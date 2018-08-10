@@ -12,13 +12,11 @@ Frontend: Angular JS 4
 http://196.28.230.195:8080/scb_dev
 
 **Credentials:**  
-HIS ROLE  
-user: admin  
-pass: admin
 
-M&E ROLE  
-user: me  
-pass: me
+|  ROLES    |Username    |Password    |
+|-----------|------------|------------|
+|HIS        |admin       |admin       |
+|M&E        |me          |me          |
 
 ## Production Server
 http://196.28.230.195:8080/scb
