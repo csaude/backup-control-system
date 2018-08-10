@@ -1,0 +1,9 @@
+node_modules
+.settings
+target
+.classpath
+.project
+dist
+.vscode
+node
+e2e

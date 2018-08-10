@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "org",
+  "type": "java.lang.String",
+  "description": "Organization Name"
+}]}

@@ -1,0 +1,248 @@
+<!--
+@author damasceno.lopes
+@email damasceno.lopes@fgh.org.mz
+-->
+
+<div class="preloader-wrapper active preloader {{isHidden}}">
+    <div class="spinner-layer spinner-red-only">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+
+<br>
+
+<h5 class="light" *ngIf="title=='Meu Perfil'"> {{ "myprofile" | translate }}</h5>
+<div class="col s12 card">
+ 
+  <mz-tab [responsiveThreshold]="'true'" *ngIf="isHidden=='hide'">
+    <mz-tab-item [active]="'true'" [label]="'Detalhes'">
+      <div class="card-panel" style="margin-top: -0px;">
+        
+        <div class="col s12" style="margin-top: -11px;">
+          <h5 class="light">{{user.person.others_names}} {{user.person.surname}}</h5>
+        </div>
+        <div class="row">
+          <div class="col s12 l2 m2">{{ "gender" | translate }}:</div>
+          <div class="col s12 l10 m10">{{user.person.gender=='M'?'Masculino':'Feminino'}}</div>
+        </div>
+        <div class="row" *ngIf="user.person.email!=null" style="margin-top: -11px;">
+          <div class="col s12 l2 m2">{{ "email" | translate }}:</div>
+          <div class="col s12 l10 m10">{{user.person.email}}</div>
+        </div>
+        <div class="row" *ngIf="user.person.phone_number!=null" style="margin-top: -11px;">
+          <div class="col s12 l2 m2">{{ "phone" | translate }}:</div>
+          <div class="col s12 l10 m10">{{user.person.phone_number}}</div>
+        </div>
+        <div class="row" style="margin-top: -11px;">
+          <div class="col s12 l2 m2"></div>
+          <div class="col s12 l10 m10">
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th>{{ "function" | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let authority of user.authorities">
+                  <td>{{ authority.description }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row" style="margin-top: -11px;">
+          <div class="col s12 l2 m2"></div>
+          <div class="col s12 l10 m10">
+            <table class="striped">
+              <thead>
+                <tr>
+                  <th colspan="2">{{ "ironkeysdistricts" | translate }} ({{user.districts.length}})</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let district of user.districts">
+                  <td>{{ district.province }}</td>
+                  <td>{{ district.name }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row" style="margin-top: -11px;">
+          <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
+          <div class="col s12 l10 m10">{{user.creatorname}} - {{user.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
+        </div>
+        <div class="row" *ngIf="user.updaterid!=null" style="margin-top: -11px;">
+          <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
+          <div class="col s12 l10 m10">{{user.updatername}} - {{user.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
+        </div>
+        <div class="row" style="margin-top: -11px;">
+          <div class="col s12 l2 m2"></div>
+          <div class="col s12 l10 m10">
+            <span style="color:lightgrey;">{{user.uuid}}</span>
+          </div>
+        </div>
+      </div>
+    </mz-tab-item>
+    <mz-tab-item [label]="'Actualizar'">
+      <div class="card-panel" style="margin-top: -0px;">
+        <div class="row">
+          <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
+            <div class="row hide">
+              <div class="input-field col s12">
+                <input id="user_id" type="text" [ngModel]="user.user_id" formControlName="user_id">
+                <input id="enabled" type="text" [ngModel]="user.enabled" formControlName="enabled">
+              </div>
+            </div>
+            <div class="row hide">
+              <div class="input-field col s12">
+                <input id="person" type="text" class="validate" [(ngModel)]="user.person" formControlName="person">
+                <label for="person" [class.active]="person"></label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12 m6 l6">
+                <i class="material-icons prefix">label_outline</i>
+                <input id="surname" type="text" class="validate" [(ngModel)]="user.person.surname" formControlName="surname" [class.invalid]="form.controls['surname'].touched && !form.controls['surname'].valid">
+                <label for="surname" [class.active]="user.person.surname" data-error="O Apelido deve ser preenchido.">
+                  {{ "surname" | translate }} *
+                </label>
+              </div>
+              <div class="input-field col s12 m6 l6">
+                <i class="material-icons prefix">label_outline</i>
+                <input id="others_names" type="text" class="validate" [(ngModel)]="user.person.others_names" formControlName="others_names"
+                  [class.invalid]="form.controls['others_names'].touched && !form.controls['others_names'].valid">
+                <label for="others_names" [class.active]="user.person.others_names" data-error="Outros Nomes deve ser preenchido.">
+                  {{ "others_names" | translate }} *
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12 m3 l3" *ngIf="translate.currentLang=='pt'">
+                <mz-select-container>
+                  <i mz-icon mz-input-prefix [icon]="'people'">
+                  </i>
+                  <select mz-select id="gender2" [label]="'Genero *'" [placeholder]="'Seleccione o Genero'" [(ngModel)]="user.person.gender"
+                    formControlName="gender">
+                    <option *ngFor="let gender of genders" [value]="gender.name" [selected]="gender.name == user.person.gender">{{ gender.description }}</option>
+                  </select>
+                </mz-select-container>
+              </div>
+              <div class="input-field col s12 m3 l3" *ngIf="translate.currentLang=='en'">
+                <mz-select-container>
+                  <i mz-icon mz-input-prefix [icon]="'people'">
+                  </i>
+                  <select mz-select id="gender2" [label]="'Gender *'" [placeholder]="'Select the Gender'" [(ngModel)]="user.person.gender"
+                    formControlName="gender">
+                    <option *ngFor="let gender of genders" [value]="gender.name" [selected]="gender.name == user.person.gender">{{ gender.description }}</option>
+                  </select>
+                </mz-select-container>
+              </div>
+              <div class="input-field col s12 m3 l3" style="margin-top: 31px;">
+                <i class="material-icons prefix">phone</i>
+                <input id="phone_number" type="number" class="validate" [(ngModel)]="user.person.phone_number" formControlName="phone_number"
+                  [class.invalid]="form.controls['phone_number'].touched && !form.controls['phone_number'].valid">
+                <label for="phone_number" [class.active]="user.person.phone_number" data-error="O Distrito deve ser preenchido.">
+                  {{ "phone" | translate }}
+                </label>
+              </div>
+              <div class="input-field col s12 m6 l6" style="margin-top: 31px;">
+                <i class="material-icons prefix">email</i>
+                <input id="email" type="email" class="validate" pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$" [(ngModel)]="user.person.email" formControlName="email" [class.invalid]="form.controls['email'].touched && !form.controls['email'].valid">
+                <label for="email" [class.active]="user.person.email" data-error="Insira um email válido.">
+                  {{ "email" | translate }}
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12 m6 l6">
+                <i class="material-icons prefix">person</i>
+                <input (keydown.space)="$event.preventDefault()" (keydown.space)="$event.preventDefault()" onDrag="return false" onDrop="return false"
+                  onPaste="return false" readonly="{{user.user_id}}" id="username" type="text" class="validate" autocomplete="new-password"
+                  [(ngModel)]="user.username" formControlName="username" [class.invalid]="form.controls['username'].touched && !form.controls['username'].valid">
+                <label for="username" [class.active]="user.username" data-error="">
+                  {{ "username" | translate }} *
+                </label>
+              </div>
+              <div class="input-field col s12 m6 l6 hide">
+                <i class="material-icons prefix">vpn_key</i>
+                <input id="password" name="password" type="password" class="validate" [(ngModel)]="user.password" autocomplete="new-password"
+                  formControlName="password" [class.invalid]="form.controls['password'].touched && !form.controls['password'].valid">
+                <label for="password" [class.active]="user.password" data-error="O Password deve ser preenchido.">
+                  {{ "password" | translate }} *
+                </label>
+              </div>
+              <div class="input-field col s12 m6 l6" *ngIf="user.user_id">
+                <i class="material-icons prefix">vpn_key</i>
+                <input id="password_new" type="password" formControlName="password_new" autocomplete="new-password">
+                <label for="password_new">
+                  {{ "password" | translate }} *
+                </label>
+              </div>
+            </div>
+            <div class="row hide">
+              <div class="input-field col s12 m6 l6">
+                <mz-select-container>
+                  <i mz-icon mz-input-prefix [icon]="'person_outline'">
+                  </i>
+                  <select multiple mz-select id="authority" [label]="'Posição *'" [placeholder]="'Seleccione a Posição'" [(ngModel)]="user.authorities"
+                    formControlName="authorities">
+                    <option *ngFor="let authority of allauthorities" [ngValue]="authority">{{ authority.description }}</option>
+                  </select>
+                </mz-select-container>
+              </div>
+              <div class="input-field col s12 m6 l6">
+                <mz-select-container>
+                  <i mz-icon mz-input-prefix [icon]="'location_on'">
+                  </i>
+                  <select multiple mz-select id="districts" [label]="'Distrito(s)'" [placeholder]="'Seleccione o(s) Distrito(s)'" [(ngModel)]="user.districts"
+                    formControlName="districts">
+                    <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+                  </select>
+                </mz-select-container>
+              </div>
+            </div>
+            <div class="row" *ngIf="ROLE_SIS||ROLE_IT||ROLE_ODMA||ROLE_ORMA||ROLE_GDD||ROLE_OA||ROLE_ODMA">
+              <div class="col s12 m5 l5" style="margin-left: 45px;margin-top: 25px;">
+                <input type="checkbox" class="filled-in" id="notification" [(ngModel)]="user.notification" formControlName="notification"
+                />
+                <label for="notification">{{ "notification" | translate }}</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12 m5 l5" *ngIf="translate.currentLang=='pt'">
+                <mz-select-container>
+                  <i mz-icon mz-input-prefix [icon]="'language'">
+                  </i>
+                  <select mz-select id="gender" [label]="'Idioma *'" [placeholder]="'Seleccione o Idioma'" [(ngModel)]="user.locale" formControlName="locale">
+                    <option *ngFor="let language of languages" [value]="language.name" [selected]="language.name == user.locale">{{ language.description }}</option>
+                  </select>
+                </mz-select-container>
+              </div>
+              <div class="input-field col s12 m5 l5" *ngIf="translate.currentLang=='en'">
+                <mz-select-container>
+                  <i mz-icon mz-input-prefix [icon]="'language'">
+                  </i>
+                  <select mz-select id="gender" [label]="'Language *'" [placeholder]="'Select the Language'" [(ngModel)]="user.locale" formControlName="locale">
+                    <option *ngFor="let language of languages" [value]="language.name" [selected]="language.name == user.locale">{{ language.description }}</option>
+                  </select>
+                </mz-select-container>
+              </div>
+            </div>
+            <br/>
+            <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled">
+              {{ "save" | translate }}
+              <i class="material-icons right">send</i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </mz-tab-item>
+  </mz-tab>
+</div>

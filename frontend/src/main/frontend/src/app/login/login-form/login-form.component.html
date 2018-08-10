@@ -1,0 +1,41 @@
+<!--
+@author damasceno.lopes
+@email damasceno.lopes@fgh.org.mz
+-->
+
+<div class="section"></div>
+<div class="section"></div>
+<div class="section"></div>
+<div class="valign-wrapper row login-box">
+  <div class="col card hoverable s10 pull-s1 m6 pull-m3 l4 pull-l4">
+    <form [formGroup]="form" (ngSubmit)="login()">
+      <div class="card-content">
+        <span class="card-title">SCB - Login</span>
+        <div class="row">
+          <div class="input-field col s12">
+            <i class="material-icons prefix">perm_identity</i>
+            <input type="text" class="validate" [(ngModel)]="localUser.username" id="username" formControlName="username" />
+            <label for="username">Username *</label>
+          </div>
+          <div class="input-field col s12">
+            <i class="material-icons prefix">vpn_key</i>
+            <input type="password" class="validate" [(ngModel)]="localUser.password" name="password" id="password" formControlName="password"
+            />
+            <label for="password">Password *</label>
+          </div>
+          <div class="{{loginFail}} right-align">
+            <span style="color:red;">Credênciais invalidas!</span>
+          </div>
+          <div class="{{loginAccess}} right-align">
+            <span style="color:red;">Acesso Restrito!</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-action right-align">
+        <button class="btn waves-effect waves-light" type="submit" [disabled]="isDisabled">
+          Entrar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

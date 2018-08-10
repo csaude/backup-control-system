@@ -1,0 +1,151 @@
+<!--
+@author damasceno.lopes
+@email damasceno.lopes@fgh.org.mz
+-->
+
+<br>
+<h5 class="light">{{ total }} {{ "transportersfound" | translate }}</h5>
+
+<form materialize [formGroup]="form">
+  <div class="row">
+    <div class="input-field col s12 m4 l4">
+      <input id="name" type="text" class="validate" formControlName="name" (keyup)="search()">
+      <label for="name">
+        {{ 'searchbyname' | translate }}
+      </label>
+    </div>
+    <div class="col s12 m4 l4" *ngIf="translate.currentLang=='pt'">
+      <mz-select-container>
+        <select mz-select mz-validation required id="district" [label]="'Posição'" formControlName="role" (change)="search()">
+          <option value="all" selected>Todas Posições</option>
+          <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
+        </select>
+      </mz-select-container>
+    </div>
+    <div class="col s12 m4 l4" *ngIf="translate.currentLang=='en'">
+      <mz-select-container>
+        <select mz-select mz-validation required id="district" [label]="'Position'" formControlName="role" (change)="search()">
+          <option value="all" selected>All Positions</option>
+          <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
+        </select>
+      </mz-select-container>
+    </div>
+    <br/>
+    <div class="col s12 m4 l4">
+      <input type="checkbox" class="filled-in" id="receiveds" formControlName="canceled" (change)="search()" />
+      <label for="receiveds">{{ "canceled" | translate }}</label>
+    </div>
+  </div>
+</form>
+
+<div class="col s12 card" style="margin-top: -20px;">
+  <div class="progress {{isHidden}}">
+    <div class="indeterminate"></div>
+  </div>
+  <table class="bordered responsive-table highlight">
+    <thead>
+      <tr>
+        <th>{{ "transportername" | translate }}</th>
+        <th>{{ "function" | translate }}</th>
+        <th>{{ "phone" | translate }}</th>
+        <th>{{ "updatedon" | translate }}</th>
+        <th>{{ "actions" | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let transporter of transporters  | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
+        <td>{{ transporter.name }}</td>
+        <td>{{ transporter.role }}</td>
+        <td>{{ transporter.phone_number }}</td>
+        <td>{{ transporter.date_updated | date: 'dd/MM/yyyy' }}</td>
+        <td>
+          <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setTransporter(transporter.uuid)"
+            (click)="basicModal2.open()" [routerLink]="">
+            <i class="material-icons icon-green">info</i>
+          </a>
+          &nbsp;
+          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/transporters', transporter.uuid]">
+            <i class="material-icons icon-orange">mode_edit</i>
+          </a>
+          &nbsp;
+          <a mz-tooltip [tooltip]="'Excluir'" [position]="'top'" [html]="false" [delay]="100" (click)="setTransporter(transporter.uuid)"
+            (click)="basicModal.open()" routerLink="/transporters">
+            <i class="material-icons icon-red">delete</i>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<pagination-controls autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPage($event)" id="server" class="right-align"></pagination-controls>
+
+<mz-modal #basicModal>
+  <mz-modal-header>
+    <i mz-icon [align]="'left'" [icon]="'warning'" [size]="'small'">
+    </i>
+    <h4>{{ "confirm" | translate }}</h4>
+  </mz-modal-header>
+  <mz-modal-content>
+    {{ "transporterdelete" | translate }}: {{transporter.name}}? {{ "confirmdelete" | translate }}
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" (click)="deleteTransporter()" mz-modal-close>{{ "yes" | translate }}</button>
+    <button mz-button [flat]="true" mz-modal-close>{{ "no" | translate }}</button>
+  </mz-modal-footer>
+</mz-modal>
+
+<mz-modal #basicModal2 [fixedFooter]="true">
+  <mz-modal-header>
+    <h4>{{ "transporterdetails" | translate }}</h4>
+  </mz-modal-header>
+  <mz-modal-content>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12">
+        <h5 class="light">{{transporter.name}}</h5>
+      </div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "function" | translate }}:</div>
+      <div class="col s12 l10 m10">{{transporter.role}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;" *ngIf="transporter.phone_number!=null">
+      <div class="col s12 l2 m2">{{ "phone" | translate }}:</div>
+      <div class="col s12 l10 m10">{{transporter.phone_number}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{transporter.created_by.person.others_names}} {{transporter.created_by.person.surname}} - {{transporter.date_created
+        | date: 'dd/MM/yyyy HH:mm'}}</div>
+    </div>
+    <div class="row" *ngIf="transporter.updated_by!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{transporter.updated_by.person.others_names}} {{transporter.updated_by.person.surname}} - {{transporter.date_updated
+        | date: 'dd/MM/yyyy HH:mm'}}</div>
+    </div>
+    <div class="row" *ngIf="transporter.canceled_by!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "canceledby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{transporter.canceled_by.person.others_names}} {{transporter.canceled_by.person.surname}} - {{transporter.date_canceled
+        | date: 'dd/MM/yyyy HH:mm'}}</div>
+    </div>
+    <div class="row" *ngIf="transporter.canceled_by!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "cancelitreason" | translate }}:</div>
+      <div class="col s12 l10 m10">{{transporter.canceled_reason}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <span style="color:lightgrey;">{{transporter.uuid}}</span>
+      </div>
+    </div>
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
+  </mz-modal-footer>
+</mz-modal>
+
+<div class="fixed-action-btn" style="bottom: 20; right: 20px;">
+  <a mz-tooltip [tooltip]="'Adicionar Tramsportador'" [position]="'left'" [html]="false" [delay]="100" class="btn-floating  btn-large waves-effect waves-light green"
+    routerLink="/transporters/new">
+    <i class="material-icons">add</i>
+  </a>
+</div>

@@ -1,0 +1,54 @@
+<!--
+@author damasceno.lopes
+@email damasceno.lopes@fgh.org.mz
+-->
+
+<br>
+<h5 class="light" *ngIf="title=='Nova Avaliação'" style="display: inline-flex;vertical-align: middle;">
+  <a routerLink="/evaluations" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
+    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
+  </a> {{ "evaluationnew" | translate }}</h5>
+<h5 class="light" *ngIf="title=='Editar Avaliação'" style="display: inline-flex;vertical-align: middle;">
+  <a routerLink="/evaluations" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
+    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
+  </a> {{ "evaluationedit" | translate }}</h5>
+
+<div class="card-panel">
+  <div class="row">
+    <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">label_outline</i>
+          <input id="name" type="text" class="validate" [(ngModel)]="evaluation.name" formControlName="name" [class.invalid]="form.controls['name'].touched && !form.controls['name'].valid">
+          <label for="name" [class.active]="evaluation.name" data-error="O Nome da Avaliação deve ser preenchida.">
+            {{ "evaluationname" | translate }} *
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">label_outline</i>
+          <input id="openmrs_sql_dataset_uuid" type="text" class="validate" [(ngModel)]="evaluation.openmrs_sql_dataset_uuid" formControlName="openmrs_sql_dataset_uuid"
+            [class.invalid]="form.controls['openmrs_sql_dataset_uuid'].touched && !form.controls['openmrs_sql_dataset_uuid'].valid">
+          <label for="openmrs_sql_dataset_uuid" [class.active]="evaluation.openmrs_sql_dataset_uuid" data-error="OpenMRS SQL Dataset UUID deve ser preenchido.">
+            {{ "openmrs_sql_dataset_uuid" | translate }} *
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">description</i>
+          <textarea id="textarea1" class="materialize-textarea" maxlength="255" [(ngModel)]="evaluation.description" formControlName="description"></textarea>
+          <label for="textarea1" [class.active]="evaluation.description">{{ "observation" | translate }}</label>
+        </div>
+      </div>
+      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled">
+        {{ "save" | translate }}
+        <i class="material-icons right">send</i>
+      </button>
+      <a *ngIf="!isDisabled" class="waves-effect waves-teal btn-flat" routerLink="/evaluations">
+        <span class="orange-text text-darken-3">{{ "cancel" | translate }}</span>
+      </a>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,306 @@
+<!--
+@author damasceno.lopes
+@email damasceno.lopes@fgh.org.mz
+-->
+<br>
+
+<h5 class="light" *ngIf="title=='Receber Backup'" style="display: inline-flex;vertical-align: middle;"><a routerLink="/receives" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
+  <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
+</a> {{ "receivenew" | translate }}</h5>
+<h5 class="light" *ngIf="title=='Editar Recepção de Backup'" style="display: inline-flex;vertical-align: middle;"><a routerLink="/receives" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
+  <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
+</a> {{ "receiveedit" | translate }}</h5>
+<div class="card-panel">
+  <div class="row">
+    <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
+
+      <mz-collapsible [mode]="'expandable'" [onClose]="closeFunctionCallback" [onOpen]="openFunctionCallback" [popout]="false">
+        <mz-collapsible-item *ngIf="send.send_id">
+          <mz-collapsible-item-header>
+            <i mz-icon mz-input-prefix [icon]="'details'"></i> {{ "showsenddetails" | translate }} {{send.district.name}} - {{send.backup_date | date: 'dd/MM/yyyy'}}
+          </mz-collapsible-item-header>
+          <mz-collapsible-item-body>
+            <div class="row hide">
+              <div class="input-field col s12">
+                <input id="name" type="text" class="validate" [ngModel]="send" formControlName="send">
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <i class="material-icons prefix">location_on</i>
+                <input id="name" type="text" class="validate" value="{{send.district.name}}" readonly>
+                <label for="name" [class.active]="send.district.name">
+                  {{ "district" | translate }}
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12 l6 m6">
+                <i class="material-icons prefix">account_circle</i>
+                <input id="name" type="text" class="validate" value="{{send.transporter.name}} - {{send.transporter.phone_number}}" readonly>
+                <label for="name" [class.active]="send.transporter.name">
+                  {{ "transporter" | translate }}
+                </label>
+              </div>
+          
+              <div class="input-field col s12 l6 m6">
+                <i class="material-icons prefix">date_range</i>
+                <input id="date_created" type="text" class="validate" value="{{send.backup_date | date: 'dd/MM/yyyy'}}" readonly>
+                <label for="date_created" [class.active]="send.date_created">
+                  {{ "backup_date" | translate }}
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class=" col s12 l6 m6" style="margin-left: 45px;">
+                <input type="checkbox" class="filled-in" id="update_finished" checked="{{send.update_finished==true?'checked':''}}" onclick="return false;"
+                />
+                <label for="update_finished">{{ "at" | translate }}</label>
+              </div>
+              <div class=" col s12 l4 m4" style="margin-left: 45px;">
+                <input type="checkbox" class="filled-in" id="sync_finished" checked="{{send.sync_finished==true?'checked':''}}" onclick="return false;"
+                />
+                <label for="sync_finished">{{ "st" | translate }}</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12 l6 m6" style="margin-left: 45px;">
+                <input type="checkbox" class="filled-in" id="cross_dhis2_finished" checked="{{send.cross_dhis2_finished==true?'checked':''}}"
+                  onclick="return false;" />
+                <label for="cross_dhis2_finished">{{ "dhis2" | translate }}</label>
+              </div>
+              <div class=" col s12 l4 m4" style="margin-left: 45px;">
+                <input type="checkbox" class="filled-in" id="cross_idart_finished" checked="{{send.cross_idart_finished==true?'checked':''}}"
+                  onclick="return false;" />
+                <label for="cross_idart_finished">{{ "idart" | translate }}</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class=" col s12 l6 m6" style="margin-left: 45px;">
+                <input type="checkbox" class="filled-in" id="validation_finished" checked="{{send.validation_finished==true?'checked':''}}"
+                  onclick="return false;" />
+                <label for="validation_finished">{{ "vt" | translate }}</label>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="input-field col s12">
+                <i class="material-icons prefix">label</i>
+                <textarea id="textarea1" class="materialize-textarea" maxlength="255" value="{{send.observation}}" readonly></textarea>
+                <label for="textarea1" [class.active]="send.observation">{{ "obs_district" | translate }}</label>
+              </div>
+            </div>
+            
+          </mz-collapsible-item-body>
+        </mz-collapsible-item>
+
+        <!-- Edit-->
+
+        <mz-collapsible-item *ngIf="receive.send.send_id">
+          <mz-collapsible-item-header>
+            <i mz-icon mz-input-prefix [icon]="'details'"></i> {{ "showsenddetails" | translate }} {{receive.send.district.name}} - {{receive.send.backup_date | date: 'dd/MM/yyyy'}}
+          </mz-collapsible-item-header>
+          <mz-collapsible-item-body>
+            <div class="row hide">
+              <div class="input-field col s12">
+                <input id="name" type="text" class="validate" [ngModel]="receive.send" formControlName="send">
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <i class="material-icons prefix">location_on</i>
+                <input id="name" type="text" class="validate" value="{{receive.send.district.name}}" readonly>
+                <label for="name" [class.active]="receive.send.district.name">
+                  {{ "district" | translate }}
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12 l6 m6">
+                <i class="material-icons prefix">account_circle</i>
+                <input id="name" type="text" class="validate" value="{{receive.send.transporter.name}} - {{receive.send.transporter.phone_number}}" readonly>
+                <label for="name" [class.active]="receive.send.transporter.name">
+                  {{ "transporter" | translate }}
+                </label>
+              </div>
+          
+              <div class="input-field col s12 l6 m6">
+                <i class="material-icons prefix">date_range</i>
+                <input id="date_created" type="text" class="validate" value="{{receive.send.backup_date | date: 'dd/MM/yyyy'}}" readonly>
+                <label for="date_created" [class.active]="receive.send.date_created">
+                  {{ "backup_date" | translate }}
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class=" col s12 l6 m6" style="margin-left: 45px;">
+                <input type="checkbox" class="filled-in" id="update_finished" checked="{{receive.send.update_finished==true?'checked':''}}" onclick="return false;"
+                />
+                <label for="update_finished">{{ "at" | translate }}</label>
+              </div>
+              <div class=" col s12 l4 m4" style="margin-left: 45px;">
+                <input type="checkbox" class="filled-in" id="sync_finished" checked="{{receive.send.sync_finished==true?'checked':''}}" onclick="return false;"
+                />
+                <label for="sync_finished">{{ "st" | translate }}</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12 l6 m6" style="margin-left: 45px;">
+                <input type="checkbox" class="filled-in" id="cross_dhis2_finished" checked="{{receive.send.cross_dhis2_finished==true?'checked':''}}"
+                  onclick="return false;" />
+                <label for="cross_dhis2_finished">{{ "dhis2" | translate }}</label>
+              </div>
+              <div class=" col s12 l4 m4" style="margin-left: 45px;">
+                <input type="checkbox" class="filled-in" id="cross_idart_finished" checked="{{receive.send.cross_idart_finished==true?'checked':''}}"
+                  onclick="return false;" />
+                <label for="cross_idart_finished">{{ "idart" | translate }}</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class=" col s12 l6 m6" style="margin-left: 45px;">
+                <input type="checkbox" class="filled-in" id="validation_finished" checked="{{receive.send.validation_finished==true?'checked':''}}"
+                  onclick="return false;" />
+                <label for="validation_finished">{{ "vt" | translate }}</label>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="input-field col s12">
+                <i class="material-icons prefix">label</i>
+                <textarea id="textarea1" class="materialize-textarea" maxlength="255" value="{{receive.send.observation}}" readonly></textarea>
+                <label for="textarea1" [class.active]="receive.send.observation">{{ "obs_district" | translate }}</label>
+              </div>
+            </div>
+           
+          </mz-collapsible-item-body>
+        </mz-collapsible-item>
+
+        <mz-collapsible-item [active]="true">
+          <mz-collapsible-item-header>
+            <i mz-icon mz-input-prefix [icon]="'details'"></i> {{ "receivenew" | translate }}
+          </mz-collapsible-item-header>
+          <mz-collapsible-item-body>
+            <div class="row hide">
+              <div class="input-field col s12">
+                <input id="name" type="text" class="validate" [ngModel]="receive.receive_id" formControlName="receive_id">
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12" *ngIf="translate.currentLang=='pt'">
+                <mz-datepicker-container>
+                  <i mz-icon mz-input-prefix [icon]="'date_range'">
+                  </i>
+                  <input mz-datepicker [label]="'Data de Recepção *'" [options]="options" required [(ngModel)]="receive.receive_date" formControlName="receive_date"
+                    type="date" />
+                </mz-datepicker-container>
+              </div>
+              <div class="input-field col s12" *ngIf="translate.currentLang=='en'">
+                <mz-datepicker-container>
+                  <i mz-icon mz-input-prefix [icon]="'date_range'">
+                  </i>
+                  <input mz-datepicker [label]="'Date of Reception *'" [options]="options" required [(ngModel)]="receive.receive_date" formControlName="receive_date"
+                    type="date" />
+                </mz-datepicker-container>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col s12 l3 m3" style="margin-left: 45px;margin-top: 40px;">
+                <input type="checkbox" class="filled-in" id="ik_returned" [(ngModel)]="receive.ik_returned" formControlName="ik_returned"
+                />
+                <label for="ik_returned">{{ "ikreturned" | translate }}</label>
+              </div>
+              <div class="input-field col s12 l3 m3" *ngIf="receive.ik_returned&&translate.currentLang=='pt'">
+                <mz-datepicker-container>
+                  <i mz-icon mz-input-prefix [icon]="'date_range'">
+                  </i>
+                  <input mz-datepicker [label]="'Data de Devolução *'" [options]="options" [(ngModel)]="receive.date_ik_returned" formControlName="date_ik_returned"
+                    type="date" />
+                </mz-datepicker-container>
+              </div>
+              <div class="input-field col s12 l5 m5" *ngIf="receive.ik_returned&&translate.currentLang=='pt'">
+                <mz-select-container>
+                  <i mz-icon mz-input-prefix [icon]="'person'">
+                  </i>
+                  <select mz-select [label]="'Transportador *'" [placeholder]="'Seleccione o Transportador'" [(ngModel)]="receive.transporter"
+                    formControlName="transporter">
+                    <option *ngFor="let transporter of alltransporters" [ngValue]="transporter">{{ transporter.name }} ({{ transporter.phone_number }})</option>
+                  </select>
+                </mz-select-container>
+              </div>
+              <div class="input-field col s12 l5 m5" *ngIf="receive.ik_returned&&translate.currentLang=='en'">
+                <mz-datepicker-container>
+                  <i mz-icon mz-input-prefix [icon]="'date_range'">
+                  </i>
+                  <input mz-datepicker [label]="'Return Date *'" [options]="options" [(ngModel)]="receive.date_ik_returned" formControlName="date_ik_returned"
+                    type="date" />
+                </mz-datepicker-container>
+              </div>
+              <div class="input-field col s12 l5 m5" *ngIf="receive.ik_returned&&translate.currentLang=='en'">
+                <mz-select-container>
+                  <i mz-icon mz-input-prefix [icon]="'person'">
+                  </i>
+                  <select mz-select [label]="'Transporter *'" [placeholder]="'Select the Transporter'" [(ngModel)]="receive.transporter" formControlName="transporter">
+                    <option *ngFor="let transporter of alltransporters" [ngValue]="transporter">{{ transporter.name }} ({{ transporter.phone_number }})</option>
+                  </select>
+                </mz-select-container>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12 l3 m3" style="margin-left: 45px;margin-top: 40px;">
+                <input type="checkbox" class="filled-in" id="restored" [(ngModel)]="receive.restored" formControlName="restored" />
+                <label for="restored">{{ "backuprestored" | translate }}</label>
+              </div>
+              <div class="input-field col s12 l8 m8" *ngIf="receive.restored&&translate.currentLang=='pt'">
+                <mz-datepicker-container>
+                  <i mz-icon mz-input-prefix [icon]="'date_range'">
+                  </i>
+                  <input mz-datepicker [label]="'Data de Restauração *'" [options]="options" [(ngModel)]="receive.date_restored" formControlName="date_restored"
+                    type="date" />
+                </mz-datepicker-container>
+              </div>
+              <div class="input-field col s12 l8 m8" *ngIf="receive.restored&&translate.currentLang=='en'">
+                <mz-datepicker-container>
+                  <i mz-icon mz-input-prefix [icon]="'date_range'">
+                  </i>
+                  <input mz-datepicker [label]="'Date of Restoration *'" [options]="options" [(ngModel)]="receive.date_restored" formControlName="date_restored"
+                    type="date" />
+                </mz-datepicker-container>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <i class="material-icons prefix">description</i>
+                <textarea id="textarea1" class="materialize-textarea" maxlength="255" [(ngModel)]="receive.observation" formControlName="observation"
+                  [class.invalid]="form.controls['observation'].touched && !form.controls['observation'].valid"></textarea>
+                <label for="textarea1" [class.active]="receive.observation" data-error="A Observação deve ser preenchida.">{{ "obs_his" | translate }}</label>
+              </div>
+            </div>
+            <div class="row" class="row {{ isHidden }}">
+              <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 25px;">
+                <input type="checkbox" class="filled-in" id="canceled" [(ngModel)]="receive.canceled" formControlName="canceled" />
+                <label for="canceled">{{ "cancelit" | translate }}</label>
+              </div>
+              <div class="input-field col s12 l8 m8" *ngIf="receive.canceled">
+                <input id="canceled_reason" type="text" class="validate" [(ngModel)]="receive.canceled_reason" formControlName="canceled_reason">
+                <label for="canceled_reason" [class.active]="send.canceled_reason">
+                  {{ "cancelitreason" | translate }}
+                </label>
+              </div>
+            </div>
+          </mz-collapsible-item-body>
+        </mz-collapsible-item>
+      </mz-collapsible>
+
+      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled">
+        {{ "save" | translate }}
+        <i class="material-icons right">send</i>
+      </button>
+
+      <a *ngIf="!isDisabled" class="waves-effect waves-teal btn-flat" routerLink="/receives">
+        <span class="orange-text text-darken-3">{{ "cancel" | translate }}</span>
+      </a>
+
+    </form>
+  </div>
+</div>

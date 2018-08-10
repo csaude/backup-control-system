@@ -1,0 +1,215 @@
+<!--
+@author damasceno.lopes
+@email damasceno.lopes@fgh.org.mz
+-->
+
+<br>
+<h5 class="light"> {{ total }} {{ "ironkeysfound" | translate }}</h5>
+
+<form materialize [formGroup]="form">
+  <div class="row">
+    <div class="input-field col s6 m3 l3">
+      <input id="name" type="text" class="validate" formControlName="serial" (keyup)="search()">
+      <label for="name">
+        {{ 'searchbyserial' | translate }}
+      </label>
+    </div>
+    <div class="input-field col s6 m3 l3">
+      <input id="name" type="text" class="validate" formControlName="version" (keyup)="search()">
+      <label for="name">
+        {{ 'searchbyversion' | translate }}
+      </label>
+    </div>
+    <div class="col s6 m3 l3" *ngIf="translate.currentLang=='pt'">
+      <mz-select-container>
+        <select mz-select id="status" [label]="'Capacidade'" [placeholder]="'Seleccione'" formControlName="size" (change)="search()">
+          <option value="all" selected>Todas Capacidades</option>
+          <option *ngFor="let size of sizes" [value]="size.id">{{ size.name }}</option>
+        </select>
+      </mz-select-container>
+    </div>
+    <div class="col s6 m3 l3" *ngIf="translate.currentLang=='en'">
+      <mz-select-container>
+        <select mz-select id="status" [label]="'Capacity'" [placeholder]="'Select'" [(ngModel)]="ironkey.status" formControlName="size"
+          (change)="search()">
+          <option value="all" selected>All Capacities</option>
+          <option *ngFor="let size of sizes" [value]="size.id">{{ size.name }}</option>
+        </select>
+      </mz-select-container>
+    </div>
+    <div class="col s6 m3 l3" *ngIf="translate.currentLang=='pt'">
+      <mz-select-container>
+        <select mz-select id="status" [label]="'Estado'" [placeholder]="'Seleccione'" formControlName="status" (change)="search()">
+          <option value="all" selected>Todos Estados</option>
+          <option *ngFor="let statusitem of statuslist" [value]="statusitem.name">{{ statusitem.name }}</option>
+        </select>
+      </mz-select-container>
+    </div>
+    <div class="col s6 m3 l3" *ngIf="translate.currentLang=='en'">
+      <mz-select-container>
+        <select mz-select id="status" [label]="'State'" [placeholder]="'Select'" [(ngModel)]="ironkey.status" formControlName="status"
+          (change)="search()">
+          <option value="all" selected>All Sates</option>
+          <option *ngFor="let statusitem of statuslist" [value]="statusitem.name">{{ statusitem.name }}</option>
+        </select>
+      </mz-select-container>
+    </div>
+  </div>
+</form>
+
+<div class="col s12 card" style="margin-top: -20px;">
+  <div class="progress {{isHidden}}">
+    <div class="indeterminate"></div>
+  </div>
+  <table class="bordered responsive-table highlight">
+    <thead>
+      <tr>
+        <th>{{ "serialn" | translate }}</th>
+        <th>{{ "version" | translate }}</th>
+        <th>{{ "capacity" | translate }}</th>
+        <th>{{ "state" | translate }}</th>
+        <th>{{ "ironkeysdistricts" | translate }}</th>
+        <th>{{ "updatedon" | translate }}</th>
+        <th>{{ "actions" | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ironkey of ironkeys | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
+        <td>{{ ironkey.serial }}</td>
+        <td>{{ ironkey.version }}</td>
+        <td *ngIf="ironkey.size==0">{{ "other" | translate }}</td>
+        <td *ngIf="ironkey.size!=0">{{ ironkey.size }} GB</td>
+        <td>{{ ironkey.status }}</td>
+        <td>{{ ironkey.districtsnumber}}</td>
+        <td>{{ ironkey.date_updated | date: 'dd/MM/yyyy' }}</td>
+        <td>
+          <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setIronkey(ironkey.uuid)" (click)="basicModal2.open()"
+            [routerLink]="">
+            <i class="material-icons icon-green">info</i>
+          </a>
+          &nbsp;
+          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/ironkeys', ironkey.uuid]">
+            <i class="material-icons icon-orange">mode_edit</i>
+          </a>
+          &nbsp;
+          <a mz-tooltip [tooltip]="'Excluir'" [position]="'top'" [html]="false" [delay]="100" (click)="setIronkey(ironkey.uuid)" (click)="basicModal.open()"
+            routerLink="/ironkeys">
+            <i class="material-icons icon-red">delete</i>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<pagination-controls autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPage($event)" id="server" class="right-align"></pagination-controls>
+
+<mz-modal #basicModal>
+  <mz-modal-header>
+    <i mz-icon [align]="'left'" [icon]="'warning'" [size]="'small'">
+    </i>
+    <h4>{{ "confirm" | translate }}</h4>
+  </mz-modal-header>
+  <mz-modal-content>
+    {{ "ironkeydelete" | translate }}: {{ironkey.serial}}? {{ "confirmdelete" | translate }}
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" (click)="deleteIronkey()" mz-modal-close>{{ "yes" | translate }}</button>
+    <button mz-button [flat]="true" mz-modal-close>{{ "no" | translate }}</button>
+  </mz-modal-footer>
+</mz-modal>
+
+<mz-modal #basicModal2 [fixedFooter]="true">
+  <mz-modal-header>
+    <h4>{{ "ironkeydetails" | translate }}</h4>
+  </mz-modal-header>
+  <mz-modal-content>
+    <div class="row">
+      <div class="col s12">
+        <h5 class="light">{{ironkey.serial}}</h5>
+      </div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "version" | translate }}:</div>
+      <div class="col s12 l10 m10">{{ironkey.version}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "state" | translate }}:</div>
+      <div class="col s12 l10 m10">{{ironkey.status}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "capacity" | translate }}:</div>
+      <div class="col s12 l10 m10" *ngIf="ironkey.size!=0">{{ironkey.size}} GB</div>
+      <div class="col s12 l10 m10" *ngIf="ironkey.size==0">Outra</div>
+    </div>
+    <div class="row" *ngIf="ironkey.date_purchased!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "date_purchased" | translate }}:</div>
+      <div class="col s12 l10 m10">{{ironkey.date_purchased | date: 'dd/MM/yyyy'}}</div>
+    </div>
+    <div class="row" *ngIf="ironkey.observation!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "observation" | translate }}:</div>
+      <div class="col s12 l10 m10">{{ironkey.observation}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <table class="striped">
+          <thead>
+            <tr>
+              <th>{{ "ironkeysdistricts" | translate }}(
+                <b>{{ironkey.districts.length}}</b>)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let district of ironkey.districts">
+              <td>
+                <a (click)="basicModal2.close()" [routerLink]="['/districts', district.uuid]" class="waves-effect waves-teal ">
+                  <span class="orange-text text-darken-3">{{ district.province }} / {{ district.name }}</span>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{ironkey.created_by.person.others_names}} {{ironkey.created_by.person.surname}} - {{ironkey.date_created | date: 'dd/MM/yyyy
+        HH:mm'}}</div>
+    </div>
+    <div class="row" *ngIf="ironkey.updated_by!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{ironkey.updated_by.person.others_names}} {{ironkey.updated_by.person.surname}} - {{ironkey.date_updated | date: 'dd/MM/yyyy
+        HH:mm'}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s10">
+        <span style="color:lightgrey;">{{ironkey.uuid}}</span>
+      </div>
+    </div>
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
+  </mz-modal-footer>
+</mz-modal>
+
+<div class="fixed-action-btn" style="bottom: 20px; right: 89px;">
+  <a class="btn-floating btn-large orange">
+    <i class="large material-icons">insert_chart</i>
+  </a>
+  <ul>
+    <li>
+      <a mz-tooltip [tooltip]="'Lista de Ironkeys por Nº de Distritos'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
+        class="btn-floating blue {{isDisabledt}}">
+        <i class="material-icons">attachment</i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
+  <a mz-tooltip [tooltip]="'Adicionar Ironkey'" [position]="'top'" [html]="false" [delay]="100" class="btn-floating  btn-large waves-effect waves-light green"
+    routerLink="/ironkeys/new">
+    <i class="material-icons">add</i>
+  </a>
+</div>

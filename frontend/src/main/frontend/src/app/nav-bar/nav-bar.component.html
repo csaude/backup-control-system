@@ -1,0 +1,142 @@
+<header>
+  <div class="navbar-fixed" *ngIf="isAuth">
+    <mz-dropdown [id]="'dropdown-demo1'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true" [dropdownButtonId]="'btn-dropdown-demo1'"
+      [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300" [stopPropagation]="true" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
+      <mz-dropdown-item *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA">
+        <a (click)="setBackup()" routerLink="/sends">{{ "send" | translate }}</a>
+      </mz-dropdown-item>
+      <mz-dropdown-divider></mz-dropdown-divider>
+      <mz-dropdown-item *ngIf="ROLE_SIS">
+        <a (click)="setBackup()" routerLink="/receives">{{ "receive" | translate }}</a>
+      </mz-dropdown-item>
+    </mz-dropdown>
+
+    <mz-dropdown [id]="'dropdown-demo2'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true" [dropdownButtonId]="'btn-dropdown-demo2'"
+      [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300" [stopPropagation]="true">
+      <mz-dropdown-item *ngIf="ROLE_SIS||ROLE_IT">
+        <a (click)="setMetadata()" routerLink="/ironkeys">{{ "ironkeys" | translate }}</a>
+      </mz-dropdown-item>
+      <mz-dropdown-divider></mz-dropdown-divider>
+      <mz-dropdown-item>
+        <a (click)="setMetadata()" routerLink="/districts">{{ "districts" | translate }}</a>
+      </mz-dropdown-item>
+      <mz-dropdown-divider></mz-dropdown-divider>
+      <mz-dropdown-item>
+        <a (click)="setMetadata()" routerLink="/transporters">{{ "transporters" | translate }}</a>
+      </mz-dropdown-item>
+      <mz-dropdown-divider></mz-dropdown-divider>
+      <mz-dropdown-item *ngIf="ROLE_SIS">
+        <a (click)="setMetadata()" routerLink="/evaluations">{{ "evaluations" | translate }}</a>
+      </mz-dropdown-item>
+      <mz-dropdown-divider></mz-dropdown-divider>
+      <mz-dropdown-item *ngIf="ROLE_SIS">
+        <a (click)="setMetadata()" routerLink="/users">{{ "users" | translate }}</a>
+      </mz-dropdown-item>
+    </mz-dropdown>
+    <mz-dropdown [id]="'dropdown-demo3'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true" [dropdownButtonId]="'btn-dropdown-demo3'"
+      [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300" [stopPropagation]="true">
+      <mz-dropdown-item>
+        <a (click)="setUser()" [routerLink]="['/users/details', user.uuid]">{{ "profile" | translate }}</a>
+      </mz-dropdown-item>
+      <mz-dropdown-divider></mz-dropdown-divider>
+      <mz-dropdown-item>
+        <a (click)="logout()">{{ "exit" | translate }}</a>
+      </mz-dropdown-item>
+    </mz-dropdown>
+
+    <nav>
+      <div class="nav-wrapper #0288d1 light-blue darken-2">
+        <a routerLink="/home" class="brand-logo">&nbsp;&nbsp;SCB</a>
+        <a id="btn-sidenav-demo" class="button-collapse">
+          <i class="material-icons">menu</i>
+        </a>
+        <ul class="right hide-on-med-and-down">
+          <li class="{{activeDashboard}}">
+            <a routerLink="/home" (click)="setDashboard()">{{ "dashboard" | translate }}</a>
+          </li>
+          <li class="{{activeBackup}}" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
+            
+            <a id="btn-dropdown-demo1">
+            <i class="material-icons left" *ngIf="ROLE_SIS&&total>0" mz-tooltip [tooltip]="total+' Backup(s) por receber'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
+            <i class="material-icons left" *ngIf="ROLE_SIS&&total==0" mz-tooltip [tooltip]="'Nenhum backup por receber'" [position]="'bottom'" [html]="false" [delay]="100">notifications_none</i>
+              {{ "backups" | translate }}
+              <i class="material-icons right">arrow_drop_down</i>
+            </a>
+          </li>
+          <li class="{{activeMetadata}}">
+            <a id="btn-dropdown-demo2">{{ "metadata" | translate }}
+              <i class="material-icons right">arrow_drop_down</i>
+            </a>
+          </li>
+          <li class="{{activeUser}}" *ngIf="isAuth">
+            <a id="btn-dropdown-demo3">
+              <i class="material-icons left">person</i>{{user.person.others_names| slice:0:1}}{{user.person.surname| slice:0:1}}
+              <i class="material-icons right">arrow_drop_down</i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</header>
+
+
+
+<mz-sidenav [id]="'sidenav-demo'" [collapseButtonId]="'btn-sidenav-demo'" [closeOnClick]="true">
+  <mz-sidenav-header>
+  </mz-sidenav-header>
+  <mz-sidenav-subheader>SCB</mz-sidenav-subheader>
+  <mz-sidenav-link>
+    <a routerLink="/home">Dashboard</a>
+  </mz-sidenav-link>
+  <mz-sidenav-collapsible *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
+    <mz-sidenav-collapsible-header>
+      <i mz-icon [icon]="'arrow_drop_down'" class="caret"></i>Backups
+    </mz-sidenav-collapsible-header>
+    <mz-sidenav-collapsible-content>
+      <mz-sidenav-link *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA">
+        <a routerLink="/sends">Enviar</a>
+      </mz-sidenav-link>
+      <mz-sidenav-link *ngIf="ROLE_SIS">
+        <a routerLink="/receives">Receber</a>
+      </mz-sidenav-link>
+    </mz-sidenav-collapsible-content>
+  </mz-sidenav-collapsible>
+
+  <mz-sidenav-collapsible>
+    <mz-sidenav-collapsible-header>
+      <i mz-icon [icon]="'arrow_drop_down'" class="caret"></i>Metadados
+    </mz-sidenav-collapsible-header>
+    <mz-sidenav-collapsible-content>
+      <mz-sidenav-link *ngIf="ROLE_SIS||ROLE_IT">
+        <a routerLink="/ironkeys">Ironkeys</a>
+      </mz-sidenav-link>
+      <mz-sidenav-link>
+        <a routerLink="/districts">Distritos</a>
+      </mz-sidenav-link>
+      <mz-sidenav-link>
+        <a routerLink="/transporters">Transportadores</a>
+      </mz-sidenav-link>
+      <mz-sidenav-link *ngIf="ROLE_SIS">
+        <a routerLink="/evaluations">Avaliações</a>
+      </mz-sidenav-link>
+      <mz-sidenav-link *ngIf="ROLE_SIS">
+        <a routerLink="/users">Utilizadores</a>
+      </mz-sidenav-link>
+    </mz-sidenav-collapsible-content>
+  </mz-sidenav-collapsible>
+
+  <mz-sidenav-collapsible>
+    <mz-sidenav-collapsible-header *ngIf="isAuth">
+      <i mz-icon [icon]="'person'" class="caret"></i>{{user.person.others_names}} {{user.person.surname}}
+    </mz-sidenav-collapsible-header>
+    <mz-sidenav-collapsible-content>
+      <mz-sidenav-link>
+        <a (click)="setUser()" *ngIf="isAuth" [routerLink]="['/users/details', user.uuid]">Perfil</a>
+      </mz-sidenav-link>
+      <mz-sidenav-link>
+        <a (click)="logout()">Sair</a>
+      </mz-sidenav-link>
+    </mz-sidenav-collapsible-content>
+  </mz-sidenav-collapsible>
+</mz-sidenav>

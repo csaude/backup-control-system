@@ -1,0 +1,173 @@
+<!--
+@author damasceno.lopes
+@email damasceno.lopes@fgh.org.mz
+-->
+<br>
+<h5 class="light">{{ total }} {{ "usersfound" | translate }}</h5>
+<form materialize [formGroup]="form">
+    <div class="row">
+      <div class="input-field col s12 m6 l6">
+        <input id="name" type="text" class="validate" formControlName="username" (keyup)="search()">
+        <label for="name">
+          {{ 'searchbyusername' | translate }}
+        </label>
+      </div>
+      <br/>
+      <div class="col s12 m6 l6">
+        <input type="checkbox" class="filled-in" id="enabled" formControlName="enabled" [(ngModel)]="enableds" (change)="search()" checked="checked" />
+        <label for="enabled">{{ "enabled" | translate }}</label>
+      </div>
+    </div>
+  </form>
+  
+<div class="col s12 card" style="margin-top: -20px;">
+  <div class="progress {{isHidden}}">
+    <div class="indeterminate"></div>
+  </div>
+  <table class="bordered responsive-table highlight">
+    <thead>
+      <tr>
+        <th>{{ "fullname" | translate }}</th>
+        <th>{{ "username" | translate }}</th>
+        <th>{{ "email" | translate }}</th>
+        <th>{{ "phone" | translate }}</th>
+        <th>{{ "updatedon" | translate }}</th>
+        <th>{{ "actions" | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
+        <td>{{ user.person.others_names}} {{user.person.surname}}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.person.email }}</td>
+        <td>{{ user.person.phone_number }}</td>
+        <td>{{ user.date_updated | date: 'dd/MM/yyyy' }}</td>
+        <td>
+          <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setUser(user.uuid)"
+            (click)="basicModal2.open()" [routerLink]="">
+            <i class="material-icons icon-green">info</i>
+          </a>
+          &nbsp;
+          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/users', user.uuid]">
+            <i class="material-icons icon-orange">mode_edit</i>
+          </a>
+          &nbsp;
+          <a mz-tooltip [tooltip]="'Excluir'" [position]="'top'" [html]="false" [delay]="100" (click)="setUser(user.uuid)"
+            (click)="basicModal.open()" routerLink="/users">
+            <i class="material-icons icon-red">delete</i>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<pagination-controls autoHide="false" previousLabel="" nextLabel="" (pageChange)="getPage($event)" id="server" class="right-align"></pagination-controls>
+
+<mz-modal #basicModal>
+  <mz-modal-header>
+    <i mz-icon [align]="'left'" [icon]="'warning'" [size]="'small'">
+    </i>
+    <h4>{{ "confirm" | translate }}</h4>
+  </mz-modal-header>
+  <mz-modal-content>
+    {{ "userdelete" | translate }}: {{user.username}}? {{ "confirmdelete" | translate }}
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" (click)="deleteUser()" mz-modal-close>Sim</button>
+    <button mz-button [flat]="true" mz-modal-close>Não</button>
+  </mz-modal-footer>
+</mz-modal>
+<mz-modal #basicModal2 [fixedFooter]="true">
+  <mz-modal-header>
+    <h4>{{ "userdetails" | translate }}</h4>
+  </mz-modal-header>
+  <mz-modal-content>
+      <div class="row" style="margin-top: -11px;">
+          <div class="col s12">
+            <h5 class="light">{{user.person.others_names}} {{user.person.surname}}</h5>
+          </div>
+        </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "gender" | translate }}:</div>
+      <div class="col s12 l10 m10">{{user.person.gender=='M'?'Masculino':'Feminino'}}</div>
+    </div>
+    <div class="row" *ngIf="user.person.email!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "email" | translate }}:</div>
+      <div class="col s12 l10 m10">{{user.person.email}}</div>
+    </div>
+    <div class="row" *ngIf="user.person.phone_number!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "phone" | translate }}:</div>
+      <div class="col s12 l10 m10">{{user.person.phone_number}}</div>
+    </div>
+    <div class="row" *ngIf="user.last_login!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "last_login" | translate }}:</div>
+      <div class="col s12 l10 m10">{{user.last_login | date: 'dd/MM/yyyy HH:mm'}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <table class="bordered responsive-table highlight card">
+          <thead>
+            <tr>
+              <th>{{ "function" | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let authority of user.authorities">
+              <td>{{ authority.description }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <table class="bordered responsive-table highlight card">
+          <thead>
+            <tr>
+              <th>{{"district" | translate }} (s)</th>
+              <th>{{"districtsironkeys" | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let district of user.districts">
+              <td><a (click)="basicModal2.close()" [routerLink]="['/districts', district.uuid]" class="waves-effect waves-teal">
+                <span class="orange-text text-darken-3">{{ district.province }} / {{ district.name }}</span></a></td>
+              <td>{{ district.ironkeysnumber }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{user.creatorname}} - {{user.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
+    </div>
+    <div class="row" *ngIf="user.updaterid!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{user.updatername}} - {{user.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <span style="color:lightgrey;">{{user.uuid}}</span>
+      </div>
+    </div>
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
+  </mz-modal-footer>
+</mz-modal>
+
+<div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
+  <a 
+  mz-tooltip
+  [tooltip]="'Adicionar Utilizador'"
+  [position]="'left'"
+  [html]="false"
+  [delay]="100"
+  class="btn-floating  btn-large waves-effect waves-light green" routerLink="/users/new">
+    <i class="material-icons">add</i>
+  </a>
+</div>

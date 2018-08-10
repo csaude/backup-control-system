@@ -1,0 +1,83 @@
+<!--
+@author damasceno.lopes
+@email damasceno.lopes@fgh.org.mz
+-->
+<br>
+
+<h5 class="light" *ngIf="title=='Novo Transportador'" style="display: inline-flex;vertical-align: middle;">
+  <a routerLink="/transporters" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
+    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
+  </a>
+  {{ "transporternew" | translate }}</h5>
+<h5 class="light" *ngIf="title=='Editar Transportador'" style="display: inline-flex;vertical-align: middle;">
+  <a routerLink="/transporters" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
+    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
+  </a>
+  {{ "transporteredit" | translate }}</h5>
+<div class="card-panel">
+  <div class="row">
+    <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">account_circle</i>
+          <input id="name" type="text" class="validate" [(ngModel)]="transporter.name" formControlName="name" [class.invalid]="form.controls['name'].touched && !form.controls['name'].valid">
+          <label for="name" [class.active]="transporter.name" data-error="O Nome do Transportador deve ser preenchido.">
+            {{ "transportername" | translate }} *
+          </label>
+        </div>
+      </div>
+      <div class="row" *ngIf="translate.currentLang=='pt'">
+        <div class="input-field col s12">
+          <mz-select-container>
+            <i mz-icon mz-input-prefix [icon]="'perm_identity'">
+            </i>
+            <select mz-select id="role" [label]="'Posição *'" [placeholder]="'Seleccione'" [(ngModel)]="transporter.role" formControlName="role">
+              <option *ngFor="let role of roles" [value]="role.name" [selected]="role.name == transporter.role">{{ role.name }}</option>
+            </select>
+          </mz-select-container>
+        </div>
+      </div>
+      <div class="row" *ngIf="translate.currentLang=='en'">
+        <div class="input-field col s12">
+          <mz-select-container>
+            <i mz-icon mz-input-prefix [icon]="'perm_identity'">
+            </i>
+            <select mz-select id="role" [label]="'Position *'" [placeholder]="'Select'" [(ngModel)]="transporter.role" formControlName="role">
+              <option *ngFor="let role of roles" [value]="role.name" [selected]="role.name == transporter.role">{{ role.name }}</option>
+            </select>
+          </mz-select-container>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">phone</i>
+          <input id="phone_number" type="text" class="validate" [(ngModel)]="transporter.phone_number" formControlName="phone_number"
+            [class.invalid]="form.controls['phone_number'].touched && !form.controls['phone_number'].valid">
+          <label for="phone_number" [class.active]="transporter.phone_number">
+            {{ "phone" | translate }}
+          </label>
+        </div>
+      </div>
+      <div class="row" class="row {{ isHidden }}">
+        <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 25px;">
+          <input type="checkbox" class="filled-in" id="canceled" [(ngModel)]="transporter.canceled" formControlName="canceled" />
+          <label for="canceled">{{ "cancelit" | translate }}</label>
+        </div>
+        <div class="input-field col s12 l8 m8" *ngIf="transporter.canceled">
+          <i class="material-icons prefix">label_outline</i>
+          <input id="canceled_reason" type="text" class="validate" [(ngModel)]="transporter.canceled_reason" formControlName="canceled_reason">
+          <label for="canceled_reason" [class.active]="transporter.canceled_reason">
+            {{ "cancelitreason" | translate }}
+          </label>
+        </div>
+      </div>
+      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled">
+        {{ "save" | translate }}
+        <i class="material-icons right">send</i>
+      </button>
+      <a *ngIf="!isDisabled" class="waves-effect waves-teal btn-flat" routerLink="/transporters">
+        <span class="orange-text text-darken-3">{{ "cancel" | translate }}</span>
+      </a>
+    </form>
+  </div>
+</div>

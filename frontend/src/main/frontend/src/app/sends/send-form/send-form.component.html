@@ -1,0 +1,203 @@
+<!--
+@author damasceno.lopes
+@email damasceno.lopes@fgh.org.mz
+-->
+<br>
+
+<h5 class="light" *ngIf="title=='Enviar Backup'" style="display: inline-flex;vertical-align: middle;">
+    <a routerLink="/sends" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
+      <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
+    </a> {{ "sendnew" | translate }}</h5>
+<h5 class="light" *ngIf="title=='Editar Envio de Backup'" style="display: inline-flex;vertical-align: middle;">
+  <a routerLink="/sends" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
+  <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
+</a> {{ "sendedit" | translate }}</h5>
+<div class="card-panel">
+  <div class="row">
+    <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
+      <div class="row hide">
+        <div class="input-field col s12">
+          <input id="name" type="text" class="validate" [ngModel]="send.send_id" formControlName="send_id">
+          <input id="received" type="text" [ngModel]="send.received" formControlName="received">
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12" *ngIf="translate.currentLang=='pt'">
+          <mz-select-container>
+            <i mz-icon mz-input-prefix [icon]="'location_on'">
+            </i>
+            <select mz-select mz-validation required id="district" [label]="'Distrito *'" [placeholder]="'Seleccione o Distrito'" [(ngModel)]="send.district"
+              formControlName="district">
+              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+            </select>
+          </mz-select-container>
+        </div>
+        <div class="input-field col s12" *ngIf="translate.currentLang=='en'">
+          <mz-select-container>
+            <i mz-icon mz-input-prefix [icon]="'location_on'">
+            </i>
+            <select mz-select mz-validation required id="district" [label]="'District *'" [placeholder]="'Select the District'" [(ngModel)]="send.district"
+              formControlName="district">
+              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+            </select>
+          </mz-select-container>
+        </div>
+      </div>
+      <div class="row">
+       
+        <div class="input-field col s10 l5 m5 " *ngIf="translate.currentLang=='pt'">
+          <mz-select-container>
+            <i mz-icon mz-input-prefix [icon]="'person'">
+            </i>
+            <select mz-select [label]="'Transportador *'" [placeholder]="'Seleccione o Transportador'" [(ngModel)]="send.transporter"
+              formControlName="transporter" [disabled]="disabled1">
+              <option *ngFor="let transporter of alltransporters" [ngValue]="transporter">{{ transporter.name }} ({{ transporter.phone_number }})</option>
+            </select>
+          </mz-select-container>
+
+
+          
+
+        </div>
+
+        <div class="input-field col s10 l5 m5" *ngIf="translate.currentLang=='en'">
+          <mz-select-container>
+            <i mz-icon mz-input-prefix [icon]="'person'">
+            </i>
+            <select mz-select [label]="'Transporter *'" [placeholder]="'Select the Transporter'" [(ngModel)]="send.transporter" formControlName="transporter" [disabled]="disabled1">
+              <option *ngFor="let transporter of alltransporters" [ngValue]="transporter">{{ transporter.name }} ({{ transporter.phone_number }})</option>
+            </select>
+          </mz-select-container>
+
+
+
+
+        </div>
+        <div class="col s1 l1 m1" *ngIf="disabled1==false">
+          <br><br>
+        <a mz-tooltip routerLink="/transporters/new" target="_blank" [tooltip]="'Adicionar Transportador'" [position]="'top'" [html]="false" [delay]="100">
+          <i class="material-icons waves-effect left" >add_circle_outline</i>
+        </a>
+      </div>
+        
+        <div class="col s1 l1 m1" *ngIf="disabled1==true">
+            <br>
+            <br>
+          <div class="preloader-wrapper small active">
+            <div class="spinner-layer spinner-red-only">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div>
+              <div class="gap-patch">
+                <div class="circle"></div>
+              </div>
+              <div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="input-field col s12 l6 m6" *ngIf="translate.currentLang=='pt'" >
+          <mz-datepicker-container>
+            <i mz-icon mz-input-prefix [icon]="'date_range'">
+            </i>
+            <input mz-datepicker [label]="'Data do Backup *'" [options]="options" [(ngModel)]="send.backup_date" formControlName="backup_date"
+              type="date" />
+          </mz-datepicker-container>
+        </div>
+        <div class="input-field col s12 l6 m6" *ngIf="translate.currentLang=='en'">
+          <mz-datepicker-container>
+            <i mz-icon mz-input-prefix [icon]="'date_range'">
+            </i>
+            <input mz-datepicker [label]="'Backup Date *'" [options]="options" [(ngModel)]="send.backup_date" formControlName="backup_date"
+              type="date" />
+          </mz-datepicker-container>
+        </div>
+      </div>
+      <div class="row">
+        <div class=" col s12 l6 m6" style="margin-left: 45px;">
+          <input type="checkbox" class="filled-in" id="update_finished" [(ngModel)]="send.update_finished" formControlName="update_finished"
+          />
+          <label for="update_finished">{{ "at" | translate }}</label>
+        </div>
+        <div class=" col s12 l4 m4" style="margin-left: 45px;">
+          <input type="checkbox" class="filled-in" id="sync_finished" [(ngModel)]="send.sync_finished" formControlName="sync_finished"
+          />
+          <label for="sync_finished">{{ "st" | translate }}</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12 l6 m6" style="margin-left: 45px;">
+          <input type="checkbox" class="filled-in" id="cross_dhis2_finished" [(ngModel)]="send.cross_dhis2_finished" formControlName="cross_dhis2_finished"
+          />
+          <label for="cross_dhis2_finished">{{ "dhis2" | translate }}</label>
+        </div>
+        <div class="col s12 l4 m4" style="margin-left: 45px;">
+          <input type="checkbox" class="filled-in" id="cross_idart_finished" [(ngModel)]="send.cross_idart_finished" formControlName="cross_idart_finished"
+          />
+          <label for="cross_idart_finished">{{ "idart" | translate }}</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12 l6 m6" style="margin-left: 45px;">
+          <input type="checkbox" class="filled-in" id="validation_finished" [(ngModel)]="send.validation_finished" formControlName="validation_finished"
+          />
+          <label for="validation_finished">{{ "vt" | translate }}</label>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="input-field col s12 l12 m12">
+          <i class="material-icons prefix">description</i>
+          <textarea id="textarea1" class="materialize-textarea" maxlength="255" [(ngModel)]="send.observation" formControlName="observation"
+            [class.invalid]="form.controls['observation'].touched && !form.controls['observation'].valid"></textarea>
+          <label for="textarea1" [class.active]="send.observation" data-error="A Observação deve ser preenchida.">{{ "obs_district" | translate }} *</label>
+        </div>
+      </div>
+      <div class="row" class="row {{ isHidden }}" *ngIf="send.received">
+        <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 40px;">
+          <input type="checkbox" class="filled-in" id="ik_received" [(ngModel)]="send.ik_received" formControlName="ik_received" />
+          <label for="ik_received">{{ "ik_received" | translate }}</label>
+        </div>
+        <div class="input-field col s12 l8 m8" *ngIf="send.ik_received&&translate.currentLang=='pt'">
+          <mz-datepicker-container>
+            <i mz-icon mz-input-prefix [icon]="'date_range'">
+            </i>
+            <input mz-datepicker [label]="'Data de Recepção *'" [options]="options" [(ngModel)]="send.date_ik_received" formControlName="date_ik_received"
+              type="date" />
+          </mz-datepicker-container>
+        </div>
+        <div class="input-field col s12 l8 m8" *ngIf="send.ik_received&&translate.currentLang=='en'">
+          <mz-datepicker-container>
+            <i mz-icon mz-input-prefix [icon]="'date_range'">
+            </i>
+            <input mz-datepicker [label]="'Date of Reception *'" [options]="options" [(ngModel)]="send.date_ik_received" formControlName="date_ik_received"
+              type="date" />
+          </mz-datepicker-container>
+        </div>
+      </div>
+      <div class="row" class="row {{ isHidden }}">
+        <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 25px;">
+          <input type="checkbox" class="filled-in" id="canceled" [(ngModel)]="send.canceled" formControlName="canceled" />
+          <label for="canceled">{{ "cancelit" | translate }}</label>
+        </div>
+        <div class="input-field col s12 l8 m8" *ngIf="send.canceled">
+          <input id="canceled_reason" type="text" class="validate" [(ngModel)]="send.canceled_reason" formControlName="canceled_reason">
+          <label for="canceled_reason" [class.active]="send.canceled_reason">
+            {{ "cancelitreason" | translate }}
+          </label>
+        </div>
+      </div>
+      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled||send.district.name==null||send.transporter.name==null||disabled1==true">
+        {{ "save" | translate }}
+        <i class="material-icons right">send</i>
+      </button>
+      <a *ngIf="!isDisabled" class="waves-effect waves-teal btn-flat" routerLink="/sends">
+        <span class="orange-text text-darken-3">{{ "cancel" | translate }}</span>
+      </a>
+    </form>
+  </div>
+</div>

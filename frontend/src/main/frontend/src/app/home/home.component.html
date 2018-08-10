@@ -1,0 +1,46 @@
+<br>
+<h5 class="light">{{ "dashboard" | translate }}</h5>
+
+
+<mz-tab [responsiveThreshold]="'true'">
+  <mz-tab-item [active]="'true'" [label]="'Backups'">
+
+    <div class="row">
+      <div class="card col s12 l6 m6">
+        <div class="progress" *ngIf="chart1==false">
+          <div class="indeterminate"></div>
+        </div>
+
+        <canvas *ngIf="chart1" baseChart style="height:250px;" [colors]="myColors" [datasets]="barChartData" [labels]="barChartLabels"
+          [options]="barChartOptions" [legend]="barChartLegend" [chartType]="barChartType"></canvas>
+      </div>
+
+      <div class="card col s12 l6 m6">
+        <div class="progress" *ngIf="chart2==false">
+          <div class="indeterminate red"></div>
+        </div>
+        <canvas *ngIf="chart2" baseChart style="height:250px;" [datasets]="barChartData2" [labels]="barChartLabels2" [options]="barChartOptions2"
+          [legend]="barChartLegend2" [chartType]="barChartType2"></canvas>
+      </div>
+
+      <div class="card col s12 l12 m12" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
+        <div class="progress" *ngIf="chart3==false">
+          <div class="indeterminate red"></div>
+        </div>
+        <canvas *ngIf="chart3" baseChart style="height:250px;" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+          [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
+      </div>
+
+    </div>
+
+  </mz-tab-item>
+
+
+  <mz-tab-item [label]="'Sync'">
+    <div class="row">
+
+    </div>
+
+  </mz-tab-item>
+
+</mz-tab>
