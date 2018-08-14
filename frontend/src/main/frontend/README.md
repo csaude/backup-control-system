@@ -1,4 +1,4 @@
-# SCB Frontend App
+# SCB Frontend Module
 
 Angular JS 4
 
