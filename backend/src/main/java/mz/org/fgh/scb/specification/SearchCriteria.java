@@ -36,6 +36,10 @@ public class SearchCriteria {
         if(key.equals("name")||key.equals("role")||key.equals("serial")||key.equals("version")||key.equals("status")){
         	this.value=value.toString().replaceAll("SPACE", " ");
         }
+        
+        if(key.equals("role")) {
+        	this.value=this.value.toString().replaceAll("MEAME", "&");
+        }
                 
     }
 

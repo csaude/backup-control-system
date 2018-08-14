@@ -226,7 +226,7 @@ export class UserFormComponent implements OnInit {
     this.toastService.show('Utilizador: ' + user + ', salvo com sucesso!', 2000, 'green', null);
   }
   showMsgErr(user) {
-    this.toastService.show('Username: ' + user + ' ja esta a ser utilizado!', 2000, 'red', null);
+    this.toastService.show('Este Utilizador ja existe!', 2000, 'red', null);
   }
   showMsgErr2() {
     this.toastService.show('Escreva uma password!', 2000, 'red', null);

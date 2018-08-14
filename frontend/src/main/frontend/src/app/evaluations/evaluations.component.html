@@ -97,13 +97,11 @@
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{evaluation.created_by.person.others_names}} {{evaluation.created_by.person.surname}} - {{evaluation.date_created
-        | date: 'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{evaluation.created_by.person.others_names}} {{evaluation.created_by.person.surname}} - {{evaluation.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
     </div>
     <div class="row" *ngIf="evaluation.updated_by!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{evaluation.updated_by.person.others_names}} {{evaluation.updated_by.person.surname}} - {{evaluation.date_updated
-        | date: 'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{evaluation.updated_by.person.others_names}} {{evaluation.updated_by.person.surname}} - {{evaluation.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>

@@ -1,5 +1,6 @@
 package mz.org.fgh.scb.model.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,8 +17,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
  * @author damasceno.lopes
@@ -51,6 +53,7 @@ public class Ironkey {
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
+	@JsonBackReference(value = "ironkeys-districts")
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "ironkeys")
 	private Set<District> districts = new HashSet<District>(0);
 
@@ -66,9 +69,6 @@ public class Ironkey {
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
-
-	@Transient
-	private int districtsnumber;
 
 	public Ironkey() {
 		this.uuid = UUID.randomUUID().toString();
@@ -93,6 +93,24 @@ public class Ironkey {
 	public String getObservation() {
 		return observation;
 	}
+	
+	public String getObservationf() {
+		if(this.observation==null)
+			return "";
+		else
+		return observation;
+	}
+	
+	public String getLastupdate() {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		if(this.getUpdated_by()==null) {
+		if(this.getCreated_by()==null)
+			return "";
+		else
+		return this.getCreated_by().getPerson().getOthers_names()+"\n"+this.getCreated_by().getPerson().getSurname()+"\n"+sdf.format(this.getDate_created());
+		}else {
+			return this.getUpdated_by().getPerson().getOthers_names()+"\n"+this.getUpdated_by().getPerson().getSurname()+"\n"+sdf.format(this.getDate_updated());	
+		}}
 
 	public void setObservation(String observation) {
 		this.observation = observation;
@@ -107,19 +125,7 @@ public class Ironkey {
 	}
 
 	public Set<District> getDistricts() {
-		if (this.districts != null) {
-			Set<District> districts = new HashSet<District>(0);
-			for (District d : this.districts) {
-				d.setCreated_by(null);
-				d.setUpdated_by(null);
-				districts.add(d);
-			}
-			setDistrictsnumber(districts.size());
 			return districts;
-
-		} else {
-			return null;
-		}
 	}
 
 	public void setDistricts(Set<District> districts) {
@@ -200,14 +206,6 @@ public class Ironkey {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public void setDistrictsnumber(int districtsnumber) {
-		this.districtsnumber = districtsnumber;
-	}
-
-	public int getDistrictsnumber() {
-		return this.districtsnumber;
 	}
 
 	public String getSized() {

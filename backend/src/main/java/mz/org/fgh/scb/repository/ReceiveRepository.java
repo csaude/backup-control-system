@@ -34,6 +34,9 @@ public interface ReceiveRepository extends JpaRepository<Receive, Long> {
 
 	@Query("SELECT distinct r FROM receive r JOIN r.send s JOIN s.district d JOIN d.users u WHERE u.username=:username AND s.canceled=0 AND r.canceled=0 AND (s.backup_date BETWEEN :from AND :until ) ORDER BY s.backup_date DESC")
 	public Page<Receive> findByUserId(Pageable pageable, @Param("from") Date from, @Param("until") Date until,@Param("username") String username);
+	
+	@Query("SELECT distinct r FROM receive r JOIN r.send s JOIN s.district d WHERE s.canceled=0 AND r.canceled=0 AND (s.backup_date BETWEEN :from AND :until ) ORDER BY s.backup_date DESC")
+	public Page<Receive> findByDate(Pageable pageable, @Param("from") Date from, @Param("until") Date until);
 
 	@Query("SELECT r FROM receive r JOIN r.send s WHERE s.canceled=0 AND r.canceled=0 ORDER BY s.backup_date DESC")
 	public Page<Receive> findAllReceived(Pageable pageable);

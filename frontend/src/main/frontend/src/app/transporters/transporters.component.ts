@@ -80,7 +80,7 @@ export class TransportersComponent implements OnInit {
     }
     if (userValue.role) {
       this.role = userValue.role;
-      this.role = this.role.split(" ").join("SPACE");
+      this.role = this.role.split(" ").join("SPACE").split("&").join("MEAME");
       if (this.role == "all") {
         this.role = "";
       }

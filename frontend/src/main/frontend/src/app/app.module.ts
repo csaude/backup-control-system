@@ -19,6 +19,8 @@ import { usersRouting } from "./users/users.routing";
 import { loginsRouting } from "./login/logins.routing";
 import { homesRouting } from "./home/home.routing";
 import { evaluationsRouting } from "./evaluations/evaluations.routing";
+import { serversRouting } from "./servers/servers.routing";
+import { syncsRouting } from "./syncs/syncs.routing";
 /*SCB Modules */
 import { DistrictsModule } from "./districts/districts.module";
 import { TransportersModule } from "./transporters/transporters.module";
@@ -32,6 +34,8 @@ import { EvaluationsModule } from "./evaluations/evaluations.module";
 import { LoginsModule } from "./login/logins.module";
 import { HomesModule } from "./home/home.module";
 import { NavBarModule } from "./nav-bar/nav-bar.module";
+import { ServersModule } from "./servers/servers.module";
+import { SyncsModule } from "./syncs/syncs.module";
 /*AuthManagers*/
 import { AuthManagerIronkeysRead } from './ironkeys/authmanagerread';
 import { AuthManagerIronkeysEdit } from './ironkeys/authmanageredit';
@@ -48,6 +52,10 @@ import { AuthManagerReceivesEdit } from './receives/authmanageredit';
 import { AuthManagerEvaluationsRead } from './evaluations/authmanagerread';
 import { AuthManagerEvaluationsEdit } from './evaluations/authmanageredit';
 import { NavbarService } from "././nav-bar/nav-bar.service";
+import { AuthManagerServersRead } from './servers/authmanagerread';
+import { AuthManagerServersEdit } from './servers/authmanageredit';
+import { AuthManagerSyncsRead } from './syncs/authmanagerread';
+import { AuthManagerSyncsEdit } from './syncs/authmanageredit';
 /** Fix 404 error on page refresh */
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { TranslateModule } from "ng2-translate";
@@ -73,6 +81,8 @@ import { TranslateModule } from "ng2-translate";
     EvaluationsModule,
     HomesModule,
     NavBarModule,
+    ServersModule,
+    SyncsModule,
     districtsRouting,
     transportersRouting,
     ironkeysRouting,
@@ -82,6 +92,8 @@ import { TranslateModule } from "ng2-translate";
     loginsRouting,
     homesRouting,
     evaluationsRouting,
+    serversRouting,
+    syncsRouting,
     routing,
     TranslateModule.forRoot()
   ],
@@ -101,6 +113,10 @@ import { TranslateModule } from "ng2-translate";
     AuthManagerReceivesEdit,
     AuthManagerEvaluationsRead,
     AuthManagerEvaluationsEdit,
+    AuthManagerServersRead,
+    AuthManagerServersEdit,
+    AuthManagerSyncsRead,
+    AuthManagerSyncsEdit,
     NavbarService
   ],
   bootstrap: [AppComponent]

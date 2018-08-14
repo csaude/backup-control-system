@@ -102,8 +102,8 @@ public class ReceiveServiceImpl implements ReceiveService {
 								+ "<tr><td bgcolor='#F3F3F3'>Data de Recepção:</td><td>" + data_recepcao + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Recebido por:</td><td>"
 								+ receive.getCreated_by().getPerson().getOthers_names() + " "
-								+ receive.getCreated_by().getPerson().getSurname() + ", "
-								+ receive.getCreated_by().getPerson().getPhone_number() + "</td></tr>"
+								+ receive.getCreated_by().getPerson().getSurname() + "<br>("
+								+ receive.getCreated_by().getPerson().getPhone_number() + ")</td></tr>"
 								+ "<tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>Sistema de Controle de Backup</span></a><br/>Mantido por: <a href='mailto:his@fgh.org.mz'><span style='color:#00FFFF;'>his@fgh.org.mz</span></a></th></tr>"
 								+ "</tbody></table>");
 						email.setTextMsg(
@@ -211,6 +211,11 @@ public class ReceiveServiceImpl implements ReceiveService {
 	@Override
 	public Page<Receive> findAllReceived(Pageable pageable) {
 		return receiveRepository.findAllReceived(pageable);
+	}
+
+	@Override
+	public Page<Receive> findByDate(Pageable pageable, Date from, Date until) {
+		return receiveRepository.findByDate(pageable, from, until);
 	}
 
 }

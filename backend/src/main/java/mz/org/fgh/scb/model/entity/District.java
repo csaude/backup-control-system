@@ -164,7 +164,6 @@ public class District {
 		}
 	}
 	
-
 	public User getCanceled_by() {
 		if (this.canceled_by != null) {
 			this.canceled_by.setDistricts(null);
@@ -206,7 +205,8 @@ public class District {
 	public Set<Ironkey> getIronkeysDistrict() {
 		Set <Ironkey> ironkeys = new HashSet<Ironkey>(0);
 		for(Ironkey i: this.ironkeys) {
-			i.setDistricts(null);
+			i.setCreated_by(null);
+			i.setUpdated_by(null);
 			ironkeys.add(i);
 		}
 		return ironkeys;
@@ -280,14 +280,14 @@ public class District {
 		else {
 			if (this.getIronkeys().size() < 2) {
 				for (Ironkey i : this.getIronkeys()) {
-					names = i.getSerial()+" ("+i.getSize()+" GB)";
+					names = i.getSize()+" GB - "+i.getSerial()+" - "+i.getStatus();
 				}
 			} else {
 				for (Ironkey i : this.getIronkeys()) {
 					if (names.equals(""))
-						names = i.getSerial()+" ("+i.getSize()+" GB)";
+						names = i.getSize()+" GB - "+i.getSerial()+" - "+i.getStatus();
 					else
-						names = names + "\n" + i.getSerial()+" ("+i.getSize()+" GB)";
+						names = names + "\n" + i.getSize()+" GB - "+i.getSerial()+" - "+i.getStatus();
 				}
 
 			}

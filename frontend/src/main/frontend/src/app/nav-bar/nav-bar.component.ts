@@ -19,7 +19,7 @@ export class NavBarComponent implements OnInit {
   public ROLE_OA: string;
   public ROLE_GMA: string;
   public isAuth: boolean;
-  public activeDashboard; activeBackup; activeMetadata; activeUser;
+  public activeDashboard; activeBackup; activeMetadata; activeUser; activeSync;
   public showNavBar: boolean = false;
   public total;
   public nIntervId; nIntervId2;
@@ -52,7 +52,7 @@ export class NavBarComponent implements OnInit {
           if (this.total > 0 && this.nIntervId2 == null) {
             this.nIntervId2 = setInterval(() => {
               this.notifyMe();
-            }, 600000);
+            }, 300000);
 
           }
 
@@ -67,9 +67,11 @@ export class NavBarComponent implements OnInit {
           this.setDashboard();
         } else if (event.url == "/sends" || event.url == "/receives") {
           this.setBackup();
-        } else if (event.url == "/ironkeys" || event.url == "/districts" || event.url == "/transporters" || event.url == "/users") {
+        } else if (event.url == "/ironkeys" || event.url == "/districts" || event.url == "/transporters" || event.url == "/users"  || event.url == "/servers") {
           this.setMetadata();
-        } else if (event.url.charAt(14) == "/") {
+        } else if (event.url == "/syncs" ) {
+          this.setSync();
+        }else if (event.url.charAt(14) == "/") {
           this.setUser();
         }
       }
@@ -105,8 +107,10 @@ export class NavBarComponent implements OnInit {
           this.setDashboard();
         } else if (event.url == "/sends" || event.url == "/receives") {
           this.setBackup();
-        } else if (event.url == "/ironkeys" || event.url == "/districts" || event.url == "/transporters" || event.url == "/users") {
+        } else if (event.url == "/ironkeys" || event.url == "/districts" || event.url == "/transporters" || event.url == "/users" || event.url == "/servers") {
           this.setMetadata();
+       } else if (event.url == "/syncs" ) {
+          this.setSync();
         } else if (event.url.charAt(14) == "/") {
           this.setUser();
         }
@@ -155,24 +159,35 @@ export class NavBarComponent implements OnInit {
     this.activeBackup = "";
     this.activeMetadata = "";
     this.activeUser = "";
+    this.activeSync = "";
   }
   setBackup() {
     this.activeDashboard = "";
     this.activeBackup = "active";
     this.activeMetadata = "";
     this.activeUser = "";
+    this.activeSync = "";
   }
   setMetadata() {
     this.activeDashboard = "";
     this.activeBackup = "";
     this.activeMetadata = "active";
     this.activeUser = "";
+    this.activeSync = "";
   }
   setUser() {
     this.activeDashboard = "";
     this.activeBackup = "";
     this.activeMetadata = "";
     this.activeUser = "active";
+    this.activeSync = "";
+  }
+  setSync() {
+    this.activeDashboard = "";
+    this.activeBackup = "";
+    this.activeMetadata = "";
+    this.activeUser = "";
+    this.activeSync = "active";
   }
 
   notifyMe() {
@@ -183,7 +198,8 @@ export class NavBarComponent implements OnInit {
 
     // Let's check whether notification permissions have already been granted
     else if ((Notification as any).permission === "granted") {
-      // If it's okay let's create a notification    
+      // If it's okay let's create a notification   
+      if (this.ROLE_SIS) { 
       var exist,backup;
       if (this.total == 1) {
         exist = "existe ";
@@ -197,6 +213,7 @@ export class NavBarComponent implements OnInit {
         icon: "../assets/images/bell-icon.png"
       };
       var notification = new Notification("SCB", options);
+    }
       clearInterval(this.nIntervId2);
       this.nIntervId2 = null;
     }
@@ -206,23 +223,24 @@ export class NavBarComponent implements OnInit {
       Notification.requestPermission(function (permission) {
         // If the user accepts, let's create a notification
         if (permission === "granted") {
-
+          if (this.ROLE_SIS) {
           var exist,backup;
-      if (this.total == 1) {
-        exist = "Existe ";
-        backup=" backup ";
-      } else {
-        exist = "Existem ";
-        backup=" backups ";
-      }
-      let options = {
-        body: exist + this.total +backup+ "por receber.",
-        icon: "../assets/images/bell-icon.png"
-      };
-      var notification = new Notification("SCB", options);
-      clearInterval(this.nIntervId2);
-      this.nIntervId2 = null;
+          if (this.total == 1) {
+            exist = "existe ";
+            backup=" backup ";
+          } else {
+            exist = "existem ";
+            backup=" backups ";
+          }
+          let options = {
+            body: this.user.person.others_names+" "+this.user.person.surname+", "+exist + this.total +backup+ "por receber!",
+            icon: "../assets/images/bell-icon.png"
+          };
+          var notification = new Notification("SCB", options);
+          clearInterval(this.nIntervId2);
+          this.nIntervId2 = null;
         }
+      }
       });
     }
 

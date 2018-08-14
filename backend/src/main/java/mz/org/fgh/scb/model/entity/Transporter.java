@@ -19,8 +19,7 @@ import javax.persistence.UniqueConstraint;
  *
  */
 @Entity(name = "transporter")
-@Table(uniqueConstraints={
-	    @UniqueConstraint(columnNames = {"name", "phone_number"})})
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "phone_number" }) })
 public class Transporter {
 
 	@Id

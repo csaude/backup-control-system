@@ -27,6 +27,8 @@ public interface ReceiveService {
 	Page<Receive> findByUserId(Pageable pageable, String username);
 
 	Page<Receive> findByUserId(Pageable pageable, Date from, Date until, String username);
+	
+	Page<Receive> findByDate(Pageable pageable, Date from, Date until);
 
 	Receive findBySendId(Long send_id);
 

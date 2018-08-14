@@ -1,0 +1,205 @@
+<!--
+@author damasceno.lopes
+@email damasceno.lopes@fgh.org.mz
+-->
+
+<br>
+<h5 class="light"> {{ total }} {{ "serversfound" | translate }}</h5>
+
+<form materialize [formGroup]="form">
+  <div class="row">
+
+    <div class="input-field col s12 l3 m3" *ngIf="translate.currentLang=='pt'">
+      <mz-select-container>
+        <select mz-select mz-validation required id="district" [label]="'Distrito'" formControlName="district" (change)="search()">
+          <option value="all" selected>Todos Distritos</option>
+          <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.name }}</option>
+        </select>
+      </mz-select-container>
+    </div>
+    <div class="input-field col s12 l3 m3" *ngIf="translate.currentLang=='en'">
+      <mz-select-container>
+
+        <select mz-select mz-validation required id="district" [label]="'District'" formControlName="district" (change)="search()">
+          <option value="all" selected>All Districts</option>
+          <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.name }}</option>
+        </select>
+      </mz-select-container>
+    </div>
+
+    <div class="input-field col s12 m3 l3" style="margin-top: 30px;">
+      <input id="name" type="text" class="validate" formControlName="name" (keyup)="search()">
+      <label for="name">
+        {{ 'searchbyname' | translate }}
+      </label>
+    </div>
+
+    <div class="col s6 m3 l3" *ngIf="translate.currentLang=='pt'" style="margin-top: 15px;">
+        <mz-select-container>
+          <select mz-select mz-validation required id="district" [label]="'Tipo de Servidor'" formControlName="type" (change)="search()">
+            <option value="all" selected>Todos Tipos</option>
+            <option *ngFor="let type of types" [value]="type.name">{{ type.name }}</option>
+          </select>
+        </mz-select-container>
+      </div>
+      <div class="col s6 m3 l3" *ngIf="translate.currentLang=='en'" style="margin-top: 30px;">
+        <mz-select-container>
+          <select mz-select mz-validation required id="district" [label]="'Server type'" formControlName="type" (change)="search()">
+            <option value="all" selected>All types</option>
+            <option *ngFor="let type of types" [value]="type.name">{{ type.name }}</option>
+          </select>
+        </mz-select-container>
+      </div>
+
+    <br/>
+    <br/>
+    <div class="col s6 m3 l3">
+      <input type="checkbox" class="filled-in" id="receiveds" formControlName="canceled" (change)="search()" />
+      <label for="receiveds">{{ "canceled" | translate }}</label>
+    </div>
+
+  </div>
+</form>
+
+<div class="col s12 card" style="margin-top: -20px;">
+  <div class="progress {{isHidden}}">
+    <div class="indeterminate"></div>
+  </div>
+  <table class="bordered responsive-table highlight">
+    <thead>
+      <tr>
+        <th>{{ "district" | translate }}</th>
+        <th>{{ "servername" | translate }}</th>
+        <th>{{ "type" | translate }}</th>
+        <th>{{ "lastsync" | translate }}</th>
+        <th>{{ "updatedon" | translate }}</th>
+        <th>{{ "actions" | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="line-height: 15px;" *ngFor="let server of servers | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
+        <td>{{server.district.name}}</td>
+        <td>{{ server.name }}</td>
+        <td>{{ server.type }}</td>
+        <td>
+          
+            <a (click)="setSync(server.sync_id)" (click)="basicModal42.open()" class="waves-effect waves-teal ">
+                <span class="orange-text text-darken-3">
+          {{ server.duration }}</span>
+        </a><br><span *ngIf="server.end_items_to_send" style="font-size: 13px;color:rgb(121, 120, 120);">{{ server.end_items_to_send }} {{"items_to_s" | translate}},&nbsp;</span>
+        <span *ngIf="server.end_items_to_receive" style="font-size: 13px;color:rgb(121, 120, 120);">{{ server.end_items_to_receive }} {{"items_to_r" | translate}}</span>
+
+
+        </td>
+        <td>{{ server.date_updated | date: 'dd/MM/yyyy' }}</td>
+        <td>
+          <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setServer(server.uuid)" (click)="basicModal2.open()"
+            [routerLink]="">
+            <i class="material-icons icon-green">info</i>
+          </a>
+          &nbsp;
+          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/servers', server.uuid]">
+            <i class="material-icons icon-orange" *ngIf="ROLE_SIS">mode_edit</i>
+          </a>
+          &nbsp;
+          <a mz-tooltip [tooltip]="'Excluir'" [position]="'top'" [html]="false" [delay]="100" (click)="setServer(server.uuid)" (click)="basicModal.open()"
+            routerLink="/servers">
+            <i class="material-icons icon-red" *ngIf="ROLE_SIS">delete</i>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<pagination-controls autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPage($event)" id="server" class="right-align"></pagination-controls>
+
+<mz-modal #basicModal>
+  <mz-modal-header>
+    <i mz-icon [align]="'left'" [icon]="'warning'" [size]="'small'">
+    </i>
+    <h4>{{ "confirm" | translate }}</h4>
+  </mz-modal-header>
+  <mz-modal-content>
+    {{ "serverdelete" | translate }}: {{server.name}}? {{ "confirmdelete" | translate }}
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" (click)="deleteServer()" mz-modal-close>{{ "yes" | translate }}</button>
+    <button mz-button [flat]="true" mz-modal-close>{{ "no" | translate }}</button>
+  </mz-modal-footer>
+</mz-modal>
+
+<mz-modal #basicModal2 [fixedFooter]="true">
+  <mz-modal-header>
+    <h4>{{ "serverdetails" | translate }}</h4>
+  </mz-modal-header>
+  <mz-modal-content>
+    <div class="row">
+      <div class="col s12">
+        <h5 class="light">{{server.type}}</h5>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: -11px;">
+        <div class="col s12 l2 m2">{{ "type" | translate }}:</div>
+        <div class="col s12 l10 m10">{{server.type}}</div>
+      </div>
+
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "district" | translate }}:</div>
+      <div class="col s12 l10 m10">{{server.district.province}} / {{server.district.name}}</div>
+    </div>
+    <div class="row" *ngIf="server.observation!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "observation" | translate }}:</div>
+      <div class="col s12 l10 m10">{{server.observation}}</div>
+    </div>
+
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{server.created_by.person.others_names}} {{server.created_by.person.surname}} - {{server.date_created | date: 'dd/MM/yyyy HH:mm'}}
+      </div>
+    </div>
+    <div class="row" *ngIf="server.updated_by!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{server.updated_by.person.others_names}} {{server.updated_by.person.surname}} - {{server.date_updated | date: 'dd/MM/yyyy HH:mm'}}
+      </div>
+    </div>
+    <div class="row" *ngIf="server.canceled_by!=null" style="margin-top: -11px;">
+        <div class="col s12 l2 m2">{{ "canceledby" | translate }}:</div>
+        <div class="col s12 l10 m10">{{server.canceled_by.person.others_names}} {{server.canceled_by.person.surname}} - {{server.date_canceled | date: 'dd/MM/yyyy HH:mm'}}</div>
+      </div>
+      <div class="row" *ngIf="server.canceled_by!=null" style="margin-top: -11px;">
+        <div class="col s12 l2 m2">{{ "cancelitreason" | translate }}:</div>
+        <div class="col s12 l10 m10">{{server.canceled_reason}}</div>
+      </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s10">
+        <span style="color:lightgrey;">{{server.uuid}}</span>
+      </div>
+    </div>
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
+  </mz-modal-footer>
+</mz-modal>
+
+<div class="fixed-action-btn" style="bottom: 20px; right: 89px;">
+    <a class="btn-floating btn-large orange">
+      <i class="large material-icons">insert_chart</i>
+    </a>
+    <ul>
+      <li>
+        <a mz-tooltip [tooltip]="'Baixar Lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
+          class="btn-floating blue {{isDisabledt}}">
+          <i class="material-icons">file_download</i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+<div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
+  <a mz-tooltip [tooltip]="'Adicionar Servidor de Sincronização'" [position]="'left'" [html]="false" [delay]="100" class="btn-floating  btn-large waves-effect waves-light green"
+    routerLink="/servers/new" *ngIf="ROLE_SIS">
+    <i class="material-icons">add</i>
+  </a>
+</div>

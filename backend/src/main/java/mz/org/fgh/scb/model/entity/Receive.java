@@ -1,5 +1,6 @@
 package mz.org.fgh.scb.model.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -50,12 +51,10 @@ public class Receive {
 
 	private Date date_updated;
 
-	
 	@JoinColumn(name = "created_by")
 	@ManyToOne
 	private User created_by;
 
-	
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
@@ -250,6 +249,20 @@ public class Receive {
 	public void setRestored(boolean restored) {
 		this.restored = restored;
 	}
+	
+	public String getSender() {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		return this.getSend().getCreated_by().getPerson().getOthers_names()+"\n"+this.getSend().getCreated_by().getPerson().getSurname()+"\n"+sdf.format(this.getSend().getDate_created());
+	}
+	
+	public String getReceiver() {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		return this.getCreated_by().getPerson().getOthers_names()+"\n"+this.getCreated_by().getPerson().getSurname()+"\n"+sdf.format(this.getDate_created());
+	}
+	
+	public String getObsd() {
+		return this.getSend().getObservation();
+	}
 
 	public User getRestored_by() {
 		if (this.restored_by!= null) {
@@ -264,7 +277,6 @@ public class Receive {
 	public void setRestored_by(User restored_by) {
 		this.restored_by = restored_by;
 	}
-	
 
 	public User getIk_returned_by() {
 		if (this.ik_returned_by!= null) {
@@ -284,8 +296,30 @@ public class Receive {
 		return this.getSend().getDistrict().getName();	
 	}
 	
-	public String getRestoredf(){
-		if(this.isRestored()){
+	public String getAt(){
+		if(this.getSend().isUpdate_finished()){
+			return "Sim";
+		}else {return "Não";}
+	}
+	public String getSt(){
+		if(this.getSend().isSync_finished()){
+			return "Sim";
+		}else {return "Não";}
+	}
+	public String getDhis2(){
+		if(this.getSend().isCross_dhis2_finished()){
+			return "Sim";
+		}else {return "Não";}
+	}
+	
+	public String getIdart(){
+		if(this.getSend().isCross_idart_finished()){
+			return "Sim";
+		}else {return "Não";}
+	}
+	
+	public String getVt(){
+		if(this.getSend().isValidation_finished()){
 			return "Sim";
 		}else {return "Não";}
 	}

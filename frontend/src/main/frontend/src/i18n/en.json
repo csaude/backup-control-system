@@ -1,8 +1,8 @@
 {
     "dashboard": "Dashboard",
     "backups": "Backups",
-    "send": "Send",
-    "receive": "Receive",
+    "send": "Sends",
+    "receive": "Receives",
     "metadata": "Metadata",
     "ironkeys": "Ironkeys",
     "districts": "Districts",

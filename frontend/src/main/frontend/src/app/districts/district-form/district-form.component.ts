@@ -164,7 +164,7 @@ export class DistrictFormComponent implements OnInit {
   }
 
   showMsgErr() {
-    this.toastService.show('O Distrito ja esta a ser utilizado!', 4000, 'red', null);
+    this.toastService.show('Este Distrito ja existe!', 4000, 'red', null);
   }
 
   

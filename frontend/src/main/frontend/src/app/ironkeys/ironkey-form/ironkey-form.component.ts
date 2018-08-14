@@ -154,6 +154,6 @@ export class IronkeyFormComponent implements OnInit {
     this.toastService.show('Iron Key: ' + ironkey + ', salvo com sucesso!', 2000, 'green', null);
   }
   showMsgErr(ironkey) {
-    this.toastService.show('O Nº de Série: ' + ironkey + ', ja esta a ser utilizado!', 2000, 'red', null);
+    this.toastService.show('Este Ironkey ja existe!', 2000, 'red', null);
   }
 }

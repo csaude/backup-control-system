@@ -51,6 +51,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.PUT,"**/api/ironkeys/**").hasAnyRole("SIS","IT")
 					.antMatchers(HttpMethod.DELETE,"**/api/ironkeys/**").hasAnyRole("SIS","IT")
 					.antMatchers(HttpMethod.GET,"**/api/ironkeys/**").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA")
+					//servers
+					.antMatchers(HttpMethod.POST,"**/api/servers/**").hasAnyRole("SIS")
+					.antMatchers(HttpMethod.PUT,"**/api/servers/**").hasAnyRole("SIS")
+					.antMatchers(HttpMethod.DELETE,"**/api/servers/**").hasAnyRole("SIS")
+					.antMatchers(HttpMethod.GET,"**/api/servers/**").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA")
 					//districts
 					.antMatchers(HttpMethod.POST,"**/api/districts/**").hasAnyRole("SIS")
 					.antMatchers(HttpMethod.PUT,"**/api/districts/**").hasAnyRole("SIS")
@@ -76,10 +81,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.DELETE,"**/api/users/**").hasAnyRole("SIS","ODMA","ORMA")
 					.antMatchers(HttpMethod.GET,"**/api/users/**").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA")
 					//sends
-					.antMatchers(HttpMethod.POST,"**/api/sends/**").hasAnyRole("GDD","ODMA","ORMA")
-					.antMatchers(HttpMethod.PUT,"**/api/sends/**").hasAnyRole("GDD","ODMA","ORMA")
-					.antMatchers(HttpMethod.DELETE,"**/api/sends/**").hasAnyRole("GDD","ODMA","ORMA")
+					.antMatchers(HttpMethod.POST,"**/api/sends/**").hasAnyRole("GDD","ODMA","ORMA","SIS")
+					.antMatchers(HttpMethod.PUT,"**/api/sends/**").hasAnyRole("GDD","ODMA","ORMA","SIS")
+					.antMatchers(HttpMethod.DELETE,"**/api/sends/**").hasAnyRole("GDD","ODMA","ORMA","SIS")
 					.antMatchers(HttpMethod.GET,"**/api/sends/**").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA")
+					//syncs
+					.antMatchers(HttpMethod.POST,"**/api/syncs/**").hasAnyRole("GDD","ODMA","ORMA","SIS")
+					.antMatchers(HttpMethod.PUT,"**/api/syncs/**").hasAnyRole("GDD","ODMA","ORMA","SIS")
+					.antMatchers(HttpMethod.DELETE,"**/api/syncs/**").hasAnyRole("GDD","ODMA","ORMA","SIS")
+					.antMatchers(HttpMethod.GET,"**/api/syncs/**").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA","SIS")
 					//receives
 					.antMatchers(HttpMethod.POST,"**/api/receives/**").hasAnyRole("SIS")
 					.antMatchers(HttpMethod.PUT,"**/api/receives/**").hasAnyRole("SIS")

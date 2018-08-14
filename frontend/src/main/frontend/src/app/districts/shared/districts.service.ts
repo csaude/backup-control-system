@@ -63,6 +63,16 @@ export class DistrictsService {
       .map(res => res.json());
   }
 
+  getDistrictsSyncInfo() {
+    var headers: any = new Headers();
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
+    var user = JSON.parse(window.localStorage.getItem('user'));
+    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
+    headers.append('Content-Type', 'application/json');
+    return this.http.get(this.url + 'syncinfo', { headers: headers })
+      .map(res => res.json());
+  }
+
   getReceivedPM() {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));

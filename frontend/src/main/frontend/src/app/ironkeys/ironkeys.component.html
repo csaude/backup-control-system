@@ -68,7 +68,6 @@
         <th>{{ "version" | translate }}</th>
         <th>{{ "capacity" | translate }}</th>
         <th>{{ "state" | translate }}</th>
-        <th>{{ "ironkeysdistricts" | translate }}</th>
         <th>{{ "updatedon" | translate }}</th>
         <th>{{ "actions" | translate }}</th>
       </tr>
@@ -80,7 +79,6 @@
         <td *ngIf="ironkey.size==0">{{ "other" | translate }}</td>
         <td *ngIf="ironkey.size!=0">{{ ironkey.size }} GB</td>
         <td>{{ ironkey.status }}</td>
-        <td>{{ ironkey.districtsnumber}}</td>
         <td>{{ ironkey.date_updated | date: 'dd/MM/yyyy' }}</td>
         <td>
           <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setIronkey(ironkey.uuid)" (click)="basicModal2.open()"
@@ -150,36 +148,12 @@
       <div class="col s12 l10 m10">{{ironkey.observation}}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <table class="striped">
-          <thead>
-            <tr>
-              <th>{{ "ironkeysdistricts" | translate }}(
-                <b>{{ironkey.districts.length}}</b>)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let district of ironkey.districts">
-              <td>
-                <a (click)="basicModal2.close()" [routerLink]="['/districts', district.uuid]" class="waves-effect waves-teal ">
-                  <span class="orange-text text-darken-3">{{ district.province }} / {{ district.name }}</span>
-                </a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ironkey.created_by.person.others_names}} {{ironkey.created_by.person.surname}} - {{ironkey.date_created | date: 'dd/MM/yyyy
-        HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{ironkey.created_by.person.others_names}} {{ironkey.created_by.person.surname}} - {{ironkey.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
     </div>
     <div class="row" *ngIf="ironkey.updated_by!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ironkey.updated_by.person.others_names}} {{ironkey.updated_by.person.surname}} - {{ironkey.date_updated | date: 'dd/MM/yyyy
-        HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{ironkey.updated_by.person.others_names}} {{ironkey.updated_by.person.surname}} - {{ironkey.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
@@ -199,9 +173,9 @@
   </a>
   <ul>
     <li>
-      <a mz-tooltip [tooltip]="'Lista de Ironkeys por Nº de Distritos'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
+      <a mz-tooltip [tooltip]="'Baixar Lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
         class="btn-floating blue {{isDisabledt}}">
-        <i class="material-icons">attachment</i>
+        <i class="material-icons">file_download</i>
       </a>
     </li>
   </ul>

@@ -2,12 +2,19 @@
   <div class="navbar-fixed" *ngIf="isAuth">
     <mz-dropdown [id]="'dropdown-demo1'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true" [dropdownButtonId]="'btn-dropdown-demo1'"
       [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300" [stopPropagation]="true" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
-      <mz-dropdown-item *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA">
+      <mz-dropdown-item *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
         <a (click)="setBackup()" routerLink="/sends">{{ "send" | translate }}</a>
       </mz-dropdown-item>
       <mz-dropdown-divider></mz-dropdown-divider>
       <mz-dropdown-item *ngIf="ROLE_SIS">
         <a (click)="setBackup()" routerLink="/receives">{{ "receive" | translate }}</a>
+      </mz-dropdown-item>
+    </mz-dropdown>
+
+    <mz-dropdown [id]="'dropdown-demo4'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true" [dropdownButtonId]="'btn-dropdown-demo4'"
+      [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300" [stopPropagation]="true" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
+      <mz-dropdown-item *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
+        <a (click)="setSync()" routerLink="/syncs">{{ "records" | translate }}</a>
       </mz-dropdown-item>
     </mz-dropdown>
 
@@ -27,6 +34,10 @@
       <mz-dropdown-divider></mz-dropdown-divider>
       <mz-dropdown-item *ngIf="ROLE_SIS">
         <a (click)="setMetadata()" routerLink="/evaluations">{{ "evaluations" | translate }}</a>
+      </mz-dropdown-item>
+      <mz-dropdown-divider></mz-dropdown-divider>
+      <mz-dropdown-item *ngIf="ROLE_SIS||ROLE_GMA||ROLE_OA">
+        <a (click)="setMetadata()" routerLink="/servers">{{ "servers" | translate }}</a>
       </mz-dropdown-item>
       <mz-dropdown-divider></mz-dropdown-divider>
       <mz-dropdown-item *ngIf="ROLE_SIS">
@@ -55,14 +66,21 @@
             <a routerLink="/home" (click)="setDashboard()">{{ "dashboard" | translate }}</a>
           </li>
           <li class="{{activeBackup}}" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
-            
             <a id="btn-dropdown-demo1">
-            <i class="material-icons left" *ngIf="ROLE_SIS&&total>0" mz-tooltip [tooltip]="total+' Backup(s) por receber'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
+            <i class="material-icons left" *ngIf="ROLE_SIS&&total>0" mz-tooltip [tooltip]="total+' backup(s) por receber'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
             <i class="material-icons left" *ngIf="ROLE_SIS&&total==0" mz-tooltip [tooltip]="'Nenhum backup por receber'" [position]="'bottom'" [html]="false" [delay]="100">notifications_none</i>
               {{ "backups" | translate }}
               <i class="material-icons right">arrow_drop_down</i>
             </a>
           </li>
+
+          <li class="{{activeSync}}" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
+            <a id="btn-dropdown-demo4">
+              {{ "sync" | translate }}
+              <i class="material-icons right">arrow_drop_down</i>
+            </a>
+          </li>
+
           <li class="{{activeMetadata}}">
             <a id="btn-dropdown-demo2">{{ "metadata" | translate }}
               <i class="material-icons right">arrow_drop_down</i>
@@ -94,14 +112,26 @@
       <i mz-icon [icon]="'arrow_drop_down'" class="caret"></i>Backups
     </mz-sidenav-collapsible-header>
     <mz-sidenav-collapsible-content>
-      <mz-sidenav-link *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA">
-        <a routerLink="/sends">Enviar</a>
+      <mz-sidenav-link *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
+        <a routerLink="/sends">Envios</a>
       </mz-sidenav-link>
       <mz-sidenav-link *ngIf="ROLE_SIS">
-        <a routerLink="/receives">Receber</a>
+        <a routerLink="/receives">Recepções</a>
       </mz-sidenav-link>
     </mz-sidenav-collapsible-content>
   </mz-sidenav-collapsible>
+
+  <mz-sidenav-collapsible *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
+    <mz-sidenav-collapsible-header>
+      <i mz-icon [icon]="'arrow_drop_down'" class="caret"></i>Sincronização
+    </mz-sidenav-collapsible-header>
+    <mz-sidenav-collapsible-content>
+      <mz-sidenav-link *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
+        <a routerLink="/syncs">Registos</a>
+      </mz-sidenav-link>
+    </mz-sidenav-collapsible-content>
+  </mz-sidenav-collapsible>
+
 
   <mz-sidenav-collapsible>
     <mz-sidenav-collapsible-header>
@@ -119,6 +149,9 @@
       </mz-sidenav-link>
       <mz-sidenav-link *ngIf="ROLE_SIS">
         <a routerLink="/evaluations">Avaliações</a>
+      </mz-sidenav-link>
+      <mz-sidenav-link *ngIf="ROLE_SIS||ROLE_GMA||ROLE_OA">
+        <a routerLink="/servers">Sync Servers</a>
       </mz-sidenav-link>
       <mz-sidenav-link *ngIf="ROLE_SIS">
         <a routerLink="/users">Utilizadores</a>

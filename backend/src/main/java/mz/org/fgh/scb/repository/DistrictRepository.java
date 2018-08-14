@@ -19,6 +19,7 @@ public interface DistrictRepository extends JpaRepository<District, Long>, JpaSp
 
 	public District findByUuid(String uuid);
 
+	@Query("SELECT d FROM district d WHERE d.canceled=0 ORDER BY d.province,d.name ASC")
 	public List<District> findAllByOrderByNameAsc();
 
 	/* JPQL */
@@ -34,6 +35,9 @@ public interface DistrictRepository extends JpaRepository<District, Long>, JpaSp
 
 	@Query(value = "SELECT  MAX(details.send_id) AS send_id,details.district_id,details.last_backup_received FROM (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT(MAX(backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 AND r.restored=1)) backup_received GROUP BY name) lbr, (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT((backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 AND r.restored=1 )) backup_received ) details WHERE lbr.last_backup_received=details.last_backup_received AND  lbr.district_id=details.district_id GROUP BY details.district_id", nativeQuery = true)
 	public List<Object[]> findLastBackupRestoredByDistrict();
+	
+	@Query(value = "SELECT s.sync_id,d.district_id,se.name,Date_format(s.start_time, '%d/%m/%Y %H:%i') start_time,Date_format(s.end_time,'%H:%i') end_time,CONCAT(se.name,'\n',Date_format(s.start_time,'%d/%m/%Y %H:%i'),'-',Date_format(s.end_time,'%H:%i')) AS server_report FROM sync s,server se,district d WHERE sync_id IN(SELECT Max(sync_id) Sync_id FROM (SELECT sync.sync_id, server.district_id FROM server INNER JOIN sync ON server.server_id = sync.server_id WHERE sync.canceled = 0 AND server.canceled = 0) syncs GROUP BY district_id ) AND s.server_id=se.server_id AND d.district_id=se.district_id", nativeQuery = true)
+	public List<Object[]> findLastSyncsByDistrict();
 	
 	@Query(value = "SELECT district.name, 1 AS exist FROM (SELECT district.district_id, district.name FROM district) district WHERE district.district_id IN (SELECT district.district_id FROM send Inner Join district ON send.district_id = district.district_id WHERE send.received=1 AND send.canceled=0 AND YEAR(send.backup_date) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(send.backup_date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH))", nativeQuery = true)
 	public List<Object[]> findBackupReceivedByDistrictOnPreviousMonth();

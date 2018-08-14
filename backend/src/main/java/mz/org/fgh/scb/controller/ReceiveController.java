@@ -63,13 +63,25 @@ public class ReceiveController {
 		return pageReceive;	
 	}
 	
+	@RequestMapping(value = "/receivesdate/get", method = RequestMethod.GET)
+	public Page<Receive> findAllByDate(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "from", required = true) String from,@RequestParam(value = "until", required = true) String until) throws Exception {
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date date_from = format.parse(from);
+		Date date_until = format.parse(until);
+		Page<Receive> pageReceive = receiveServiceImpl.findByDate(new PageRequest(page - 1, size),date_from,date_until);
+		if (page - 1 > pageReceive.getTotalPages()) {
+			throw new Exception();
+		}
+		return pageReceive;	
+	}
+	
 	@RequestMapping(value = "/receivesdistrictdate/get", method = RequestMethod.GET)
 	public Page<Receive> findByDistrictId(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "district", required = true) Long district_id,@RequestParam(value = "from", required = true) String from,@RequestParam(value = "until", required = true) String until) throws Exception {
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date_from = format.parse(from);
 		Date date_until = format.parse(until);
 		Page<Receive> pageReceive = receiveServiceImpl.findByDistrictId(district_id,
-				new PageRequest(page - 1, 10),date_from,date_until);
+				new PageRequest(page - 1, size),date_from,date_until);
 		if (page - 1 > pageReceive.getTotalPages()) {
 			throw new Exception();
 		}

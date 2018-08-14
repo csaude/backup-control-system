@@ -191,7 +191,7 @@ export class SendFormComponent implements OnInit {
   }
 
   showMsg() {
-    this.toastService.show('Envio salvo com sucesso!', 2000, 'green', null);
+    this.toastService.show('Envio de Backup salvo com sucesso!', 2000, 'green', null);
   }
   showMsgErr() {
     this.toastService.show('A Data do Backup não deve estar no futuro!', 2000, 'red', null);

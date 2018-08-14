@@ -32,14 +32,15 @@
         <th>{{ "district" | translate }}</th>
         <th>{{ "lastbackupreceived" | translate }}</th>
         <th>{{ "lastbackuprestored" | translate }}</th>
+        <th>{{ "lastsync" | translate }}</th>
         <th>{{ "districtsironkeys" | translate }}</th>
         <th>{{ "updatedon" | translate }}</th>
         <th>{{ "actions" | translate }}</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let district of districts | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
-        <td>{{ district.province }} / {{ district.name }}</td>
+      <tr style="line-height: 15px;" *ngFor="let district of districts | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
+        <td>{{ district.name }}</td>
         <td>
           <a (click)="setSend(district.send_id_rec)" (click)="basicModal4.open()" class="waves-effect waves-teal ">
             <span class="orange-text text-darken-3">
@@ -54,6 +55,11 @@
             </span>
           </a>
         </td>
+        <td>
+            <a (click)="setSSync(district.sync_id)" (click)="basicModal42.open()" class="waves-effect waves-teal ">
+                <span class="orange-text text-darken-3">
+          {{ district.server }}</span>
+        </a><br><span *ngIf="district.server" style="font-size: 13px;color:rgb(121, 120, 120);">{{ district.start_time }}-{{ district.end_time }}</span></td>
         <td>{{ district.ironkeysnumber }}</td>
         <td>{{ district.date_updated | date: 'dd/MM/yyyy' }}</td>
         <td>
@@ -69,7 +75,7 @@
           &nbsp;
           <a mz-tooltip [tooltip]="'Histórico de Sincronização'" [position]="'top'" [html]="false" [delay]="100" (click)="setDistrict(district.uuid)"
             (click)="basicModal2.open()" [routerLink]="">
-            <i class="material-icons icon-green">cast_connected</i>
+            <i class="material-icons icon-green">sync</i>
           </a>
           &nbsp;
           <a mz-tooltip [tooltip]="'AQD OpenMRS'" [position]="'top'" [html]="false" [delay]="100" (click)="setDistrict(district.uuid)"
@@ -223,7 +229,7 @@
     <div class="row" style="margin-top: -11px;" *ngIf="district.ironkeysnumber">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">{{ "districtsironkeys" | translate }}({{district.ironkeysnumber}}):
-        <table class="bordered responsive-table highlight card">
+        <table class="bordered responsive-table highlight">
           <thead>
             <tr>
               <th>{{ "serialn" | translate }}</th>
@@ -247,13 +253,11 @@
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{district.created_by.person.others_names}} {{district.created_by.person.surname}} - {{district.date_created | date:
-        'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{district.created_by.person.others_names}} {{district.created_by.person.surname}} - {{district.date_created | date:'dd/MM/yyyy HH:mm'}}</div>
     </div>
     <div class="row" *ngIf="district.updated_by!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{district.updated_by.person.others_names}} {{district.updated_by.person.surname}} - {{district.date_updated | date:
-        'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{district.updated_by.person.others_names}} {{district.updated_by.person.surname}} - {{district.date_updated | date:'dd/MM/yyyy HH:mm'}}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
@@ -293,13 +297,9 @@
             <option *ngFor="let evaluation of evaluations" [ngValue]="evaluation">{{ evaluation.name }}</option>
           </select>
         </mz-select-container>
-        <div class="progress {{isHidden2}}">
-          <div class="indeterminate"></div>
-        </div>
       </div>
       <br>
-      <br>
-      <div class="col s1 l1 m1" *ngIf="disabled1==true">
+      <div class="col s1 l1 m1" *ngIf="disabled1==true||isHidden2==''">
         <div class="preloader-wrapper small active">
           <div class="spinner-layer spinner-red-only">
             <div class="circle-clipper left">
@@ -452,15 +452,13 @@
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{send.created_by.person.others_names}} {{send.created_by.person.surname}} - {{send.date_created | date: 'dd/MM/yyyy
-        HH:mm'}}
+      <div class="col s12 l10 m10">{{send.created_by.person.others_names}} {{send.created_by.person.surname}} - {{send.date_created | date: 'dd/MM/yyyy HH:mm'}}
       </div>
     </div>
 
     <div class="row" *ngIf="send.updated_by!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{send.updated_by.person.others_names}} {{send.updated_by.person.surname}} - {{send.date_updated | date: 'dd/MM/yyyy
-        HH:mm'}}
+      <div class="col s12 l10 m10">{{send.updated_by.person.others_names}} {{send.updated_by.person.surname}} - {{send.date_updated | date: 'dd/MM/yyyy HH:mm'}}
       </div>
     </div>
     <div class="row" style="margin-top: -11px;">
@@ -481,15 +479,9 @@
   </a>
   <ul>
     <li>
-      <a mz-tooltip [tooltip]="'Lista de Distitos por Nº de Ironkeys'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
+      <a mz-tooltip [tooltip]="'Baixar Lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
         class="btn-floating blue {{isDisabledt}}">
-        <i class="material-icons">attachment</i>
-      </a>
-    </li>
-    <li>
-      <a mz-tooltip [tooltip]="'Lista de Ironkeys por Nome de Distritos'" [position]="'left'" [html]="false" [delay]="100" (click)="printList2()"
-        class="btn-floating blue {{isDisabledt}}">
-        <i class="material-icons">attachment</i>
+        <i class="material-icons">file_download</i>
       </a>
     </li>
   </ul>

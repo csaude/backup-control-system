@@ -13,7 +13,7 @@ import { TransportersService } from './../../transporters/shared/transporters.se
 import { Transporter } from './../../transporters/shared/transporter';
 import { MzToastService } from 'ng2-materialize';
 import { TranslateService } from 'ng2-translate';
-import { DatePipe } from '@angular/common'
+import { DatePipe } from '@angular/common';
 @Component({
   selector: 'app-receive-form',
   templateUrl: './receive-form.component.html',

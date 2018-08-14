@@ -115,7 +115,7 @@ export class TransporterFormComponent implements OnInit {
     this.toastService.show('Transportador: ' + transporter + ', salvo com sucesso!', 2000, 'green', null);
   }
   showMsgErr() {
-    this.toastService.show('Transportador com estas propriedades ja existe!', 2000, 'red', null);
+    this.toastService.show('Este Transportador ja existe!', 2000, 'red', null);
   }
   showMsgErr2() {
     this.toastService.show('Escreva a razão para anular!', 2000, 'red', null);

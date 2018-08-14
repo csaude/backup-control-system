@@ -15,6 +15,8 @@ import { AuthoritiesService } from './../../authorities/shared/authorities.servi
 import { Authority } from './../../authorities/shared/authority';
 import { MzToastService } from 'ng2-materialize';
 import { TranslateService } from 'ng2-translate';
+import * as CryptoJS from 'crypto-js';
+
 @Component({
   selector: 'app-userdetails-form',
   templateUrl: './user-details-form.component.html',
@@ -176,6 +178,7 @@ export class UserDetailsFormComponent implements OnInit {
         userValue.date_created=this.user.date_created;
         userValue.uuid=this.user.uuid;
         userValue.last_login=this.user.last_login;
+
         result = this.usersService.updateUser(userValue, this.user.creatorid, user.user_id);
         result.subscribe(data => {
         },
@@ -184,7 +187,11 @@ export class UserDetailsFormComponent implements OnInit {
           () => {
             this.showMsg(userValue.username);
             window.localStorage.removeItem("user");
+            window.localStorage.removeItem("password");
             window.localStorage.setItem('user', JSON.stringify(userValue));
+            var wordArray = CryptoJS.enc.Utf8.parse(userValue.password);
+            var base64 = CryptoJS.enc.Base64.stringify(wordArray);
+            window.localStorage.setItem('password', base64);
             this.translate.use(userValue.locale);
             this.isDisabled = false;
             this.isHidden = "hide";

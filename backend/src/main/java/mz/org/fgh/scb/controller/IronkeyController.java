@@ -46,7 +46,7 @@ public class IronkeyController {
 			builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
 		}
 		Specification<Ironkey> spec = builder.build();
-		PageRequest pageRequest = PageRequestBuilder.getPageRequest(10, page, "+serial");
+		PageRequest pageRequest = PageRequestBuilder.getPageRequest(size, page, "+serial");
 		Page<Ironkey> pageIronkey = ironkeyServiceImpl.findAll(spec, pageRequest);
 		if (page > pageIronkey.getTotalPages()) {
 			throw new Exception();

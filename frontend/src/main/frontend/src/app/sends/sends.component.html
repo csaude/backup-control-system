@@ -8,7 +8,7 @@
 
 <form materialize [formGroup]="form">
   <div class="row">
-    <div class="input-field col s12 l6 m6" *ngIf="translate.currentLang=='pt'">
+    <div class="input-field col s12 l4 m4" *ngIf="translate.currentLang=='pt'">
       <mz-select-container>
         <select mz-select mz-validation required id="district" [label]="'Distrito'" formControlName="district" (change)="search2()">
           <option value="all" selected>Todos Distritos</option>
@@ -16,7 +16,7 @@
         </select>
       </mz-select-container>
     </div>
-    <div class="input-field col s12 l6 m6" *ngIf="translate.currentLang=='en'">
+    <div class="input-field col s12 l4 m4" *ngIf="translate.currentLang=='en'">
       <mz-select-container>
 
         <select mz-select mz-validation required id="district" [label]="'District'" formControlName="district" (change)="search2()">
@@ -221,14 +221,12 @@
       </div>
      <div class="row" style="margin-top: -11px;">
           <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-          <div class="col s12 l10 m10">{{send.created_by.person.others_names}} {{send.created_by.person.surname}} - {{send.date_created
-            | date: 'dd/MM/yyyy HH:mm'}}</div>
+          <div class="col s12 l10 m10">{{send.created_by.person.others_names}} {{send.created_by.person.surname}} - {{send.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
         </div>
       
         <div class="row" *ngIf="send.updated_by!=null" style="margin-top: -11px;">
           <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-          <div class="col s12 l10 m10">{{send.updated_by.person.others_names}} {{send.updated_by.person.surname}} - {{send.date_updated
-            | date: 'dd/MM/yyyy HH:mm'}}</div>
+          <div class="col s12 l10 m10">{{send.updated_by.person.others_names}} {{send.updated_by.person.surname}} - {{send.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
         </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>

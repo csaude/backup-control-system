@@ -272,7 +272,6 @@ export class SendsComponent implements OnInit {
     doc.textWithLink('Mantido por: his@fgh.org.mz', 77, 261, { url: 'mailto:his@fgh.org.mz' });
     doc.setFontSize(8);
     doc.setTextColor(100);
-    doc.text('DIE-SIS', 200, 290, null, null, 'right');
     doc.save('SCB_Protocolo_Envio_' + send.district.name + '_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
   }
   setSendid(send_id) {

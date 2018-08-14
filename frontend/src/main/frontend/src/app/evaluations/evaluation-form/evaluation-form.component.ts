@@ -102,6 +102,6 @@ export class EvaluationFormComponent implements OnInit {
     this.toastService.show('Avaliação: ' + evaluation + ', salvo com sucesso!', 4000, 'green', null);
   }
   showMsgErr() {
-    this.toastService.show('Avaliação com estas propriedades ja existe!', 4000, 'red', null);
+    this.toastService.show('ESta Avaliação ja existe!', 4000, 'red', null);
   }
 }

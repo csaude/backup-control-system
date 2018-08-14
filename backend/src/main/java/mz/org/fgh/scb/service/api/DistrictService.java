@@ -32,6 +32,8 @@ public interface DistrictService {
 	List<Object[]> findLastBackupReceivedByDistrict();
 
 	List<Object[]> findLastBackupRestoredByDistrict();
+	
+	List<Object[]> findLastSyncByDistrict();
 
 	List<Object[]> findBackupReceivedByDistrictOnPreviousMonth();
 

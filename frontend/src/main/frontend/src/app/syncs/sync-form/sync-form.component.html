@@ -1,0 +1,249 @@
+<!--
+@author damasceno.lopes
+@email damasceno.lopes@fgh.org.mz
+-->
+<br>
+
+<h5 class="light" *ngIf="title=='Registar Sincronização'" style="display: inline-flex;vertical-align: middle;">
+    <a routerLink="/syncs" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
+      <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
+    </a> {{ "syncnew" | translate }}</h5>
+<h5 class="light" *ngIf="title=='Editar Registo de Sincronização'" style="display: inline-flex;vertical-align: middle;">
+  <a routerLink="/syncs" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
+  <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
+</a> {{ "syncedit" | translate }}</h5>
+<div class="card-panel">
+  <div class="row">
+    <form materialize [formGroup]="form" (ngSubmit)="save()">
+      <div class="row">
+        <div class="{{disabled1==true?'input-field col s10 l11 m11':'input-field col s12 l12 m12'}}" *ngIf="translate.currentLang=='pt'">
+          <mz-select-container>
+            <i mz-icon mz-input-prefix [icon]="'location_on'">
+            </i>
+            <select mz-select mz-validation required id="server" [label]="'Servidor *'" [placeholder]="'Seleccione o Servidor'" [(ngModel)]="sync.server"
+              formControlName="server">
+
+              <optgroup *ngFor="let d of allservers" [label]="d.district">
+                <option *ngFor="let server of d.servers" [ngValue]="server">{{ server.name }}</option>
+              </optgroup>
+
+              
+            </select>
+          </mz-select-container>
+        </div>
+        <div class="{{disabled1==true?'input-field col s10 l11 m11':'input-field col s12 l12 m12'}}" *ngIf="translate.currentLang=='en'">
+          <mz-select-container>
+            <i mz-icon mz-input-prefix [icon]="'location_on'">
+            </i>
+            <select mz-select mz-validation required id="server" [label]="'Server *'" [placeholder]="'Select the Server'" [(ngModel)]="sync.server"
+              formControlName="server">
+             
+              <optgroup *ngFor="let d of allservers" [label]="d.district">
+                <option *ngFor="let server of d.servers" [ngValue]="server">{{ server.name }}</option>
+              </optgroup>
+
+            </select>
+          </mz-select-container>
+        </div>
+      
+      <div class="col s1 l1 m1" *ngIf="disabled1==true">
+        <br>
+        <br>
+        <div class="preloader-wrapper small active">
+          <div class="spinner-layer spinner-red-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="input-field col s12 l3 m3" *ngIf="translate.currentLang=='pt'">
+        <mz-datepicker-container>
+          <i mz-icon mz-input-prefix [icon]="'date_range'">
+          </i>
+          <input mz-datepicker [label]="'Data de Sincronização *'" [options]="options" [(ngModel)]="sync.start_time" formControlName="start_time"
+            type="date" />
+        </mz-datepicker-container>
+      </div>
+      <div class="input-field col s12 l3 m3" *ngIf="translate.currentLang=='en'">
+        <mz-datepicker-container>
+          <i mz-icon mz-input-prefix [icon]="'date_range'">
+          </i>
+          <input mz-datepicker [label]="'Synchronization Date *'" [options]="options" [(ngModel)]="sync.start_time" formControlName="start_time"
+            type="date" />
+        </mz-datepicker-container>
+      </div>
+   
+
+      <div class="input-field col s12 l3 m3" *ngIf="translate.currentLang=='pt'" >
+        <mz-timepicker-container >
+          <i mz-icon mz-input-prefix
+            [icon]="'access_time'">
+          </i>
+          <input mz-timepicker
+            [label]="'Hora inicial*'"
+            [options]="timepickerOptions"
+            id="timepicker"
+            placeholder="Seleccione a hora inicial"
+            [(ngModel)]="sync.start_time_time" formControlName="start_time_time"
+            type="text">
+        </mz-timepicker-container>
+        </div>
+    
+        <div class="input-field col s12 l3 m3" *ngIf="translate.currentLang=='en'">
+          <mz-timepicker-container>
+            <i mz-icon-mdi mz-input-prefix
+              [icon]="'access_time'">
+            </i>
+            <input mz-timepicker
+              [label]="'Start time'"
+              [options]="timepickerOptions"
+              id="timepicker"
+              placeholder="Select the start time"
+              [(ngModel)]="sync.start_time_time" formControlName="start_time_time"
+              type="text">
+          </mz-timepicker-container>
+          </div>
+
+          <div class="input-field col s6 l3 m3" style="margin-top: 28px;">
+            <i class="material-icons prefix">keyboard_arrow_up</i>
+            <input id="start_items_to_send" type="number" class="validate" [(ngModel)]="sync.start_items_to_send" formControlName="start_items_to_send"
+              [class.invalid]="form.controls['start_items_to_send'].touched && !form.controls['start_items_to_send'].valid">
+            <label for="start_items_to_send" [class.active]="sync.start_items_to_send">
+              {{ "items_to_send" | translate }} *
+            </label>
+          </div>
+
+          <div class="input-field col s6 l3 m3" style="margin-top: 28px;">
+            <i class="material-icons prefix">keyboard_arrow_down</i>
+            <input id="start_items_to_receive" type="number" class="validate" [(ngModel)]="sync.start_items_to_receive" formControlName="start_items_to_receive"
+              [class.invalid]="form.controls['start_items_to_receive'].touched && !form.controls['start_items_to_receive'].valid">
+            <label for="start_items_to_receive" [class.active]="sync.start_items_to_receive">
+              {{ "items_to_receive" | translate }} *
+            </label>
+          </div>
+
+    </div>
+
+
+
+
+    <div class="row">
+      <div class="input-field col s12 l3 m3" >
+        
+      </div>
+   
+
+      <div class="input-field col s12 l3 m3" *ngIf="translate.currentLang=='pt'" >
+        <mz-timepicker-container >
+          <i mz-icon mz-input-prefix
+            [icon]="'access_time'">
+          </i>
+          <input mz-timepicker
+            [label]="'Hora final *'"
+            [options]="timepickerOptions"
+            id="timepicker"
+            placeholder="Seleccione a hora inicial"
+            [(ngModel)]="sync.end_time_time" formControlName="end_time_time"
+            type="text">
+        </mz-timepicker-container>
+        </div>
+    
+        <div class="input-field col s12 l3 m3" *ngIf="translate.currentLang=='en'">
+          <mz-timepicker-container>
+            <i mz-icon-mdi mz-input-prefix
+              [icon]="'access_time'">
+            </i>
+            <input mz-timepicker
+              [label]="'End time *'"
+              [options]="timepickerOptions"
+              id="timepicker"
+              placeholder="Select the end time"
+              [(ngModel)]="sync.end_time_time" formControlName="end_time_time"
+              type="text">
+          </mz-timepicker-container>
+          </div>
+
+          <div class="input-field col s6 l3 m3" style="margin-top: 28px;">
+            <i class="material-icons prefix">keyboard_arrow_up</i>
+            <input id="end_items_to_send" type="number" class="validate" [(ngModel)]="sync.end_items_to_send" formControlName="end_items_to_send"
+              [class.invalid]="form.controls['end_items_to_send'].touched && !form.controls['end_items_to_send'].valid">
+            <label for="end_items_to_send" [class.active]="sync.end_items_to_send||sync.end_items_to_send==0">
+              {{ "end_items_to_send" | translate }} *
+            </label>
+          </div>
+
+          <div class="input-field col s6 l3 m3" style="margin-top: 28px;">
+            <i class="material-icons prefix">keyboard_arrow_down</i>
+            <input id="end_items_to_receive" type="number" class="validate" [(ngModel)]="sync.end_items_to_receive" formControlName="end_items_to_receive"
+              [class.invalid]="form.controls['end_items_to_receive'].touched && !form.controls['end_items_to_receive'].valid">
+            <label for="end_items_to_receive" [class.active]="sync.end_items_to_receive||sync.end_items_to_receive==0">
+              {{ "end_items_to_receive" | translate }} *
+            </label>
+          </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="switch col s12" style="margin-left: 45px;display: inline-flex;">
+          {{ "sync_error" | translate }}
+        <label>
+          <input type="checkbox" [(ngModel)]="sync.sync_error" formControlName="sync_error">
+          <span class="lever"></span>
+        </label>
+      </div>
+
+    </div>
+<br>
+    <div class="row" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA">
+      <div class="input-field col s12 l12 m12">
+        <i class="material-icons prefix">description</i>
+        <textarea id="textarea1" class="materialize-textarea" maxlength="255" [(ngModel)]="sync.observation" formControlName="observation"
+          [class.invalid]="form.controls['observation'].touched && !form.controls['observation'].valid"></textarea>
+        <label for="textarea1" [class.active]="sync.observation" data-error="A Observação deve ser preenchida.">{{ "obs_district" | translate }} *</label>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="ROLE_SIS">
+      <div class="input-field col s12 l12 m12">
+        <i class="material-icons prefix">description</i>
+        <textarea id="textarea1" class="materialize-textarea" maxlength="255" [(ngModel)]="sync.observation_his" formControlName="observation_his"
+          [class.invalid]="form.controls['observation_his'].touched && !form.controls['observation_his'].valid"></textarea>
+        <label for="textarea1" [class.active]="sync.observation_his">{{ "obs_his" | translate }} *</label>
+      </div>
+    </div>
+    
+    
+      <div class="row" class="row {{ isHidden }}">
+        <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 25px;">
+          <input type="checkbox" class="filled-in" id="canceled" [(ngModel)]="sync.canceled" formControlName="canceled" />
+          <label for="canceled">{{ "cancelit" | translate }}</label>
+        </div>
+        <div class="input-field col s12 l8 m8" *ngIf="sync.canceled">
+          <input id="canceled_reason" type="text" class="validate" [(ngModel)]="sync.canceled_reason" formControlName="canceled_reason">
+          <label for="canceled_reason" [class.active]="sync.canceled_reason">
+            {{ "cancelitreason" | translate }}
+          </label>
+        </div>
+      </div>
+      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled||sync.server.name==null||disabled1==true">
+        {{ "save" | translate }}
+        <i class="material-icons right">send</i>
+      </button>
+      <a *ngIf="!isDisabled" class="waves-effect waves-teal btn-flat" routerLink="/syncs">
+        <span class="orange-text text-darken-3">{{ "cancel" | translate }}</span>
+      </a>
+    </form>
+  </div>
+</div>

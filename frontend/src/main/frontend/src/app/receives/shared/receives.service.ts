@@ -76,7 +76,18 @@ export class ReceivesService {
         return this.http.get(this.getReceiveUrl7()+"get?page="+page+"&size="+size+"&from="+from+"&until="+until, { headers: headers })
           .map(res  => res.json());
         }
-    getreceivesByDistrictDate(page,size,district_id,from,until) {
+
+        getReceivesByDate(page,size,from,until) {
+          var headers: any = new Headers();
+          var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
+          var user = JSON.parse(window.localStorage.getItem('user'));
+          headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
+          headers.append('Content-Type', 'application/json');
+          return this.http.get(this.getReceiveUrl9()+"get?page="+page+"&size="+size+"&from="+from+"&until="+until, { headers: headers })
+            .map(res  => res.json());
+          }
+
+    getReceivesByDistrictDate(page,size,district_id,from,until) {
       var headers: any = new Headers();
       var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
       var user = JSON.parse(window.localStorage.getItem('user'));
@@ -129,6 +140,9 @@ export class ReceivesService {
   }
   public getReceiveUrl5() {
     return this.url + "districtdate/" ;
+  }
+  public getReceiveUrl9() {
+    return this.url + "date/" ;
   }
   public getReceiveUrl8() {
     return this.url + "all/" ;

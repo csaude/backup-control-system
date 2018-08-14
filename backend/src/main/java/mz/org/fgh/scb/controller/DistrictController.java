@@ -49,6 +49,11 @@ public class DistrictController {
 	public List<Object[]> findLastBackupRestoredByDistrict() {
 		return districtServiceImpl.findLastBackupRestoredByDistrict();
 	}
+	
+	@RequestMapping(value = "/districtssyncinfo", method = RequestMethod.GET)
+	public List<Object[]> findLastSyncByDistrict() {
+		return districtServiceImpl.findLastSyncByDistrict();
+	}
 
 	@RequestMapping(value = "/districtsreceivedpreviousmonth", method = RequestMethod.GET)
 	public List<Object[]> findBackupReceivedByDistrictOnPreviousMonth() {
@@ -81,7 +86,7 @@ public class DistrictController {
 
 	@RequestMapping(value = "/districts/get", method = RequestMethod.GET)
 	public Page<District> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "name", required = true) String name,@RequestParam(value = "canceled", required = true) boolean canceled) throws Exception {
-		Page<District> pageDistrict = districtServiceImpl.findAll(name, canceled, new PageRequest(page - 1, 10));
+		Page<District> pageDistrict = districtServiceImpl.findAll(name, canceled, new PageRequest(page - 1, size));
 		if (page - 1 > pageDistrict.getTotalPages()) {
 			throw new Exception();
 		}
@@ -93,7 +98,7 @@ public class DistrictController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();
 		Page<District> pageDistrict = districtServiceImpl.findAllByUser(name, currentPrincipalName, canceled,
-				new PageRequest(page - 1, 10));
+				new PageRequest(page - 1, size));
 		if (page - 1 > pageDistrict.getTotalPages()) {
 			throw new Exception();
 		}

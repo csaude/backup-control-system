@@ -32,7 +32,7 @@ public class SendServiceImpl implements SendService {
 	@Autowired
 	private Environment env;
 
-	private String at, vt, st, c_dhis, c_idart, data, obs, transporter_name, transporter_phone, district,transporter_role, province;
+	private String at, vt, st, c_dhis, c_idart, data, obs, transporter_name, transporter_phone, district,transporter_role;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -80,7 +80,6 @@ public class SendServiceImpl implements SendService {
 			transporter_phone = send.getTransporter().getPhone_number() + "";
 			transporter_role = send.getTransporter().getRole() + "";
 			district = send.getDistrict().getName();
-			province = send.getDistrict().getProvince();
 
 			new Thread(new Runnable() {
 				public void run() {
@@ -106,8 +105,7 @@ public class SendServiceImpl implements SendService {
 						email.setHtmlMsg(""
 								+ "<table border='1' style='border-color:#EEEEEE;' cellspacing='0' cellpadding='5' style='width:400px;'>"
 								+ "<thead><tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'>Novo registo de Envio de Backup</th></tr><thead>"
-								+ "<tbody><tr>" + "<td colspan='2' bgcolor='#F3F3F3' style='font-size:14px;'>"
-								+ province + " / " + district + "</td></tr>"
+								+ "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Distrito:</td><td>" + district + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Data do Backup:</td><td>" + data + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Actualização Terminada?</td><td>" + at + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Sincronização Terminada?</td><td>" + st + "</td></tr>"
@@ -118,8 +116,8 @@ public class SendServiceImpl implements SendService {
 								+ "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Enviado por:</td><td>"
 								+ send.getCreated_by().getPerson().getOthers_names() + " "
 								+ send.getCreated_by().getPerson().getSurname() + "<br>("
-								+ send.getCreated_by().getPerson().getPhone_number() + ")" + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Transportado por:</td><td>" + transporter_role + ": "
+								+ send.getCreated_by().getPerson().getPhone_number() + ")</td></tr>"
+								+ "<tr><td bgcolor='#F3F3F3'>Transportado por:</td><td>" + transporter_role + ":<br>"
 								+ transporter_name + "<br>(" + transporter_phone + ")" + "</td></tr>"
 								+ "<tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>Sistema de Controle de Backup</span></a><br/>Mantido por: <a href='mailto:his@fgh.org.mz'><span style='color:#00FFFF;'>his@fgh.org.mz</span></a></th></tr>"
 								+ "</tbody></table>");
