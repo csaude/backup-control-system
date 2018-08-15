@@ -24,6 +24,8 @@ export class Sync {
   uuid: string;
   canceled: boolean;
   canceled_reason: string;
+  state: string;
+  duration:string;
 
 
 }

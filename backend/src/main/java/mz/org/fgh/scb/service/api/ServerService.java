@@ -24,7 +24,15 @@ public interface ServerService {
 	List<Server> findByUserId(String username);
 	
 	List<Object[]> findLastSyncsByServer();
-
+	
+	List<Object[]> findSyncsOfPreviousWeek();
+	
+	List<Object[]> findSyncsOfThisWeek();
+	
+	List<Object[]> findSyncsItemsOfThisWeek();
+	
+	List<Object[]> findSyncsItemsOfPreviousWeek();
+	
 	Server findByUuid(String uuid);
 
 	Server save(Server ironkey);

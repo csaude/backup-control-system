@@ -71,6 +71,46 @@ export class ServersService {
       .map(res  => res.json());
     }
 
+    getSyncsPW() {
+      var headers: any = new Headers();
+      var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
+      var user = JSON.parse(window.localStorage.getItem('user'));
+      headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
+      headers.append('Content-Type', 'application/json');
+      return this.http.get(this.url + 'syncspreviousweek', { headers: headers })
+        .map(res => res.json());
+    }
+
+    getSyncsTW() {
+      var headers: any = new Headers();
+      var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
+      var user = JSON.parse(window.localStorage.getItem('user'));
+      headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
+      headers.append('Content-Type', 'application/json');
+      return this.http.get(this.url + 'syncsthisweek', { headers: headers })
+        .map(res => res.json());
+    }
+
+    getSyncsItemsPW() {
+      var headers: any = new Headers();
+      var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
+      var user = JSON.parse(window.localStorage.getItem('user'));
+      headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
+      headers.append('Content-Type', 'application/json');
+      return this.http.get(this.url + 'syncsitemspreviousweek', { headers: headers })
+        .map(res => res.json());
+    }
+
+    getSyncsItemsTW() {
+      var headers: any = new Headers();
+      var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
+      var user = JSON.parse(window.localStorage.getItem('user'));
+      headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
+      headers.append('Content-Type', 'application/json');
+      return this.http.get(this.url + 'syncsitemsthisweek', { headers: headers })
+        .map(res => res.json());
+    }
+
   addServer(server) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));

@@ -3,7 +3,6 @@ package mz.org.fgh.scb.controller;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,6 +48,17 @@ public class SyncController {
 		return syncServiceImpl.findByUuid(uuid);
 	}
 	
+	@RequestMapping(value = "/syncsinprogress", method = RequestMethod.GET)
+	public int findInProgress() throws Exception {
+		return syncServiceImpl.findInProgress();
+	}
+	
+	@RequestMapping(value = "/syncsinprogressuser", method = RequestMethod.GET)
+	public int findInProgressByUser() throws Exception {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+		return syncServiceImpl.findInProgressByUser(currentPrincipalName);
+	}
 	
 	@RequestMapping(value = "/syncss/{id}", method = RequestMethod.GET)
 	public Object getSyncById(@PathVariable Long id) throws Exception {

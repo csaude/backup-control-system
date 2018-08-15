@@ -79,6 +79,26 @@ export class SyncsService {
       .map(res => res.json());
   }
 
+  getSyncsInProgress() {
+    var headers: any = new Headers();
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
+    var user = JSON.parse(window.localStorage.getItem('user'));
+    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
+    headers.append('Content-Type', 'application/json');
+    return this.http.get(this.url+"inprogress", { headers: headers })
+      .map(res => res.json());
+  }
+
+  getSyncsInProgressByUser() {
+    var headers: any = new Headers();
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
+    var user = JSON.parse(window.localStorage.getItem('user'));
+    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
+    headers.append('Content-Type', 'application/json');
+    return this.http.get(this.url+"inprogressuser", { headers: headers })
+      .map(res => res.json());
+  }
+
   getSyncsByDate(page, size, from, until) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));

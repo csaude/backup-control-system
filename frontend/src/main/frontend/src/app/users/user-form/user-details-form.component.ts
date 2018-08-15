@@ -187,11 +187,17 @@ export class UserDetailsFormComponent implements OnInit {
           () => {
             this.showMsg(userValue.username);
             window.localStorage.removeItem("user");
-            window.localStorage.removeItem("password");
+
+            if (userValue.password_new != null) {
+              userValue.password = userValue.password_new;
+              window.localStorage.removeItem("password");
+              var wordArray = CryptoJS.enc.Utf8.parse(userValue.password);
+              var base64 = CryptoJS.enc.Base64.stringify(wordArray);
+              window.localStorage.setItem('password', base64);
+            }
+            
             window.localStorage.setItem('user', JSON.stringify(userValue));
-            var wordArray = CryptoJS.enc.Utf8.parse(userValue.password);
-            var base64 = CryptoJS.enc.Base64.stringify(wordArray);
-            window.localStorage.setItem('password', base64);
+           
             this.translate.use(userValue.locale);
             this.isDisabled = false;
             this.isHidden = "hide";

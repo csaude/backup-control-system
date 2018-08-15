@@ -157,7 +157,8 @@
     "duration":"Duração",
     "items_to_send":"Itens por enviar no inicio",
     "items_to_receive":"Itens por receber no inicio",
-    "sync_error":"Erro de sincronização?",
+    "sync_error":"Encontrou erro?",
+    "sync_error_desc":"Encontrou erro ao sincronizar?",
     "end_items_to_send":"Itens por enviar no fim",
     "end_items_to_receive":"Itens por receber no fim",
     "sync_time":"Horário de sincronização?",
@@ -165,5 +166,10 @@
     "syncnew": "Novo Registo de Sincronização",
     "items_to_s":"Itens por enviar",
     "items_to_r":"Itens por receber",
-    "final_state": "Estado final"
+    "final_state": "Estado Final",
+    "items_onstart": "Nº de itens na Hora inicial",
+    "items_onend": "Nº de itens na Hora final",
+    "items_send": "por enviar",
+    "items_receive": "por receber",
+    "syncdetails":"Detalhes da Sincronização"
 }

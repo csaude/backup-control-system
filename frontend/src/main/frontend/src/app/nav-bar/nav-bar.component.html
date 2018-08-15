@@ -1,12 +1,12 @@
 <header>
   <div class="navbar-fixed" *ngIf="isAuth">
     <mz-dropdown [id]="'dropdown-demo1'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true" [dropdownButtonId]="'btn-dropdown-demo1'"
-      [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300" [stopPropagation]="true" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
+      [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300" [stopPropagation]="true" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
       <mz-dropdown-item *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
         <a (click)="setBackup()" routerLink="/sends">{{ "send" | translate }}</a>
       </mz-dropdown-item>
       <mz-dropdown-divider></mz-dropdown-divider>
-      <mz-dropdown-item *ngIf="ROLE_SIS">
+      <mz-dropdown-item *ngIf="ROLE_SIS||ROLE_GMA||ROLE_OA">
         <a (click)="setBackup()" routerLink="/receives">{{ "receive" | translate }}</a>
       </mz-dropdown-item>
     </mz-dropdown>
@@ -65,9 +65,11 @@
           <li class="{{activeDashboard}}">
             <a routerLink="/home" (click)="setDashboard()">{{ "dashboard" | translate }}</a>
           </li>
-          <li class="{{activeBackup}}" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
+          
+          <li class="{{activeBackup}}" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
             <a id="btn-dropdown-demo1">
-            <i class="material-icons left" *ngIf="ROLE_SIS&&total>0" mz-tooltip [tooltip]="total+' backup(s) por receber'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
+            <a class="btn-floating pulseb btn-small" *ngIf="ROLE_SIS&&total>0"><i class="material-icons" mz-tooltip [tooltip]="total+' backup(s) por receber'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
+              </a>
             <i class="material-icons left" *ngIf="ROLE_SIS&&total==0" mz-tooltip [tooltip]="'Nenhum backup por receber'" [position]="'bottom'" [html]="false" [delay]="100">notifications_none</i>
               {{ "backups" | translate }}
               <i class="material-icons right">arrow_drop_down</i>
@@ -76,6 +78,9 @@
 
           <li class="{{activeSync}}" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
             <a id="btn-dropdown-demo4">
+                <a class="btn-floating pulseb orange btn-small" *ngIf="(ROLE_SIS||ROLE_ODMA)&&total2>0"><i class="material-icons" mz-tooltip [tooltip]="total2+' sincronização(s) em processo'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
+                </a>
+              <i class="material-icons left" *ngIf="(ROLE_SIS||ROLE_ODMA)&&total2==0" mz-tooltip [tooltip]="'Nenhuma sincronização em processo'" [position]="'bottom'" [html]="false" [delay]="100">notifications_none</i>
               {{ "sync" | translate }}
               <i class="material-icons right">arrow_drop_down</i>
             </a>

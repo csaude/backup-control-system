@@ -3,7 +3,7 @@ import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { NavbarService } from './nav-bar.service';
 import { TranslateService } from 'ng2-translate';
 import { SendsService } from "../sends/shared/sends.service";
-
+import { SyncsService } from "../syncs/shared/syncs.service";
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
@@ -21,16 +21,18 @@ export class NavBarComponent implements OnInit {
   public isAuth: boolean;
   public activeDashboard; activeBackup; activeMetadata; activeUser; activeSync;
   public showNavBar: boolean = false;
-  public total;
-  public nIntervId; nIntervId2;
+  public total;total2;
+  public nIntervId; nIntervId2;nIntervId3;
 
   constructor(
     public router: Router,
     public route: ActivatedRoute,
     public nav: NavbarService,
     public translate: TranslateService,
-    public sendsService: SendsService
+    public sendsService: SendsService,
+    public syncsService: SyncsService
   ) {
+
     translate.addLangs(['pt', 'en']);
     translate.setDefaultLang('pt');
     this.nav.invokeEvent.subscribe(value => {
@@ -41,7 +43,11 @@ export class NavBarComponent implements OnInit {
   }
 
   callFuntionAtIntervals() {
-    this.sendsService.getSendsNotReceivedNum()
+    
+
+      if(this.ROLE_SIS){
+
+        this.sendsService.getSendsNotReceivedNum()
       .subscribe(data => {
         this.total = data;
       },
@@ -58,6 +64,42 @@ export class NavBarComponent implements OnInit {
 
         }
       );
+
+        this.syncsService.getSyncsInProgress()
+        .subscribe(data => {
+          this.total2 = data;
+        },
+          error => {
+            this.total2 = 0;
+          },
+          () => {
+            if (this.total2 > 0 && this.nIntervId3 == null) {
+              this.nIntervId3 = setInterval(() => {
+                this.notifyMe2();
+              }, 300000);
+            }
+          }
+        );
+      }
+
+      else if(this.ROLE_ODMA){
+        this.syncsService.getSyncsInProgressByUser()
+        .subscribe(data => {
+          this.total2 = data;
+        },
+          error => {
+            this.total2 = 0;
+          },
+          () => {
+            if (this.total2 > 0 && this.nIntervId3 == null) {
+              this.nIntervId3 = setInterval(() => {
+                this.notifyMe2();
+              }, 300000);
+            }
+          }
+        );
+      }
+
   }
 
   callMyMethod() {
@@ -91,7 +133,7 @@ export class NavBarComponent implements OnInit {
     }
     this.showNavBar = true;
 
-    if (this.ROLE_SIS) {
+    if (this.ROLE_SIS||this.ROLE_ODMA) {
       this.callFuntionAtIntervals();
       this.nIntervId = setInterval(() => {
         this.callFuntionAtIntervals();
@@ -135,9 +177,10 @@ export class NavBarComponent implements OnInit {
       }
 
     } else {
-      if (this.ROLE_SIS) {
+      if (this.ROLE_SIS||this.ROLE_ODMA) {
         clearInterval(this.nIntervId);
         clearInterval(this.nIntervId2);
+        clearInterval(this.nIntervId3);
       }
       this.router.navigate(['login']);
     }
@@ -146,9 +189,10 @@ export class NavBarComponent implements OnInit {
 
   }
   logout() {
-    if (this.ROLE_SIS) {
+    if (this.ROLE_SIS||this.ROLE_ODMA) {
       clearInterval(this.nIntervId);
-      clearInterval(this.nIntervId);
+      clearInterval(this.nIntervId2);
+      clearInterval(this.nIntervId3);
     }
     window.localStorage.clear();
     this.isAuth = false;
@@ -240,6 +284,65 @@ export class NavBarComponent implements OnInit {
           clearInterval(this.nIntervId2);
           this.nIntervId2 = null;
         }
+      }
+      });
+    }
+
+    // At last, if the user has denied notifications, and you 
+    // want to be respectful there is no need to bother them any more.
+  }
+
+  notifyMe2() {
+    
+    if (!("Notification" in window)) {
+      console.log("This browser does not support desktop notification");
+    }
+
+    // Let's check whether notification permissions have already been granted
+    else if ((Notification as any).permission === "granted") {
+      // If it's okay let's create a notification   
+      if (this.ROLE_SIS||this.ROLE_ODMA) { 
+      var exist,backup;
+      if (this.total == 1) {
+        exist = "existe ";
+        backup=" sincronização ";
+      } else {
+        exist = "existem ";
+        backup=" sincronizações ";
+      }
+      let options = {
+        body: this.user.person.others_names+" "+this.user.person.surname+", "+exist + this.total +backup+ "em processo!",
+        icon: "../assets/images/bell-icon.png"
+      };
+      var notification = new Notification("SCB", options);
+    }
+      clearInterval(this.nIntervId3);
+      this.nIntervId3 = null;
+    }
+
+    // Otherwise, we need to ask the user for permission
+    else if ((Notification as any).permission !== "denied") {
+      Notification.requestPermission(function (permission) {
+        // If the user accepts, let's create a notification
+        if (permission === "granted") {
+          if (this.ROLE_SIS||this.ROLE_ODMA) { 
+            var exist,backup;
+            if (this.total == 1) {
+              exist = "existe ";
+              backup=" sincronização ";
+            } else {
+              exist = "existem ";
+              backup=" sincronizações ";
+            }
+            let options = {
+              body: this.user.person.others_names+" "+this.user.person.surname+", "+exist + this.total +backup+ "em processo!",
+              icon: "../assets/images/bell-icon.png"
+            };
+            var notification = new Notification("SCB", options);
+          }
+            clearInterval(this.nIntervId3);
+            this.nIntervId3 = null;
+        
       }
       });
     }

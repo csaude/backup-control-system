@@ -54,7 +54,7 @@ export class SyncFormComponent implements OnInit {
     ampmclickable: true, // make AM PM clickable
     aftershow: () => alert('AfterShow has been invoked.'), // function for after opening timepicker
   };
-  
+
   constructor(
     formBuilder: FormBuilder,
     public router: Router,
@@ -68,7 +68,7 @@ export class SyncFormComponent implements OnInit {
   ) {
     this.form = formBuilder.group({
       server: ['', [
-         Validators.required]],
+        Validators.required]],
       start_time: ['', [
         Validators.required
       ]],
@@ -82,20 +82,14 @@ export class SyncFormComponent implements OnInit {
         Validators.required
       ]],
       end_time: [],
-      end_time_time: ['', [
-        Validators.required
-      ]],
-      end_items_to_send: ['', [
-        Validators.required
-      ]],
-      end_items_to_receive: ['', [
-        Validators.required
-      ]],
+      end_time_time: [],
+      end_items_to_send: [],
+      end_items_to_receive: [],
       observation: [],
-      observation_his:[],
+      observation_his: [],
       canceled: [],
       canceled_reason: [],
-      sync_error:[]
+      sync_error: []
     });
   }
   ngOnInit() {
@@ -122,17 +116,17 @@ export class SyncFormComponent implements OnInit {
             .subscribe(data => {
               this.allservers = data;
               this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
-            
-            }, error => { },() => {this.disabled1 = false;});
-    
-    
+
+            }, error => { }, () => { this.disabled1 = false; });
+
+
         } else if (this.ROLE_SIS || this.ROLE_GMA || this.ROLE_OA) {
-      
+
           this.serversService.getServers()
             .subscribe(data => {
               this.allservers = data;
               this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
-            }, error => { },() => {this.disabled1 = false;});
+            }, error => { }, () => { this.disabled1 = false; });
         }
       } else {
         this.syncsService.getSync(uuid)
@@ -149,9 +143,9 @@ export class SyncFormComponent implements OnInit {
 
                     this.allservers = filteredservers;
                     this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
-            
 
-                  }, error => { },() => {this.disabled1 = false;});
+
+                  }, error => { }, () => { this.disabled1 = false; });
 
 
               } else if (this.ROLE_SIS || this.ROLE_GMA || this.ROLE_OA) {
@@ -165,15 +159,15 @@ export class SyncFormComponent implements OnInit {
                     filteredservers.push(this.sync.server);
                     this.allservers = filteredservers;
                     this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
-            
-                  }, error => { },() => {this.disabled1 = false;});
 
-                }
-              });
+                  }, error => { }, () => { this.disabled1 = false; });
 
-            }
-
+              }
             });
+
+      }
+
+    });
   }
 
 
@@ -183,7 +177,10 @@ export class SyncFormComponent implements OnInit {
     var user = JSON.parse(window.localStorage.getItem('user'));
     if (this.sync.uuid) {
 
-      if (new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.start_time_time+":00.000") > new Date()||new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.end_time_time+":00.000")> new Date()) {
+      if (
+        new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.start_time_time + ":00.000") > new Date()
+        || ((userValue.end_time_time != null && userValue.end_time_time != "") && new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.end_time_time + ":00.000") > new Date())
+        || new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.start_time_time + ":00.000") < new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T00:00:00.000")) {
         this.showMsgErr();
         this.isDisabled = false;
       }
@@ -192,117 +189,163 @@ export class SyncFormComponent implements OnInit {
           this.showMsgErr3();
           this.isDisabled = false;
         }
-        else if(this.datepipe.transform(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+" "+userValue.start_time_time, 'yyyy-MM-dd HH:mm') > this.datepipe.transform(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+" "+userValue.end_time_time, 'yyyy-MM-dd HH:m')){
+        else if ((userValue.end_time_time != null && userValue.end_time_time != "") && (this.datepipe.transform(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + " " + userValue.start_time_time, 'yyyy-MM-dd HH:mm') > this.datepipe.transform(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + " " + userValue.end_time_time, 'yyyy-MM-dd HH:m'))) {
           this.showMsgErr4();
           this.isDisabled = false;
         }
-        else if(userValue.end_items_to_send>userValue.start_items_to_send||userValue.end_items_to_receive>userValue.start_items_to_receive){
+        else if (userValue.end_items_to_send > userValue.start_items_to_send || userValue.end_items_to_receive > userValue.start_items_to_receive) {
           this.showMsgErr5();
+          this.isDisabled = false;
+        } 
+        else if ((userValue.end_time_time!=null&&userValue.end_time_time!="")&&(userValue.end_items_to_send==null||userValue.end_items_to_receive==null)) {
+          this.showMsgErr7();
           this.isDisabled = false;
         }
         else {
 
           if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
 
-            if(userValue.observation==""||userValue.observation==null){
+            if (userValue.observation == "" || userValue.observation == null) {
 
               this.showMsgErr6();
               this.isDisabled = false;
-            }else{
+            } else {
 
-          userValue.sync_id = this.sync.sync_id;
-          userValue.date_created = this.sync.date_created;
-          userValue.uuid = this.sync.uuid;
-          userValue.created_by = this.sync.created_by;
-          userValue.updated_by = user;
+              userValue.sync_id = this.sync.sync_id;
+              userValue.date_created = this.sync.date_created;
+              userValue.uuid = this.sync.uuid;
+              userValue.created_by = this.sync.created_by;
+              userValue.updated_by = user;
+              userValue.observation_his = this.sync.observation_his;
+              userValue.start_time = new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.start_time_time + ":00.000");
 
-          userValue.start_time=new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.start_time_time+":00.000");
-          userValue.end_time=new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.end_time_time+":00.000");
+              if (userValue.end_time_time != null && userValue.end_time_time != "") {
+                userValue.end_time = new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.end_time_time + ":00.000");
+              }
+              else {
+                userValue.end_items_to_send = null;
+                userValue.end_items_to_send = null;
+                userValue.end_time = null;
+              }
 
-          result = this.syncsService.updateSync(userValue);
-          result.subscribe(data => this.router.navigate(['syncs']));
-          this.showMsg();
+              result = this.syncsService.updateSync(userValue);
+              result.subscribe(data => this.router.navigate(['syncs']));
+              this.showMsg();
 
 
             }
 
-          }else  if (this.ROLE_SIS) {
+          } else if (this.ROLE_SIS) {
 
-            if(userValue.observation_his==""||userValue.observation_his==null){
+            if (userValue.observation_his == "" || userValue.observation_his == null) {
 
               this.showMsgErr6();
               this.isDisabled = false;
-            }else{
+            } else {
 
-          userValue.sync_id = this.sync.sync_id;
-          userValue.date_created = this.sync.date_created;
-          userValue.uuid = this.sync.uuid;
-          userValue.created_by = this.sync.created_by;
-          userValue.updated_by = user;
+              userValue.sync_id = this.sync.sync_id;
+              userValue.date_created = this.sync.date_created;
+              userValue.uuid = this.sync.uuid;
+              userValue.created_by = this.sync.created_by;
+              userValue.updated_by = user;
+              userValue.observation = this.sync.observation;
 
-          userValue.start_time=new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.start_time_time+":00.000");
-          userValue.end_time=new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.end_time_time+":00.000");
+              userValue.start_time = new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.start_time_time + ":00.000");
 
-          result = this.syncsService.updateSync(userValue);
-          result.subscribe(data => this.router.navigate(['syncs']));
-          this.showMsg();
+              if (userValue.end_time_time != null && userValue.end_time_time != "") {
+                userValue.end_time = new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.end_time_time + ":00.000");
+              }
+              else {
+                userValue.end_items_to_send = null;
+                userValue.end_items_to_receive = null;
+                userValue.end_time = null;
+              }
+
+              result = this.syncsService.updateSync(userValue);
+              result.subscribe(data => this.router.navigate(['syncs']));
+              this.showMsg();
 
 
             }
 
           }
-          
+
         }
       }
 
     } else {
 
 
-      if (new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.start_time_time+":00.000") > new Date()||new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.end_time_time+":00.000")> new Date()) {
+      if (new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.start_time_time + ":00.000") > new Date()
+        || ((userValue.end_time_time != null && userValue.end_time_time != "") && new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.end_time_time + ":00.000") > new Date())
+        || new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.start_time_time + ":00.000") < new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T00:00:00.000")) {
         this.showMsgErr();
         this.isDisabled = false;
       }
       else {
-        if(this.datepipe.transform(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+" "+userValue.start_time_time, 'yyyy-MM-dd HH:mm') > this.datepipe.transform(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+" "+userValue.end_time_time, 'yyyy-MM-dd HH:m')){
+        if ((userValue.end_time_time != null && userValue.end_time_time != "") && (this.datepipe.transform(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + " " + userValue.start_time_time, 'yyyy-MM-dd HH:mm') > this.datepipe.transform(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + " " + userValue.end_time_time, 'yyyy-MM-dd HH:m'))) {
           this.showMsgErr4();
           this.isDisabled = false;
         }
-        else if(userValue.end_items_to_send>userValue.start_items_to_send||userValue.end_items_to_receive>userValue.start_items_to_receive){
+        else if (userValue.end_items_to_send > userValue.start_items_to_send || userValue.end_items_to_receive > userValue.start_items_to_receive) {
           this.showMsgErr5();
+          this.isDisabled = false;
+        }else if ((userValue.end_time_time!=null&&userValue.end_time_time!="")&&(userValue.end_items_to_send==null||userValue.end_items_to_receive==null)) {
+          this.showMsgErr7();
           this.isDisabled = false;
         }
         else {
 
           if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
 
-            if(userValue.observation==""||userValue.observation==null){
+            if (userValue.observation == "" || userValue.observation == null) {
 
               this.showMsgErr6();
               this.isDisabled = false;
-            }else{
+            } else {
 
-          userValue.created_by = user;
-          userValue.updated_by = user;
-          userValue.start_time=new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.start_time_time+":00.000");
-          userValue.end_time=new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.end_time_time+":00.000");
-          result = this.syncsService.addSync(userValue);
-          result.subscribe(data => this.router.navigate(['syncs']));
-          this.showMsg();
+              userValue.created_by = user;
+              userValue.start_time = new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.start_time_time + ":00.000");
+
+              if (userValue.end_time_time != null && userValue.end_time_time != "") {
+                userValue.end_time = new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.end_time_time + ":00.000");
+              }
+              else {
+                userValue.end_items_to_send = null;
+                userValue.end_items_to_receive = null;
+                userValue.end_time = null;
+              }
+
+
+
+              result = this.syncsService.addSync(userValue);
+              result.subscribe(data => this.router.navigate(['syncs']));
+              this.showMsg();
 
             }
 
-          }else  if (this.ROLE_SIS) {
+          } else if (this.ROLE_SIS) {
 
-            if(userValue.observation_his==""||userValue.observation_his==null){
+            if (userValue.observation_his == "" || userValue.observation_his == null) {
 
               this.showMsgErr6();
               this.isDisabled = false;
-            }else{
+            } else {
 
               userValue.created_by = user;
-              userValue.updated_by = user;
-              userValue.start_time=new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.start_time_time+":00.000");
-              userValue.end_time=new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd')+"T"+userValue.end_time_time+":00.000");
+
+               userValue.start_time = new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.start_time_time + ":00.000");
+
+              if (userValue.end_time_time != null && userValue.end_time_time != "") {
+                userValue.end_time = new Date(this.datepipe.transform(new Date(userValue.start_time), 'yyyy-MM-dd') + "T" + userValue.end_time_time + ":00.000");
+              }
+              else {
+                userValue.end_items_to_send = null;
+                userValue.end_items_to_receive = null;
+                userValue.end_time = null;
+              }
+
+
               result = this.syncsService.addSync(userValue);
               result.subscribe(data => this.router.navigate(['syncs']));
               this.showMsg();
@@ -310,7 +353,7 @@ export class SyncFormComponent implements OnInit {
             }
 
           }
-          
+
         }
       }
 
@@ -321,7 +364,7 @@ export class SyncFormComponent implements OnInit {
     this.toastService.show('Registo de Sincronização salvo com sucesso!', 2000, 'green', null);
   }
   showMsgErr() {
-    this.toastService.show('O periodo de Sincronização não deve estar no futuro!', 2000, 'red', null);
+    this.toastService.show('O periodo de Sincronização não deve estar no passado ou futuro!', 2000, 'red', null);
   }
   showMsgErr3() {
     this.toastService.show('Escreva a razão para anular!', 2000, 'red', null);
@@ -335,8 +378,12 @@ export class SyncFormComponent implements OnInit {
     this.toastService.show('Escreva uma observação!', 2000, 'red', null);
   }
 
+  showMsgErr7() {
+    this.toastService.show('Preenche o nº dos itens por enviar na hora final!', 2000, 'red', null);
+  }
+
   showMsgErr5() {
     this.toastService.show('Nº de itens no fim da sincronização não deve ser maior que no inicio.', 2000, 'red', null);
   }
-  
+
 }

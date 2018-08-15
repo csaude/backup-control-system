@@ -150,7 +150,7 @@
             [icon]="'access_time'">
           </i>
           <input mz-timepicker
-            [label]="'Hora final *'"
+            [label]="'Hora final '"
             [options]="timepickerOptions"
             id="timepicker"
             placeholder="Seleccione a hora inicial"
@@ -165,7 +165,7 @@
               [icon]="'access_time'">
             </i>
             <input mz-timepicker
-              [label]="'End time *'"
+              [label]="'End time '"
               [options]="timepickerOptions"
               id="timepicker"
               placeholder="Select the end time"
@@ -179,7 +179,7 @@
             <input id="end_items_to_send" type="number" class="validate" [(ngModel)]="sync.end_items_to_send" formControlName="end_items_to_send"
               [class.invalid]="form.controls['end_items_to_send'].touched && !form.controls['end_items_to_send'].valid">
             <label for="end_items_to_send" [class.active]="sync.end_items_to_send||sync.end_items_to_send==0">
-              {{ "end_items_to_send" | translate }} *
+              {{ "end_items_to_send" | translate }} 
             </label>
           </div>
 
@@ -188,7 +188,7 @@
             <input id="end_items_to_receive" type="number" class="validate" [(ngModel)]="sync.end_items_to_receive" formControlName="end_items_to_receive"
               [class.invalid]="form.controls['end_items_to_receive'].touched && !form.controls['end_items_to_receive'].valid">
             <label for="end_items_to_receive" [class.active]="sync.end_items_to_receive||sync.end_items_to_receive==0">
-              {{ "end_items_to_receive" | translate }} *
+              {{ "end_items_to_receive" | translate }} 
             </label>
           </div>
 
@@ -197,7 +197,7 @@
     <div class="row">
 
       <div class="switch col s12" style="margin-left: 45px;display: inline-flex;">
-          {{ "sync_error" | translate }}
+          {{ "sync_error_desc" | translate }}
         <label>
           <input type="checkbox" [(ngModel)]="sync.sync_error" formControlName="sync_error">
           <span class="lever"></span>
@@ -217,10 +217,12 @@
 
     <div class="row" *ngIf="ROLE_SIS">
       <div class="input-field col s12 l12 m12">
+        
         <i class="material-icons prefix">description</i>
         <textarea id="textarea1" class="materialize-textarea" maxlength="255" [(ngModel)]="sync.observation_his" formControlName="observation_his"
           [class.invalid]="form.controls['observation_his'].touched && !form.controls['observation_his'].valid"></textarea>
         <label for="textarea1" [class.active]="sync.observation_his">{{ "obs_his" | translate }} *</label>
+        
       </div>
     </div>
     

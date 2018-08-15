@@ -6,30 +6,32 @@
   <mz-tab-item [active]="'true'" [label]="'Backups'">
 
     <div class="row">
-      <div class="card col s12 l6 m6">
+      <div class="card col s12 l6 m6" style="height:250px;">
         <div class="progress" *ngIf="chart1==false">
           <div class="indeterminate"></div>
         </div>
 
-        <canvas *ngIf="chart1" baseChart style="height:250px;" [colors]="myColors" [datasets]="barChartData" [labels]="barChartLabels"
+        <canvas *ngIf="chart1" baseChart  [colors]="myColors" [datasets]="barChartData" [labels]="barChartLabels"
           [options]="barChartOptions" [legend]="barChartLegend" [chartType]="barChartType"></canvas>
       </div>
 
-      <div class="card col s12 l6 m6">
+      <div class="card col s12 l6 m6" style="height:250px;">
         <div class="progress" *ngIf="chart2==false">
           <div class="indeterminate red"></div>
         </div>
-        <canvas *ngIf="chart2" baseChart style="height:250px;" [datasets]="barChartData2" [labels]="barChartLabels2" [options]="barChartOptions2"
+        <canvas *ngIf="chart2" baseChart  [datasets]="barChartData2" [labels]="barChartLabels2" [options]="barChartOptions2"
           [legend]="barChartLegend2" [chartType]="barChartType2"></canvas>
       </div>
 
-      <div class="card col s12 l12 m12" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
+      <div class="card col s12 l12 m12" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA" style="height:250px;">
         <div class="progress" *ngIf="chart3==false">
           <div class="indeterminate red"></div>
         </div>
-        <canvas *ngIf="chart3" baseChart style="height:250px;" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+        <canvas *ngIf="chart3" baseChart  [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
           [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
       </div>
+
+     
 
     </div>
 
@@ -37,7 +39,66 @@
 
 
   <mz-tab-item [label]="'Sync'">
+    
     <div class="row">
+
+        <div class="card col s12 l12 m12" style="height:250px;">
+            <div class="progress" *ngIf="chart4==false">
+              <div class="indeterminate"></div>
+            </div>
+            <canvas *ngIf="chart4" baseChart   [datasets]="barChartData4" [labels]="barChartLabels4"
+            [options]="barChartOptions4" [legend]="barChartLegend4" [chartType]="barChartType4"></canvas>
+          </div>
+  
+        <div class="card col s12 l12 m12" style="height:250px;">
+            <div class="progress" *ngIf="chart5==false">
+              <div class="indeterminate"></div>
+            </div>
+            <canvas *ngIf="chart5" baseChart  [datasets]="barChartData5" [labels]="barChartLabels5"
+            [options]="barChartOptions5" [legend]="barChartLegend5" [chartType]="barChartType5"></canvas>
+          </div>
+  
+        <div class="card col s12 l6 m6" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
+            <canvas style="height:250px;" *ngIf="chart6" baseChart [data]="pieChartData6" [labels]="pieChartLabels6" [chartType]="pieChartType6" [options]="pieOptions6"></canvas>
+          </div>
+
+          <div class="card col s12 l6 m6" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA" >
+              <canvas style="height:250px;" *ngIf="chart7" baseChart [data]="pieChartData7" [labels]="pieChartLabels7" [chartType]="pieChartType7" [options]="pieOptions7"></canvas>
+            </div>
+
+            <div class="card col s12 l6 m6" style="height:250px;" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
+                <div class="progress" *ngIf="chart8==false">
+                  <div class="indeterminate red"></div>
+                </div>
+                <canvas  *ngIf="chart8" baseChart  [datasets]="barChartData8" [labels]="barChartLabels8"
+                [options]="barChartOptions8" [legend]="barChartLegend8" [chartType]="barChartType8"></canvas>
+              </div>
+
+              <div class="card col s12 l6 m6"style="height:250px;" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
+                  <div class="progress" *ngIf="chart8==false">
+                    <div class="indeterminate red"></div>
+                  </div>
+                  <canvas  *ngIf="chart9" baseChart  [datasets]="barChartData9" [labels]="barChartLabels9"
+                  [options]="barChartOptions9" [legend]="barChartLegend9" [chartType]="barChartType9"></canvas>
+                </div>
+
+                <div class="card col s12 l6 m6" style="height:250px;"*ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
+                    <div class="progress" *ngIf="chart10==false">
+                      <div class="indeterminate red"></div>
+                    </div>
+                    <canvas *ngIf="chart10" baseChart  [datasets]="barChartData10" [labels]="barChartLabels10" [options]="barChartOptions10"
+                      [legend]="barChartLegend10" [chartType]="barChartType10"></canvas>
+                  </div>
+
+                  <div class="card col s12 l6 m6" style="height:250px;"*ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
+                      <div class="progress" *ngIf="chart10==false">
+                        <div class="indeterminate red"></div>
+                      </div>
+                      <canvas *ngIf="chart11" baseChart  [datasets]="barChartData11" [labels]="barChartLabels11" [options]="barChartOptions11"
+                        [legend]="barChartLegend11" [chartType]="barChartType11"></canvas>
+                    </div>
+
+                   
 
     </div>
 

@@ -178,7 +178,8 @@ export class UserFormComponent implements OnInit {
     this.isDisabled = true;
     var result, userValue = this.form.value;
     var userLogged = JSON.parse(window.localStorage.getItem('user'));
-    if (userValue.user_id) {
+    console.log(userValue)
+    if (this.user.uuid) {
       if (userValue.password_new != null) {
         userValue.password = userValue.password_new;
       }
@@ -191,7 +192,7 @@ export class UserFormComponent implements OnInit {
           this.router.navigate(['users']);
           this.showMsg(userValue.username);
         } else {
-          this.showMsgErr2();
+          this.showMsgErr(userValue.username);
           this.isDisabled = false;
         }
       },

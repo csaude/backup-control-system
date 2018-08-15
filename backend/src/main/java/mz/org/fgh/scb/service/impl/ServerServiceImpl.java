@@ -85,4 +85,25 @@ public class ServerServiceImpl implements ServerService {
 		return serverRepository.findLastSyncsByServer();
 	}
 
+	@Override
+	public List<Object[]> findSyncsOfPreviousWeek() {
+		return serverRepository.findSyncsOfPreviousWeek();
+	}
+
+
+	@Override
+	public List<Object[]> findSyncsOfThisWeek() {
+		return serverRepository.findSyncsOfThisWeek();
+	}
+
+	@Override
+	public List<Object[]> findSyncsItemsOfThisWeek() {
+		return serverRepository.findSyncsItemsOfThisWeek();
+	}
+
+	@Override
+	public List<Object[]> findSyncsItemsOfPreviousWeek() {
+		return serverRepository.findSyncsItemsOfPreviousWeek();
+	}
+
 }

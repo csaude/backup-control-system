@@ -43,6 +43,26 @@ public class ServerController {
 		return serverServiceImpl.findByDistrictId(district_id);
 	}
 	
+	@RequestMapping(value = "/serverssyncspreviousweek", method = RequestMethod.GET)
+	public List<Object[]> findSyncsOfPreviousWeek() {
+		return serverServiceImpl.findSyncsOfPreviousWeek();
+	}
+	
+	@RequestMapping(value = "/serverssyncsthisweek", method = RequestMethod.GET)
+	public List<Object[]> findSyncsOfThisWeek() {
+		return serverServiceImpl.findSyncsOfThisWeek();
+	}
+	
+	@RequestMapping(value = "/serverssyncsitemspreviousweek", method = RequestMethod.GET)
+	public List<Object[]> findSyncsItemsOfPreviousWeek() {
+		return serverServiceImpl.findSyncsItemsOfPreviousWeek();
+	}
+	
+	@RequestMapping(value = "/serverssyncsitemsthisweek", method = RequestMethod.GET)
+	public List<Object[]> findSyncsItemsOfThisWeek() {
+		return serverServiceImpl.findSyncsItemsOfThisWeek();
+	}
+	
 	@RequestMapping(value = "/serversuser", method = RequestMethod.GET)
 	public List<Server> findByUserId() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

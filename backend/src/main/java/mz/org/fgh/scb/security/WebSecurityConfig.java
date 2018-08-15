@@ -61,10 +61,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.PUT,"**/api/districts/**").hasAnyRole("SIS")
 					.antMatchers(HttpMethod.DELETE,"**/api/districts/**").hasAnyRole("SIS")
 					.antMatchers(HttpMethod.GET,"**/api/districts/**").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA")
-					.antMatchers(HttpMethod.GET,"**/api/districtsreceiveinfo/").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA")
-					.antMatchers(HttpMethod.GET,"**/api/districtsrestoreinfo/").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA")
-					.antMatchers(HttpMethod.GET,"**/api/districtsrec/").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA")
-					.antMatchers(HttpMethod.GET,"**/api/districtsres/").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA")
 					//transporters
 					.antMatchers(HttpMethod.POST,"**/api/transporters/**").hasAnyRole("SIS","ODMA","GDD","ORMA")
 					.antMatchers(HttpMethod.PUT,"**/api/transporters/**").hasAnyRole("SIS","ODMA","GDD","ORMA")
@@ -86,9 +82,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.DELETE,"**/api/sends/**").hasAnyRole("GDD","ODMA","ORMA","SIS")
 					.antMatchers(HttpMethod.GET,"**/api/sends/**").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA")
 					//syncs
-					.antMatchers(HttpMethod.POST,"**/api/syncs/**").hasAnyRole("GDD","ODMA","ORMA","SIS")
-					.antMatchers(HttpMethod.PUT,"**/api/syncs/**").hasAnyRole("GDD","ODMA","ORMA","SIS")
-					.antMatchers(HttpMethod.DELETE,"**/api/syncs/**").hasAnyRole("GDD","ODMA","ORMA","SIS")
+					.antMatchers(HttpMethod.POST,"**/api/syncs/**").hasAnyRole("ODMA","SIS")
+					.antMatchers(HttpMethod.PUT,"**/api/syncs/**").hasAnyRole("ODMA","SIS")
+					.antMatchers(HttpMethod.DELETE,"**/api/syncs/**").hasAnyRole("ODMA","SIS")
 					.antMatchers(HttpMethod.GET,"**/api/syncs/**").hasAnyRole("SIS","IT","OA","ODMA","GDD","ORMA","GMA","SIS")
 					//receives
 					.antMatchers(HttpMethod.POST,"**/api/receives/**").hasAnyRole("SIS")

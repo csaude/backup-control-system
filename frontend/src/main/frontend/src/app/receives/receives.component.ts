@@ -34,6 +34,14 @@ export class ReceivesComponent implements OnInit {
   public form: FormGroup;
   public received; districts_filter; districtr_filter; date_filter: boolean;
 
+  public ROLE_SIS: string;
+  public ROLE_IT: string;
+  public ROLE_ODMA: string;
+  public ROLE_GDD: string;
+  public ROLE_ORMA: string;
+  public ROLE_OA: string;
+  public ROLE_GMA: string;
+
   public from;until;
   public user: Object[] = [];
   public district_id: number;
@@ -58,6 +66,14 @@ export class ReceivesComponent implements OnInit {
     this.districts_filter = false;
     this.districtr_filter = false;
     this.date_filter = false;
+    this.ROLE_SIS = window.localStorage.getItem('ROLE_SIS');
+    this.ROLE_OA = window.localStorage.getItem('ROLE_OA');
+    this.ROLE_IT = window.localStorage.getItem('ROLE_IT');
+    this.ROLE_ODMA = window.localStorage.getItem('ROLE_ODMA');
+    this.ROLE_GDD = window.localStorage.getItem('ROLE_GDD');
+    this.ROLE_ORMA = window.localStorage.getItem('ROLE_ORMA');
+    this.ROLE_GMA = window.localStorage.getItem('ROLE_GMA');
+
     this.districtsService.getDistricts()
       .subscribe(data => {
         this.alldistricts = data;
@@ -619,7 +635,7 @@ export class ReceivesComponent implements OnInit {
           doc.setFontSize(11);
           doc.setTextColor(100);
           var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-          var text = doc.splitTextToSize('Backups efectuados num determinado periodo que foram recebidos pelo SIS.', pageWidth - 25, {});
+          var text = doc.splitTextToSize('Backups efectuados num determinado periodo e distrito que foram recebidos pelo SIS.', pageWidth - 25, {});
           doc.text(text, 14, 32);
 
           var pageContent = function (data) {

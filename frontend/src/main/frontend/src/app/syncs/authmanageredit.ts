@@ -13,7 +13,6 @@ export class AuthManagerSyncsEdit implements CanActivate {
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 
         if (window.localStorage.getItem('authenticated') == "Sim" && (
-            window.localStorage.getItem('ROLE_GDD') ||
             window.localStorage.getItem('ROLE_ODMA') ||
             window.localStorage.getItem('ROLE_ORMA')||
             window.localStorage.getItem('ROLE_SIS'))) {

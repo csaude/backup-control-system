@@ -1,6 +1,9 @@
 package mz.org.fgh.scb.model.entity;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -40,13 +43,13 @@ public class Sync {
 	@Column(nullable = false)
 	private int start_items_to_receive;
 	
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private Date end_time;
 	
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private int end_items_to_send;
 	
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private int end_items_to_receive;
 
 	private String observation;
@@ -180,9 +183,13 @@ public class Sync {
 	}
 	
 	public String getDuration() {
-		if(this.start_time==null&&this.end_time==null) {
-			return "";
-		}else {
+		if(this.end_time==null&&getEditable()==false) {
+			return "NÃO\nTERMINADO";
+		}else if(this.end_time==null&&getEditable()==true) {
+			return "EM\nPROGRESSO";
+		}else 
+			if(this.end_time!=null)
+		   {
 			long diff = this.end_time.getTime() - this.start_time.getTime();
 			long diffMinutes = diff / (60 * 1000) % 60;
 			long diffHours = diff / (60 * 60 * 1000) % 24;
@@ -196,18 +203,111 @@ public class Sync {
 			}else {
 			return decimalFormat.format(diffMinutes)+"min";	
 			}
+		
+		   }else {return "";}
+	}
+	
+	public String getServerreport() {
+		return this.server.getName()+"\n"+this.server.getDistrictname();
+	}
+	
+	@SuppressWarnings("deprecation")
+	public String getSynctime() {
+		if(this.end_time==null) {
+			DecimalFormat decimalFormat= new DecimalFormat("00");
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			return sdf.format(this.start_time)+"\n"+decimalFormat.format(this.start_time.getHours())+":"+decimalFormat.format(this.start_time.getMinutes());
+		}else {
+		DecimalFormat decimalFormat= new DecimalFormat("00");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		return sdf.format(this.start_time)+"\n"+decimalFormat.format(this.start_time.getHours())+":"+decimalFormat.format(this.start_time.getMinutes())+"-"+decimalFormat.format(this.end_time.getHours())+":"+decimalFormat.format(this.end_time.getMinutes());
+		}
+		}
+	
+	@SuppressWarnings("deprecation")
+	public String getSynctimeemailstart() {
+		DecimalFormat decimalFormat= new DecimalFormat("00");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		return sdf.format(this.start_time)+" "+decimalFormat.format(this.start_time.getHours())+":"+decimalFormat.format(this.start_time.getMinutes());
 		}
 		
+	
+	@SuppressWarnings("deprecation")
+	public String getSynctimeemail() {
+		if(this.start_time==null||this.end_time==null) {
+			return "";
+		}else {
+		DecimalFormat decimalFormat= new DecimalFormat("00");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		return sdf.format(this.start_time)+" "+decimalFormat.format(this.start_time.getHours())+":"+decimalFormat.format(this.start_time.getMinutes())+"-"+decimalFormat.format(this.end_time.getHours())+":"+decimalFormat.format(this.end_time.getMinutes());
+		}
+		}
+	
+	public String getStartitems() {
+		return this.getStart_items_to_send()+" por enviar\n"+this.getStart_items_to_receive()+" por receber";
+	}
+	
+	public String getEnditems() {
+		return this.getEnd_items_to_send()+" por enviar\n"+this.getEnd_items_to_receive()+" por receber";
+	}
+	
+	public String getSyncerror(){
+		if(this.isSync_error()){
+			return "Sim";
+		}else {return "Não";}
+	}
+	
+	public String getSyncer(){
+		return this.getCreated_by().getPerson().getOthers_names()+"\n"+this.getCreated_by().getPerson().getSurname();
+	}
+	
+	public String getObservations() {
+		if(this.observation!=null&&this.observation_his==null) {
+			return this.observation;
+		}
+		else if(this.observation==null&&this.observation_his!=null) {
+			return this.observation_his;
+		}
+		else if(this.observation!=null&&this.observation_his!=null) {
+			return "M&A: "+ this.observation+"\nSIS: "+this.observation_his;
+		}
+		else {return null;}
 	}
 	
 	public String getState() {
+		
+		if(this.end_time==null) {
+			return "Progress";
+		}else {
+		
 		if(this.getEnd_items_to_receive()==0&&this.getEnd_items_to_send()==0) {
 			return "Complete";
 		}else if(this.getEnd_items_to_receive()>0||this.getEnd_items_to_send()>0) {
 			return "Incomplete";
-		}else  {
-			return "";
+		}else {return "";}
+		
 		}
+		
+	}
+	
+	public boolean getEditable(){
+		
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		Date today = new Date();
+		Date todayDate = null;
+		Date syncDate = null;
+		try {
+			todayDate = formatter.parse(formatter.format(today));
+			syncDate = formatter.parse(formatter.format(this.start_time));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		
+		if(syncDate.before(todayDate)) 
+			return false;
+		else
+			return true;
 	}
 
 	@SuppressWarnings("deprecation")

@@ -14,6 +14,8 @@ import { District } from './../districts/shared/district';
 import { DistrictsService } from './../districts/shared/districts.service';
 import * as myGlobals from '../../globals';
 import * as alasql from 'alasql';
+import { SyncsService } from "./../syncs/shared/syncs.service";
+import { Sync } from "./../syncs/shared/sync";
 
 @Component({
   selector: 'app-servers',
@@ -26,7 +28,7 @@ export class ServersComponent implements OnInit {
   public total: number = 0;
   public form: FormGroup;
   public server: Server = new Server();
-  public isHidden; isDisabledt: string;
+  public isHidden;isHidden2m; isDisabledt: string;
   public name;district;type: string;
   public size: string;
   public alldistricts: District[] = [];
@@ -39,6 +41,8 @@ export class ServersComponent implements OnInit {
   public ROLE_ORMA: string;
   public ROLE_GDD: string;
   public serverssyncinfo;
+  public syncs: Sync[] = [];
+  public sync: Sync = new Sync();
 
   public types = [
     { name: 'CHILD' },
@@ -52,6 +56,7 @@ export class ServersComponent implements OnInit {
     public toastService: MzToastService,
     public translate: TranslateService, 
     public formBuilder: FormBuilder,
+    public syncsService: SyncsService,
     public districtsService: DistrictsService) {
       this.form = formBuilder.group({
         name: [],
@@ -96,7 +101,7 @@ export class ServersComponent implements OnInit {
         this.total = data.totalElements;
         this.p = page;
         var result = data.content;
-        var synced = alasql("SELECT [0] AS send_id,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
+        var synced = alasql("SELECT [0] AS sync_id,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
         this.servers= alasql("SELECT * FROM ?result LEFT JOIN ?synced USING server_id ", [result, synced]);
         
       },
@@ -208,7 +213,7 @@ export class ServersComponent implements OnInit {
         this.serversService.getServersPaginated(1, 10000000, this.district,this.name,this.canceled,this.type)
       .subscribe(data => {
         var result = data.content;
-        var synced = alasql("SELECT [0] AS send_id,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
+        var synced = alasql("SELECT [0] AS sync_id,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
         this.serversreport= alasql("SELECT * FROM ?result LEFT JOIN ?synced USING server_id ", [result, synced]);
       },
         error => {
@@ -282,12 +287,16 @@ export class ServersComponent implements OnInit {
 
       });
 
-
-    
-
-
-
    
+  }
+
+  setSync(id) {
+    this.isHidden2m = "";
+    this.syncsService.getSyncById(id)
+    .subscribe(
+      sync => {
+        this.sync = sync;
+      },error=>{},()=>{this.isHidden2m = "hide";});
   }
 
   showMsg(server) {

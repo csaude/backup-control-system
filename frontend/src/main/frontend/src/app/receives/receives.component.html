@@ -97,11 +97,11 @@
             <i class="material-icons icon-green">info</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Receber'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receive', send.uuid]">
+          <a mz-tooltip [tooltip]="'Receber'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receive', send.uuid]" *ngIf="ROLE_SIS">
             <i class="material-icons icon-orange">mode_edit</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Imprimir Protocolo'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.send_id)" (click)="printSend()" [routerLink]="">
+          <a mz-tooltip [tooltip]="'Imprimir Protocolo'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.send_id)" (click)="printSend()" [routerLink]="" *ngIf="ROLE_SIS">
             <i class="material-icons icon-green">print</i>
           </a>
          
@@ -139,12 +139,12 @@
             <i class="material-icons icon-green">info</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receives', receive.uuid]">
+          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receives', receive.uuid]" *ngIf="ROLE_SIS">
             <i class="material-icons icon-orange">mode_edit</i>
           </a>
           
           &nbsp;
-          <a mz-tooltip [tooltip]="'Imprimir Protocolo'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend2(receive.uuid)" [routerLink]="">
+          <a mz-tooltip [tooltip]="'Imprimir Protocolo'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend2(receive.uuid)" [routerLink]="" *ngIf="ROLE_SIS">
             <i class="material-icons icon-green">print</i>
           </a>
        

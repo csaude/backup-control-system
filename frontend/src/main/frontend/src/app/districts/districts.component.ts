@@ -8,6 +8,8 @@ import { DistrictsService } from "./shared/districts.service";
 import { District } from "./shared/district";
 import { SendsService } from "./../sends/shared/sends.service";
 import { Send } from "./../sends/shared/send";
+import { SyncsService } from "./../syncs/shared/syncs.service";
+import { Sync } from "./../syncs/shared/sync";
 import { Receive } from '../receives/shared/receive';
 import { ReceivesService } from '../receives/shared/receives.service';
 import { Evaluation } from '../evaluations/shared/evaluation';
@@ -36,7 +38,6 @@ export class DistrictsComponent implements OnInit {
   public send_id: number;
   public send: Send = new Send();
   public sends: Send[] = [];
-  public sendsHistory: Object[] = [];
   public receive: Receive = new Receive();
   public evaluations: Evaluation[] = [];
   public evaluation: Evaluation = new Evaluation();
@@ -59,12 +60,8 @@ export class DistrictsComponent implements OnInit {
   public alldistricts: District[] = [];
   public districtsinfo; districtsresinfo; districtssyncinfo;
   public disabled1: boolean;
-
-  public options: Pickadate.DateOptions = {
-    format: 'dd/mm/yyyy',
-    formatSubmit: 'yyyy-mm-dd',
-    onClose: () => this.search2()
-  };
+  public syncs: Sync[] = [];
+  public sync: Sync = new Sync();
 
   constructor(
     public datepipe: DatePipe,
@@ -75,6 +72,7 @@ export class DistrictsComponent implements OnInit {
     public sendsService: SendsService,
     public receivesService: ReceivesService,
     public translate: TranslateService,
+    public syncsService: SyncsService,
     public formBuilder: FormBuilder) {
     this.form1 = formBuilder.group({
       name: [],
@@ -338,137 +336,20 @@ export class DistrictsComponent implements OnInit {
     this._csvService.download(this.resultEvaluation, this.district.name + '_' + this.evaluation.name + '_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm'));
   }
 
-  getPageSend(page: number) {
-    this.isHidden3m = "";
-    this.sendsService.getSendsByDistrict(page, 10, this.district_id)
-      .subscribe(data => {
-        this.totalHistory = data.totalElements;
-        this.pHistory = page;
-        this.sendsHistory = data.content;
-      },
-        error => {
-          this.isHidden3m = "hide";
-          this.totalHistory = 0;
-          this.pHistory = 1;
-          this.sendsHistory = [];
-        },
-        () => {
-          this.isHidden3m = "hide";
-        }
-      );
-  }
-
-  getPageSendDate(page: number, from, until) {
-    this.isHidden3m = "";
-    this.sendsService.getSendsByDistrictDate(page, 10, this.district_id, from, until)
-      .subscribe(data => {
-        this.totalHistory = data.totalElements;
-        this.pHistory = page;
-        this.sendsHistory = data.content;
-      },
-        error => {
-          this.isHidden3m = "hide";
-          this.totalHistory = 0;
-          this.pHistory = 1;
-          this.sendsHistory = [];
-        },
-        () => {
-          this.isHidden3m = "hide";
-        }
-      );
-  }
-
-  getPageReceiveDate(page: number, from, until) {
-    this.isHidden3m = "";
-    this.receivesService.getReceivesByDistrictDate(page, 10, this.district_id, from, until)
-      .subscribe(data => {
-        this.totalHistory = data.totalElements;
-        this.pHistory = page;
-        this.sendsHistory = data.content;
-      },
-        error => {
-          this.isHidden3m = "hide";
-          this.totalHistory = 0;
-          this.pHistory = 1;
-          this.sendsHistory = [];
-        },
-        () => {
-          this.isHidden3m = "hide";
-        }
-      );
-  }
-
-  getPageReceive(page: number) {
-    this.isHidden3m = "";
-    this.receivesService.getReceivesByDistrict(page, 10, this.district_id)
-      .subscribe(data => {
-        this.totalHistory = data.totalElements;
-        this.pHistory = page;
-        this.sendsHistory = data.content;
-      },
-        error => {
-          this.isHidden3m = "hide";
-          this.totalHistory = 0;
-          this.pHistory = 1;
-          this.sendsHistory = [];
-        },
-        () => {
-          this.isHidden3m = "hide";
-        }
-      );
-  }
-
-  getHistory(district_id) {
-    this.form.get('received').setValue(false);
-    this.form.get('backup_from').setValue(null);
-    this.form.get('backup_until').setValue(null);
-    this.received = false;
-    this.district_id = district_id;
-    this.getPageSend(1);
-  }
-
-  search2() {
-    var userValue = this.form.value;
-    if (userValue.received == null || userValue.received == false) {
-      this.received = false;
-      if (userValue.backup_from != "" && userValue.backup_from != null && userValue.backup_until != "" && userValue.backup_until != null) {
-        if (userValue.backup_from > userValue.backup_until) {
-          this.showMsgErr3();
-        } else {
-          this.isHidden3m = "";
-          this.getPageSendDate(1, userValue.backup_from, userValue.backup_until);
-        }
-      }
-      else if (((userValue.backup_from == "" || userValue.backup_from == null) && (userValue.backup_until == "" || userValue.backup_until == null)) ||
-        ((userValue.backup_from != null) && (userValue.backup_until == "" || userValue.backup_until == null)) ||
-        ((userValue.backup_until != null) && (userValue.backup_from == "" || userValue.backup_from == null))) {
-        this.isHidden3m = "";
-        this.getPageSend(1);
-      }
-    }
-    else {
-      this.received = true;
-      if (userValue.backup_from != "" && userValue.backup_from != null && userValue.backup_until != "" && userValue.backup_until != null) {
-        if (userValue.backup_from > userValue.backup_until) {
-          this.showMsgErr3();
-        } else {
-          this.isHidden3m = "";
-          this.getPageReceiveDate(1, userValue.backup_from, userValue.backup_until);
-        }
-      }
-      else if (((userValue.backup_from == "" || userValue.backup_from == null) && (userValue.backup_until == "" || userValue.backup_until == null)) ||
-        ((userValue.backup_from != null) && (userValue.backup_until == "" || userValue.backup_until == null)) ||
-        ((userValue.backup_until != null) && (userValue.backup_from == "" || userValue.backup_from == null))) {
-        this.isHidden3m = "";
-        this.getPageReceive(1);
-      }
-    }
-  }
-
+  
   clean() {
     this.resultEvaluation = [];
     this.keys = [];
     this.showResult = false;
+  }
+
+  setSync(id) {
+    this.isHidden2m = "";
+    this.syncsService.getSyncById(id)
+    .subscribe(
+      sync => {
+        this.sync = sync;
+      },error=>{},()=>{this.isHidden2m = "hide";});
   }
 
   printList() {
