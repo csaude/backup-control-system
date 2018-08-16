@@ -19,6 +19,13 @@ import { TranslateService } from 'ng2-translate';
   styleUrls: ['./sends.component.css']
 })
 export class SendsComponent implements OnInit {
+  public ROLE_SIS: string;
+  public ROLE_IT: string;
+  public ROLE_ODMA: string;
+  public ROLE_GDD: string;
+  public ROLE_ORMA: string;
+  public ROLE_OA: string;
+  public ROLE_GMA: string;
   public sends: Send[] = [];
   public send_id: number;
   public send: Send = new Send();
@@ -54,8 +61,23 @@ export class SendsComponent implements OnInit {
     this.received = false;
     this.districts_filter=false;
     this.districtr_filter=false;
-    var user = JSON.parse(window.localStorage.getItem('user'));
-    this.alldistricts = user.districts.sort(function (a, b) {
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
+    this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
+    this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
+    this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
+    this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
+    this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
+    this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
+    this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
+    
+    
+    if(this.ROLE_SIS){
+      this.alldistricts = user.districts;
+    }else{
+      this.alldistricts = user.districts.filter(item => item.parentdistrict!=null);
+    }
+
+    this.alldistricts.sort(function (a, b) {
       var nameA = a.name.toUpperCase(); // ignore upper and lowercase
       var nameB = b.name.toUpperCase(); // ignore upper and lowercase
       if (nameA < nameB) {
@@ -160,7 +182,7 @@ export class SendsComponent implements OnInit {
     }
   }
   printSend() {
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     var doc = new jsPDF();
     var send = this.send;
     doc.setFontSize(10);

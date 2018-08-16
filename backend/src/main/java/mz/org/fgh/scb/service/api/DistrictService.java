@@ -40,8 +40,4 @@ public interface DistrictService {
 	List<Object[]> findBackupReceivedByDistrictOnThisMonth();
 
 	List<Object[]> findBackupReceivedOnLast12Months();
-
-	List<Object[]> findBackupReceivedByDistrictOnPreviousMonthByUser(String username);
-
-	List<Object[]> findBackupReceivedByDistrictOnThisMonthByUser(String username);
 }

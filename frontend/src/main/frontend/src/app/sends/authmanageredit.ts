@@ -12,11 +12,11 @@ export class AuthManagerSendsEdit implements CanActivate {
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 
-        if (window.localStorage.getItem('authenticated') == "Sim" && (
-            window.localStorage.getItem('ROLE_GDD') ||
-            window.localStorage.getItem('ROLE_ODMA') ||
-            window.localStorage.getItem('ROLE_ORMA')||
-            window.localStorage.getItem('ROLE_SIS'))) {
+        if (window.sessionStorage.getItem('authenticated') == "Sim" && (
+            window.sessionStorage.getItem('ROLE_GDD') ||
+            window.sessionStorage.getItem('ROLE_ODMA') ||
+            window.sessionStorage.getItem('ROLE_ORMA')||
+            window.sessionStorage.getItem('ROLE_SIS'))) {
             return true;
         } else {
             this.router.navigate(['login']);

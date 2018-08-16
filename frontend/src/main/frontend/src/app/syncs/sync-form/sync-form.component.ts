@@ -95,14 +95,14 @@ export class SyncFormComponent implements OnInit {
   ngOnInit() {
     this.isDisabled = false;
     this.disabled1 = true;
-    var user = JSON.parse(window.localStorage.getItem('user'));
-    this.ROLE_SIS = window.localStorage.getItem('ROLE_SIS');
-    this.ROLE_OA = window.localStorage.getItem('ROLE_OA');
-    this.ROLE_IT = window.localStorage.getItem('ROLE_IT');
-    this.ROLE_ODMA = window.localStorage.getItem('ROLE_ODMA');
-    this.ROLE_GDD = window.localStorage.getItem('ROLE_GDD');
-    this.ROLE_ORMA = window.localStorage.getItem('ROLE_ORMA');
-    this.ROLE_GMA = window.localStorage.getItem('ROLE_GMA');
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
+    this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
+    this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
+    this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
+    this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
+    this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
+    this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
+    this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
     var uuid = this.route.params.subscribe(params => {
       var uuid = params['uuid'];
       this.title = uuid ? 'Editar Registo de Sincronização' : 'Registar Sincronização';
@@ -174,7 +174,7 @@ export class SyncFormComponent implements OnInit {
   save() {
     this.isDisabled = true;
     var result, userValue = this.form.value;
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     if (this.sync.uuid) {
 
       if (

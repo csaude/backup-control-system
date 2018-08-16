@@ -108,6 +108,7 @@ public class ReceiveServiceImpl implements ReceiveService {
 								+ "</tbody></table>");
 						email.setTextMsg(
 								"O seu cliente não aceita mensagens HTML. \nContacte o Administador para mais detalhes.");
+						email.setCharset("utf-8");
 						email.send();
 					} catch (Exception e) {
 						e.printStackTrace();

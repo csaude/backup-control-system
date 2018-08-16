@@ -43,7 +43,7 @@ export class UsersComponent implements OnInit {
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
-        var user = JSON.parse(window.localStorage.getItem('user'));
+        var user = JSON.parse(window.sessionStorage.getItem('user'));
         this.users  = data.content.filter(item => item.user_id != user.user_id);
       },
         error => {

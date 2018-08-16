@@ -83,8 +83,8 @@ export class UserFormComponent implements OnInit {
     this.isDisabled = false;
     this.disabled1 = true;
     this.disabled2 = true;
-    var user = JSON.parse(window.localStorage.getItem('user'));
-    this.ROLE_SIS = window.localStorage.getItem('ROLE_SIS');
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
+    this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
     var id = this.route.params.subscribe(params => {
       var uuid = params['uuid'];
       this.title = uuid ? 'Editar Utilizador' : 'Novo Utilizador';
@@ -177,8 +177,8 @@ export class UserFormComponent implements OnInit {
   save() {
     this.isDisabled = true;
     var result, userValue = this.form.value;
-    var userLogged = JSON.parse(window.localStorage.getItem('user'));
-    console.log(userValue)
+    var userLogged = JSON.parse(window.sessionStorage.getItem('user'));
+   
     if (this.user.uuid) {
       if (userValue.password_new != null) {
         userValue.password = userValue.password_new;

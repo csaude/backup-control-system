@@ -115,9 +115,14 @@
   </mz-modal-header>
   <mz-modal-content>
     <div class="row" style="margin-top: -11px;">
-      <div class="col s12">
+      <div class="col s12" *ngIf="district.parentdistrict==null">
         <h5 class="light">{{district.province}} / {{district.name}}</h5>
       </div>
+
+      <div class="col s12" *ngIf="district.parentdistrict!=null">
+        <h5 class="light">{{district.province}} /  {{district.parentdistrict.name}} / {{district.name}}</h5>
+      </div>
+
     </div>
     <div class="row" style="margin-top: -11px;" *ngIf="district.ironkeysnumber">
       <div class="col s12 l2 m2"></div>
@@ -395,7 +400,7 @@
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2">{{ "duration" | translate }}:</div>
         <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==true"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span></div>
-        <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==false"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge red' data-badge-caption="NÃO FINALIZADO"></span></div>
+        <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==false"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge red' data-badge-caption="NÃO CONCLUIDA"></span></div>
         <div class="col s12 l10 m10" *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.duration }}</div>
       </div>
   
@@ -407,7 +412,7 @@
   
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2">{{ "items_onend" | translate }}:</div>
-        <div class="col s12 l10 m10">{{ sync.end_items_to_send }} {{ "items_send" | translate }}
+        <div class="col s12 l10 m10"  *ngIf="sync.end_time!=null">{{ sync.end_items_to_send }} {{ "items_send" | translate }}
           <br>{{ sync.end_items_to_receive }} {{ "items_receive" | translate }}</div>
       </div>
   

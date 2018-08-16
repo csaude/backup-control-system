@@ -17,8 +17,8 @@ export class AuthoritiesService {
  */
   getAuthorities() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url, { headers: headers })

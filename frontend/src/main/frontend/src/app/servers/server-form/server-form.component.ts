@@ -66,7 +66,7 @@ export class ServerFormComponent implements OnInit {
   ngOnInit() {
     this.disabled1 = true;
     this.isDisabled = false;
-    this.user = JSON.parse(window.localStorage.getItem('user'));
+    this.user = JSON.parse(window.sessionStorage.getItem('user'));
     this.route.params.subscribe(params => {
       var uuid = params['uuid'];
       this.title = uuid ? 'Editar Server' : 'Novo Server';
@@ -75,7 +75,7 @@ export class ServerFormComponent implements OnInit {
         
         this.districtsService.getDistricts()
         .subscribe(data => {
-          this.alldistricts = data;
+          this.alldistricts = data.filter(item => item.parentdistrict==null);;
         
         },error=>{},
       ()=>{this.disabled1 = false;});
@@ -97,7 +97,7 @@ export class ServerFormComponent implements OnInit {
 
               this.districtsService.getDistricts()
               .subscribe(data => {
-                this.alldistricts = data;
+                this.alldistricts = data.filter(item => item.parentdistrict==null);;
                 this.alldistricts = this.alldistricts.filter(item => item.district_id !== this.server.district.district_id);
                 this.alldistricts.push(this.server.district);
                 this.alldistricts =  this.alldistricts.sort(function (a, b) {

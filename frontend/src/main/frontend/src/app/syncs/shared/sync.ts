@@ -26,6 +26,7 @@ export class Sync {
   canceled_reason: string;
   state: string;
   duration:string;
+  editable: boolean;
 
 
 }

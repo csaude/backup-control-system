@@ -184,7 +184,7 @@ public class Sync {
 	
 	public String getDuration() {
 		if(this.end_time==null&&getEditable()==false) {
-			return "NÃO\nTERMINADO";
+			return "NÃO\nCONCLUIDA";
 		}else if(this.end_time==null&&getEditable()==true) {
 			return "EM\nPROGRESSO";
 		}else 
@@ -248,6 +248,9 @@ public class Sync {
 	}
 	
 	public String getEnditems() {
+		if(this.end_time==null) 
+			return "";
+		else
 		return this.getEnd_items_to_send()+" por enviar\n"+this.getEnd_items_to_receive()+" por receber";
 	}
 	

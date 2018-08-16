@@ -15,8 +15,8 @@ export class DistrictsService {
 
   getDistricts() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url, { headers: headers })
@@ -25,8 +25,8 @@ export class DistrictsService {
   
   getDistrictsFiltered(page,size,name,canceled) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url+"/getf?page="+page+"&size="+size+"&name="+name+"&canceled="+canceled, { headers: headers })
@@ -35,8 +35,8 @@ export class DistrictsService {
 
   getDistrictsAll(page,size,name,canceled) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url+"/get?page="+page+"&size="+size+"&name="+name+"&canceled="+canceled, { headers: headers })
@@ -45,8 +45,8 @@ export class DistrictsService {
 
   getDistrictsReceiveInfo() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url + 'receiveinfo', { headers: headers })
@@ -55,8 +55,8 @@ export class DistrictsService {
 
   getDistrictsRestoreInfo() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url + 'restoreinfo', { headers: headers })
@@ -65,8 +65,8 @@ export class DistrictsService {
 
   getDistrictsSyncInfo() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url + 'syncinfo', { headers: headers })
@@ -75,8 +75,8 @@ export class DistrictsService {
 
   getReceivedPM() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url + 'receivedpreviousmonth', { headers: headers })
@@ -85,8 +85,8 @@ export class DistrictsService {
 
   getReceivedTM() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url + 'receivedthismonth', { headers: headers })
@@ -95,38 +95,18 @@ export class DistrictsService {
 
   getReceivedLast() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url + 'receivedlastmonths', { headers: headers })
       .map(res => res.json());
   }
 
-  getSendPM() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'sendpreviousmonth', { headers: headers })
-      .map(res => res.json());
-  }
-
-  getSendTM() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'sendthismonth', { headers: headers })
-      .map(res => res.json());
-  }
-
   getDistrictByUuid(uuid) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.getDistrictUrl(uuid), { headers: headers })
@@ -135,8 +115,8 @@ export class DistrictsService {
 
   addDistrict(district) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.post(this.url, JSON.stringify(district), { headers: headers });
@@ -144,8 +124,8 @@ export class DistrictsService {
 
   updateDistrict(district) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.put(this.url, JSON.stringify(district), { headers: headers });
@@ -153,8 +133,8 @@ export class DistrictsService {
 
   deleteDistrict(uuid) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.delete(this.getDistrictUrl(uuid), { headers: headers });
@@ -162,8 +142,8 @@ export class DistrictsService {
 
   evaluate(url, datasetuuid) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url + "/" + url + "/" + datasetuuid, { headers: headers })

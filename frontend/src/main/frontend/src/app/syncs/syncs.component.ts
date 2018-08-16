@@ -68,18 +68,18 @@ export class SyncsComponent implements OnInit {
     this.isHidden = "";
     this.districts_filter = false;
     this.servers_filter = false;
-    var user = JSON.parse(window.localStorage.getItem('user'));
-    this.ROLE_SIS = window.localStorage.getItem('ROLE_SIS');
-    this.ROLE_OA = window.localStorage.getItem('ROLE_OA');
-    this.ROLE_IT = window.localStorage.getItem('ROLE_IT');
-    this.ROLE_ODMA = window.localStorage.getItem('ROLE_ODMA');
-    this.ROLE_GDD = window.localStorage.getItem('ROLE_GDD');
-    this.ROLE_ORMA = window.localStorage.getItem('ROLE_ORMA');
-    this.ROLE_GMA = window.localStorage.getItem('ROLE_GMA');
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
+    this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
+    this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
+    this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
+    this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
+    this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
+    this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
+    this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
 
     if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
-
-      this.alldistricts = user.districts.sort(function (a, b) {
+      var filteredd=user.districts.filter(item => item.parentdistrict==null);
+      this.alldistricts = filteredd.sort(function (a, b) {
         var nameA = a.name.toUpperCase(); // ignore upper and lowercase
         var nameB = b.name.toUpperCase(); // ignore upper and lowercase
         if (nameA < nameB) {
@@ -108,7 +108,8 @@ export class SyncsComponent implements OnInit {
 
       this.districtsService.getDistricts()
         .subscribe(data => {
-          this.alldistricts = data;
+          var filteredd=user.districts.filter(item => item.parentdistrict==null);
+          this.alldistricts = filteredd;
         });
 
       this.serversService.getServers()
@@ -461,7 +462,7 @@ export class SyncsComponent implements OnInit {
               () => {
                 this.isHidden = "hide";
 
-                var user = JSON.parse(window.localStorage.getItem('user'));
+                var user = JSON.parse(window.sessionStorage.getItem('user'));
                 var doc = new jsPDF('landscape');
                 var totalPagesExp = "{total_pages_count_string}";
                 var columns = [
@@ -546,7 +547,7 @@ export class SyncsComponent implements OnInit {
               () => {
                 this.isHidden = "hide";
 
-                var user = JSON.parse(window.localStorage.getItem('user'));
+                var user = JSON.parse(window.sessionStorage.getItem('user'));
                 var doc = new jsPDF('landscape');
                 var totalPagesExp = "{total_pages_count_string}";
                 var columns = [
@@ -556,7 +557,7 @@ export class SyncsComponent implements OnInit {
                   { title: "Nº itens na\nHora inicial", dataKey: "startitems" },
                   { title: "Nº itens na\nHora final", dataKey: "enditems" },
                   { title: "Encontrou\nerro?", dataKey: "syncerror" },
-                  { title: "Sincronizado\npor", dataKey: "syncer" },
+                  { title: "Sincronização\niniciada por", dataKey: "syncer" },
                   { title: "Observação", dataKey: "observations" }
                   
                 ];
@@ -633,7 +634,7 @@ export class SyncsComponent implements OnInit {
           () => {
             this.isHidden = "hide";
 
-            var user = JSON.parse(window.localStorage.getItem('user'));
+            var user = JSON.parse(window.sessionStorage.getItem('user'));
             var doc = new jsPDF('landscape');
             var totalPagesExp = "{total_pages_count_string}";
             var columns = [
@@ -643,7 +644,7 @@ export class SyncsComponent implements OnInit {
               { title: "Nº itens na\nHora inicial", dataKey: "startitems" },
               { title: "Nº itens na\nHora final", dataKey: "enditems" },
               { title: "Encontrou\nerro?", dataKey: "syncerror" },
-              { title: "Sincronizado\npor", dataKey: "syncer" },
+              { title: "Sincronização\niniciada por", dataKey: "syncer" },
               { title: "Observação", dataKey: "observations" }
               
             ];
@@ -721,7 +722,7 @@ export class SyncsComponent implements OnInit {
           () => {
             this.isHidden = "hide";
 
-            var user = JSON.parse(window.localStorage.getItem('user'));
+            var user = JSON.parse(window.sessionStorage.getItem('user'));
             var doc = new jsPDF('landscape');
             var totalPagesExp = "{total_pages_count_string}";
             var columns = [

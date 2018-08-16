@@ -93,13 +93,13 @@ export class DistrictsComponent implements OnInit {
     this.isDisabledt2 = "disabled";
     this.isHidden2 = "hide";
     this.isDisabled = false;
-    this.ROLE_SIS = window.localStorage.getItem('ROLE_SIS');
-    this.ROLE_OA = window.localStorage.getItem('ROLE_OA');
-    this.ROLE_IT = window.localStorage.getItem('ROLE_IT');
-    this.ROLE_GMA = window.localStorage.getItem('ROLE_GMA');
-    this.ROLE_ODMA = window.localStorage.getItem('ROLE_ODMA');
-    this.ROLE_ORMA = window.localStorage.getItem('ROLE_ORMA');
-    this.ROLE_GDD = window.localStorage.getItem('ROLE_GDD');
+    this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
+    this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
+    this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
+    this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
+    this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
+    this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
+    this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
     this.total = 0;
     if (this.ROLE_SIS || this.ROLE_IT || this.ROLE_GMA || this.ROLE_OA) {
       this.getPageAll(1);
@@ -163,7 +163,7 @@ export class DistrictsComponent implements OnInit {
     this.isHidden = "";
     this.districtsService.getDistrictsFiltered(page, 10, this.name, this.canceled)
       .subscribe(data => {
-        this.total = data.totalElements;
+        this.totali = data.totalElements;
         this.p = page;
         this.alldistricts = data.content;;
       },
@@ -399,7 +399,7 @@ export class DistrictsComponent implements OnInit {
                               this.isDisabledt = "";
                               this.total = this.totali;
 
-                              var user = JSON.parse(window.localStorage.getItem('user'));
+                              var user = JSON.parse(window.sessionStorage.getItem('user'));
                               var doc = new jsPDF('landscape');
                               var totalPagesExp = "{total_pages_count_string}";
                               var columns = [
@@ -505,7 +505,7 @@ export class DistrictsComponent implements OnInit {
                               this.isDisabledt = "";
                               this.total = this.totali;
 
-                              var user = JSON.parse(window.localStorage.getItem('user'));
+                              var user = JSON.parse(window.sessionStorage.getItem('user'));
                               var doc = new jsPDF('landscape');
                               var totalPagesExp = "{total_pages_count_string}";
                               var columns = [

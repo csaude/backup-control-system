@@ -12,11 +12,11 @@ export class AuthManagerTransportersEdit implements CanActivate {
     constructor(public router: Router) { }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        if (window.localStorage.getItem('authenticated') == "Sim" && (
-            window.localStorage.getItem('ROLE_SIS') ||
-            window.localStorage.getItem('ROLE_ODMA') ||
-            window.localStorage.getItem('ROLE_GDD') ||
-            window.localStorage.getItem('ROLE_ORMA'))
+        if (window.sessionStorage.getItem('authenticated') == "Sim" && (
+            window.sessionStorage.getItem('ROLE_SIS') ||
+            window.sessionStorage.getItem('ROLE_ODMA') ||
+            window.sessionStorage.getItem('ROLE_GDD') ||
+            window.sessionStorage.getItem('ROLE_ORMA'))
         ) {
             return true;
         } else {

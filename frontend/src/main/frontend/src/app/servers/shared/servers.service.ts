@@ -13,8 +13,8 @@ export class ServersService {
   }
   getServers() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url, { headers: headers })
@@ -23,8 +23,8 @@ export class ServersService {
 
   getServersByUser() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url+"user", { headers: headers })
@@ -33,8 +33,8 @@ export class ServersService {
 
   getServersSyncInfo() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url + 'syncinfo', { headers: headers })
@@ -44,8 +44,8 @@ export class ServersService {
 
   getServersPaginated(page, size, district,name,canceled,type) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url + "/get?page=" + page + "&size=" + size + "&search=district~"+district+",name:" + name+ ",canceled!" + canceled+ ",type!" + type, { headers: headers })
@@ -53,8 +53,8 @@ export class ServersService {
   }
   getServerByUuid(uuid) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.getServerUrl(uuid), { headers: headers })
@@ -63,8 +63,8 @@ export class ServersService {
 
   getServersByDistrict(district_id) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url+'district/'+district_id, { headers: headers })
@@ -73,8 +73,8 @@ export class ServersService {
 
     getSyncsPW() {
       var headers: any = new Headers();
-      var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-      var user = JSON.parse(window.localStorage.getItem('user'));
+      var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+      var user = JSON.parse(window.sessionStorage.getItem('user'));
       headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
       headers.append('Content-Type', 'application/json');
       return this.http.get(this.url + 'syncspreviousweek', { headers: headers })
@@ -83,8 +83,8 @@ export class ServersService {
 
     getSyncsTW() {
       var headers: any = new Headers();
-      var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-      var user = JSON.parse(window.localStorage.getItem('user'));
+      var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+      var user = JSON.parse(window.sessionStorage.getItem('user'));
       headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
       headers.append('Content-Type', 'application/json');
       return this.http.get(this.url + 'syncsthisweek', { headers: headers })
@@ -93,8 +93,8 @@ export class ServersService {
 
     getSyncsItemsPW() {
       var headers: any = new Headers();
-      var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-      var user = JSON.parse(window.localStorage.getItem('user'));
+      var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+      var user = JSON.parse(window.sessionStorage.getItem('user'));
       headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
       headers.append('Content-Type', 'application/json');
       return this.http.get(this.url + 'syncsitemspreviousweek', { headers: headers })
@@ -103,8 +103,8 @@ export class ServersService {
 
     getSyncsItemsTW() {
       var headers: any = new Headers();
-      var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-      var user = JSON.parse(window.localStorage.getItem('user'));
+      var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+      var user = JSON.parse(window.sessionStorage.getItem('user'));
       headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
       headers.append('Content-Type', 'application/json');
       return this.http.get(this.url + 'syncsitemsthisweek', { headers: headers })
@@ -113,24 +113,24 @@ export class ServersService {
 
   addServer(server) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.post(this.url, JSON.stringify(server), { headers: headers });
   }
   updateServer(server) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.put(this.url, JSON.stringify(server), { headers: headers });
   }
   deleteServer(uuid) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.delete(this.getServerUrl(uuid), { headers: headers });

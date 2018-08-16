@@ -3,23 +3,13 @@
 @email damasceno.lopes@fgh.org.mz
 -->
 
-<div class="preloader-wrapper big active preloader {{isHidden}}">
-    <div class="spinner-layer spinner-red-only">
-      <div class="circle-clipper left">
-        <div class="circle"></div>
-      </div><div class="gap-patch">
-        <div class="circle"></div>
-      </div><div class="circle-clipper right">
-        <div class="circle"></div>
-      </div>
-    </div>
-  </div>
-
 <br>
 
 <h5 class="light" *ngIf="title=='Meu Perfil'"> {{ "myprofile" | translate }}</h5>
 <div class="col s12 card">
- 
+  <div class="progress {{isHidden}}">
+    <div class="indeterminate"></div>
+  </div>
   <mz-tab [responsiveThreshold]="'true'" *ngIf="isHidden=='hide'">
     <mz-tab-item [active]="'true'" [label]="'Detalhes'">
       <div class="card-panel" style="margin-top: -0px;">

@@ -77,7 +77,7 @@ export class IronkeyFormComponent implements OnInit {
   }
   ngOnInit() {
     this.isDisabled = false;
-    this.user = JSON.parse(window.localStorage.getItem('user'));
+    this.user = JSON.parse(window.sessionStorage.getItem('user'));
     this.route.params.subscribe(params => {
       var uuid = params['uuid'];
       this.title = uuid ? 'Editar Ironkey' : 'Novo Ironkey';

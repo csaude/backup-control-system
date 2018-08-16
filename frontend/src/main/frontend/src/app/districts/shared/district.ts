@@ -19,4 +19,7 @@ export class District {
   updated_by: User = new User();
   date_created: Date;
   uuid: string;
+  canceled: boolean;
+  canceled_reason:string;
+  parentdistrict: District;
 }

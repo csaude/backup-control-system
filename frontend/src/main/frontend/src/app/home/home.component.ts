@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Backups efectuados no mês anterior recebidos no SIS',
+      text: 'Nº de backups efectuados no mês anterior recebidos',
       display: true
     },
     scales: {
@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Backups efectuados neste mês recebidos no SIS',
+      text: 'Nº de backups efectuados neste mês recebidos',
       display: true
     },
     scales: {
@@ -128,7 +128,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Backups dos últimos 12 meses recebidos e restaurados',
+      text: 'Nº de distritos que enviaram backups nos últimos 12 meses recebidos e restaurados',
       display: true
     },
     scales: {
@@ -161,7 +161,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Sincronizações registadas na semana anterior',
+      text: 'Nº de sincronizações registadas na semana anterior',
       display: true
     },
     scales: {
@@ -173,13 +173,14 @@ export class HomeComponent implements OnInit {
               return label;
             }
           }
-        }
+        },
+        stacked: true
       }],
       xAxes: [{
         ticks: {
           autoSkip: false
         },
-
+        stacked: true
       }]
     }
   };
@@ -194,7 +195,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Sincronizações registadas nesta semana',
+      text: 'Nº de sincronizações registadas nesta semana',
       display: true
     },
     scales: {
@@ -206,12 +207,14 @@ export class HomeComponent implements OnInit {
               return label;
             }
           }
-        }
+        },
+        stacked: true
       }],
       xAxes: [{
         ticks: {
           autoSkip: false
-        }
+        },
+        stacked: true
       }]
     }
   };
@@ -220,7 +223,7 @@ export class HomeComponent implements OnInit {
   public pieChartType6: string = 'pie';
   public pieOptions6: any = {
     title: {
-      text: 'Erros de sincronização encontrados na semana anterior',
+      text: 'Nº de erros de sincronização encontrados na semana anterior',
       display: true
     },
     legend: {
@@ -237,7 +240,7 @@ export class HomeComponent implements OnInit {
   public pieChartType7: string = 'pie';
   public pieOptions7: any = {
     title: {
-      text: 'Erros de sincronização encontrados nesta semana',
+      text: 'Nº de erros de sincronização encontrados nesta semana',
       display: true
     },
     legend: {
@@ -260,7 +263,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Maquinas com itens restantes por enviar na semana anterior',
+      text: 'Servidores com itens restantes por enviar na semana anterior',
       display: true
     },
     scales: {
@@ -293,7 +296,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Maquinas com itens restantes por enviar nesta semana',
+      text: 'Servidores com itens restantes por enviar nesta semana',
       display: true
     },
     scales: {
@@ -326,7 +329,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Maquinas com itens restantes por receber na semana anterior',
+      text: 'Servidores com itens restantes por receber na semana anterior',
       display: true
     },
     scales: {
@@ -359,7 +362,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Maquinas com itens restantes por receber nesta semana',
+      text: 'Servidores com itens restantes por receber nesta semana',
       display: true
     },
     scales: {
@@ -400,14 +403,14 @@ export class HomeComponent implements OnInit {
     this.chart9 = false;
     this.chart10 = false;
     this.chart11 = false;
-    this.ROLE_SIS = window.localStorage.getItem('ROLE_SIS');
-    this.ROLE_OA = window.localStorage.getItem('ROLE_OA');
-    this.ROLE_IT = window.localStorage.getItem('ROLE_IT');
-    this.ROLE_ODMA = window.localStorage.getItem('ROLE_ODMA');
-    this.ROLE_GDD = window.localStorage.getItem('ROLE_GDD');
-    this.ROLE_ORMA = window.localStorage.getItem('ROLE_ORMA');
-    this.ROLE_GMA = window.localStorage.getItem('ROLE_GMA');
-    this.user=JSON.parse(window.localStorage.getItem('user'));
+    this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
+    this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
+    this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
+    this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
+    this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
+    this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
+    this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
+    this.user = JSON.parse(window.sessionStorage.getItem('user'));
     if (this.ROLE_SIS || this.ROLE_IT || this.ROLE_OA || this.ROLE_GMA) {
       this.districtsService.getReceivedPM()
         .subscribe(data => {
@@ -470,12 +473,11 @@ export class HomeComponent implements OnInit {
           var label: string[] = [];
           var value: number[] = [];
           var value2: number[] = [];
-          for (let l of result) {
-            label.push((l.district.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
-            value.push(l.exist);
-            if (l.error == 0) {
-              value2.push(null);
-            } else {
+
+          if (data) {
+            for (let l of result) {
+              label.push((l.district.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
+              value.push(l.exist);
               value2.push(l.error);
             }
 
@@ -483,15 +485,18 @@ export class HomeComponent implements OnInit {
           this.barChartLabels4 = label;
           this.barChartData4 = [
 
-            { data: value2, label: "Erro encontrado", type: "line", fill: "false" },
-            { data: value, label: "Sincronização registada" }];
+            { data: value, label: "Sincronização registada" },
+            { data: value2, label: "Erro encontrado" }
+          ];
 
           var result2 = alasql("SELECT [1] AS district, COUNT(*) AS error FROM ? WHERE [4]=1 GROUP BY [1] ", [data]);
           var label2: string[] = [];
           var value3: number[] = [];
-          for (let l of result2) {
-            label2.push((l.district.split('Quelimane (').join('')).split(')').join(''));
-            value3.push(l.error);
+          if (data.length > 0) {
+            for (let l of result2) {
+              label2.push((l.district.split('Quelimane (').join('')).split(')').join(''));
+              value3.push(l.error);
+            }
           }
           this.pieChartLabels6 = label2;
           this.pieChartData6 = value3;
@@ -509,29 +514,30 @@ export class HomeComponent implements OnInit {
           var label: string[] = [];
           var value: number[] = [];
           var value2: number[] = [];
-          for (let l of result) {
-            label.push((l.district.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
-            value.push(l.exist);
-            if (l.error == 0) {
-              value2.push(null);
-            } else {
+          if (data) {
+            for (let l of result) {
+              label.push((l.district.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
+              value.push(l.exist);
               value2.push(l.error);
             }
-
           }
+
           this.barChartLabels5 = label;
           this.barChartData5 = [
-
-            { data: value2, label: "Erro encontrado", type: "line", fill: "false" },
-            { data: value, label: "Sincronização registada" }];
+            //, type: "line", fill: "false"
+            { data: value, label: "Sincronização registada" },
+            { data: value2, label: "Erro encontrado" }
+          ];
 
 
           var result2 = alasql("SELECT [1] AS district, COUNT(*) AS error FROM ? WHERE [4]=1 GROUP BY [1] ", [data]);
           var label2: string[] = [];
           var value3: number[] = [];
-          for (let l of result2) {
-            label2.push((l.district.split('Quelimane (').join('')).split(')').join(''));
-            value3.push(l.error);
+          if (data.length > 0) {
+            for (let l of result2) {
+              label2.push((l.district.split('Quelimane (').join('')).split(')').join(''));
+              value3.push(l.error);
+            }
           }
           this.pieChartLabels7 = label2;
           this.pieChartData7 = value3;
@@ -612,18 +618,17 @@ export class HomeComponent implements OnInit {
             this.chart11 = true;
           });
 
-
-
-
     }
     if (this.ROLE_ODMA || this.ROLE_GDD || this.ROLE_ORMA) {
-      this.districtsService.getSendPM()
+      this.districtsService.getReceivedPM()
         .subscribe(data => {
-          var result = alasql("SELECT [0] AS district, [1] AS exist FROM ?", [data]);
+          var districts = this.user.districts.filter(item => item.parentdistrict!=null);;
+          var resulti = alasql("SELECT [0] AS name, [1] AS exist FROM ?", [data]);
+          var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
           var label: string[] = [];
           var value: number[] = [];
           for (let l of result) {
-            label.push(l.district);
+            label.push((l.name.split('Quelimane (').join('')).split(')').join('') );
             value.push(l.exist);
           }
           this.barChartLabels = label;
@@ -635,13 +640,15 @@ export class HomeComponent implements OnInit {
             this.chart1 = true;
           });
 
-      this.districtsService.getSendTM()
+      this.districtsService.getReceivedTM()
         .subscribe(data => {
-          var result = alasql("SELECT [0] AS district, [1] AS exist FROM ?", [data]);
+          var districts = this.user.districts.filter(item => item.parentdistrict!=null);;
+          var resulti = alasql("SELECT [0] AS name, [1] AS exist FROM ?", [data]);
+          var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
           var label: string[] = [];
           var value: number[] = [];
           for (let l of result) {
-            label.push(l.district);
+            label.push((l.name.split('Quelimane (').join('')).split(')').join(''));
             value.push(l.exist);
           }
           this.barChartLabels2 = label;
@@ -654,11 +661,11 @@ export class HomeComponent implements OnInit {
             this.chart2 = true;
           });
 
-          this.serversService.getSyncsPW()
+      this.serversService.getSyncsPW()
         .subscribe(data => {
-          var districts=this.user.districts;
-          var resulti = alasql("SELECT [0] AS server,[1] AS name, [3] AS exist,[4] AS error FROM ?data ", [data,districts]);
-          var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti,districts]);
+          var districts = this.user.districts;
+          var resulti = alasql("SELECT [0] AS server,[1] AS name, [3] AS exist,[4] AS error FROM ?data ", [data, districts]);
+          var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
           var label: string[] = [];
           var value: number[] = [];
           var value2: number[] = [];
@@ -675,22 +682,21 @@ export class HomeComponent implements OnInit {
           this.barChartLabels4 = label;
           this.barChartData4 = [
 
-            { data: value2, label: "Erro encontrado", type: "line", fill: "false" },
-            { data: value, label: "Sincronização registada" }];
-            
+            { data: value, label: "Sincronização registada" },{ data: value2, label: "Erro encontrado" }];
+
 
         },
           error => { },
           () => {
             this.chart4 = true;
-       
+
           });
 
       this.serversService.getSyncsTW()
         .subscribe(data => {
-          var districts=this.user.districts;
-          var resulti = alasql("SELECT [0] AS server,[1] AS name, [3] AS exist,[4] AS error FROM ?data ", [data,districts]);
-          var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti,districts]);
+          var districts = this.user.districts;
+          var resulti = alasql("SELECT [0] AS server,[1] AS name, [3] AS exist,[4] AS error FROM ?data ", [data, districts]);
+          var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
           var label: string[] = [];
           var value: number[] = [];
           var value2: number[] = [];
@@ -707,8 +713,7 @@ export class HomeComponent implements OnInit {
           this.barChartLabels5 = label;
           this.barChartData5 = [
 
-            { data: value2, label: "Erro encontrado", type: "line", fill: "false" },
-            { data: value, label: "Sincronização registada" }];
+            { data: value, label: "Sincronização registada" },{ data: value2, label: "Erro encontrado" }];
 
         },
           error => { },

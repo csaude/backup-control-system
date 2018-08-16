@@ -143,6 +143,45 @@
           </label>
         </div>
       </div>
+
+
+      <div class="row">
+        <div class="input-field col s12" *ngIf="translate.currentLang=='pt'">
+          <mz-select-container>
+            <i mz-icon mz-input-prefix [icon]="'location_on'">
+            </i>
+            <select mz-select mz-validation required id="district" [label]="'Parente *'" [placeholder]="'Seleccione o Distrito'" [(ngModel)]="district.parentdistrict"
+              formControlName="parent">
+              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+            </select>
+          </mz-select-container>
+        </div>
+        <div class="input-field col s12" *ngIf="translate.currentLang=='en'">
+          <mz-select-container>
+            <i mz-icon mz-input-prefix [icon]="'location_on'">
+            </i>
+            <select mz-select mz-validation required id="district" [label]="'Parent *'" [placeholder]="'Select the District'" [(ngModel)]="district.parentdistrict"
+              formControlName="parent">
+              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+            </select>
+          </mz-select-container>
+        </div>
+      </div>
+
+      <div class="row" class="row"*ngIf="district.district_id!=null">
+        <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 25px;">
+          <input type="checkbox" class="filled-in" id="canceled" [(ngModel)]="district.canceled" formControlName="canceled" />
+          <label for="canceled">{{ "cancelit" | translate }}</label>
+        </div>
+        <div class="input-field col s12 l8 m8" *ngIf="district.canceled">
+          <input id="canceled_reason" type="text" class="validate" [(ngModel)]="district.canceled_reason" formControlName="canceled_reason">
+          <label for="canceled_reason" [class.active]="district.canceled_reason">
+            {{ "cancelitreason" | translate }}
+          </label>
+        </div>
+      </div>
+
+
       <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled||disabled1==true">
         {{ "save" | translate }}
         <i class="material-icons right">send</i>

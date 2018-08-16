@@ -85,6 +85,12 @@ public class District {
 	private User canceled_by;
 	
 	private Date date_canceled;
+	
+	@JsonBackReference(value="district-parent")
+	@JoinColumn(name = "parent_id")
+	@ManyToOne
+	private District parent;
+	
 
 	public District() {
 		this.canceled = false;
@@ -269,6 +275,20 @@ public class District {
 
 	public void setCanceled_reason(String canceled_reason) {
 		this.canceled_reason = canceled_reason;
+	}
+
+	public District getParent() {
+		return parent;
+	}
+	
+	public District getParentdistrict() {
+		this.setCreated_by(null);
+		this.setUpdated_by(null);
+		return parent;
+	}
+
+	public void setParent(District parent) {
+		this.parent = parent;
 	}
 
 	public String getIronkeysnames() {

@@ -99,16 +99,6 @@ public class DistrictServiceImpl implements DistrictService {
 	}
 
 	@Override
-	public List<Object[]> findBackupReceivedByDistrictOnPreviousMonthByUser(String username) {
-		return districtRepository.findBackupReceivedByDistrictOnPreviousMonthByUser(username);
-	}
-
-	@Override
-	public List<Object[]> findBackupReceivedByDistrictOnThisMonthByUser(String username) {
-		return districtRepository.findBackupReceivedByDistrictOnThisMonthByUser(username);
-	}
-
-	@Override
 	public List<Object[]> findLastSyncByDistrict() {
 		return districtRepository.findLastSyncsByDistrict();
 	}

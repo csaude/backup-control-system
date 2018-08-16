@@ -48,7 +48,7 @@ public class SyncServiceImpl implements SyncService {
 
 			if(sync.getState().equals("Progress")) {
 				sync_time=sync.getSynctimeemailstart();
-				duration="<span style='color:white;background-color: orange; font-size: 11px;border-radius: 5%; padding: 5px;'>IN PROGRESS</span>";
+				duration="<span style='color:white;background-color: orange; font-size: 11px;border-radius: 5%; padding: 5px;'>EM PROGRESSO</span>";
 				end_items_to_send = "";
 				end_items_to_receive = "";
 			}else {
@@ -128,6 +128,7 @@ public class SyncServiceImpl implements SyncService {
 								+ "</tbody></table>");
 						email.setTextMsg(
 								"O seu cliente não aceita mensagens HTML. \nContacte o Administador para mais detalhes.");
+						email.setCharset("utf-8");
 						email.send();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -168,7 +169,7 @@ public class SyncServiceImpl implements SyncService {
 				
 				if(sync.getState().equals("Progress")) {
 					sync_time=sync.getSynctimeemailstart();
-					duration="<span style='color:white;background-color: orange; font-size: 11px;border-radius: 5%; padding: 5px;'>IN PROGRESS</span>";
+					duration="<span style='color:white;background-color: orange; font-size: 11px;border-radius: 5%; padding: 5px;'>EM PROGRESSO</span>";
 					end_items_to_send = "";
 					end_items_to_receive = "";
 				}else {
@@ -255,6 +256,7 @@ public class SyncServiceImpl implements SyncService {
 									+ "</tbody></table>");
 							email.setTextMsg(
 									"O seu cliente não aceita mensagens HTML. \nContacte o Administador para mais detalhes.");
+							email.setCharset("utf-8");
 							email.send();
 						} catch (Exception e) {
 							e.printStackTrace();

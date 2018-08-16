@@ -39,13 +39,13 @@ export class LoginFormComponent implements OnInit {
   }
   ngOnInit() {
     this.isDisabled = false;
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     if (user) {
       this.router.navigate(['home']);
     }
   }
   login() {
-    window.localStorage.clear();
+    window.sessionStorage.clear();
     this.isDisabled = true;
     this.loginsService.getUser(this.localUser)
       .subscribe(data => {
@@ -54,11 +54,11 @@ export class LoginFormComponent implements OnInit {
           if (this.user.enabled == true) {
             var wordArray = CryptoJS.enc.Utf8.parse(this.localUser.password);
             var base64 = CryptoJS.enc.Base64.stringify(wordArray);
-            window.localStorage.setItem('user', JSON.stringify(this.user));
-            window.localStorage.setItem('password', base64);
-            window.localStorage.setItem('authenticated', 'Sim');
+            window.sessionStorage.setItem('user', JSON.stringify(this.user));
+            window.sessionStorage.setItem('password', base64);
+            window.sessionStorage.setItem('authenticated', 'Sim');
             for (let authority of this.user.authorities) {
-              window.localStorage.setItem(authority.name, 'Sim');
+              window.sessionStorage.setItem(authority.name, 'Sim');
             }
             this.router.navigate(['home']);
             this.nav.callMethodOfSecondComponent();

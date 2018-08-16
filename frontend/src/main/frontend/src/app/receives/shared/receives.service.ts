@@ -14,8 +14,8 @@ export class ReceivesService {
 
   getReceives() {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url, { headers: headers })
@@ -23,8 +23,8 @@ export class ReceivesService {
   }
   getReceive(receive_id) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.getReceiveUrl(receive_id), { headers: headers })
@@ -32,8 +32,8 @@ export class ReceivesService {
   }
   getReceiveBySendId(send_id) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.getReceiveUrl3(send_id), { headers: headers })
@@ -41,8 +41,8 @@ export class ReceivesService {
   }
   getReceivesByDistrict(page,size,district_id) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.getReceiveUrl4()+"get?page="+page+"&size="+size+"&district="+district_id, { headers: headers })
@@ -50,8 +50,8 @@ export class ReceivesService {
     }
     getReceivesByUser(page,size) {
       var headers: any = new Headers();
-      var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-      var user = JSON.parse(window.localStorage.getItem('user'));
+      var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+      var user = JSON.parse(window.sessionStorage.getItem('user'));
       headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
       headers.append('Content-Type', 'application/json');
       return this.http.get(this.getReceiveUrl6()+"get?page="+page+"&size="+size, { headers: headers })
@@ -59,8 +59,8 @@ export class ReceivesService {
       }
       getAllReceived(page,size) {
         var headers: any = new Headers();
-        var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-        var user = JSON.parse(window.localStorage.getItem('user'));
+        var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+        var user = JSON.parse(window.sessionStorage.getItem('user'));
         headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
         headers.append('Content-Type', 'application/json');
         return this.http.get(this.getReceiveUrl8()+"get?page="+page+"&size="+size, { headers: headers })
@@ -69,8 +69,8 @@ export class ReceivesService {
       
       getReceivesByUserDate(page,size,from,until) {
         var headers: any = new Headers();
-        var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-        var user = JSON.parse(window.localStorage.getItem('user'));
+        var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+        var user = JSON.parse(window.sessionStorage.getItem('user'));
         headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
         headers.append('Content-Type', 'application/json');
         return this.http.get(this.getReceiveUrl7()+"get?page="+page+"&size="+size+"&from="+from+"&until="+until, { headers: headers })
@@ -79,8 +79,8 @@ export class ReceivesService {
 
         getReceivesByDate(page,size,from,until) {
           var headers: any = new Headers();
-          var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-          var user = JSON.parse(window.localStorage.getItem('user'));
+          var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+          var user = JSON.parse(window.sessionStorage.getItem('user'));
           headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
           headers.append('Content-Type', 'application/json');
           return this.http.get(this.getReceiveUrl9()+"get?page="+page+"&size="+size+"&from="+from+"&until="+until, { headers: headers })
@@ -89,8 +89,8 @@ export class ReceivesService {
 
     getReceivesByDistrictDate(page,size,district_id,from,until) {
       var headers: any = new Headers();
-      var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-      var user = JSON.parse(window.localStorage.getItem('user'));
+      var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+      var user = JSON.parse(window.sessionStorage.getItem('user'));
       headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
       headers.append('Content-Type', 'application/json');
       return this.http.get(this.getReceiveUrl5()+"get?page="+page+"&size="+size+"&district="+district_id+"&from="+from+"&until="+until, { headers: headers })
@@ -98,24 +98,24 @@ export class ReceivesService {
       }
   addReceive(receive) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.post(this.url, JSON.stringify(receive), { headers: headers });
   }
   updateReceive(receive) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.put(this.url, JSON.stringify(receive), { headers: headers });
   }
   deleteReceive(receive_id) {
     var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.localStorage.getItem('password'));
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.delete(this.getReceiveUrl(receive_id), { headers: headers });

@@ -119,15 +119,15 @@ export class NavBarComponent implements OnInit {
       }
     }
     );
-    this.user = JSON.parse(window.localStorage.getItem('user'));
-    this.ROLE_SIS = window.localStorage.getItem('ROLE_SIS');
-    this.ROLE_OA = window.localStorage.getItem('ROLE_OA');
-    this.ROLE_IT = window.localStorage.getItem('ROLE_IT');
-    this.ROLE_ODMA = window.localStorage.getItem('ROLE_ODMA');
-    this.ROLE_GDD = window.localStorage.getItem('ROLE_GDD');
-    this.ROLE_ORMA = window.localStorage.getItem('ROLE_ORMA');
-    this.ROLE_GMA = window.localStorage.getItem('ROLE_GMA');
-    if (window.localStorage.getItem('authenticated')) {
+    this.user = JSON.parse(window.sessionStorage.getItem('user'));
+    this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
+    this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
+    this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
+    this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
+    this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
+    this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
+    this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
+    if (window.sessionStorage.getItem('authenticated')) {
       this.isAuth = true;
       this.translate.use(this.user.locale);
     }
@@ -158,15 +158,15 @@ export class NavBarComponent implements OnInit {
         }
       }
     });
-    this.user = JSON.parse(window.localStorage.getItem('user'));
-    this.ROLE_SIS = window.localStorage.getItem('ROLE_SIS');
-    this.ROLE_OA = window.localStorage.getItem('ROLE_OA');
-    this.ROLE_IT = window.localStorage.getItem('ROLE_IT');
-    this.ROLE_ODMA = window.localStorage.getItem('ROLE_ODMA');
-    this.ROLE_GDD = window.localStorage.getItem('ROLE_GDD');
-    this.ROLE_ORMA = window.localStorage.getItem('ROLE_ORMA');
-    this.ROLE_GMA = window.localStorage.getItem('ROLE_GMA');
-    if (window.localStorage.getItem('authenticated')) {
+    this.user = JSON.parse(window.sessionStorage.getItem('user'));
+    this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
+    this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
+    this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
+    this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
+    this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
+    this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
+    this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
+    if (window.sessionStorage.getItem('authenticated')) {
       this.isAuth = true;
       this.translate.use(this.user.locale);
       if (this.ROLE_SIS) {
@@ -194,7 +194,7 @@ export class NavBarComponent implements OnInit {
       clearInterval(this.nIntervId2);
       clearInterval(this.nIntervId3);
     }
-    window.localStorage.clear();
+    window.sessionStorage.clear();
     this.isAuth = false;
     this.router.navigate(['login']);
   }

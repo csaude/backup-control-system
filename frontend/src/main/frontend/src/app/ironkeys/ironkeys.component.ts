@@ -70,7 +70,7 @@ export class IronkeysComponent implements OnInit {
     this.status = "";
     this.size = "";
     this.getPage(1);
-    this.user = JSON.parse(window.localStorage.getItem('user'));
+    this.user = JSON.parse(window.sessionStorage.getItem('user'));
   }
   getPage(page: number) {
     this.isHidden = "";
@@ -147,7 +147,7 @@ export class IronkeysComponent implements OnInit {
           this.isHidden = "hide";
           this.isDisabledt = "";
 
-          var user = JSON.parse(window.localStorage.getItem('user'));
+          var user = JSON.parse(window.sessionStorage.getItem('user'));
           var doc = new jsPDF('landscape');
           var totalPagesExp = "{total_pages_count_string}";
           var columns = [

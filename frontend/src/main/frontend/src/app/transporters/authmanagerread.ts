@@ -12,7 +12,7 @@ export class AuthManagerTransportersRead implements CanActivate {
     constructor(public router: Router) { }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        if (window.localStorage.getItem('authenticated') == "Sim") {
+        if (window.sessionStorage.getItem('authenticated') == "Sim") {
             return true;
         } else {
             this.router.navigate(['login']);

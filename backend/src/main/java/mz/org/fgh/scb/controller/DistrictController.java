@@ -70,20 +70,6 @@ public class DistrictController {
 		return districtServiceImpl.findBackupReceivedOnLast12Months();
 	}
 
-	@RequestMapping(value = "/districtssendpreviousmonth", method = RequestMethod.GET)
-	public List<Object[]> findBackupReceivedByDistrictOnPreviousMonthByUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		return districtServiceImpl.findBackupReceivedByDistrictOnPreviousMonthByUser(currentPrincipalName);
-	}
-
-	@RequestMapping(value = "/districtssendthismonth", method = RequestMethod.GET)
-	public List<Object[]> findBackupReceivedByDistrictOnThisMonthByUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		return districtServiceImpl.findBackupReceivedByDistrictOnThisMonthByUser(currentPrincipalName);
-	}
-
 	@RequestMapping(value = "/districts/get", method = RequestMethod.GET)
 	public Page<District> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "name", required = true) String name,@RequestParam(value = "canceled", required = true) boolean canceled) throws Exception {
 		Page<District> pageDistrict = districtServiceImpl.findAll(name, canceled, new PageRequest(page - 1, size));

@@ -12,7 +12,7 @@ export class AuthManagerIronkeysEdit implements CanActivate {
     constructor(public router: Router) { }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        if (window.localStorage.getItem('authenticated') == "Sim" && (window.localStorage.getItem('ROLE_SIS') || window.localStorage.getItem('ROLE_IT'))) {
+        if (window.sessionStorage.getItem('authenticated') == "Sim" && (window.sessionStorage.getItem('ROLE_SIS') || window.sessionStorage.getItem('ROLE_IT'))) {
             return true;
         } else {
             this.router.navigate(['login']);

@@ -91,13 +91,13 @@ export class UserDetailsFormComponent implements OnInit {
   }
   ngOnInit() {
     this.isDisabled = false;
-    this.ROLE_SIS = window.localStorage.getItem('ROLE_SIS');
-    this.ROLE_OA = window.localStorage.getItem('ROLE_OA');
-    this.ROLE_IT = window.localStorage.getItem('ROLE_IT');
-    this.ROLE_ODMA = window.localStorage.getItem('ROLE_ODMA');
-    this.ROLE_GDD = window.localStorage.getItem('ROLE_GDD');
-    this.ROLE_ORMA = window.localStorage.getItem('ROLE_ORMA');
-    this.ROLE_GMA = window.localStorage.getItem('ROLE_GMA');
+    this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
+    this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
+    this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
+    this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
+    this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
+    this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
+    this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
     var uuid = this.route.params.subscribe(params => {
       var uuid = params['uuid'];
       this.title = uuid ? 'Meu Perfil' : 'Novo Utilizador';
@@ -170,7 +170,7 @@ export class UserDetailsFormComponent implements OnInit {
     this.isDisabled = true;
     this.isHidden = "";
     var result, userValue = this.form.value;
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     if (userValue.user_id) {
         if (userValue.password_new != null) {
           userValue.password = userValue.password_new;
@@ -186,17 +186,17 @@ export class UserDetailsFormComponent implements OnInit {
           },
           () => {
             this.showMsg(userValue.username);
-            window.localStorage.removeItem("user");
+            window.sessionStorage.removeItem("user");
 
             if (userValue.password_new != null) {
               userValue.password = userValue.password_new;
-              window.localStorage.removeItem("password");
+              window.sessionStorage.removeItem("password");
               var wordArray = CryptoJS.enc.Utf8.parse(userValue.password);
               var base64 = CryptoJS.enc.Base64.stringify(wordArray);
-              window.localStorage.setItem('password', base64);
+              window.sessionStorage.setItem('password', base64);
             }
             
-            window.localStorage.setItem('user', JSON.stringify(userValue));
+            window.sessionStorage.setItem('user', JSON.stringify(userValue));
            
             this.translate.use(userValue.locale);
             this.isDisabled = false;

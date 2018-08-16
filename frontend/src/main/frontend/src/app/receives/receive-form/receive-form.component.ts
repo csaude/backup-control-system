@@ -113,7 +113,7 @@ export class ReceiveFormComponent implements OnInit {
   save() {
     this.isDisabled = true;
     var result, userValue = this.form.value;
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     if (userValue.receive_id) {
       if (new Date(userValue.receive_date) > new Date()||new Date(userValue.date_ik_returned)> new Date()) {
         this.showMsgErr();

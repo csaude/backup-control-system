@@ -39,6 +39,7 @@ export class DistrictFormComponent implements OnInit {
   public isDisabled: boolean;
   public response: string;
   public district: District = new District();
+  public alldistricts: District[] = [];
   public allironkeys: Ironkey[] = [];
   public user: Object[] = [];
   public disabled1: boolean;
@@ -63,19 +64,26 @@ export class DistrictFormComponent implements OnInit {
       instance_url: [],
       instance_username: [],
       instance_password: [],
-      ironkeys: []
+      ironkeys: [],
+      canceled: [],
+      canceled_reason: [],
+      parent:[]
     });
   }
 
   ngOnInit() {
     this.isDisabled = false;
     this.disabled1 = true;
-    this.user = JSON.parse(window.localStorage.getItem('user'));
+    this.user = JSON.parse(window.sessionStorage.getItem('user'));
     var id = this.route.params.subscribe(params => {
       var uuid = params['uuid'];
       this.title = uuid ? 'Editar Distrito' : 'Novo Distrito';
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
+        this.districtsService.getDistricts()
+            .subscribe(data => {
+              this.alldistricts = data;
+            });
         this.ironkeysService.getIronkeys()
           .subscribe(data => {this.allironkeys = data},error=>{},
             ()=>{
@@ -83,6 +91,8 @@ export class DistrictFormComponent implements OnInit {
             });
         return;
       } else {
+        
+
         this.districtsService.getDistrictByUuid(uuid).subscribe(
           district => {
             this.district = district;
@@ -110,7 +120,31 @@ export class DistrictFormComponent implements OnInit {
                 });
               },error=>{},
               ()=>{
-                this.disabled1 = false;
+
+                this.districtsService.getDistricts()
+              .subscribe(data => {
+                this.alldistricts = data;
+                if(this.district.parentdistrict!=null){
+                this.alldistricts = this.alldistricts.filter(item => item.district_id !== this.district.parentdistrict.district_id);
+                this.alldistricts.push(this.district.parentdistrict);
+                }
+                this.alldistricts =  this.alldistricts.sort(function (a, b) {
+                  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+                  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                  if (nameA < nameB) {
+                    return -1;
+                  }
+                  if (nameA > nameB) {
+                    return 1;
+                  }
+                  return 0;
+                });
+
+              },error=>{},
+              ()=>{this.disabled1 = false;});
+
+
+                
               }
             );
           },
@@ -126,7 +160,7 @@ export class DistrictFormComponent implements OnInit {
   save() {
     this.isDisabled = true;
     var result, userValue = this.form.value;
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     userValue.districts = userValue.districtsIronkeys;
     if (userValue.district_id) {
       userValue.district_id = this.district.district_id;

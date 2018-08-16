@@ -66,13 +66,13 @@ export class ReceivesComponent implements OnInit {
     this.districts_filter = false;
     this.districtr_filter = false;
     this.date_filter = false;
-    this.ROLE_SIS = window.localStorage.getItem('ROLE_SIS');
-    this.ROLE_OA = window.localStorage.getItem('ROLE_OA');
-    this.ROLE_IT = window.localStorage.getItem('ROLE_IT');
-    this.ROLE_ODMA = window.localStorage.getItem('ROLE_ODMA');
-    this.ROLE_GDD = window.localStorage.getItem('ROLE_GDD');
-    this.ROLE_ORMA = window.localStorage.getItem('ROLE_ORMA');
-    this.ROLE_GMA = window.localStorage.getItem('ROLE_GMA');
+    this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
+    this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
+    this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
+    this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
+    this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
+    this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
+    this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
 
     this.districtsService.getDistricts()
       .subscribe(data => {
@@ -203,7 +203,7 @@ export class ReceivesComponent implements OnInit {
   }
 
   printSend() {
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     var doc = new jsPDF();
     var send = this.send;
     doc.setFontSize(10);
@@ -319,7 +319,7 @@ export class ReceivesComponent implements OnInit {
     doc.save('SCB_Protocolo_Envio_' + send.district.name + '_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
   }
   printSend2() {
-    var user = JSON.parse(window.localStorage.getItem('user'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
     var doc = new jsPDF();
     var send = this.send;
     doc.setFontSize(10);
@@ -520,7 +520,7 @@ export class ReceivesComponent implements OnInit {
         () => {
           this.isHidden = "hide";
 
-          var user = JSON.parse(window.localStorage.getItem('user'));
+          var user = JSON.parse(window.sessionStorage.getItem('user'));
           var doc = new jsPDF('landscape');
           var totalPagesExp = "{total_pages_count_string}";
           var columns = [
@@ -608,7 +608,7 @@ export class ReceivesComponent implements OnInit {
         () => {
           this.isHidden = "hide";
 
-          var user = JSON.parse(window.localStorage.getItem('user'));
+          var user = JSON.parse(window.sessionStorage.getItem('user'));
           var doc = new jsPDF('landscape');
           var totalPagesExp = "{total_pages_count_string}";
           var columns = [
