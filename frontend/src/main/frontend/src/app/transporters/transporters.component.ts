@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TransportersService } from "./shared/transporters.service";
@@ -13,6 +13,10 @@ import { TranslateService } from 'ng2-translate';
   templateUrl: './transporters.component.html',
   styleUrls: ['./transporters.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class TransportersComponent implements OnInit {
   public transporter: Transporter = new Transporter();
   public isHidden: string;
@@ -33,6 +37,8 @@ export class TransportersComponent implements OnInit {
   public name: string;
   public canceled: boolean;
   public role: string;
+  
+     
   constructor(
     public transportersService: TransportersService,
     public toastService: MzToastService,

@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -17,6 +17,10 @@ import { DistrictsService } from '../../districts/shared/districts.service';
   templateUrl: './server-form.component.html',
   styleUrls: ['./server-form.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class ServerFormComponent implements OnInit {
   public options: Pickadate.DateOptions = {
     format: 'dd/mm/yyyy',
@@ -39,6 +43,7 @@ export class ServerFormComponent implements OnInit {
     { name: 'PARENT' }
   ]
 
+     
   constructor(
     public formBuilder: FormBuilder,
     public router: Router,

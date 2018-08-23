@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -9,11 +9,16 @@ import { Transporter } from '../shared/transporter';
 import { TransportersService } from '../shared/transporters.service';
 import { MzToastService } from 'ng2-materialize';
 import { TranslateService } from 'ng2-translate';
+
 @Component({
   selector: 'app-transporter-form',
   templateUrl: './transporter-form.component.html',
   styleUrls: ['./transporter-form.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class TransporterFormComponent implements OnInit {
   public roles = [
     { name: 'Gestor de Dados' },
@@ -31,6 +36,8 @@ export class TransporterFormComponent implements OnInit {
   public isDisabled: boolean;
   public transporter: Transporter = new Transporter();
   public user: Object[] = [];
+  
+     
   constructor(
     public formBuilder: FormBuilder,
     public router: Router,

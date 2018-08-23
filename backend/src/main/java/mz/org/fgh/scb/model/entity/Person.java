@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.model.entity;
 
 import java.util.Date;
@@ -16,7 +20,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
- * @author damasceno.lopes
+ * A Person is a definition of metadada for identification of 
+ * the users.
+ * 
+ * @author Damasceno Lopes
  *
  */
 @Entity(name = "person")
@@ -60,6 +67,9 @@ public class Person {
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
+	// -------------------------------------------------
+	// Constructors
+	// -------------------------------------------------
 	public Person() {
 		this.uuid = UUID.randomUUID().toString();
 	}
@@ -154,9 +164,8 @@ public class Person {
 
 	@Override
 	public String toString() {
-		return "Person [person_id=" + person_id + ", others_names=" + others_names + ", surname=" + surname + ", email="
-				+ email + ", phone_number=" + phone_number + ", date_created=" + date_created + ", date_updated="
-				+ date_updated + ", gender=" + gender + ", uuid=" + uuid + "]";
+		return "Person [person_id=" + person_id + ", others_names=" + others_names + ", surname=" + surname + ", email=" + email + ", phone_number=" + phone_number + ", date_created=" + date_created + ", date_updated=" + date_updated
+				+ ", gender=" + gender + ", uuid=" + uuid + "]";
 	}
 
 	@Override
@@ -189,7 +198,5 @@ public class Person {
 			return false;
 		return true;
 	}
-	
-	
 
 }

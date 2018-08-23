@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.service.impl;
 
 import java.util.Date;
@@ -12,7 +16,7 @@ import mz.org.fgh.scb.repository.PersonRepository;
 import mz.org.fgh.scb.service.api.PersonService;
 
 /**
- * @author damasceno.lopes
+ * @author Damasceno Lopes
  *
  */
 @Service

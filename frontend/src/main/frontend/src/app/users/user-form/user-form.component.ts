@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -14,11 +14,16 @@ import { AuthoritiesService } from './../../authorities/shared/authorities.servi
 import { Authority } from './../../authorities/shared/authority';
 import { MzToastService } from 'ng2-materialize';
 import { TranslateService } from 'ng2-translate';
+
 @Component({
   selector: 'app-user-form',
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class UserFormComponent implements OnInit {
   public form: FormGroup;
   public title: string;
@@ -40,6 +45,8 @@ export class UserFormComponent implements OnInit {
     { name: 'pt', description: 'Português' },
     { name: 'en', description: 'English' }
   ];
+  
+   
   constructor(
     public formBuilder: FormBuilder,
     public router: Router,
@@ -125,8 +132,8 @@ export class UserFormComponent implements OnInit {
                   filtereddistricts.push(i);
                 }
                 this.alldistricts = filtereddistricts.sort(function (a, b) {
-                  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-                  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                  var nameA = a.namef.toUpperCase(); // ignore upper and lowercase
+                  var nameB = b.namef.toUpperCase(); // ignore upper and lowercase
                   if (nameA < nameB) {
                     return -1;
                   }

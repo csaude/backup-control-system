@@ -177,6 +177,11 @@
     "items_onend": "Items nº on end time",
     "items_send": "to send",
     "items_receive": "to receive",
-    "syncdetails":"Synchronization Details"
+    "syncdetails":"Synchronization Details",
+    "include_idart_backup":"Include iDART Backup?",
+
+    "serverfault":"Server fault?",
+    "laptopfault":"Laptop fault?",
+    "powercut":"Power cut?"
 
 }

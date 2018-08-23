@@ -1,25 +1,26 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { DistrictsService } from "../districts/shared/districts.service";
 import { ServersService } from "../servers/shared/servers.service";
 import { TranslateService } from 'ng2-translate';
 import * as alasql from 'alasql';
+import { District } from '../districts/shared/district';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class HomeComponent implements OnInit {
-  public ROLE_SIS: string;
-  public ROLE_IT: string;
-  public ROLE_ODMA: string;
-  public ROLE_GDD: string;
-  public ROLE_ORMA: string;
-  public ROLE_OA: string;
-  public ROLE_GMA: string;
+
+  public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD: string;
   public isAuth: boolean;
   public isAuthHq: boolean;
   public chart1; chart2; chart3; chart4; chart5; chart6; chart7; chart8; chart9; chart10; chart11: boolean;
@@ -29,6 +30,7 @@ export class HomeComponent implements OnInit {
   public barChartType: string = 'bar';
   public barChartLegend: boolean = false;
   public barChartData: any[] = [];
+  public alldistricts: District[] = [];
   public barChartOptions: any = {
     scaleShowVerticalLines: false,
     responsive: true,
@@ -128,7 +130,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Nº de distritos que enviaram backups nos últimos 12 meses recebidos e restaurados',
+      text: 'Nº de distritos que enviaram backups nos últimos 12 meses',
       display: true
     },
     scales: {
@@ -385,11 +387,20 @@ export class HomeComponent implements OnInit {
     }
   };
 
+  public form: FormGroup;
 
+   
   constructor(
     public translate: TranslateService,
     public districtsService: DistrictsService,
-    public serversService: ServersService) { }
+    public serversService: ServersService, formBuilder: FormBuilder) {
+
+
+    this.form = formBuilder.group({
+      district: []
+    });
+
+  }
   ngOnInit() {
     this.isAuth = false;
     this.chart1 = false;
@@ -412,13 +423,21 @@ export class HomeComponent implements OnInit {
     this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
     if (this.ROLE_SIS || this.ROLE_IT || this.ROLE_OA || this.ROLE_GMA) {
+
+
+      this.districtsService.getDistricts()
+        .subscribe(data => {
+          var filteredd = data.filter(item => item.parentdistrict == null);
+          this.alldistricts = filteredd;
+        });
+
       this.districtsService.getReceivedPM()
         .subscribe(data => {
           var result = alasql("SELECT [0] AS district, [1] AS exist FROM ?", [data]);
           var label: string[] = [];
           var value: number[] = [];
           for (let l of result) {
-            label.push((l.district.split('Quelimane (').join('')).split(')').join(''));
+            label.push(l.district);
             value.push(l.exist);
           }
           this.barChartLabels = label;
@@ -435,7 +454,7 @@ export class HomeComponent implements OnInit {
           var label: string[] = [];
           var value: number[] = [];
           for (let l of result) {
-            label.push((l.district.split('Quelimane (').join('')).split(')').join(''));
+            label.push(l.district);
             value.push(l.exist);
           }
           this.barChartLabels2 = label;
@@ -476,7 +495,7 @@ export class HomeComponent implements OnInit {
 
           if (data) {
             for (let l of result) {
-              label.push((l.district.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
+              label.push(l.district + ' - ' + l.server);
               value.push(l.exist);
               value2.push(l.error);
             }
@@ -489,12 +508,12 @@ export class HomeComponent implements OnInit {
             { data: value2, label: "Erro encontrado" }
           ];
 
-          var result2 = alasql("SELECT [1] AS district, COUNT(*) AS error FROM ? WHERE [4]=1 GROUP BY [1] ", [data]);
+          var result2 = alasql("SELECT [1] AS district, SUM([4]) AS error FROM ? WHERE [4]>0 GROUP BY [1] ", [data]);
           var label2: string[] = [];
           var value3: number[] = [];
-          if (data.length > 0) {
+          if (data.length > 0 && result2.find(item => item.district != null)) {
             for (let l of result2) {
-              label2.push((l.district.split('Quelimane (').join('')).split(')').join(''));
+              label2.push(l.district);
               value3.push(l.error);
             }
           }
@@ -516,7 +535,7 @@ export class HomeComponent implements OnInit {
           var value2: number[] = [];
           if (data) {
             for (let l of result) {
-              label.push((l.district.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
+              label.push(l.district + ' - ' + l.server);
               value.push(l.exist);
               value2.push(l.error);
             }
@@ -524,18 +543,16 @@ export class HomeComponent implements OnInit {
 
           this.barChartLabels5 = label;
           this.barChartData5 = [
-            //, type: "line", fill: "false"
             { data: value, label: "Sincronização registada" },
             { data: value2, label: "Erro encontrado" }
           ];
 
-
-          var result2 = alasql("SELECT [1] AS district, COUNT(*) AS error FROM ? WHERE [4]=1 GROUP BY [1] ", [data]);
+          var result2 = alasql("SELECT [1] AS district, SUM([4]) AS error FROM ? WHERE [4]>0 GROUP BY [1] ", [data]);
           var label2: string[] = [];
           var value3: number[] = [];
-          if (data.length > 0) {
+          if (data.length > 0 && result2.find(item => item.district != null)) {
             for (let l of result2) {
-              label2.push((l.district.split('Quelimane (').join('')).split(')').join(''));
+              label2.push(l.district);
               value3.push(l.error);
             }
           }
@@ -557,7 +574,7 @@ export class HomeComponent implements OnInit {
           var value: number[] = [];
 
           for (let l of result) {
-            label.push((l.district.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
+            label.push(l.district + ' - ' + l.server);
             value.push(l.its);
           }
           this.barChartLabels8 = label;
@@ -568,7 +585,7 @@ export class HomeComponent implements OnInit {
           var label2: string[] = [];
           var value3: number[] = [];
           for (let l of result2) {
-            label2.push((l.district.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
+            label2.push(l.district + ' - ' + l.server);
             value3.push(l.itr);
           }
 
@@ -591,7 +608,7 @@ export class HomeComponent implements OnInit {
           var value: number[] = [];
 
           for (let l of result) {
-            label.push((l.district.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
+            label.push(l.district + ' - ' + l.server);
             value.push(l.its);
           }
           this.barChartLabels9 = label;
@@ -603,7 +620,7 @@ export class HomeComponent implements OnInit {
           var label2: string[] = [];
           var value3: number[] = [];
           for (let l of result2) {
-            label2.push((l.district.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
+            label2.push(l.district + ' - ' + l.server);
             value3.push(l.itr);
           }
 
@@ -622,13 +639,21 @@ export class HomeComponent implements OnInit {
     if (this.ROLE_ODMA || this.ROLE_GDD || this.ROLE_ORMA) {
       this.districtsService.getReceivedPM()
         .subscribe(data => {
-          var districts = this.user.districts.filter(item => item.parentdistrict!=null);;
+          var districts;
+          if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict != null)) {
+            districts = this.user.districts.filter(item => item.parentdistrict != null);
+          }
+          else if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict == null)) {
+            districts = this.user.districts;
+          }
+
+
           var resulti = alasql("SELECT [0] AS name, [1] AS exist FROM ?", [data]);
           var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
           var label: string[] = [];
           var value: number[] = [];
           for (let l of result) {
-            label.push((l.name.split('Quelimane (').join('')).split(')').join('') );
+            label.push(l.name);
             value.push(l.exist);
           }
           this.barChartLabels = label;
@@ -642,13 +667,21 @@ export class HomeComponent implements OnInit {
 
       this.districtsService.getReceivedTM()
         .subscribe(data => {
-          var districts = this.user.districts.filter(item => item.parentdistrict!=null);;
+
+          var districts;
+          if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict != null)) {
+            districts = this.user.districts.filter(item => item.parentdistrict != null);
+          }
+          else if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict == null)) {
+            districts = this.user.districts;
+          }
+
           var resulti = alasql("SELECT [0] AS name, [1] AS exist FROM ?", [data]);
           var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
           var label: string[] = [];
           var value: number[] = [];
           for (let l of result) {
-            label.push((l.name.split('Quelimane (').join('')).split(')').join(''));
+            label.push(l.name);
             value.push(l.exist);
           }
           this.barChartLabels2 = label;
@@ -663,14 +696,20 @@ export class HomeComponent implements OnInit {
 
       this.serversService.getSyncsPW()
         .subscribe(data => {
-          var districts = this.user.districts;
+          var districts;
+          if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict != null)) {
+            districts = this.user.districts.filter(item => item.parentdistrict != null);
+          }
+          else if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict == null)) {
+            districts = this.user.districts;
+          }
           var resulti = alasql("SELECT [0] AS server,[1] AS name, [3] AS exist,[4] AS error FROM ?data ", [data, districts]);
           var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
           var label: string[] = [];
           var value: number[] = [];
           var value2: number[] = [];
           for (let l of result) {
-            label.push((l.name.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
+            label.push(l.name + ' - ' + l.server);
             value.push(l.exist);
             if (l.error == 0) {
               value2.push(null);
@@ -682,7 +721,7 @@ export class HomeComponent implements OnInit {
           this.barChartLabels4 = label;
           this.barChartData4 = [
 
-            { data: value, label: "Sincronização registada" },{ data: value2, label: "Erro encontrado" }];
+            { data: value, label: "Sincronização registada" }, { data: value2, label: "Erro encontrado" }];
 
 
         },
@@ -694,14 +733,20 @@ export class HomeComponent implements OnInit {
 
       this.serversService.getSyncsTW()
         .subscribe(data => {
-          var districts = this.user.districts;
+          var districts;
+          if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict != null)) {
+            districts = this.user.districts.filter(item => item.parentdistrict != null);
+          }
+          else if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict == null)) {
+            districts = this.user.districts;
+          }
           var resulti = alasql("SELECT [0] AS server,[1] AS name, [3] AS exist,[4] AS error FROM ?data ", [data, districts]);
           var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
           var label: string[] = [];
           var value: number[] = [];
           var value2: number[] = [];
           for (let l of result) {
-            label.push((l.name.split('Quelimane (').join('')).split(')').join('') + ' - ' + l.server);
+            label.push(l.name + ' - ' + l.server);
             value.push(l.exist);
             if (l.error == 0) {
               value2.push(null);
@@ -713,7 +758,7 @@ export class HomeComponent implements OnInit {
           this.barChartLabels5 = label;
           this.barChartData5 = [
 
-            { data: value, label: "Sincronização registada" },{ data: value2, label: "Erro encontrado" }];
+            { data: value, label: "Sincronização registada" }, { data: value2, label: "Erro encontrado" }];
 
         },
           error => { },
@@ -725,4 +770,260 @@ export class HomeComponent implements OnInit {
 
     }
   }
+
+
+
+
+  search() {
+
+    this.chart4 = false;
+    this.chart5 = false;
+    this.chart6 = false;
+    this.chart7 = false;
+    this.chart8 = false;
+    this.chart9 = false;
+    this.chart10 = false;
+    this.chart11 = false;
+    var userValue = this.form.value;
+
+    this.serversService.getSyncsPW()
+      .subscribe(data => {
+        if (userValue.district == "all") {
+          var result = alasql("SELECT [0] AS server,[1] AS district, [3] AS exist,[4] AS error FROM ?", [data]);
+        } else {
+          var result = alasql("SELECT [0] AS server,[1] AS district, [3] AS exist,[4] AS error FROM ?data WHERE [1]='" + userValue.district + "'", [data]);
+        }
+
+        var label: string[] = [];
+        var value: number[] = [];
+        var value2: number[] = [];
+
+        if (data) {
+          for (let l of result) {
+            if (userValue.district == "all") {
+              label.push(l.district + ' - ' + l.server);
+            } else {
+              label.push(l.server);
+            }
+            value.push(l.exist);
+            value2.push(l.error);
+          }
+
+        }
+        this.barChartLabels4 = label;
+        this.barChartData4 = [
+
+          { data: value, label: "Sincronização registada" },
+          { data: value2, label: "Erro encontrado" }
+        ];
+        if (userValue.district == "all") {
+          var result2 = alasql("SELECT [1] AS district, SUM([4]) AS error FROM ? WHERE [4]>0 GROUP BY [1] ", [data]);
+          var label2: string[] = [];
+          var value3: number[] = [];
+          if (data.length > 0 && result2.find(item => item.district != null)) {
+            for (let l of result2) {
+              label2.push(l.district);
+              value3.push(l.error);
+            }
+          }
+        } else {
+          var result2 = alasql("SELECT [0] AS server,[1] AS district, [3] AS exist,[4] AS error FROM ?data WHERE [1]='" + userValue.district + "'", [data]);
+          var label2: string[] = [];
+          var value3: number[] = [];
+          if (data.length > 0) {
+            for (let l of result2) {
+              if (l.error > 0) {
+                label2.push(l.server);
+                value3.push(l.error);
+              }
+            }
+          }
+        }
+
+        this.pieChartLabels6 = label2;
+        this.pieChartData6 = value3;
+
+      },
+        error => { },
+        () => {
+          this.chart4 = true;
+          this.chart6 = true;
+        });
+
+    this.serversService.getSyncsTW()
+      .subscribe(data => {
+
+        if (userValue.district == "all") {
+          var result = alasql("SELECT [0] AS server,[1] AS district, [3] AS exist,[4] AS error FROM ?", [data]);
+        } else {
+          var result = alasql("SELECT [0] AS server,[1] AS district, [3] AS exist,[4] AS error FROM ?data WHERE [1]='" + userValue.district + "'", [data]);
+        }
+
+        var label: string[] = [];
+        var value: number[] = [];
+        var value2: number[] = [];
+        if (data) {
+          for (let l of result) {
+            if (userValue.district == "all") {
+              label.push(l.district + ' - ' + l.server);
+            } else {
+              label.push(l.server);
+            }
+            value.push(l.exist);
+            value2.push(l.error);
+          }
+        }
+
+        this.barChartLabels5 = label;
+        this.barChartData5 = [
+          //, type: "line", fill: "false"
+          { data: value, label: "Sincronização registada" },
+          { data: value2, label: "Erro encontrado" }
+        ];
+        if (userValue.district == "all") {
+          var result2 = alasql("SELECT [1] AS district, SUM([4]) AS error FROM ? WHERE [4]>0 GROUP BY [1] ", [data]);
+          var label2: string[] = [];
+          var value3: number[] = [];
+          if (data.length > 0 && result2.find(item => item.district != null)) {
+            for (let l of result2) {
+              label2.push(l.district);
+              value3.push(l.error);
+            }
+          }
+        } else {
+          var result2 = alasql("SELECT [0] AS server,[1] AS district, [3] AS exist,[4] AS error FROM ?data WHERE [1]='" + userValue.district + "'", [data]);
+          var label2: string[] = [];
+          var value3: number[] = [];
+          if (data.length > 0) {
+            for (let l of result2) {
+              if (l.error > 0) {
+                label2.push(l.server);
+                value3.push(l.error);
+              }
+            }
+          }
+
+        }
+
+
+        this.pieChartLabels7 = label2;
+        this.pieChartData7 = value3;
+
+
+      },
+        error => { },
+        () => {
+          this.chart5 = true;
+          this.chart7 = true;
+        });
+
+
+
+    this.serversService.getSyncsItemsPW()
+      .subscribe(data => {
+
+        if (userValue.district == "all") {
+          var result = alasql("SELECT [1] AS server,[2] AS district, [3] AS its,[4] AS itr FROM ? WHERE [3]>0 ORDER BY [3] DESC", [data]);
+        } else {
+          var result = alasql("SELECT [1] AS server,[2] AS district, [3] AS its,[4] AS itr FROM ? WHERE [3]>0 AND [2]='" + userValue.district + "' ORDER BY [3] DESC", [data]);
+        }
+
+
+        var label: string[] = [];
+        var value: number[] = [];
+
+        for (let l of result) {
+          if (userValue.district == "all") {
+            label.push(l.district + ' - ' + l.server);
+          } else {
+            label.push(l.server);
+          }
+          value.push(l.its);
+        }
+        this.barChartLabels8 = label;
+        this.barChartData8 = [
+          { data: value, label: "Itens restantes por enviar" }];
+
+        if (userValue.district == "all") {
+          var result2 = alasql("SELECT [1] AS server,[2] AS district, [3] AS its,[4] AS itr FROM ? WHERE [4]>0 ORDER BY [4] DESC ", [data]);
+        } else {
+          var result2 = alasql("SELECT [1] AS server,[2] AS district, [3] AS its,[4] AS itr FROM ? WHERE [4]>0 AND [2]='" + userValue.district + "' ORDER BY [4] DESC ", [data]);
+        }
+
+        var label2: string[] = [];
+        var value3: number[] = [];
+        for (let l of result2) {
+          if (userValue.district == "all") {
+            label2.push(l.district + ' - ' + l.server);
+          } else {
+            label2.push(l.server);
+          }
+          value3.push(l.itr);
+        }
+
+        this.barChartLabels10 = label2;
+        this.barChartData10 = [
+          { data: value3, label: "Itens restantes por receber" }];
+
+
+      },
+        error => { },
+        () => {
+          this.chart8 = true;
+          this.chart10 = true;
+        });
+
+    this.serversService.getSyncsItemsTW()
+      .subscribe(data => {
+        if (userValue.district == "all") {
+          var result = alasql("SELECT [1] AS server,[2] AS district, [3] AS its,[4] AS itr FROM ? WHERE [3]>0 ORDER BY [3] DESC", [data]);
+        } else {
+          var result = alasql("SELECT [1] AS server,[2] AS district, [3] AS its,[4] AS itr FROM ? WHERE [3]>0 AND [2]='" + userValue.district + "' ORDER BY [3] DESC", [data]);
+        }
+        var label: string[] = [];
+        var value: number[] = [];
+
+        for (let l of result) {
+          if (userValue.district == "all") {
+            label.push(l.district + ' - ' + l.server);
+          } else {
+            label.push(l.server);
+          }
+          value.push(l.its);
+        }
+        this.barChartLabels9 = label;
+        this.barChartData9 = [
+          { data: value, label: "Itens restantes por enviar" }];
+
+
+        if (userValue.district == "all") {
+          var result2 = alasql("SELECT [1] AS server,[2] AS district, [3] AS its,[4] AS itr FROM ? WHERE [4]>0 ORDER BY [4] DESC ", [data]);
+        } else {
+          var result2 = alasql("SELECT [1] AS server,[2] AS district, [3] AS its,[4] AS itr FROM ? WHERE [4]>0 AND [2]='" + userValue.district + "' ORDER BY [4] DESC ", [data]);
+        }
+        var label2: string[] = [];
+        var value3: number[] = [];
+        for (let l of result2) {
+          if (userValue.district == "all") {
+            label2.push(l.district + ' - ' + l.server);
+          } else {
+            label2.push(l.server);
+          }
+          value3.push(l.itr);
+        }
+
+        this.barChartLabels11 = label2;
+        this.barChartData11 = [
+          { data: value3, label: "Itens restantes por receber" }];
+
+      },
+        error => { },
+        () => {
+          this.chart9 = true;
+          this.chart11 = true;
+        });
+
+
+  }
+
 }

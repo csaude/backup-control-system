@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Routes, RouterModule } from '@angular/router';
 import { AuthManagerDistrictsRead } from './authmanagerread';
 import { AuthManagerDistrictsEdit } from './authmanageredit';
@@ -14,4 +14,7 @@ const districtsRoutes: Routes = [
   { path: 'districts/:uuid', component: DistrictFormComponent, canActivate: [AuthManagerDistrictsEdit] }
 ];
 
+/** 
+ * @author Damasceno Lopes
+ */
 export const districtsRouting = RouterModule.forChild(districtsRoutes);

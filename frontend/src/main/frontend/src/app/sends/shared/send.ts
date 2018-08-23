@@ -1,10 +1,14 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { District } from './../../districts/shared/district';
 import { Transporter } from './../../transporters/shared/transporter';
 import { User } from './../../users/shared/user';
+
+/** 
+* @author Damasceno Lopes
+*/
 export class Send {
   send_id: number;
   backup_date: Date;
@@ -34,4 +38,6 @@ export class Send {
   uuid: string;
   ik_received: boolean;
   date_ik_received: Date;
+  idart_backup: boolean;
+  idart_backup_date: Date;
 }

@@ -1,6 +1,14 @@
-<br>
-<h5 class="light">{{ "dashboard" | translate }}</h5>
+<!--
+ Copyright (C) 2014-2018, Friends in Global Health, LLC
+ All rights reserved.
+ @author Damasceno Lopes
+-->
 
+<br>
+<h5 class="light" style="display: inline-flex;">{{ "dashboard" | translate }}
+  &nbsp;
+ <a mz-tooltip [tooltip]="'Ajuda'" [position]="'top'" [html]="false" [delay]="100" style="color:black;" href="https://docs.google.com/document/d/12yBBqBCr_Zlbgbd-bGJOwHqbRz8INw6wZ5BKSmt3-9I/edit#" target="_blank"><i class="material-icons waves-effect" >help_outline</i></a>
+</h5>
 
 <mz-tab [responsiveThreshold]="'true'">
   <mz-tab-item [active]="'true'" [label]="'Backups'">
@@ -30,15 +38,32 @@
         <canvas *ngIf="chart3" baseChart  [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
           [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
       </div>
-
-     
-
     </div>
 
   </mz-tab-item>
-
-
   <mz-tab-item [label]="'Sync'">
+     <form materialize [formGroup]="form">
+          <div class="input-field col s10" *ngIf="translate.currentLang=='pt'&&(ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA)">
+            <mz-select-container>
+              <select mz-select mz-validation required id="district" [label]="'Distrito'"  (change)="search()" formControlName="district"
+                >
+                <option value="all" selected>Todos Distritos</option>
+                <option *ngFor="let district of alldistricts" [value]="district.name">{{ district.name }}</option>
+              </select>
+            </mz-select-container>
+          </div>
+          <div class="input-field col s10" *ngIf="translate.currentLang=='en'&&(ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA)">
+            <mz-select-container>
+      
+              <select mz-select mz-validation required id="district" [label]="'District'"  (change)="search()" formControlName="district"
+               >
+                <option value="all" selected>All Districts</option>
+                <option *ngFor="let district of alldistricts" [value]="district.name">{{ district.name }}</option>
+              </select>
+            </mz-select-container>
+          </div>
+        </form>
+       
     
     <div class="row">
 
@@ -46,6 +71,7 @@
             <div class="progress" *ngIf="chart4==false">
               <div class="indeterminate"></div>
             </div>
+
             <canvas *ngIf="chart4" baseChart [colors]="myColors2"   [datasets]="barChartData4" [labels]="barChartLabels4"
             [options]="barChartOptions4" [legend]="barChartLegend4" [chartType]="barChartType4"></canvas>
           </div>
@@ -74,7 +100,7 @@
                 [options]="barChartOptions8" [legend]="barChartLegend8" [chartType]="barChartType8"></canvas>
               </div>
 
-              <div class="card col s12 l6 m6"style="height:300px;" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
+              <div class="card col s12 l6 m6" style="height:300px;" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
                   <div class="progress" *ngIf="chart8==false">
                     <div class="indeterminate red"></div>
                   </div>
@@ -105,3 +131,4 @@
   </mz-tab-item>
 
 </mz-tab>
+

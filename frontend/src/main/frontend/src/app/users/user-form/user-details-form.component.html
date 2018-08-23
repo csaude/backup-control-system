@@ -58,7 +58,7 @@
               <tbody>
                 <tr *ngFor="let district of user.districts">
                   <td>{{ district.province }}</td>
-                  <td>{{ district.name }}</td>
+                  <td>{{ district.namef }}</td>
                 </tr>
               </tbody>
             </table>
@@ -193,7 +193,7 @@
                   </i>
                   <select multiple mz-select id="districts" [label]="'Distrito(s)'" [placeholder]="'Seleccione o(s) Distrito(s)'" [(ngModel)]="user.districts"
                     formControlName="districts">
-                    <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+                    <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.namef }}</option>
                   </select>
                 </mz-select-container>
               </div>

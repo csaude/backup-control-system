@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.controller;
 
 import java.util.List;
@@ -21,7 +25,9 @@ import mz.org.fgh.scb.service.impl.IronkeyServiceImpl;
 import mz.org.fgh.scb.specification.IronkeySpecificationsBuilder;
 
 /**
- * @author damasceno.lopes
+ * Defines the rest endpoint configuration for Ironkeys
+ * 
+ * @author Damasceno Lopes
  *
  */
 @RestController
@@ -54,7 +60,7 @@ public class IronkeyController {
 		return pageIronkey;
 	}
 
-	@RequestMapping(value = "/ironkeys", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/ironkeys", method = RequestMethod.POST)
 	@ResponseBody
 	public String create(@RequestBody Ironkey ironkey) {
 		try {
@@ -71,7 +77,7 @@ public class IronkeyController {
 		return ironkeyServiceImpl.findByUuid(uuid);
 	}
 
-	@RequestMapping(value = "/ironkeys/{uuid}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/ironkeys/{uuid}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public String deleteIronkey(@PathVariable String uuid) throws Exception {
 		Ironkey ironkey = null;
@@ -85,7 +91,7 @@ public class IronkeyController {
 		}
 	}
 
-	@RequestMapping(value = "/ironkeys", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/ironkeys", method = RequestMethod.PUT)
 	@ResponseBody
 	public String update(@RequestBody Ironkey ironkey) throws Exception {
 		try {

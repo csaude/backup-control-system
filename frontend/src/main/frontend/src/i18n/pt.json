@@ -171,5 +171,10 @@
     "items_onend": "Nº de itens na Hora final",
     "items_send": "por enviar",
     "items_receive": "por receber",
-    "syncdetails":"Detalhes da Sincronização"
+    "syncdetails":"Detalhes da Sincronização",
+    "include_idart_backup":"Incluiu Backup de iDART?",
+
+    "serverfault":"O Servidor avariou?",
+    "laptopfault":"O Laptop avariou?",
+    "powercut":"Houve corte de energia?"
 }

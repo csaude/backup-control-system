@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.service.impl;
 
 import java.text.DateFormat;
@@ -20,7 +24,7 @@ import mz.org.fgh.scb.repository.SendRepository;
 import mz.org.fgh.scb.service.api.SendService;
 
 /**
- * @author damasceno.lopes
+ * @author Damasceno Lopes
  *
  */
 @Service
@@ -79,7 +83,7 @@ public class SendServiceImpl implements SendService {
 			transporter_name = send.getTransporter().getName() + "";
 			transporter_phone = send.getTransporter().getPhone_number() + "";
 			transporter_role = send.getTransporter().getRole() + "";
-			district = send.getDistrict().getName();
+			district = send.getDistrict().getNamef();
 
 			new Thread(new Runnable() {
 				public void run() {
@@ -177,18 +181,18 @@ public class SendServiceImpl implements SendService {
 	}
 
 	@Override
-	public Page<Send> findByDistrictId(Long district_id, Pageable pageable, Date from, Date until) {
-		return sendRepository.findByDistrictId(district_id, pageable, from, until);
+	public Page<Send> findByDistrictIdAndBackupDateRange(Long district_id, Pageable pageable, Date from, Date until) {
+		return sendRepository.findByDistrictIdAndBackupDateRange(district_id, pageable, from, until);
 	}
 
 	@Override
-	public Page<Send> findByUserId(Pageable pageable, String username) {
-		return sendRepository.findByUserId(pageable, username);
+	public Page<Send> findByUsername(Pageable pageable, String username) {
+		return sendRepository.findByUsername(pageable, username);
 	}
 
 	@Override
-	public Page<Send> findByUserId(Pageable pageable, Date from, Date until, String username) {
-		return sendRepository.findByUserId(pageable, from, until, username);
+	public Page<Send> findByUsernameAndBackupDateRange(Pageable pageable, Date from, Date until, String username) {
+		return sendRepository.findByUsernameAndBackupDateRange(pageable, from, until, username);
 	}
 
 	@Override

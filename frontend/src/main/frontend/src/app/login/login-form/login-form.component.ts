@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -14,6 +14,10 @@ import { NavbarService } from '../../nav-bar/nav-bar.service';
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class LoginFormComponent implements OnInit {
   public user: User = new User();
   public form: FormGroup;
@@ -21,6 +25,8 @@ export class LoginFormComponent implements OnInit {
   public loginAccess: string = "hide";
   public isDisabled: boolean;
   public localUser = { username: '', password: '' };
+
+   
   constructor(
     formBuilder: FormBuilder,
     public router: Router,
@@ -44,6 +50,9 @@ export class LoginFormComponent implements OnInit {
       this.router.navigate(['home']);
     }
   }
+  /**
+   * Handle user authentication
+   */
   login() {
     window.sessionStorage.clear();
     this.isDisabled = true;

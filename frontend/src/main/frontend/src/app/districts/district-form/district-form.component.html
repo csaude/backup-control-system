@@ -1,6 +1,7 @@
 <!--
-@author damasceno.lopes
-@email damasceno.lopes@fgh.org.mz
+ Copyright (C) 2014-2018, Friends in Global Health, LLC
+ All rights reserved.
+ @author Damasceno Lopes
 -->
 
 <br>
@@ -85,7 +86,6 @@
             </div>
           </div>
 
-
       </div>
       <div class="row" *ngIf="translate.currentLang=='en'">
         <div class="input-field col s11 l11 m11">
@@ -117,7 +117,6 @@
             </div>
           </div>
 
-
       </div>
       <div class="row">
         <div class="input-field col s12 l6 m6">
@@ -144,15 +143,14 @@
         </div>
       </div>
 
-
       <div class="row">
         <div class="input-field col s12" *ngIf="translate.currentLang=='pt'">
           <mz-select-container>
             <i mz-icon mz-input-prefix [icon]="'location_on'">
             </i>
-            <select mz-select mz-validation required id="district" [label]="'Parente *'" [placeholder]="'Seleccione o Distrito'" [(ngModel)]="district.parentdistrict"
+            <select mz-select  id="district" [label]="'Parente *'" [placeholder]="'Seleccione o Distrito'" [(ngModel)]="district.parentdistrict"
               formControlName="parent">
-              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.namef }}</option>
             </select>
           </mz-select-container>
         </div>
@@ -160,9 +158,9 @@
           <mz-select-container>
             <i mz-icon mz-input-prefix [icon]="'location_on'">
             </i>
-            <select mz-select mz-validation required id="district" [label]="'Parent *'" [placeholder]="'Select the District'" [(ngModel)]="district.parentdistrict"
+            <select mz-select  id="district" [label]="'Parent *'" [placeholder]="'Select the District'" [(ngModel)]="district.parentdistrict"
               formControlName="parent">
-              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.namef }}</option>
             </select>
           </mz-select-container>
         </div>
@@ -180,7 +178,6 @@
           </label>
         </div>
       </div>
-
 
       <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled||disabled1==true">
         {{ "save" | translate }}

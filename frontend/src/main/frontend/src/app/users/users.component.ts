@@ -1,18 +1,23 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from "./shared/users.service";
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { User } from "./shared/user";
 import { MzToastService } from 'ng2-materialize';
 import { TranslateService } from 'ng2-translate';
+
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class UsersComponent implements OnInit {
   public users: User[] = [];
   public isHidden: string;
@@ -24,6 +29,8 @@ export class UsersComponent implements OnInit {
   public username: string;
   public enabled: boolean;
   public enableds: boolean=true;
+  
+     
   constructor(public usersService: UsersService, public toastService: MzToastService,
     public translate: TranslateService,
     public formBuilder: FormBuilder) {

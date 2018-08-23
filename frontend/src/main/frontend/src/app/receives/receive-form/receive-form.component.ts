@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -14,11 +14,16 @@ import { Transporter } from './../../transporters/shared/transporter';
 import { MzToastService } from 'ng2-materialize';
 import { TranslateService } from 'ng2-translate';
 import { DatePipe } from '@angular/common';
+
 @Component({
   selector: 'app-receive-form',
   templateUrl: './receive-form.component.html',
   styleUrls: ['./receive-form.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class ReceiveFormComponent implements OnInit {
   public form: FormGroup;
   public title: string;
@@ -32,6 +37,8 @@ export class ReceiveFormComponent implements OnInit {
     format: 'dd/mm/yyyy',
     formatSubmit: 'yyyy-mm-dd',
   };
+
+   
   constructor(
     formBuilder: FormBuilder,
     public router: Router,
@@ -59,6 +66,7 @@ export class ReceiveFormComponent implements OnInit {
       canceled_reason: []
     });
   }
+  
   ngOnInit() {
     this.isDisabled = false;
     var uuid = this.route.params.subscribe(params => {
@@ -110,12 +118,13 @@ export class ReceiveFormComponent implements OnInit {
       }
     });
   }
+
   save() {
     this.isDisabled = true;
     var result, userValue = this.form.value;
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     if (userValue.receive_id) {
-      if (new Date(userValue.receive_date) > new Date()||new Date(userValue.date_ik_returned)> new Date()) {
+      if (new Date(userValue.receive_date) > new Date() || new Date(userValue.date_ik_returned) > new Date()) {
         this.showMsgErr();
         this.isDisabled = false;
       } else
@@ -181,7 +190,7 @@ export class ReceiveFormComponent implements OnInit {
                 if (this.send.received == true) {
                   this.router.navigate(['receives']);
                 } else {
-                  
+
                   userValue.created_by = user;
                   result = this.receivesService.addReceive(userValue);
                   result.subscribe(data => this.router.navigate(['receives']));
@@ -190,6 +199,7 @@ export class ReceiveFormComponent implements OnInit {
               }
     }
   }
+
   showMsgErr() {
     this.toastService.show('A Data do Recepção ou Devolução não deve estar no futuro!', 2000, 'red', null);
   }

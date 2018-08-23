@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.service.impl;
 
 import java.util.Date;
@@ -16,7 +20,7 @@ import mz.org.fgh.scb.repository.ServerRepository;
 import mz.org.fgh.scb.service.api.ServerService;
 
 /**
- * @author damasceno.lopes
+ * @author Damasceno Lopes
  *
  */
 @Service
@@ -76,13 +80,13 @@ public class ServerServiceImpl implements ServerService {
 	}
 
 	@Override
-	public List<Server> findByUserId(String username) {
-		return serverRepository.findByUserId(username);
+	public List<Server> findByUsername(String username) {
+		return serverRepository.findByUsername(username);
 	}
 
 	@Override
-	public List<Object[]> findLastSyncsByServer() {
-		return serverRepository.findLastSyncsByServer();
+	public List<Object[]> findLastSyncByServer() {
+		return serverRepository.findLastSyncByServer();
 	}
 
 	@Override
@@ -97,13 +101,13 @@ public class ServerServiceImpl implements ServerService {
 	}
 
 	@Override
-	public List<Object[]> findSyncsItemsOfThisWeek() {
-		return serverRepository.findSyncsItemsOfThisWeek();
+	public List<Object[]> findSyncsRemainingItemsOfThisWeek() {
+		return serverRepository.findSyncsRemainingItemsOfThisWeek();
 	}
 
 	@Override
-	public List<Object[]> findSyncsItemsOfPreviousWeek() {
-		return serverRepository.findSyncsItemsOfPreviousWeek();
+	public List<Object[]> findSyncsRemainingItemsOfPreviousWeek() {
+		return serverRepository.findSyncsRemainingItemsOfPreviousWeek();
 	}
 
 }

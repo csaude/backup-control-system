@@ -196,15 +196,58 @@
 
     <div class="row">
 
-      <div class="switch col s12" style="margin-left: 45px;display: inline-flex;">
-          {{ "sync_error_desc" | translate }}
+      <div class="switch col s3" style="margin-left: 45px;display: inline-flex;">
+         
         <label>
           <input type="checkbox" [(ngModel)]="sync.sync_error" formControlName="sync_error">
           <span class="lever"></span>
         </label>
+
+        {{ "sync_error_desc" | translate }}
       </div>
 
     </div>
+
+    <div class="row">
+
+      <div class="switch col s12" style="margin-left: 45px;display: inline-flex;">
+         
+        <label>
+          <input type="checkbox" [(ngModel)]="sync.serverfault" formControlName="serverfault">
+          <span class="lever"></span>
+        </label>
+        {{ "serverfault" | translate }}
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="switch col s12" style="margin-left: 45px;display: inline-flex;">
+         
+        <label>
+          <input type="checkbox" [(ngModel)]="sync.laptopfault" formControlName="laptopfault">
+          <span class="lever"></span>
+        </label>
+        {{ "laptopfault" | translate }}
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="switch col s12" style="margin-left: 45px;display: inline-flex;">
+          
+        <label>
+          <input type="checkbox" [(ngModel)]="sync.powercut" formControlName="powercut">
+          <span class="lever"></span>
+        </label>
+        {{ "powercut" | translate }}
+      </div>
+
+    </div>
+
+    
 <br>
     <div class="row" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA">
       <div class="input-field col s12 l12 m12">

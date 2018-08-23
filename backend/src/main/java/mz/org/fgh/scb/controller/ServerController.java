@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.controller;
 
 import java.util.List;
@@ -23,7 +27,9 @@ import mz.org.fgh.scb.service.impl.ServerServiceImpl;
 import mz.org.fgh.scb.specification.ServerSpecificationsBuilder;
 
 /**
- * @author damasceno.lopes
+ * Defines the rest endpoint configuration for Servers
+ * 
+ * @author Damasceno Lopes
  *
  */
 @RestController
@@ -55,24 +61,24 @@ public class ServerController {
 	
 	@RequestMapping(value = "/serverssyncsitemspreviousweek", method = RequestMethod.GET)
 	public List<Object[]> findSyncsItemsOfPreviousWeek() {
-		return serverServiceImpl.findSyncsItemsOfPreviousWeek();
+		return serverServiceImpl.findSyncsRemainingItemsOfPreviousWeek();
 	}
 	
 	@RequestMapping(value = "/serverssyncsitemsthisweek", method = RequestMethod.GET)
 	public List<Object[]> findSyncsItemsOfThisWeek() {
-		return serverServiceImpl.findSyncsItemsOfThisWeek();
+		return serverServiceImpl.findSyncsRemainingItemsOfThisWeek();
 	}
 	
 	@RequestMapping(value = "/serversuser", method = RequestMethod.GET)
 	public List<Server> findByUserId() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();
-		return serverServiceImpl.findByUserId(currentPrincipalName);
+		return serverServiceImpl.findByUsername(currentPrincipalName);
 	}
 	
 	@RequestMapping(value = "/serverssyncinfo", method = RequestMethod.GET)
 	public List<Object[]> findLastSyncByServer() {
-		return serverServiceImpl.findLastSyncsByServer();
+		return serverServiceImpl.findLastSyncByServer();
 	}
 
 	@RequestMapping(value = "/servers/get", method = RequestMethod.GET)
@@ -93,7 +99,7 @@ public class ServerController {
 		return pageServer;
 	}
 
-	@RequestMapping(value = "/servers", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/servers", method = RequestMethod.POST)
 	@ResponseBody
 	public String create(@RequestBody Server server) {
 		try {
@@ -110,7 +116,7 @@ public class ServerController {
 		return serverServiceImpl.findByUuid(uuid);
 	}
 
-	@RequestMapping(value = "/servers/{uuid}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/servers/{uuid}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public String deleteServer(@PathVariable String uuid) throws Exception {
 		Server server = null;
@@ -124,7 +130,7 @@ public class ServerController {
 		}
 	}
 
-	@RequestMapping(value = "/servers", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/servers", method = RequestMethod.PUT)
 	@ResponseBody
 	public String update(@RequestBody Server server) throws Exception {
 		try {

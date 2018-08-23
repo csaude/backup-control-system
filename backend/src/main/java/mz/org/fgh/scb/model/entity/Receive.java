@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.model.entity;
 
 import java.text.SimpleDateFormat;
@@ -17,7 +21,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
- * @author damasceno.lopes
+ * A Receive is a definition of all backups that have been 
+ * Received on Headquarter.
+ * 
+ * @author Damasceno Lopes
  *
  */
 @Entity(name = "receive")
@@ -66,7 +73,7 @@ public class Receive {
 
 	@Column(nullable = false)
 	private boolean canceled;
-	
+
 	private Date date_restored;
 
 	@Column(nullable = false)
@@ -78,16 +85,18 @@ public class Receive {
 	@JoinColumn(name = "canceled_by")
 	@ManyToOne
 	private User canceled_by;
-	
+
 	@JoinColumn(name = "restored_by")
 	@ManyToOne
 	private User restored_by;
-	
-	
+
 	@JoinColumn(name = "ik_returned_by")
 	@ManyToOne
 	private User ik_returned_by;
 
+	// -------------------------------------------------
+	// Constructors
+	// -------------------------------------------------
 	public Receive() {
 		this.canceled = false;
 		this.uuid = UUID.randomUUID().toString();
@@ -130,9 +139,9 @@ public class Receive {
 			this.created_by.setDistricts(null);
 			this.created_by.setAuthorities(null);
 			return this.created_by;
-			}else {
-				return null;
-			}
+		} else {
+			return null;
+		}
 	}
 
 	public void setCreated_by(User created_by) {
@@ -232,8 +241,7 @@ public class Receive {
 	public void setTransporter(Transporter transporter) {
 		this.transporter = transporter;
 	}
-	
-	
+
 	public Date getDate_restored() {
 		return date_restored;
 	}
@@ -249,23 +257,23 @@ public class Receive {
 	public void setRestored(boolean restored) {
 		this.restored = restored;
 	}
-	
+
 	public String getSender() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		return this.getSend().getCreated_by().getPerson().getOthers_names()+"\n"+this.getSend().getCreated_by().getPerson().getSurname()+"\n"+sdf.format(this.getSend().getDate_created());
+		return this.getSend().getCreated_by().getPerson().getOthers_names() + "\n" + this.getSend().getCreated_by().getPerson().getSurname() + "\n" + sdf.format(this.getSend().getDate_created());
 	}
-	
+
 	public String getReceiver() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		return this.getCreated_by().getPerson().getOthers_names()+"\n"+this.getCreated_by().getPerson().getSurname()+"\n"+sdf.format(this.getDate_created());
+		return this.getCreated_by().getPerson().getOthers_names() + "\n" + this.getCreated_by().getPerson().getSurname() + "\n" + sdf.format(this.getDate_created());
 	}
-	
+
 	public String getObsd() {
 		return this.getSend().getObservation();
 	}
 
 	public User getRestored_by() {
-		if (this.restored_by!= null) {
+		if (this.restored_by != null) {
 			this.restored_by.setDistricts(null);
 			this.restored_by.setAuthorities(null);
 			return this.restored_by;
@@ -279,7 +287,7 @@ public class Receive {
 	}
 
 	public User getIk_returned_by() {
-		if (this.ik_returned_by!= null) {
+		if (this.ik_returned_by != null) {
 			this.ik_returned_by.setDistricts(null);
 			this.ik_returned_by.setAuthorities(null);
 			return this.ik_returned_by;
@@ -292,50 +300,60 @@ public class Receive {
 		this.ik_returned_by = ik_returned_by;
 	}
 
-	public String getDistrictname(){
-		return this.getSend().getDistrict().getName();	
+	public String getDistrictname() {
+		return this.getSend().getDistrict().getNamef();
 	}
-	
-	public String getAt(){
-		if(this.getSend().isUpdate_finished()){
+
+	public String getAt() {
+		if (this.getSend().isUpdate_finished()) {
 			return "Sim";
-		}else {return "Não";}
+		} else {
+			return "Não";
+		}
 	}
-	public String getSt(){
-		if(this.getSend().isSync_finished()){
+
+	public String getSt() {
+		if (this.getSend().isSync_finished()) {
 			return "Sim";
-		}else {return "Não";}
+		} else {
+			return "Não";
+		}
 	}
-	public String getDhis2(){
-		if(this.getSend().isCross_dhis2_finished()){
+
+	public String getDhis2() {
+		if (this.getSend().isCross_dhis2_finished()) {
 			return "Sim";
-		}else {return "Não";}
+		} else {
+			return "Não";
+		}
 	}
-	
-	public String getIdart(){
-		if(this.getSend().isCross_idart_finished()){
+
+	public String getIdart() {
+		if (this.getSend().isCross_idart_finished()) {
 			return "Sim";
-		}else {return "Não";}
+		} else {
+			return "Não";
+		}
 	}
-	
-	public String getVt(){
-		if(this.getSend().isValidation_finished()){
+
+	public String getVt() {
+		if (this.getSend().isValidation_finished()) {
 			return "Sim";
-		}else {return "Não";}
+		} else {
+			return "Não";
+		}
 	}
-	
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	public Date getBackup_date_f() {
 		return this.getSend().getBackup_date();
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Receive [receive_id=" + receive_id + ", receive_date=" + receive_date + ", observation=" + observation
-				+ ", ik_returned=" + ik_returned + ", date_ik_returned=" + date_ik_returned + ", date_created="
-				+ date_created + ", date_updated=" + date_updated + ", uuid=" + uuid + ", date_canceled="
-				+ date_canceled + ", canceled=" + canceled + ", date_restored=" + date_restored + ", restored="
-				+ restored + ", canceled_reason=" + canceled_reason + "]";
+		return "Receive [receive_id=" + receive_id + ", receive_date=" + receive_date + ", observation=" + observation + ", ik_returned=" + ik_returned + ", date_ik_returned=" + date_ik_returned + ", date_created=" + date_created
+				+ ", date_updated=" + date_updated + ", uuid=" + uuid + ", date_canceled=" + date_canceled + ", canceled=" + canceled + ", date_restored=" + date_restored + ", restored=" + restored + ", canceled_reason=" + canceled_reason
+				+ "]";
 	}
 
 	@Override

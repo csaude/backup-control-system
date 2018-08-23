@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Routes, RouterModule } from '@angular/router';
 import { AuthManagerIronkeysRead } from './authmanagerread';
 import { AuthManagerIronkeysEdit } from './authmanageredit';
@@ -12,4 +12,8 @@ const ironkeysRoutes: Routes = [
   { path: 'ironkeys/new', component: IronkeyFormComponent, canActivate: [AuthManagerIronkeysEdit] },
   { path: 'ironkeys/:uuid', component: IronkeyFormComponent, canActivate: [AuthManagerIronkeysEdit] }
 ];
+
+/** 
+* @author Damasceno Lopes
+*/
 export const ironkeysRouting = RouterModule.forChild(ironkeysRoutes);

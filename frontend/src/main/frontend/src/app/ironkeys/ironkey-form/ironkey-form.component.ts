@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -14,6 +14,10 @@ import { TranslateService } from 'ng2-translate';
   templateUrl: './ironkey-form.component.html',
   styleUrls: ['./ironkey-form.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class IronkeyFormComponent implements OnInit {
   public options: Pickadate.DateOptions = {
     format: 'dd/mm/yyyy',
@@ -48,6 +52,8 @@ export class IronkeyFormComponent implements OnInit {
   public ironkeys: Ironkey[] = [];
   public serial = null;
   public user: Object[] = [];
+  
+   
   constructor(
     public formBuilder: FormBuilder,
     public router: Router,
@@ -128,7 +134,7 @@ export class IronkeyFormComponent implements OnInit {
             this.router.navigate(['ironkeys']);
             this.showMsg(userValue.serial);
           } else {
-            this.showMsgErr(userValue.serial);
+            this.showMsgErr();
             this.isDisabled = false;
           }
         }, error => {
@@ -144,7 +150,7 @@ export class IronkeyFormComponent implements OnInit {
           this.router.navigate(['ironkeys']);
           this.showMsg(userValue.serial);
         } else {
-          this.showMsgErr(userValue.serial);
+          this.showMsgErr();
           this.isDisabled = false;
         }
       });
@@ -153,7 +159,7 @@ export class IronkeyFormComponent implements OnInit {
   showMsg(ironkey) {
     this.toastService.show('Iron Key: ' + ironkey + ', salvo com sucesso!', 2000, 'green', null);
   }
-  showMsgErr(ironkey) {
+  showMsgErr() {
     this.toastService.show('Este Ironkey ja existe!', 2000, 'red', null);
   }
 }

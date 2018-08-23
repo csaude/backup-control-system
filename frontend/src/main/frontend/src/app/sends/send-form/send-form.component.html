@@ -1,6 +1,7 @@
 <!--
-@author damasceno.lopes
-@email damasceno.lopes@fgh.org.mz
+ Copyright (C) 2014-2018, Friends in Global Health, LLC
+ All rights reserved.
+ @author Damasceno Lopes
 -->
 <br>
 
@@ -29,7 +30,7 @@
             </i>
             <select mz-select mz-validation required id="district" [label]="'Distrito *'" [placeholder]="'Seleccione o Distrito'" [(ngModel)]="send.district"
               formControlName="district">
-              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.namef }}</option>
             </select>
           </mz-select-container>
         </div>
@@ -39,7 +40,7 @@
             </i>
             <select mz-select mz-validation required id="district" [label]="'District *'" [placeholder]="'Select the District'" [(ngModel)]="send.district"
               formControlName="district">
-              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.namef }}</option>
             </select>
           </mz-select-container>
         </div>
@@ -137,6 +138,36 @@
         </div>
       </div>
       <br>
+<!--
+      <div class="row">
+
+        <div class="switch col s12 l3 m3" style="margin-left: 45px;display: inline-flex;">
+            {{ "include_idart_backup" | translate }}
+          <label>
+            <input type="checkbox" [(ngModel)]="send.idart_backup" formControlName="idart_backup">
+            <span class="lever"></span>
+          </label>
+        </div>
+
+        <div class="input-field col s12 l3 m3" *ngIf="translate.currentLang=='pt'&&send.idart_backup==true" style="margin-top: -20px;">
+          <mz-datepicker-container>
+            <i mz-icon mz-input-prefix [icon]="'date_range'">
+            </i>
+            <input mz-datepicker [label]="'Data do Backup de iDART*'" [options]="options" [(ngModel)]="send.idart_backup_date" formControlName="idart_backup_date"
+              type="date" />
+          </mz-datepicker-container>
+        </div>
+        <div class="input-field col s12 l3 m3" *ngIf="translate.currentLang=='en'&&send.idart_backup==true" style="margin-top: -20px;">
+          <mz-datepicker-container>
+            <i mz-icon mz-input-prefix [icon]="'date_range'">
+            </i>
+            <input mz-datepicker [label]="'Backup Date de iDART*'" [options]="options" [(ngModel)]="send.idart_backup_date" formControlName="idart_backup_date"
+              type="date" />
+          </mz-datepicker-container>
+        </div>
+  
+      </div>
+-->
       <div class="row">
         <div class="input-field col s12 l12 m12">
           <i class="material-icons prefix">description</i>

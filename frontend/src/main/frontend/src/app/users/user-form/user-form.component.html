@@ -156,7 +156,7 @@
             <select multiple mz-select id="districts" [label]="'Distrito(s)'" [placeholder]="'Seleccione o(s) Distrito(s)'" [(ngModel)]="user.districts"
               formControlName="districts" [disabled]="disabled2" style="font-size: 8px;">
 
-              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.namef }}</option>
             </select>
           </mz-select-container>
         </div>
@@ -166,7 +166,7 @@
             </i>
             <select multiple mz-select id="districts" [label]="'District(s)'" [placeholder]="'Select the District(s)'" [(ngModel)]="user.districts"
               formControlName="districts" [disabled]="disabled2">
-              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.namef }}</option>
             </select>
           </mz-select-container>
         </div>

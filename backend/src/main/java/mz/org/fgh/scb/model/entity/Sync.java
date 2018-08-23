@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.model.entity;
 
 import java.text.DateFormat;
@@ -19,7 +23,10 @@ import javax.persistence.SequenceGenerator;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
- * @author damasceno.lopes
+ * A Sync is a definition of the process of the 
+ * data exchange between the Servers.
+ * 
+ * @author Damasceno Lopes
  *
  */
 @Entity(name = "sync")
@@ -33,34 +40,34 @@ public class Sync {
 	@JoinColumn(name = "server_id")
 	@ManyToOne
 	private Server server;
-	
+
 	@Column(nullable = false)
 	private Date start_time;
-	
+
 	@Column(nullable = false)
 	private int start_items_to_send;
-	
+
 	@Column(nullable = false)
 	private int start_items_to_receive;
-	
+
 	@Column(nullable = true)
 	private Date end_time;
-	
+
 	@Column(nullable = true)
 	private int end_items_to_send;
-	
+
 	@Column(nullable = true)
 	private int end_items_to_receive;
 
 	private String observation;
-	
+
 	private String observation_his;
 
 	@Column(nullable = false)
 	private Date date_created;
 
 	private Date date_updated;
-	
+
 	@Column(nullable = false)
 	private boolean sync_error;
 
@@ -79,6 +86,15 @@ public class Sync {
 
 	@Column(nullable = false)
 	private boolean canceled;
+	
+	@Column(nullable = false)
+	private boolean serverfault;
+	
+	@Column(nullable = false)
+	private boolean laptopfault;
+	
+	@Column(nullable = false)
+	private boolean powercut;
 
 	private String canceled_reason;
 
@@ -87,6 +103,9 @@ public class Sync {
 	@ManyToOne
 	private User canceled_by;
 
+	// -------------------------------------------------
+	// Constructors
+	// -------------------------------------------------
 	public Sync() {
 		this.canceled = false;
 		this.uuid = UUID.randomUUID().toString();
@@ -181,120 +200,135 @@ public class Sync {
 	public void setDate_updated(Date date_updated) {
 		this.date_updated = date_updated;
 	}
-	
+
 	public String getDuration() {
-		if(this.end_time==null&&getEditable()==false) {
+		if (this.end_time == null && getEditable() == false) {
 			return "NÃO\nCONCLUIDA";
-		}else if(this.end_time==null&&getEditable()==true) {
+		} else if (this.end_time == null && getEditable() == true) {
 			return "EM\nPROGRESSO";
-		}else 
-			if(this.end_time!=null)
-		   {
+		} else if (this.end_time != null) {
 			long diff = this.end_time.getTime() - this.start_time.getTime();
 			long diffMinutes = diff / (60 * 1000) % 60;
 			long diffHours = diff / (60 * 60 * 1000) % 24;
 			long diffDays = diff / (24 * 60 * 60 * 1000);
-			DecimalFormat decimalFormat= new DecimalFormat("00");
-			
-			if(diffDays>0) {
-		    return diffDays+"d "+diffHours+"h "+diffMinutes+"min";
-			}else if(diffHours>0){
-		    return decimalFormat.format(diffHours)+"h "+decimalFormat.format(diffMinutes)+"min";
-			}else {
-			return decimalFormat.format(diffMinutes)+"min";	
+			DecimalFormat decimalFormat = new DecimalFormat("00");
+
+			if (diffDays > 0) {
+				return diffDays + "d " + diffHours + "h " + diffMinutes + "min";
+			} else if (diffHours > 0) {
+				return decimalFormat.format(diffHours) + "h " + decimalFormat.format(diffMinutes) + "min";
+			} else {
+				return decimalFormat.format(diffMinutes) + "min";
 			}
-		
-		   }else {return "";}
+
+		} else {
+			return "";
+		}
 	}
-	
+
 	public String getServerreport() {
-		return this.server.getName()+"\n"+this.server.getDistrictname();
+		return this.server.getName() + "\n" + this.server.getDistrictname();
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public String getSynctime() {
-		if(this.end_time==null) {
-			DecimalFormat decimalFormat= new DecimalFormat("00");
+		if (this.end_time == null) {
+			DecimalFormat decimalFormat = new DecimalFormat("00");
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			return sdf.format(this.start_time)+"\n"+decimalFormat.format(this.start_time.getHours())+":"+decimalFormat.format(this.start_time.getMinutes());
-		}else {
-		DecimalFormat decimalFormat= new DecimalFormat("00");
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		return sdf.format(this.start_time)+"\n"+decimalFormat.format(this.start_time.getHours())+":"+decimalFormat.format(this.start_time.getMinutes())+"-"+decimalFormat.format(this.end_time.getHours())+":"+decimalFormat.format(this.end_time.getMinutes());
+			return sdf.format(this.start_time) + "\n" + decimalFormat.format(this.start_time.getHours()) + ":" + decimalFormat.format(this.start_time.getMinutes());
+		} else {
+			DecimalFormat decimalFormat = new DecimalFormat("00");
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			return sdf.format(this.start_time) + "\n" + decimalFormat.format(this.start_time.getHours()) + ":" + decimalFormat.format(this.start_time.getMinutes()) + "-" + decimalFormat.format(this.end_time.getHours()) + ":"
+					+ decimalFormat.format(this.end_time.getMinutes());
 		}
-		}
-	
+	}
+
 	@SuppressWarnings("deprecation")
 	public String getSynctimeemailstart() {
-		DecimalFormat decimalFormat= new DecimalFormat("00");
+		DecimalFormat decimalFormat = new DecimalFormat("00");
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		return sdf.format(this.start_time)+" "+decimalFormat.format(this.start_time.getHours())+":"+decimalFormat.format(this.start_time.getMinutes());
-		}
-		
-	
+		return sdf.format(this.start_time) + " " + decimalFormat.format(this.start_time.getHours()) + ":" + decimalFormat.format(this.start_time.getMinutes());
+	}
+
 	@SuppressWarnings("deprecation")
 	public String getSynctimeemail() {
-		if(this.start_time==null||this.end_time==null) {
+		if (this.start_time == null || this.end_time == null) {
 			return "";
-		}else {
-		DecimalFormat decimalFormat= new DecimalFormat("00");
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		return sdf.format(this.start_time)+" "+decimalFormat.format(this.start_time.getHours())+":"+decimalFormat.format(this.start_time.getMinutes())+"-"+decimalFormat.format(this.end_time.getHours())+":"+decimalFormat.format(this.end_time.getMinutes());
+		} else {
+			DecimalFormat decimalFormat = new DecimalFormat("00");
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			return sdf.format(this.start_time) + " " + decimalFormat.format(this.start_time.getHours()) + ":" + decimalFormat.format(this.start_time.getMinutes()) + "-" + decimalFormat.format(this.end_time.getHours()) + ":"
+					+ decimalFormat.format(this.end_time.getMinutes());
 		}
-		}
-	
-	public String getStartitems() {
-		return this.getStart_items_to_send()+" por enviar\n"+this.getStart_items_to_receive()+" por receber";
 	}
-	
+
+	public String getStartitems() {
+		return this.getStart_items_to_send() + " por enviar\n" + this.getStart_items_to_receive() + " por receber";
+	}
+
 	public String getEnditems() {
-		if(this.end_time==null) 
+		if (this.end_time == null)
 			return "";
 		else
-		return this.getEnd_items_to_send()+" por enviar\n"+this.getEnd_items_to_receive()+" por receber";
+			return this.getEnd_items_to_send() + " por enviar\n" + this.getEnd_items_to_receive() + " por receber";
 	}
-	
-	public String getSyncerror(){
-		if(this.isSync_error()){
-			return "Sim";
-		}else {return "Não";}
+
+	public String getSyncerror() {
+		//Ocorrências
+		String occurrence="";
+		if (this.isSync_error()) {
+			occurrence= "Erro de Sync\n";
+		} 
+		if (this.isServerfault()) {
+			occurrence= occurrence+"Avaria do Servidor\n";
+		} 
+		if (this.isLaptopfault()) {
+			occurrence= occurrence+"Avaria do Laptop\n";
+		} 
+		if (this.isPowercut()) {
+			occurrence= occurrence+"Corte de Energia";
+		} 
+		
+		return occurrence;
 	}
-	
-	public String getSyncer(){
-		return this.getCreated_by().getPerson().getOthers_names()+"\n"+this.getCreated_by().getPerson().getSurname();
+
+	public String getSyncer() {
+		return this.getCreated_by().getPerson().getOthers_names() + "\n" + this.getCreated_by().getPerson().getSurname();
 	}
-	
+
 	public String getObservations() {
-		if(this.observation!=null&&this.observation_his==null) {
+		if (this.observation != null && this.observation_his == null) {
 			return this.observation;
-		}
-		else if(this.observation==null&&this.observation_his!=null) {
+		} else if (this.observation == null && this.observation_his != null) {
 			return this.observation_his;
+		} else if (this.observation != null && this.observation_his != null) {
+			return "M&A: " + this.observation + "\nSIS: " + this.observation_his;
+		} else {
+			return null;
 		}
-		else if(this.observation!=null&&this.observation_his!=null) {
-			return "M&A: "+ this.observation+"\nSIS: "+this.observation_his;
-		}
-		else {return null;}
 	}
-	
+
 	public String getState() {
-		
-		if(this.end_time==null) {
+
+		if (this.end_time == null) {
 			return "Progress";
-		}else {
-		
-		if(this.getEnd_items_to_receive()==0&&this.getEnd_items_to_send()==0) {
-			return "Complete";
-		}else if(this.getEnd_items_to_receive()>0||this.getEnd_items_to_send()>0) {
-			return "Incomplete";
-		}else {return "";}
-		
+		} else {
+
+			if (this.getEnd_items_to_receive() == 0 && this.getEnd_items_to_send() == 0) {
+				return "Complete";
+			} else if (this.getEnd_items_to_receive() > 0 || this.getEnd_items_to_send() > 0) {
+				return "Incomplete";
+			} else {
+				return "";
+			}
+
 		}
-		
+
 	}
-	
-	public boolean getEditable(){
-		
+
+	public boolean getEditable() {
+
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		Date today = new Date();
 		Date todayDate = null;
@@ -305,42 +339,65 @@ public class Sync {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
-		
-		if(syncDate.before(todayDate)) 
+
+		if (syncDate.before(todayDate))
 			return false;
 		else
 			return true;
 	}
 
+	public boolean isServerfault() {
+		return serverfault;
+	}
+
+	public void setServerfault(boolean serverfault) {
+		this.serverfault = serverfault;
+	}
+
+	public boolean isLaptopfault() {
+		return laptopfault;
+	}
+
+	public void setLaptopfault(boolean laptopfault) {
+		this.laptopfault = laptopfault;
+	}
+
+	public boolean isPowercut() {
+		return powercut;
+	}
+
+	public void setPowercut(boolean powercut) {
+		this.powercut = powercut;
+	}
+
 	@SuppressWarnings("deprecation")
 	public String getStart_time_time() {
-		if(this.start_time==null) {
+		if (this.start_time == null) {
 			return "";
-		}else {
-			DecimalFormat decimalFormat= new DecimalFormat("00");
-			return decimalFormat.format(this.start_time.getHours())+":"+decimalFormat.format(this.start_time.getMinutes());
+		} else {
+			DecimalFormat decimalFormat = new DecimalFormat("00");
+			return decimalFormat.format(this.start_time.getHours()) + ":" + decimalFormat.format(this.start_time.getMinutes());
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public String getEnd_time_time() {
-		if(this.end_time==null) {
+		if (this.end_time == null) {
 			return "";
-		}else {
-			DecimalFormat decimalFormat= new DecimalFormat("00");
-			return decimalFormat.format(this.end_time.getHours())+":"+decimalFormat.format(this.end_time.getMinutes());
+		} else {
+			DecimalFormat decimalFormat = new DecimalFormat("00");
+			return decimalFormat.format(this.end_time.getHours()) + ":" + decimalFormat.format(this.end_time.getMinutes());
 		}
 	}
-	
+
 	public User getCreated_by() {
 		if (this.created_by != null) {
 			this.created_by.setDistricts(null);
 			this.created_by.setAuthorities(null);
 			return this.created_by;
-			}else {
-				return null;
-			}
+		} else {
+			return null;
+		}
 	}
 
 	public void setCreated_by(User created_by) {
@@ -425,12 +482,9 @@ public class Sync {
 
 	@Override
 	public String toString() {
-		return "Sync [sync_id=" + sync_id + ", start_time=" + start_time + ", start_items_to_send="
-				+ start_items_to_send + ", start_items_to_receive=" + start_items_to_receive + ", end_time=" + end_time
-				+ ", end_items_to_send=" + end_items_to_send + ", end_items_to_receive=" + end_items_to_receive
-				+ ", observation=" + observation + ", date_created=" + date_created + ", date_updated=" + date_updated
-				+ ", uuid=" + uuid + ", date_canceled=" + date_canceled + ", canceled=" + canceled
-				+ ", canceled_reason=" + canceled_reason + ", canceled_by=" + canceled_by + "]";
+		return "Sync [sync_id=" + sync_id + ", start_time=" + start_time + ", start_items_to_send=" + start_items_to_send + ", start_items_to_receive=" + start_items_to_receive + ", end_time=" + end_time + ", end_items_to_send="
+				+ end_items_to_send + ", end_items_to_receive=" + end_items_to_receive + ", observation=" + observation + ", date_created=" + date_created + ", date_updated=" + date_updated + ", uuid=" + uuid + ", date_canceled="
+				+ date_canceled + ", canceled=" + canceled + ", canceled_reason=" + canceled_reason + ", canceled_by=" + canceled_by + "]";
 	}
 
 	@Override
@@ -463,7 +517,5 @@ public class Sync {
 			return false;
 		return true;
 	}
-	
-	
 
 }

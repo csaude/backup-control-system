@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.service.impl;
 
 import java.util.Date;
@@ -7,9 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import mz.org.fgh.scb.model.entity.District;
@@ -17,7 +19,7 @@ import mz.org.fgh.scb.repository.DistrictRepository;
 import mz.org.fgh.scb.service.api.DistrictService;
 
 /**
- * @author damasceno.lopes
+ * @author Damasceno Lopes
  *
  */
 @Service
@@ -38,10 +40,7 @@ public class DistrictServiceImpl implements DistrictService {
 		return districtRepository.findByUuid(uuid);
 	}
 
-	@Override
-	public Page<District> findAll(Specification<District> spec, PageRequest pageRequest) {
-		return districtRepository.findAll(spec, pageRequest);
-	}
+	
 
 	@Override
 	public District save(District district) {
@@ -64,13 +63,13 @@ public class DistrictServiceImpl implements DistrictService {
 	}
 
 	@Override
-	public Page<District> findAll(String name, boolean canceled, Pageable pageRequest) {
-		return this.districtRepository.findAll(name, canceled, pageRequest);
+	public Page<District> findAllByName(String name, boolean canceled, Pageable pageRequest) {
+		return this.districtRepository.findAllByName(name, canceled, pageRequest);
 	}
 
 	@Override
-	public Page<District> findAllByUser(String name, String username, boolean canceled, Pageable pageRequest) {
-		return this.districtRepository.findAllByUser(name, username, canceled, pageRequest);
+	public Page<District> findAllByNameAndUsername(String name, String username, boolean canceled, Pageable pageRequest) {
+		return this.districtRepository.findAllByNameAndUsername(name, username, canceled, pageRequest);
 	}
 
 	@Override
@@ -100,6 +99,6 @@ public class DistrictServiceImpl implements DistrictService {
 
 	@Override
 	public List<Object[]> findLastSyncByDistrict() {
-		return districtRepository.findLastSyncsByDistrict();
+		return districtRepository.findLastSyncByDistrict();
 	}
 }

@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -31,4 +31,8 @@ import { TranslateModule } from "ng2-translate";
   providers: [
   ]
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class NavBarModule { }

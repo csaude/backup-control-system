@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -14,6 +14,10 @@ import { TranslateService } from 'ng2-translate';
   templateUrl: './evaluation-form.component.html',
   styleUrls: ['./evaluation-form.component.css']
 })
+
+/** 
+ * @author Damasceno Lopes
+ */
 export class EvaluationFormComponent implements OnInit {
   public form: FormGroup;
   public title: string;
@@ -21,6 +25,8 @@ export class EvaluationFormComponent implements OnInit {
   public isDisabled: boolean;
   public evaluation: Evaluation = new Evaluation();
   public user: Object[] = [];
+
+   
   constructor(
     public formBuilder: FormBuilder,
     public router: Router,
@@ -41,6 +47,7 @@ export class EvaluationFormComponent implements OnInit {
       description: []
     });
   }
+
   ngOnInit() {
     this.isDisabled = false;
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
@@ -64,6 +71,8 @@ export class EvaluationFormComponent implements OnInit {
       }
     });
   }
+
+ 
   save() {
     this.isDisabled = true;
     var result, userValue = this.form.value;
@@ -98,6 +107,7 @@ export class EvaluationFormComponent implements OnInit {
       );
     }
   }
+
   showMsg(evaluation) {
     this.toastService.show('Avaliação: ' + evaluation + ', salvo com sucesso!', 4000, 'green', null);
   }

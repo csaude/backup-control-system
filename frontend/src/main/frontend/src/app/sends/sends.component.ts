@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { SendsService } from "./shared/sends.service";
@@ -18,6 +18,10 @@ import { TranslateService } from 'ng2-translate';
   templateUrl: './sends.component.html',
   styleUrls: ['./sends.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class SendsComponent implements OnInit {
   public ROLE_SIS: string;
   public ROLE_IT: string;
@@ -47,6 +51,8 @@ export class SendsComponent implements OnInit {
     onClose: () => this.search()
   };
   public total; totali; number = 0;
+  
+     
   constructor(public datepipe: DatePipe, public sendsService: SendsService, public receivesService: ReceivesService,
     public translate: TranslateService,public districtsService: DistrictsService, formBuilder: FormBuilder) {
       this.form = formBuilder.group({
@@ -73,8 +79,11 @@ export class SendsComponent implements OnInit {
     
     if(this.ROLE_SIS){
       this.alldistricts = user.districts;
-    }else{
+    }else if(!this.ROLE_SIS&&user.districts.find(item => item.parentdistrict!=null)){
       this.alldistricts = user.districts.filter(item => item.parentdistrict!=null);
+    }
+    else if(!this.ROLE_SIS){
+      this.alldistricts = user.districts;
     }
 
     this.alldistricts.sort(function (a, b) {

@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.model.entity;
 
 import java.util.Date;
@@ -22,12 +26,16 @@ import javax.persistence.UniqueConstraint;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
- * @author damasceno.lopes
+ * A District is a definition of location where have an EPTS
+ * database installed, this location send backups every month
+ * to Headquarters and Database Synchronization is supposed 
+ * to occur every Friday.
+ * 
+ * @author Damasceno Lopes
  *
  */
 @Entity(name = "district")
-@Table(uniqueConstraints={
-	    @UniqueConstraint(columnNames = {"province", "name"})})
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "province", "name" }) })
 public class District {
 
 	@Id
@@ -49,10 +57,8 @@ public class District {
 
 	@JsonBackReference(value = "district-ironkeys")
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "district_ironkey", joinColumns = {
-			@JoinColumn(name = "district_id", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "ironkey_id", nullable = false, updatable = false) }, uniqueConstraints = {
-							@UniqueConstraint(columnNames = { "district_id", "ironkey_id" }) })
+	@JoinTable(name = "district_ironkey", joinColumns = { @JoinColumn(name = "district_id", nullable = false, updatable = false) }, inverseJoinColumns = {
+			@JoinColumn(name = "ironkey_id", nullable = false, updatable = false) }, uniqueConstraints = { @UniqueConstraint(columnNames = { "district_id", "ironkey_id" }) })
 	private Set<Ironkey> ironkeys = new HashSet<Ironkey>(0);
 
 	@Column(nullable = false)
@@ -74,29 +80,31 @@ public class District {
 
 	@Column(nullable = false, unique = true)
 	private String uuid;
-	
+
 	@Column(nullable = false)
 	private boolean canceled;
 
 	private String canceled_reason;
-	
+
 	@JoinColumn(name = "canceled_by")
 	@ManyToOne
 	private User canceled_by;
-	
+
 	private Date date_canceled;
-	
-	@JsonBackReference(value="district-parent")
+
+	@JsonBackReference(value = "district-parent")
 	@JoinColumn(name = "parent_id")
 	@ManyToOne
 	private District parent;
-	
 
+	// -------------------------------------------------
+	// Constructors
+	// -------------------------------------------------
 	public District() {
 		this.canceled = false;
 		this.uuid = UUID.randomUUID().toString();
 	}
-	
+
 	public Date getDate_canceled() {
 		return date_canceled;
 	}
@@ -104,9 +112,16 @@ public class District {
 	public void setDate_canceled(Date date_canceled) {
 		this.date_canceled = date_canceled;
 	}
-
+	
 	public String getName() {
 		return name;
+	}
+
+	public String getNamef() {
+		if(this.parent==null)
+		return name;
+		else
+		return this.parent.getName()+" / "+name;
 	}
 
 	public void setName(String name) {
@@ -144,16 +159,15 @@ public class District {
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
-	
 
 	public User getCreated_by() {
 		if (this.created_by != null) {
 			created_by.setDistricts(null);
 			created_by.setAuthorities(null);
 			return created_by;
-			}else {
-				return null;
-			}
+		} else {
+			return null;
+		}
 	}
 
 	public void setCreated_by(User created_by) {
@@ -169,7 +183,7 @@ public class District {
 			return null;
 		}
 	}
-	
+
 	public User getCanceled_by() {
 		if (this.canceled_by != null) {
 			this.canceled_by.setDistricts(null);
@@ -207,10 +221,10 @@ public class District {
 	public Set<Ironkey> getIronkeys() {
 		return ironkeys;
 	}
-	
+
 	public Set<Ironkey> getIronkeysDistrict() {
-		Set <Ironkey> ironkeys = new HashSet<Ironkey>(0);
-		for(Ironkey i: this.ironkeys) {
+		Set<Ironkey> ironkeys = new HashSet<Ironkey>(0);
+		for (Ironkey i : this.ironkeys) {
 			i.setCreated_by(null);
 			i.setUpdated_by(null);
 			ironkeys.add(i);
@@ -260,7 +274,7 @@ public class District {
 	public Date getLast_Backup_restored() {
 		return null;
 	}
-	
+
 	public boolean isCanceled() {
 		return canceled;
 	}
@@ -280,7 +294,7 @@ public class District {
 	public District getParent() {
 		return parent;
 	}
-	
+
 	public District getParentdistrict() {
 		this.setCreated_by(null);
 		this.setUpdated_by(null);
@@ -300,14 +314,14 @@ public class District {
 		else {
 			if (this.getIronkeys().size() < 2) {
 				for (Ironkey i : this.getIronkeys()) {
-					names = i.getSize()+" GB - "+i.getSerial()+" - "+i.getStatus();
+					names = i.getSize() + " GB - " + i.getSerial() + " - " + i.getStatus();
 				}
 			} else {
 				for (Ironkey i : this.getIronkeys()) {
 					if (names.equals(""))
-						names = i.getSize()+" GB - "+i.getSerial()+" - "+i.getStatus();
+						names = i.getSize() + " GB - " + i.getSerial() + " - " + i.getStatus();
 					else
-						names = names + "\n" + i.getSize()+" GB - "+i.getSerial()+" - "+i.getStatus();
+						names = names + "\n" + i.getSize() + " GB - " + i.getSerial() + " - " + i.getStatus();
 				}
 
 			}
@@ -316,13 +330,11 @@ public class District {
 		}
 
 	}
-	
+
 	@Override
 	public String toString() {
-		return "District [district_id=" + district_id + ", province=" + province + ", name=" + name + ", instance_url="
-				+ instance_url + ", instance_username=" + instance_username + ", instance_password=" + instance_password
-				+ ", date_created=" + date_created + ", date_updated=" + date_updated + ", uuid=" + uuid + ", canceled="
-				+ canceled + ", canceled_reason=" + canceled_reason + "]";
+		return "District [district_id=" + district_id + ", province=" + province + ", name=" + name + ", instance_url=" + instance_url + ", instance_username=" + instance_username + ", instance_password=" + instance_password
+				+ ", date_created=" + date_created + ", date_updated=" + date_updated + ", uuid=" + uuid + ", canceled=" + canceled + ", canceled_reason=" + canceled_reason + "]";
 	}
 
 	@Override

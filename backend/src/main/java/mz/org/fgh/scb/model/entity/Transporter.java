@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.model.entity;
 
 import java.util.Date;
@@ -15,7 +19,9 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 /**
- * @author damasceno.lopes
+ * A Transporter is a definition of the backup carriers.
+ * 
+ * @author Damasceno Lopes
  *
  */
 @Entity(name = "transporter")
@@ -62,6 +68,9 @@ public class Transporter {
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
+	// -------------------------------------------------
+	// Constructors
+	// -------------------------------------------------
 	public Transporter() {
 		this.canceled = false;
 		this.uuid = UUID.randomUUID().toString();
@@ -112,9 +121,9 @@ public class Transporter {
 			created_by.setDistricts(null);
 			created_by.setAuthorities(null);
 			return created_by;
-			}else {
-				return null;
-			}
+		} else {
+			return null;
+		}
 	}
 
 	public void setCreated_by(User created_by) {
@@ -191,10 +200,8 @@ public class Transporter {
 
 	@Override
 	public String toString() {
-		return "Transporter [transporter_id=" + transporter_id + ", name=" + name + ", phone_number=" + phone_number
-				+ ", role=" + role + ", date_created=" + date_created + ", date_updated=" + date_updated + ", canceled="
-				+ canceled + ", canceled_reason=" + canceled_reason + ", date_canceled=" + date_canceled + ", uuid="
-				+ uuid + "]";
+		return "Transporter [transporter_id=" + transporter_id + ", name=" + name + ", phone_number=" + phone_number + ", role=" + role + ", date_created=" + date_created + ", date_updated=" + date_updated + ", canceled=" + canceled
+				+ ", canceled_reason=" + canceled_reason + ", date_canceled=" + date_canceled + ", uuid=" + uuid + "]";
 	}
 
 	@Override

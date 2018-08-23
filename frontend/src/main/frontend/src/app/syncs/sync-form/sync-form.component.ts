@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -15,12 +15,17 @@ import { MzToastService } from 'ng2-materialize';
 import { TranslateService } from 'ng2-translate';
 import { DatePipe } from '@angular/common';
 import * as alasql from 'alasql';
+import { NavbarService } from '../../nav-bar/nav-bar.service';
 
 @Component({
   selector: 'app-sync-form',
   templateUrl: './sync-form.component.html',
   styleUrls: ['./sync-form.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class SyncFormComponent implements OnInit {
   public form: FormGroup;
   public title: string;
@@ -55,6 +60,7 @@ export class SyncFormComponent implements OnInit {
     aftershow: () => alert('AfterShow has been invoked.'), // function for after opening timepicker
   };
 
+     
   constructor(
     formBuilder: FormBuilder,
     public router: Router,
@@ -64,7 +70,8 @@ export class SyncFormComponent implements OnInit {
     public transportersService: TransportersService,
     public toastService: MzToastService,
     public translate: TranslateService,
-    public datepipe: DatePipe
+    public datepipe: DatePipe,
+    public nav: NavbarService
   ) {
     this.form = formBuilder.group({
       server: ['', [
@@ -89,7 +96,10 @@ export class SyncFormComponent implements OnInit {
       observation_his: [],
       canceled: [],
       canceled_reason: [],
-      sync_error: []
+      sync_error: [],
+      serverfault: [],
+      laptopfault: [],
+      powercut: []
     });
   }
   ngOnInit() {
@@ -228,9 +238,9 @@ export class SyncFormComponent implements OnInit {
                 userValue.end_time = null;
               }
 
-              result = this.syncsService.updateSync(userValue);
-              result.subscribe(data => this.router.navigate(['syncs']));
+              result = this.syncsService.updateSync(userValue).subscribe(data => {},error=>{},()=>{this.router.navigate(['syncs']);this.nav.callMethodOfSecondComponent();});
               this.showMsg();
+              this.nav.callMethodOfSecondComponent();
 
 
             }
@@ -261,9 +271,9 @@ export class SyncFormComponent implements OnInit {
                 userValue.end_time = null;
               }
 
-              result = this.syncsService.updateSync(userValue);
-              result.subscribe(data => this.router.navigate(['syncs']));
+              result = this.syncsService.updateSync(userValue).subscribe(data => {},error=>{},()=>{this.router.navigate(['syncs']);this.nav.callMethodOfSecondComponent();});
               this.showMsg();
+              this.nav.callMethodOfSecondComponent();
 
 
             }
@@ -318,9 +328,9 @@ export class SyncFormComponent implements OnInit {
 
 
 
-              result = this.syncsService.addSync(userValue);
-              result.subscribe(data => this.router.navigate(['syncs']));
+              result = this.syncsService.addSync(userValue).subscribe(data => {},error=>{},()=>{this.router.navigate(['syncs']);this.nav.callMethodOfSecondComponent();});
               this.showMsg();
+              this.nav.callMethodOfSecondComponent();
 
             }
 
@@ -346,9 +356,9 @@ export class SyncFormComponent implements OnInit {
               }
 
 
-              result = this.syncsService.addSync(userValue);
-              result.subscribe(data => this.router.navigate(['syncs']));
+              result = this.syncsService.addSync(userValue).subscribe(data => {},error=>{},()=>{this.router.navigate(['syncs']);this.nav.callMethodOfSecondComponent();});
               this.showMsg();
+              
 
             }
 

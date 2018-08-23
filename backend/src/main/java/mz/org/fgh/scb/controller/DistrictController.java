@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.controller;
 
 import java.util.List;
@@ -25,7 +29,9 @@ import mz.org.fgh.scb.model.entity.District;
 import mz.org.fgh.scb.service.impl.DistrictServiceImpl;
 
 /**
- * @author damasceno.lopes
+ * Defines the rest endpoint configuration for Districts
+ * 
+ * @author Damasceno Lopes
  *
  */
 @RestController
@@ -71,8 +77,8 @@ public class DistrictController {
 	}
 
 	@RequestMapping(value = "/districts/get", method = RequestMethod.GET)
-	public Page<District> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "name", required = true) String name,@RequestParam(value = "canceled", required = true) boolean canceled) throws Exception {
-		Page<District> pageDistrict = districtServiceImpl.findAll(name, canceled, new PageRequest(page - 1, size));
+	public Page<District> findAllByName(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "name", required = true) String name,@RequestParam(value = "canceled", required = true) boolean canceled) throws Exception {
+		Page<District> pageDistrict = districtServiceImpl.findAllByName(name, canceled, new PageRequest(page - 1, size));
 		if (page - 1 > pageDistrict.getTotalPages()) {
 			throw new Exception();
 		}
@@ -80,10 +86,10 @@ public class DistrictController {
 	}
 
 	@RequestMapping(value = "/districts/getf", method = RequestMethod.GET)
-	public Page<District> findAllByUser(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "name", required = true) String name,@RequestParam(value = "canceled", required = true) boolean canceled) throws Exception {
+	public Page<District> findAllByNameAndUsername(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "name", required = true) String name,@RequestParam(value = "canceled", required = true) boolean canceled) throws Exception {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();
-		Page<District> pageDistrict = districtServiceImpl.findAllByUser(name, currentPrincipalName, canceled,
+		Page<District> pageDistrict = districtServiceImpl.findAllByNameAndUsername(name, currentPrincipalName, canceled,
 				new PageRequest(page - 1, size));
 		if (page - 1 > pageDistrict.getTotalPages()) {
 			throw new Exception();
@@ -91,7 +97,7 @@ public class DistrictController {
 		return pageDistrict;
 	}
 
-	@RequestMapping(value = "/districts", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/districts", method = RequestMethod.POST)
 	@ResponseBody
 	public String create(@RequestBody District district) {
 		try {
@@ -124,7 +130,7 @@ public class DistrictController {
 		return response.getBody();
 	}
 
-	@RequestMapping(value = "/districts/{uuid}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/districts/{uuid}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public String delete(@PathVariable String uuid) throws Exception {
 		District district = null;
@@ -138,7 +144,7 @@ public class DistrictController {
 		}
 	}
 
-	@RequestMapping(value = "/districts", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/districts", method = RequestMethod.PUT)
 	@ResponseBody
 	public String update(@RequestBody District district) throws Exception {
 		try {

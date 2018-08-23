@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.controller;
 
 import java.util.regex.Matcher;
@@ -22,7 +26,9 @@ import mz.org.fgh.scb.service.impl.UserServiceImpl;
 import mz.org.fgh.scb.specification.UserSpecificationsBuilder;
 
 /**
- * @author damasceno.lopes
+ * Defines the rest endpoint configuration for users
+ * 
+ * @author Damasceno Lopes
  *
  */
 @RestController
@@ -56,7 +62,7 @@ public class UserController {
 		return pageUser;
 	}
 
-	@RequestMapping(value = "/users", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/users", method = RequestMethod.POST)
 	@ResponseBody
 	public String create(
 			@RequestBody User user) {
@@ -75,7 +81,7 @@ public class UserController {
 		return userServiceImpl.findByUuid(uuid);
 	}
 
-	@RequestMapping(value = "/users/{uuid}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/users/{uuid}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public String deleteUser(@PathVariable String uuid) throws Exception {
 		User user = null;
@@ -89,7 +95,7 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping(value = "/users/{creator}/{updater}", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/users/{creator}/{updater}", method = RequestMethod.PUT)
 	@ResponseBody
 	public Object update(@RequestBody User user, @PathVariable Long creator,@PathVariable Long updater) throws Exception {
 

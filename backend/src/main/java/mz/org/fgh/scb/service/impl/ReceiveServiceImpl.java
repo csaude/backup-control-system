@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.service.impl;
 
 import java.text.DateFormat;
@@ -22,7 +26,7 @@ import mz.org.fgh.scb.service.api.ReceiveService;
 import mz.org.fgh.scb.service.api.SendService;
 
 /**
- * @author damasceno.lopes
+ * @author Damasceno Lopes
  *
  */
 @Service
@@ -80,7 +84,7 @@ public class ReceiveServiceImpl implements ReceiveService {
 					DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
 					data = dateFormat1.format(receive.getSend().getBackup_date());
 					data_recepcao = dateFormat1.format(receive.getReceive_date());
-					district = receive.getSend().getDistrict().getName();
+					district = receive.getSend().getDistrict().getNamef();
 					try {
 						String r1 = receiveRepository.findUsersForNotification(receive.getSend().getDistrict().getDistrict_id()).toString().replace("[", "");
 						String r2 = r1.replace("]", " ");
@@ -195,28 +199,28 @@ public class ReceiveServiceImpl implements ReceiveService {
 	}
 
 	@Override
-	public Page<Receive> findByDistrictId(Long district_id, Pageable pageable, Date from, Date until) {
-		return receiveRepository.findByDistrictId(district_id, pageable, from, until);
+	public Page<Receive> findByDistrictIdAndSendBackupDateRange(Long district_id, Pageable pageable, Date from, Date until) {
+		return receiveRepository.findByDistrictIdAndSendBackupDateRange(district_id, pageable, from, until);
 	}
 
 	@Override
-	public Page<Receive> findByUserId(Pageable pageable, String username) {
-		return receiveRepository.findByUserId(pageable, username);
+	public Page<Receive> findByUsername(Pageable pageable, String username) {
+		return receiveRepository.findByUsername(pageable, username);
 	}
 
 	@Override
-	public Page<Receive> findByUserId(Pageable pageable, Date from, Date until, String username) {
-		return receiveRepository.findByUserId(pageable, from, until, username);
+	public Page<Receive> findByUsernameAndSendDateBackupRange(Pageable pageable, Date from, Date until, String username) {
+		return receiveRepository.findByUsernameAndSendBackupDateRange(pageable, from, until, username);
 	}
 
 	@Override
-	public Page<Receive> findAllReceived(Pageable pageable) {
-		return receiveRepository.findAllReceived(pageable);
+	public Page<Receive> findAllReceives(Pageable pageable) {
+		return receiveRepository.findAllReceives(pageable);
 	}
 
 	@Override
-	public Page<Receive> findByDate(Pageable pageable, Date from, Date until) {
-		return receiveRepository.findByDate(pageable, from, until);
+	public Page<Receive> findBySendBackupDateRange(Pageable pageable, Date from, Date until) {
+		return receiveRepository.findBySendBackupDateRange(pageable, from, until);
 	}
 
 }

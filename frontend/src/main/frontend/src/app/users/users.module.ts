@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -14,6 +14,7 @@ import { UserDetailsFormComponent } from './user-form/user-details-form.componen
 import { MzTooltipModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzSelectModule,MzTabModule } from 'ng2-materialize';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { TranslateModule } from "ng2-translate";
+
 @NgModule({
   imports: [
     FormsModule,
@@ -45,4 +46,8 @@ import { TranslateModule } from "ng2-translate";
     UsersService
   ]
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class UsersModule { }

@@ -24,7 +24,7 @@
                 </i>
                 <select mz-select mz-validation required id="district" [label]="'Distrito *'" [placeholder]="'Seleccione o Distrito'" [(ngModel)]="server.district"
                   formControlName="district" [disabled]="disabled1">
-                  <option *ngFor="let district of alldistricts" [ngValue]="district" >{{ district.name }}</option>
+                  <option *ngFor="let district of alldistricts" [ngValue]="district" >{{ district.namef }}</option>
                 </select>
               </mz-select-container>
             </div>
@@ -34,7 +34,7 @@
                 </i>
                 <select mz-select mz-validation required id="district" [label]="'District *'" [placeholder]="'Select the District'" [(ngModel)]="server.district"
                   formControlName="district" [disabled]="disabled1">
-                  <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.name }}</option>
+                  <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.namef }}</option>
                 </select>
               </mz-select-container>
             </div>

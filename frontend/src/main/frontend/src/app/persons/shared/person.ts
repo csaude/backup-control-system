@@ -1,6 +1,10 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
+
+/** 
+* @author Damasceno Lopes
 */
 export class Person {
   person_id: number;

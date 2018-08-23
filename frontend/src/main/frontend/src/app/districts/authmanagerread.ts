@@ -1,19 +1,25 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot,RouterStateSnapshot } from '@angular/router';
+import { CanActivate, Router} from '@angular/router';
 
+/** 
+* @author Damasceno Lopes
+*/
 @Injectable()
 export class AuthManagerDistrictsRead implements CanActivate {
 
-    constructor( public router: Router){}
+    //-------------------------------------------------
+    //Constructors
+    //-------------------------------------------------
+    constructor(public router: Router) { }
 
-    canActivate(next: ActivatedRouteSnapshot,state: RouterStateSnapshot){
-        if(window.sessionStorage.getItem('authenticated')=="Sim"){
+    canActivate() {
+        if (window.sessionStorage.getItem('authenticated') == "Sim") {
             return true;
-        }else{
+        } else {
             this.router.navigate(['login']);
             return false;
         }

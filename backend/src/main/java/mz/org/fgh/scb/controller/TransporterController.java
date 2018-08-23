@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.controller;
 
 import java.util.List;
@@ -21,7 +25,9 @@ import mz.org.fgh.scb.service.impl.TransporterServiceImpl;
 import mz.org.fgh.scb.specification.TransporterSpecificationsBuilder;
 
 /**
- * @author damasceno.lopes
+ * Defines the rest endpoint configuration for Transporters
+ * 
+ * @author Damasceno Lopes
  *
  */
 @RestController
@@ -53,7 +59,7 @@ public class TransporterController {
 		return pageTransporter;
 	}
 
-	@RequestMapping(value = "/transporters", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/transporters", method = RequestMethod.POST)
 	@ResponseBody
 	public String create(@RequestBody Transporter transporter) {
 
@@ -71,7 +77,7 @@ public class TransporterController {
 		return transporterServiceImpl.findByUuid(uuid);
 	}
 
-	@RequestMapping(value = "/transporters/{uuid}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/transporters/{uuid}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public String deleteTransporter(@PathVariable String uuid) throws Exception {
 		Transporter transporter = null;
@@ -85,7 +91,7 @@ public class TransporterController {
 		}
 	}
 
-	@RequestMapping(value = "/transporters", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/transporters", method = RequestMethod.PUT)
 	@ResponseBody
 	public String update(@RequestBody Transporter transporter) throws Exception {
 		try {

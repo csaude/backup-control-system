@@ -12,7 +12,7 @@
       <mz-select-container>
         <select mz-select mz-validation required id="district" [label]="'Distrito'" formControlName="district" (change)="search2()">
           <option value="all" selected>Todos Distritos</option>
-          <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.name }}</option>
+          <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.namef }}</option>
         </select>
       </mz-select-container>
     </div>
@@ -21,7 +21,7 @@
 
         <select mz-select mz-validation required id="district" [label]="'District'" formControlName="district" (change)="search2()">
           <option value="all" selected>All Districts</option>
-          <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.name }}</option>
+          <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.namef }}</option>
         </select>
       </mz-select-container>
     </div>
@@ -50,7 +50,7 @@
     </thead>
     <tbody *ngIf="received==false">
       <tr *ngFor="let send of sends | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
-        <td>{{ send.district.name }}</td>
+        <td>{{ send.district.namef }}</td>
         <td>{{ send.backup_date | date: 'dd/MM/yyyy'}}</td>
         <td *ngIf="send.received">
           {{ "yes" | translate }}
@@ -81,7 +81,7 @@
 
     <tbody *ngIf="received==true">
       <tr *ngFor="let receive of receives | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
-        <td>{{ receive.send.district.name }}</td>
+        <td>{{ receive.send.district.namef }}</td>
         <td>{{ receive.send.backup_date | date: 'dd/MM/yyyy'}}</td>
         <td *ngIf="receive.send.received">
           {{ "yes" | translate }}
@@ -132,7 +132,7 @@
       
         <div class="row" style="margin-top: -11px;">
             <div class="col s12">
-              <h5 class="light">{{send.district.province}} / {{send.district.name}}</h5>
+              <h5 class="light">{{send.district.province}} / {{send.district.namef}}</h5>
             </div>
           </div>
   
@@ -248,7 +248,7 @@
       
         <div class="row" style="margin-top: -11px;">
             <div class="col s12">
-              <h5 class="light">{{receive.send.district.province}} / {{receive.send.district.name}}</h5>
+              <h5 class="light">{{receive.send.district.province}} / {{receive.send.district.namef}}</h5>
             </div>
           </div>
   
@@ -337,14 +337,12 @@
       </div>
       <div class="row" style="margin-top: -11px;">
           <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-          <div class="col s12 l10 m10">{{receive.send.created_by.person.others_names}} {{receive.send.created_by.person.surname}} - {{send.date_created
-            | date: 'dd/MM/yyyy HH:mm'}}</div>
+          <div class="col s12 l10 m10">{{receive.send.created_by.person.others_names}} {{receive.send.created_by.person.surname}} - {{receive.send.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
         </div>
     
         <div class="row" *ngIf="receive.send.updated_by!=null" style="margin-top: -11px;">
           <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-          <div class="col s12 l10 m10">{{receive.send.updated_by.person.others_names}} {{receive.send.updated_by.person.surname}} - {{send.date_updated
-            | date: 'dd/MM/yyyy HH:mm'}}</div>
+          <div class="col s12 l10 m10">{{receive.send.updated_by.person.others_names}} {{receive.send.updated_by.person.surname}} - {{receive.send.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
         </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>

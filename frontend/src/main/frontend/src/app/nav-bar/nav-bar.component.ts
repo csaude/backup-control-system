@@ -1,3 +1,8 @@
+/**
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { NavbarService } from './nav-bar.service';
@@ -9,21 +14,20 @@ import { SyncsService } from "../syncs/shared/syncs.service";
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class NavBarComponent implements OnInit {
   public user;
-  public ROLE_SIS: string;
-  public ROLE_IT: string;
-  public ROLE_ODMA: string;
-  public ROLE_GDD: string;
-  public ROLE_ORMA: string;
-  public ROLE_OA: string;
-  public ROLE_GMA: string;
+  public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD: string;
   public isAuth: boolean;
   public activeDashboard; activeBackup; activeMetadata; activeUser; activeSync;
   public showNavBar: boolean = false;
-  public total;total2;
-  public nIntervId; nIntervId2;nIntervId3;
+  public total; total2;
+  public nIntervId; nIntervId2; nIntervId3;
 
+   
   constructor(
     public router: Router,
     public route: ActivatedRoute,
@@ -42,30 +46,30 @@ export class NavBarComponent implements OnInit {
     });
   }
 
+  /**
+   * Call this function on this interval
+   */
   callFuntionAtIntervals() {
-    
-
-      if(this.ROLE_SIS){
-
-        this.sendsService.getSendsNotReceivedNum()
-      .subscribe(data => {
-        this.total = data;
-      },
-        error => {
-          this.total = 0;
+    clearInterval(this.nIntervId2);
+    clearInterval(this.nIntervId3);
+    if (this.ROLE_SIS) {
+      this.sendsService.getSendsNotReceivedNum()
+        .subscribe(data => {
+          this.total = data;
         },
-        () => {
-          if (this.total > 0 && this.nIntervId2 == null) {
-            this.nIntervId2 = setInterval(() => {
-              this.notifyMe();
-            }, 300000);
-
+          error => {
+            this.total = 0;
+          },
+          () => {
+            if (this.total > 0 && this.nIntervId2 == null) {
+              this.nIntervId2 = setInterval(() => {
+                this.notifyMe();
+              }, 300000);
+            }
           }
+        );
 
-        }
-      );
-
-        this.syncsService.getSyncsInProgress()
+      this.syncsService.getSyncsInProgress()
         .subscribe(data => {
           this.total2 = data;
         },
@@ -80,10 +84,10 @@ export class NavBarComponent implements OnInit {
             }
           }
         );
-      }
+    }
 
-      else if(this.ROLE_ODMA){
-        this.syncsService.getSyncsInProgressByUser()
+    else if (this.ROLE_ODMA) {
+      this.syncsService.getSyncsInProgressByUser()
         .subscribe(data => {
           this.total2 = data;
         },
@@ -98,10 +102,13 @@ export class NavBarComponent implements OnInit {
             }
           }
         );
-      }
+    }
 
   }
 
+  /**
+   * Call this method on start
+   */
   callMyMethod() {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -109,11 +116,11 @@ export class NavBarComponent implements OnInit {
           this.setDashboard();
         } else if (event.url == "/sends" || event.url == "/receives") {
           this.setBackup();
-        } else if (event.url == "/ironkeys" || event.url == "/districts" || event.url == "/transporters" || event.url == "/users"  || event.url == "/servers") {
+        } else if (event.url == "/ironkeys" || event.url == "/districts" || event.url == "/transporters" || event.url == "/users" || event.url == "/servers") {
           this.setMetadata();
-        } else if (event.url == "/syncs" ) {
+        } else if (event.url == "/syncs") {
           this.setSync();
-        }else if (event.url.charAt(14) == "/") {
+        } else if (event.url.charAt(14) == "/") {
           this.setUser();
         }
       }
@@ -133,13 +140,13 @@ export class NavBarComponent implements OnInit {
     }
     this.showNavBar = true;
 
-    if (this.ROLE_SIS||this.ROLE_ODMA) {
+    if (this.ROLE_SIS || this.ROLE_ODMA) {
+
       this.callFuntionAtIntervals();
       this.nIntervId = setInterval(() => {
         this.callFuntionAtIntervals();
       }, 180000);
     }
-
   }
 
   ngOnInit() {
@@ -151,7 +158,7 @@ export class NavBarComponent implements OnInit {
           this.setBackup();
         } else if (event.url == "/ironkeys" || event.url == "/districts" || event.url == "/transporters" || event.url == "/users" || event.url == "/servers") {
           this.setMetadata();
-       } else if (event.url == "/syncs" ) {
+        } else if (event.url == "/syncs") {
           this.setSync();
         } else if (event.url.charAt(14) == "/") {
           this.setUser();
@@ -175,9 +182,8 @@ export class NavBarComponent implements OnInit {
           this.callFuntionAtIntervals();
         }, 180000);
       }
-
     } else {
-      if (this.ROLE_SIS||this.ROLE_ODMA) {
+      if (this.ROLE_SIS || this.ROLE_ODMA) {
         clearInterval(this.nIntervId);
         clearInterval(this.nIntervId2);
         clearInterval(this.nIntervId3);
@@ -185,11 +191,10 @@ export class NavBarComponent implements OnInit {
       this.router.navigate(['login']);
     }
     this.showNavBar = true;
-
-
   }
+
   logout() {
-    if (this.ROLE_SIS||this.ROLE_ODMA) {
+    if (this.ROLE_SIS || this.ROLE_ODMA) {
       clearInterval(this.nIntervId);
       clearInterval(this.nIntervId2);
       clearInterval(this.nIntervId3);
@@ -198,6 +203,7 @@ export class NavBarComponent implements OnInit {
     this.isAuth = false;
     this.router.navigate(['login']);
   }
+
   setDashboard() {
     this.activeDashboard = "active";
     this.activeBackup = "";
@@ -205,6 +211,7 @@ export class NavBarComponent implements OnInit {
     this.activeUser = "";
     this.activeSync = "";
   }
+
   setBackup() {
     this.activeDashboard = "";
     this.activeBackup = "active";
@@ -212,6 +219,7 @@ export class NavBarComponent implements OnInit {
     this.activeUser = "";
     this.activeSync = "";
   }
+
   setMetadata() {
     this.activeDashboard = "";
     this.activeBackup = "";
@@ -219,6 +227,7 @@ export class NavBarComponent implements OnInit {
     this.activeUser = "";
     this.activeSync = "";
   }
+
   setUser() {
     this.activeDashboard = "";
     this.activeBackup = "";
@@ -226,6 +235,7 @@ export class NavBarComponent implements OnInit {
     this.activeUser = "active";
     this.activeSync = "";
   }
+
   setSync() {
     this.activeDashboard = "";
     this.activeBackup = "";
@@ -235,7 +245,7 @@ export class NavBarComponent implements OnInit {
   }
 
   notifyMe() {
-    
+
     if (!("Notification" in window)) {
       console.log("This browser does not support desktop notification");
     }
@@ -243,21 +253,21 @@ export class NavBarComponent implements OnInit {
     // Let's check whether notification permissions have already been granted
     else if ((Notification as any).permission === "granted") {
       // If it's okay let's create a notification   
-      if (this.ROLE_SIS) { 
-      var exist,backup;
-      if (this.total == 1) {
-        exist = "existe ";
-        backup=" backup ";
-      } else {
-        exist = "existem ";
-        backup=" backups ";
+      if (this.ROLE_SIS) {
+        var exist, backup;
+        if (this.total == 1) {
+          exist = "existe ";
+          backup = " backup ";
+        } else {
+          exist = "existem ";
+          backup = " backups ";
+        }
+        let options = {
+          body: this.user.person.others_names + " " + this.user.person.surname + ", " + exist + this.total + backup + "por receber!",
+          icon: "../assets/images/bell-icon.png"
+        };
+        var notification = new Notification("SCB", options);
       }
-      let options = {
-        body: this.user.person.others_names+" "+this.user.person.surname+", "+exist + this.total +backup+ "por receber!",
-        icon: "../assets/images/bell-icon.png"
-      };
-      var notification = new Notification("SCB", options);
-    }
       clearInterval(this.nIntervId2);
       this.nIntervId2 = null;
     }
@@ -268,32 +278,29 @@ export class NavBarComponent implements OnInit {
         // If the user accepts, let's create a notification
         if (permission === "granted") {
           if (this.ROLE_SIS) {
-          var exist,backup;
-          if (this.total == 1) {
-            exist = "existe ";
-            backup=" backup ";
-          } else {
-            exist = "existem ";
-            backup=" backups ";
+            var exist, backup;
+            if (this.total == 1) {
+              exist = "existe ";
+              backup = " backup ";
+            } else {
+              exist = "existem ";
+              backup = " backups ";
+            }
+            let options = {
+              body: this.user.person.others_names + " " + this.user.person.surname + ", " + exist + this.total + backup + "por receber!",
+              icon: "../assets/images/bell-icon.png"
+            };
+            var notification = new Notification("SCB", options);
+            clearInterval(this.nIntervId2);
+            this.nIntervId2 = null;
           }
-          let options = {
-            body: this.user.person.others_names+" "+this.user.person.surname+", "+exist + this.total +backup+ "por receber!",
-            icon: "../assets/images/bell-icon.png"
-          };
-          var notification = new Notification("SCB", options);
-          clearInterval(this.nIntervId2);
-          this.nIntervId2 = null;
         }
-      }
       });
     }
-
-    // At last, if the user has denied notifications, and you 
-    // want to be respectful there is no need to bother them any more.
   }
 
   notifyMe2() {
-    
+
     if (!("Notification" in window)) {
       console.log("This browser does not support desktop notification");
     }
@@ -301,21 +308,21 @@ export class NavBarComponent implements OnInit {
     // Let's check whether notification permissions have already been granted
     else if ((Notification as any).permission === "granted") {
       // If it's okay let's create a notification   
-      if (this.ROLE_SIS||this.ROLE_ODMA) { 
-      var exist,backup;
-      if (this.total == 1) {
-        exist = "existe ";
-        backup=" sincronização ";
-      } else {
-        exist = "existem ";
-        backup=" sincronizações ";
+      if (this.ROLE_SIS || this.ROLE_ODMA) {
+        var exist, backup;
+        if (this.total == 1) {
+          exist = "existe ";
+          backup = " sincronização ";
+        } else {
+          exist = "existem ";
+          backup = " sincronizações ";
+        }
+        let options = {
+          body: this.user.person.others_names + " " + this.user.person.surname + ", " + exist + this.total + backup + "em processo!",
+          icon: "../assets/images/bell-icon.png"
+        };
+        var notification = new Notification("SCB", options);
       }
-      let options = {
-        body: this.user.person.others_names+" "+this.user.person.surname+", "+exist + this.total +backup+ "em processo!",
-        icon: "../assets/images/bell-icon.png"
-      };
-      var notification = new Notification("SCB", options);
-    }
       clearInterval(this.nIntervId3);
       this.nIntervId3 = null;
     }
@@ -325,25 +332,25 @@ export class NavBarComponent implements OnInit {
       Notification.requestPermission(function (permission) {
         // If the user accepts, let's create a notification
         if (permission === "granted") {
-          if (this.ROLE_SIS||this.ROLE_ODMA) { 
-            var exist,backup;
+          if (this.ROLE_SIS || this.ROLE_ODMA) {
+            var exist, backup;
             if (this.total == 1) {
               exist = "existe ";
-              backup=" sincronização ";
+              backup = " sincronização ";
             } else {
               exist = "existem ";
-              backup=" sincronizações ";
+              backup = " sincronizações ";
             }
             let options = {
-              body: this.user.person.others_names+" "+this.user.person.surname+", "+exist + this.total +backup+ "em processo!",
+              body: this.user.person.others_names + " " + this.user.person.surname + ", " + exist + this.total + backup + "em processo!",
               icon: "../assets/images/bell-icon.png"
             };
             var notification = new Notification("SCB", options);
           }
-            clearInterval(this.nIntervId3);
-            this.nIntervId3 = null;
-        
-      }
+          clearInterval(this.nIntervId3);
+          this.nIntervId3 = null;
+
+        }
       });
     }
 

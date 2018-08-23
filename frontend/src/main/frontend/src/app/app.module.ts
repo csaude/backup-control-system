@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -59,6 +59,7 @@ import { AuthManagerSyncsEdit } from './syncs/authmanageredit';
 /** Fix 404 error on page refresh */
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { TranslateModule } from "ng2-translate";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -121,4 +122,8 @@ import { TranslateModule } from "ng2-translate";
   ],
   bootstrap: [AppComponent]
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class AppModule { }

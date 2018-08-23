@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IronkeysService } from "./shared/ironkeys.service";
@@ -17,6 +17,10 @@ import * as myGlobals from '../../globals';
   templateUrl: './ironkeys.component.html',
   styleUrls: ['./ironkeys.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class IronkeysComponent implements OnInit {
   public ironkeys; ironkeysreport: Ironkey[] = [];
   public p: number = 1;
@@ -51,6 +55,8 @@ export class IronkeysComponent implements OnInit {
     { id: 0, name: 'Outro' }
   ];
   public user;
+
+   
   constructor(
     public datepipe: DatePipe,
     public ironkeysService: IronkeysService,
@@ -72,6 +78,8 @@ export class IronkeysComponent implements OnInit {
     this.getPage(1);
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
   }
+
+  
   getPage(page: number) {
     this.isHidden = "";
     this.isDisabledt = "disabled";
@@ -94,6 +102,8 @@ export class IronkeysComponent implements OnInit {
         }
       );
   }
+
+  
   search() {
     var userValue = this.form.value;
     if (userValue.serial) {
@@ -161,19 +171,19 @@ export class IronkeysComponent implements OnInit {
           var listSize = this.ironkeysreport.length;
           var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
 
-           // HEADER
-           doc.setFontSize(18);
-           doc.text('Lista de Ironkeys', 14, 22);
-           doc.setFontSize(14);
-           doc.text(listSize + ' ironkeys encontrados.', 14, 45);
-           doc.setFontSize(11);
-           doc.setTextColor(100);
-           var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-           var text = doc.splitTextToSize('Os Ironkeys são utilizados para o transporte de backup de base dados.', pageWidth - 25, {});
-           doc.text(text, 14, 32);
+          // HEADER
+          doc.setFontSize(18);
+          doc.text('Lista de Ironkeys', 14, 22);
+          doc.setFontSize(14);
+          doc.text(listSize + ' ironkeys encontrados.', 14, 45);
+          doc.setFontSize(11);
+          doc.setTextColor(100);
+          var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+          var text = doc.splitTextToSize('Os Ironkeys são utilizados para o transporte de backup de base dados.', pageWidth - 25, {});
+          doc.text(text, 14, 32);
 
           var pageContent = function (data) {
-           
+
             // FOOTER
             var str = "Página " + data.pageCount;
             if (typeof doc.putTotalPages === 'function') {
@@ -188,8 +198,8 @@ export class IronkeysComponent implements OnInit {
             styles: { overflow: 'linebreak' },
             bodyStyles: { valign: 'top' },
             columnStyles: {
-              serial: { columnWidth: 60,fontSize:10 },
-              observation: { columnWidth: 60,fontSize:10 }
+              serial: { columnWidth: 60, fontSize: 10 },
+              observation: { columnWidth: 60, fontSize: 10 }
             },
             theme: 'grid',
             headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },

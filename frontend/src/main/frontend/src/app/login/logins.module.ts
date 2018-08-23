@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -27,4 +27,8 @@ import { LoginsService } from './shared/logins.service';
     LoginsService
   ]
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class LoginsModule { }

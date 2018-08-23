@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.repository;
 
 import java.util.List;
@@ -8,13 +12,26 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import mz.org.fgh.scb.model.entity.Transporter;
 
 /**
- * @author damasceno.lopes
+ * Defines the functionality for persisting Transporters
+ * 
+ * @author Damasceno Lopes
  *
  */
 public interface TransporterRepository extends JpaRepository<Transporter, Long>, JpaSpecificationExecutor<Transporter> {
 
-	List<Transporter> findAllByOrderByNameAsc();
-
+	/**
+	 * Returns the Transporter with the given uuid
+	 * 
+	 * @param uuid the uuid
+	 * @return the Transporter with the given uuid
+	 */
 	Transporter findByUuid(String uuid);
+
+	/**
+	 * Returns all Transporters
+	 * 
+	 * @return all Transporters
+	 */
+	List<Transporter> findAllByOrderByNameAsc();
 
 }

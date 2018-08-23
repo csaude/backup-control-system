@@ -133,7 +133,7 @@
           <tbody>
             <tr *ngFor="let district of user.districts">
               <td><a (click)="basicModal2.close()" [routerLink]="['/districts', district.uuid]" class="waves-effect waves-teal">
-                <span class="orange-text text-darken-3">{{ district.province }} / {{ district.name }}</span></a></td>
+                <span class="orange-text text-darken-3">{{ district.province }} / {{ district.namef }}</span></a></td>
               <td>{{ district.ironkeysnumber }}</td>
             </tr>
           </tbody>

@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.service.impl;
 
 import java.text.ParseException;
@@ -19,7 +23,7 @@ import mz.org.fgh.scb.repository.SyncRepository;
 import mz.org.fgh.scb.service.api.SyncService;
 
 /**
- * @author damasceno.lopes
+ * @author Damasceno Lopes
  *
  */
 @Service
@@ -70,7 +74,7 @@ public class SyncServiceImpl implements SyncService {
 			obs = sync.getObservations();
 			
 			
-			district = sync.getServer().getDistrict().getName();
+			district = sync.getServer().getDistrict().getNamef();
 			server=sync.getServer().getName()+" ("+sync.getServer().getType()+")";
 
 			new Thread(new Runnable() {
@@ -191,7 +195,7 @@ public class SyncServiceImpl implements SyncService {
 				obs = sync.getObservations();
 				
 				
-				district = sync.getServer().getDistrict().getName();
+				district = sync.getServer().getDistrict().getNamef();
 				server=sync.getServer().getName()+" ("+sync.getServer().getType()+")";
 
 				new Thread(new Runnable() {
@@ -294,18 +298,18 @@ public class SyncServiceImpl implements SyncService {
 	}
 
 	@Override
-	public Page<Sync> findByDistrictId(Long district_id, Pageable pageable, Date from, Date until) {
-		return syncRepository.findByDistrictId(district_id, pageable, from, until);
+	public Page<Sync> findByDistrictIdAndDateRange(Long district_id, Pageable pageable, Date from, Date until) {
+		return syncRepository.findByDistrictIdAndDateRange(district_id, pageable, from, until);
 	}
 
 	@Override
-	public Page<Sync> findByUserId(Pageable pageable, String username) {
-		return syncRepository.findByUserId(pageable, username);
+	public Page<Sync> findByUsername(Pageable pageable, String username) {
+		return syncRepository.findByUsername(pageable, username);
 	}
 
 	@Override
-	public Page<Sync> findByUserId(Pageable pageable, Date from, Date until, String username) {
-		return syncRepository.findByUserId(pageable, from, until, username);
+	public Page<Sync> findByUserIdAndDateRange(Pageable pageable, Date from, Date until, String username) {
+		return syncRepository.findByUsernameAndDateRange(pageable, from, until, username);
 	}
 
 	@Override
@@ -319,13 +323,13 @@ public class SyncServiceImpl implements SyncService {
 	}
 
 	@Override
-	public Page<Sync> findByServerId(Long server_id, Pageable pageable, Date from, Date until) {
-		return syncRepository.findByServerId(server_id, pageable, from, until);
+	public Page<Sync> findByServerIdAndDateRange(Long server_id, Pageable pageable, Date from, Date until) {
+		return syncRepository.findByServerIdAndDateRange(server_id, pageable, from, until);
 	}
 
 	@Override
-	public Page<Sync> findAllByDate(Pageable pageable, Date from, Date until) {
-		return syncRepository.findAllByDate(pageable, from, until);
+	public Page<Sync> findAllByDateRange(Pageable pageable, Date from, Date until) {
+		return syncRepository.findAllByDateRange(pageable, from, until);
 	}
 	
 	public int findInProgress() {

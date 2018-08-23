@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.model.entity;
 
 import java.util.Date;
@@ -17,12 +21,15 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
- * @author damasceno.lopes
+ * A Evaluation is a definition of OpenMRS SQL dataset wich 
+ * allows the user to perform queries on the databse on this 
+ * System are beeing used to do database QA.
+ * 
+ * @author Damasceno Lopes
  *
  */
 @Entity(name = "evaluation")
-@Table(uniqueConstraints={
-	    @UniqueConstraint(columnNames = {"name", "openmrs_sql_dataset_uuid"})})
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "openmrs_sql_dataset_uuid" }) })
 public class Evaluation {
 
 	@Id
@@ -56,6 +63,9 @@ public class Evaluation {
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
+	// -------------------------------------------------
+	// Constructors
+	// -------------------------------------------------
 	public Evaluation() {
 		this.uuid = UUID.randomUUID().toString();
 	}
@@ -121,9 +131,9 @@ public class Evaluation {
 			this.created_by.setDistricts(null);
 			this.created_by.setAuthorities(null);
 			return this.created_by;
-			}else {
-				return null;
-			}
+		} else {
+			return null;
+		}
 	}
 
 	public void setCreated_by(User created_by) {
@@ -146,9 +156,8 @@ public class Evaluation {
 
 	@Override
 	public String toString() {
-		return "Evaluation [evaluation_id=" + evaluation_id + ", name=" + name + ", openmrs_sql_dataset_uuid="
-				+ openmrs_sql_dataset_uuid + ", description=" + description + ", date_created=" + date_created
-				+ ", date_updated=" + date_updated + ", uuid=" + uuid + "]";
+		return "Evaluation [evaluation_id=" + evaluation_id + ", name=" + name + ", openmrs_sql_dataset_uuid=" + openmrs_sql_dataset_uuid + ", description=" + description + ", date_created=" + date_created + ", date_updated=" + date_updated
+				+ ", uuid=" + uuid + "]";
 	}
 
 	@Override

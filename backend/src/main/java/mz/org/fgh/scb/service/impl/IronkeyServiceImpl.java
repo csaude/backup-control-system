@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.service.impl;
 
 import java.text.ParseException;
@@ -18,7 +22,7 @@ import mz.org.fgh.scb.repository.IronkeyRepository;
 import mz.org.fgh.scb.service.api.IronkeyService;
 
 /**
- * @author damasceno.lopes
+ * @author Damasceno Lopes
  *
  */
 @Service

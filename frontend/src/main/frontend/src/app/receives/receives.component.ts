@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { SendsService } from "../sends/shared/sends.service";
@@ -20,6 +20,10 @@ import * as myGlobals from '../../globals';
   templateUrl: './receives.component.html',
   styleUrls: ['./receives.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class ReceivesComponent implements OnInit {
   public sends: Send[] = [];
   public send_id: number;
@@ -33,16 +37,9 @@ export class ReceivesComponent implements OnInit {
   public alldistricts: District[] = [];
   public form: FormGroup;
   public received; districts_filter; districtr_filter; date_filter: boolean;
+  public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD: string;
 
-  public ROLE_SIS: string;
-  public ROLE_IT: string;
-  public ROLE_ODMA: string;
-  public ROLE_GDD: string;
-  public ROLE_ORMA: string;
-  public ROLE_OA: string;
-  public ROLE_GMA: string;
-
-  public from;until;
+  public from; until;
   public user: Object[] = [];
   public district_id: number;
   public options: Pickadate.DateOptions = {
@@ -51,6 +48,8 @@ export class ReceivesComponent implements OnInit {
     onClose: () => this.search2()
   };
   public total; totali; number = 0;
+
+   
   constructor(public datepipe: DatePipe, public sendsService: SendsService, public receivesService: ReceivesService,
     public translate: TranslateService, public districtsService: DistrictsService, formBuilder: FormBuilder) {
     this.form = formBuilder.group({
@@ -60,6 +59,7 @@ export class ReceivesComponent implements OnInit {
       received: []
     });
   }
+
   ngOnInit() {
     this.isHidden = "";
     this.received = false;
@@ -184,7 +184,7 @@ export class ReceivesComponent implements OnInit {
   getPageReceiveByDistrictDate(page: number) {
 
     this.isHidden = "";
-    this.receivesService.getReceivesByDistrictDate(page, 10, this.district_id,this.from, this.until)
+    this.receivesService.getReceivesByDistrictDate(page, 10, this.district_id, this.from, this.until)
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
@@ -508,181 +508,191 @@ export class ReceivesComponent implements OnInit {
   printList() {
     this.isHidden = "";
     var userValue = this.form.value;
-    if(userValue.district==null||userValue.district=='all'){
-    this.receivesService.getReceivesByDate(1, 1000000, userValue.backup_from, userValue.backup_until)
-      .subscribe(data => {
-        this.receivesreport = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.receivesreport = [];
-        },
-        () => {
-          this.isHidden = "hide";
+    if (userValue.district == null || userValue.district == 'all') {
+      this.receivesService.getReceivesByDate(1, 1000000, userValue.backup_from, userValue.backup_until)
+        .subscribe(data => {
+          this.receivesreport = data.content;
 
-          var user = JSON.parse(window.sessionStorage.getItem('user'));
-          var doc = new jsPDF('landscape');
-          var totalPagesExp = "{total_pages_count_string}";
-          var columns = [
-            { title: "Distrito/US", dataKey: "districtname" },
-            { title: "Data do\nBackup", dataKey: "backup_date_f" },
-            { title: "Actualização\nTerminada?", dataKey: "at" },
-            { title: "Sincronização\nTerminada?", dataKey: "st" },
-            { title: "Cruzamento\ncom DHIS2?", dataKey: "dhis2" },
-            { title: "Cruzamento\ncom iDART?", dataKey: "idart" },
-            { title: "Validação\nTerminada?", dataKey: "vt" },
-            { title: "Enviado\npor", dataKey: "sender" },
-            { title: "Observação Distrital", dataKey: "obsd" },
-            { title: "Recebido\npor", dataKey: "receiver" }
-            
-          ];
-          var listSize = this.receivesreport.length;
-          var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
-
-          // HEADER
-          doc.setFontSize(18);
-          doc.text('Lista de Backups Recebidos', 14, 22);
-          doc.setFontSize(14);
-          doc.text(listSize + ' backups, efectuados de ' + this.datepipe.transform(userValue.backup_from, 'dd/MM/yyyy') + ' até ' + this.datepipe.transform(userValue.backup_until, 'dd/MM/yyyy')+'.', 14, 45);
-          doc.setFontSize(11);
-          doc.setTextColor(100);
-          var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-          var text = doc.splitTextToSize('Backups efectuados num determinado periodo que foram recebidos pelo SIS.', pageWidth - 25, {});
-          doc.text(text, 14, 32);
-
-          var pageContent = function (data) {
-            // FOOTER
-            var str = "Página " + data.pageCount;
-            if (typeof doc.putTotalPages === 'function') {
-              str = str + " de " + totalPagesExp;
+          for(let d of this.alldistricts){
+             if(!this.receivesreport.find(item=>item.districtname==d.namef)){
+              let receive= new Receive();
+              receive.districtname= d.namef
+              receive.obsd="Não registou envio de backup neste periodo.";
+              this.receivesreport.push(receive);
+             }
             }
-            doc.setFontSize(10);
-            var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-            doc.text(str, data.settings.margin.left, pageHeight - 5);
-          };
-          doc.autoTable(columns, this.receivesreport, {
-            startY: 50,
-            styles: { overflow: 'linebreak' },
-            bodyStyles: { valign: 'top' },
-            columnStyles: {
-              districtname: { columnWidth: 35,fontSize:10 },
-              backup_date_f: { columnWidth: 23,fontSize:10 },
-              at: { columnWidth: 25 },
-              st: { columnWidth: 27 },
-              dhis2: { columnWidth: 24 },
-              idart: { columnWidth: 25 },
-              vt: { columnWidth: 24 },
-              sender: { columnWidth: 23, fontSize:10 },
-              obsd: { columnWidth: 40, fontSize:10 },
-              receiver: { columnWidth: 23, fontSize:10 }
-              
-            },
-            theme: 'grid',
-            headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
-            addPageContent: pageContent
-          });
-          doc.setFontSize(11);
-          doc.setTextColor(100);
-          doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
-          doc.setTextColor(0, 0, 200);
-          doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
 
-          if (typeof doc.putTotalPages === 'function') {
-            doc.putTotalPages(totalPagesExp);
-          }
-          doc.save('SCB_Backups recebidos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
-
-
-        }
-      );
-    }else{
-
-      this.receivesService.getReceivesByDistrictDate(1, 1000000,userValue.district, userValue.backup_from, userValue.backup_until)
-      .subscribe(data => {
-        this.receivesreport = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.receivesreport = [];
         },
-        () => {
-          this.isHidden = "hide";
+          error => {
+            this.isHidden = "hide";
+            this.receivesreport = [];
+          },
+          () => {
+            this.isHidden = "hide";
 
-          var user = JSON.parse(window.sessionStorage.getItem('user'));
-          var doc = new jsPDF('landscape');
-          var totalPagesExp = "{total_pages_count_string}";
-          var columns = [
-            { title: "Distrito/US", dataKey: "districtname" },
-            { title: "Data do\nBackup", dataKey: "backup_date_f" },
-            { title: "Actualização\nTerminada?", dataKey: "at" },
-            { title: "Sincronização\nTerminada?", dataKey: "st" },
-            { title: "Cruzamento\ncom DHIS2?", dataKey: "dhis2" },
-            { title: "Cruzamento\ncom iDART?", dataKey: "idart" },
-            { title: "Validação\nTerminada?", dataKey: "vt" },
-            { title: "Enviado\npor", dataKey: "sender" },
-            { title: "Observação Distrital", dataKey: "obsd" },
-            { title: "Recebido\npor", dataKey: "receiver" }
-            
-          ];
-          var listSize = this.receivesreport.length;
-          var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
+            var user = JSON.parse(window.sessionStorage.getItem('user'));
+            var doc = new jsPDF('landscape');
+            var totalPagesExp = "{total_pages_count_string}";
+            var columns = [
+              { title: "Distrito/US", dataKey: "districtname" },
+              { title: "Data do\nBackup", dataKey: "backup_date_f" },
+              { title: "Actualização\nTerminada?", dataKey: "at" },
+              { title: "Sincronização\nTerminada?", dataKey: "st" },
+              { title: "Cruzamento\ncom DHIS2?", dataKey: "dhis2" },
+              { title: "Cruzamento\ncom iDART?", dataKey: "idart" },
+              { title: "Validação\nTerminada?", dataKey: "vt" },
+              { title: "Enviado\npor", dataKey: "sender" },
+              { title: "Observação Distrital", dataKey: "obsd" },
+              { title: "Recebido\npor", dataKey: "receiver" }
 
-          // HEADER
-          doc.setFontSize(18);
-          doc.text('Lista de Backups Recebidos', 14, 22);
-          doc.setFontSize(14);
-          doc.text(listSize + ' backups, efectuados de ' + this.datepipe.transform(userValue.backup_from, 'dd/MM/yyyy') + ' até ' + this.datepipe.transform(userValue.backup_until, 'dd/MM/yyyy')+'.', 14, 45);
-          doc.setFontSize(11);
-          doc.setTextColor(100);
-          var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-          var text = doc.splitTextToSize('Backups efectuados num determinado periodo e distrito que foram recebidos pelo SIS.', pageWidth - 25, {});
-          doc.text(text, 14, 32);
+            ];
+            var listSize = this.receivesreport.length;
+            var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
 
-          var pageContent = function (data) {
-            // FOOTER
-            var str = "Página " + data.pageCount;
+            // HEADER
+            doc.setFontSize(18);
+            doc.text('Lista de Backups Recebidos', 14, 22);
+            doc.setFontSize(14);
+            doc.text(listSize + ' backups, efectuados de ' + this.datepipe.transform(userValue.backup_from, 'dd/MM/yyyy') + ' até ' + this.datepipe.transform(userValue.backup_until, 'dd/MM/yyyy') + '.', 14, 45);
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+            var text = doc.splitTextToSize('Backups efectuados num determinado periodo que foram recebidos pelo SIS.', pageWidth - 25, {});
+            doc.text(text, 14, 32);
+
+            var pageContent = function (data) {
+              // FOOTER
+              var str = "Página " + data.pageCount;
+              if (typeof doc.putTotalPages === 'function') {
+                str = str + " de " + totalPagesExp;
+              }
+              doc.setFontSize(10);
+              var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+              doc.text(str, data.settings.margin.left, pageHeight - 5);
+            };
+            doc.autoTable(columns, this.receivesreport, {
+              startY: 50,
+              styles: { overflow: 'linebreak' },
+              bodyStyles: { valign: 'top' },
+              columnStyles: {
+                districtname: { columnWidth: 35, fontSize: 10 },
+                backup_date_f: { columnWidth: 23, fontSize: 10 },
+                at: { columnWidth: 25 },
+                st: { columnWidth: 27 },
+                dhis2: { columnWidth: 24 },
+                idart: { columnWidth: 25 },
+                vt: { columnWidth: 24 },
+                sender: { columnWidth: 23, fontSize: 10 },
+                obsd: { columnWidth: 40, fontSize: 10 },
+                receiver: { columnWidth: 23, fontSize: 10 }
+
+              },
+              theme: 'grid',
+              headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
+              addPageContent: pageContent
+            });
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
+            doc.setTextColor(0, 0, 200);
+            doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
+
             if (typeof doc.putTotalPages === 'function') {
-              str = str + " de " + totalPagesExp;
+              doc.putTotalPages(totalPagesExp);
             }
-            doc.setFontSize(10);
-            var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-            doc.text(str, data.settings.margin.left, pageHeight - 5);
-          };
-          doc.autoTable(columns, this.receivesreport, {
-            startY: 50,
-            styles: { overflow: 'linebreak' },
-            bodyStyles: { valign: 'top' },
-            columnStyles: {
-              districtname: { columnWidth: 35,fontSize:10 },
-              backup_date_f: { columnWidth: 23,fontSize:10 },
-              at: { columnWidth: 25 },
-              st: { columnWidth: 27 },
-              dhis2: { columnWidth: 24 },
-              idart: { columnWidth: 25 },
-              vt: { columnWidth: 24 },
-              sender: { columnWidth: 23, fontSize:10 },
-              obsd: { columnWidth: 40, fontSize:10 },
-              receiver: { columnWidth: 23, fontSize:10 }
-              
-            },
-            theme: 'grid',
-            headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
-            addPageContent: pageContent
-          });
-          doc.setFontSize(11);
-          doc.setTextColor(100);
-          doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
-          doc.setTextColor(0, 0, 200);
-          doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
+            doc.save('SCB_Backups recebidos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
 
-          if (typeof doc.putTotalPages === 'function') {
-            doc.putTotalPages(totalPagesExp);
+
           }
-          doc.save('SCB_Backups recebidos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
+        );
+    } else {
+
+      this.receivesService.getReceivesByDistrictDate(1, 1000000, userValue.district, userValue.backup_from, userValue.backup_until)
+        .subscribe(data => {
+          this.receivesreport = data.content;
+        },
+          error => {
+            this.isHidden = "hide";
+            this.receivesreport = [];
+          },
+          () => {
+            this.isHidden = "hide";
+
+            var user = JSON.parse(window.sessionStorage.getItem('user'));
+            var doc = new jsPDF('landscape');
+            var totalPagesExp = "{total_pages_count_string}";
+            var columns = [
+              { title: "Distrito/US", dataKey: "districtname" },
+              { title: "Data do\nBackup", dataKey: "backup_date_f" },
+              { title: "Actualização\nTerminada?", dataKey: "at" },
+              { title: "Sincronização\nTerminada?", dataKey: "st" },
+              { title: "Cruzamento\ncom DHIS2?", dataKey: "dhis2" },
+              { title: "Cruzamento\ncom iDART?", dataKey: "idart" },
+              { title: "Validação\nTerminada?", dataKey: "vt" },
+              { title: "Enviado\npor", dataKey: "sender" },
+              { title: "Observação Distrital", dataKey: "obsd" },
+              { title: "Recebido\npor", dataKey: "receiver" }
+
+            ];
+            var listSize = this.receivesreport.length;
+            var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
+
+            // HEADER
+            doc.setFontSize(18);
+            doc.text('Lista de Backups Recebidos', 14, 22);
+            doc.setFontSize(14);
+            doc.text(listSize + ' backups, efectuados de ' + this.datepipe.transform(userValue.backup_from, 'dd/MM/yyyy') + ' até ' + this.datepipe.transform(userValue.backup_until, 'dd/MM/yyyy') + '.', 14, 45);
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+            var text = doc.splitTextToSize('Backups efectuados num determinado periodo e distrito que foram recebidos pelo SIS.', pageWidth - 25, {});
+            doc.text(text, 14, 32);
+
+            var pageContent = function (data) {
+              // FOOTER
+              var str = "Página " + data.pageCount;
+              if (typeof doc.putTotalPages === 'function') {
+                str = str + " de " + totalPagesExp;
+              }
+              doc.setFontSize(10);
+              var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+              doc.text(str, data.settings.margin.left, pageHeight - 5);
+            };
+            doc.autoTable(columns, this.receivesreport, {
+              startY: 50,
+              styles: { overflow: 'linebreak' },
+              bodyStyles: { valign: 'top' },
+              columnStyles: {
+                districtname: { columnWidth: 35, fontSize: 10 },
+                backup_date_f: { columnWidth: 23, fontSize: 10 },
+                at: { columnWidth: 25 },
+                st: { columnWidth: 27 },
+                dhis2: { columnWidth: 24 },
+                idart: { columnWidth: 25 },
+                vt: { columnWidth: 24 },
+                sender: { columnWidth: 23, fontSize: 10 },
+                obsd: { columnWidth: 40, fontSize: 10 },
+                receiver: { columnWidth: 23, fontSize: 10 }
+
+              },
+              theme: 'grid',
+              headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
+              addPageContent: pageContent
+            });
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
+            doc.setTextColor(0, 0, 200);
+            doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
+
+            if (typeof doc.putTotalPages === 'function') {
+              doc.putTotalPages(totalPagesExp);
+            }
+            doc.save('SCB_Backups recebidos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
 
 
-        }
-      );
+          }
+        );
 
     }
   }
@@ -724,16 +734,16 @@ export class ReceivesComponent implements OnInit {
       else if (((userValue.backup_from != "" && userValue.backup_from != null) && (userValue.backup_until != "" && userValue.backup_until != null)) && (userValue.district == "all" || userValue.district == null)) {
         this.date_filter = true;
         this.isHidden = "";
-        this.from=userValue.backup_from;
-        this.until=userValue.backup_until;
+        this.from = userValue.backup_from;
+        this.until = userValue.backup_until;
         this.getPageReceiveByDate(1);
       }
       else if (((userValue.backup_from != "" && userValue.backup_from != null) && (userValue.backup_until != "" && userValue.backup_until != null)) && (userValue.district != "all" && userValue.district != null)) {
         this.date_filter = true;
         this.districtr_filter = true;
         this.isHidden = "";
-        this.from=userValue.backup_from;
-        this.until=userValue.backup_until;
+        this.from = userValue.backup_from;
+        this.until = userValue.backup_until;
         this.district_id = userValue.district;
         this.getPageReceiveByDistrictDate(1);
       }

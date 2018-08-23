@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -18,6 +18,9 @@ import { TranslateService } from 'ng2-translate';
   styleUrls: ['./district-form.component.css']
 })
 
+/** 
+ * @author Damasceno Lopes
+ */
 export class DistrictFormComponent implements OnInit {
   public provinces = [
     { name: 'Cabo Delgado' },
@@ -34,16 +37,14 @@ export class DistrictFormComponent implements OnInit {
     { name: 'Outra' }
   ]
   public form: FormGroup;
-  public title: string;
-  public isHidden: string;
-  public isDisabled: boolean;
-  public response: string;
+  public title; isHidden: string;
+  public isDisabled; disabled1: boolean;
   public district: District = new District();
   public alldistricts: District[] = [];
   public allironkeys: Ironkey[] = [];
   public user: Object[] = [];
-  public disabled1: boolean;
 
+   
   constructor(
     public formBuilder: FormBuilder,
     public router: Router,
@@ -67,7 +68,7 @@ export class DistrictFormComponent implements OnInit {
       ironkeys: [],
       canceled: [],
       canceled_reason: [],
-      parent:[]
+      parent: []
     });
   }
 
@@ -75,24 +76,22 @@ export class DistrictFormComponent implements OnInit {
     this.isDisabled = false;
     this.disabled1 = true;
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
-    var id = this.route.params.subscribe(params => {
+    this.route.params.subscribe(params => {
       var uuid = params['uuid'];
       this.title = uuid ? 'Editar Distrito' : 'Novo Distrito';
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
         this.districtsService.getDistricts()
-            .subscribe(data => {
-              this.alldistricts = data;
-            });
+          .subscribe(data => {
+            this.alldistricts = data;
+          });
         this.ironkeysService.getIronkeys()
-          .subscribe(data => {this.allironkeys = data},error=>{},
-            ()=>{
+          .subscribe(data => { this.allironkeys = data }, error => { },
+            () => {
               this.disabled1 = false;
             });
         return;
       } else {
-        
-
         this.districtsService.getDistrictByUuid(uuid).subscribe(
           district => {
             this.district = district;
@@ -118,35 +117,31 @@ export class DistrictFormComponent implements OnInit {
                   }
                   return 0;
                 });
-              },error=>{},
-              ()=>{
+              }, error => { },
+                () => {
+                  this.districtsService.getDistricts()
+                    .subscribe(data => {
+                      this.alldistricts = data;
+                      if (this.district.parentdistrict != null) {
+                        this.alldistricts = this.alldistricts.filter(item => item.district_id !== this.district.parentdistrict.district_id);
+                        this.alldistricts.push(this.district.parentdistrict);
+                      }
+                      this.alldistricts = this.alldistricts.sort(function (a, b) {
+                        var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+                        var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                        if (nameA < nameB) {
+                          return -1;
+                        }
+                        if (nameA > nameB) {
+                          return 1;
+                        }
+                        return 0;
+                      });
 
-                this.districtsService.getDistricts()
-              .subscribe(data => {
-                this.alldistricts = data;
-                if(this.district.parentdistrict!=null){
-                this.alldistricts = this.alldistricts.filter(item => item.district_id !== this.district.parentdistrict.district_id);
-                this.alldistricts.push(this.district.parentdistrict);
+                    }, error => { },
+                      () => { this.disabled1 = false; });
                 }
-                this.alldistricts =  this.alldistricts.sort(function (a, b) {
-                  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-                  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-                  if (nameA < nameB) {
-                    return -1;
-                  }
-                  if (nameA > nameB) {
-                    return 1;
-                  }
-                  return 0;
-                });
-
-              },error=>{},
-              ()=>{this.disabled1 = false;});
-
-
-                
-              }
-            );
+              );
           },
           response => {
             if (response.status == 404) {
@@ -200,6 +195,4 @@ export class DistrictFormComponent implements OnInit {
   showMsgErr() {
     this.toastService.show('Este Distrito ja existe!', 4000, 'red', null);
   }
-
-  
 }

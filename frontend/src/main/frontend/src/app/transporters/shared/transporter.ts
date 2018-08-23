@@ -1,8 +1,12 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { User } from './../../users/shared/user';
+
+/** 
+* @author Damasceno Lopes
+*/
 export class Transporter {
   transporter_id: number;
   name: string;

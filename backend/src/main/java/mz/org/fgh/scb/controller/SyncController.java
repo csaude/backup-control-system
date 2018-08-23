@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.controller;
 
 import java.text.DateFormat;
@@ -21,7 +25,9 @@ import mz.org.fgh.scb.model.entity.Sync;
 import mz.org.fgh.scb.service.impl.SyncServiceImpl;
 
 /**
- * @author damasceno.lopes
+ * Defines the rest endpoint configuration for Syncs
+ * 
+ * @author Damasceno Lopes
  *
  */
 @RestController
@@ -31,7 +37,7 @@ public class SyncController {
 	@Autowired
 	private SyncServiceImpl syncServiceImpl;
 
-	@RequestMapping(value = "/syncs", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/syncs", method = RequestMethod.POST)
 	@ResponseBody
 	public String create(@RequestBody Sync sync) {
 		try {
@@ -98,7 +104,7 @@ public class SyncController {
 	public Page<Sync> findByUserId(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size) throws Exception {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();
-		Page<Sync> pageSync = syncServiceImpl.findByUserId(
+		Page<Sync> pageSync = syncServiceImpl.findByUsername(
 				new PageRequest(page - 1, 10),currentPrincipalName);
 		if (page - 1 > pageSync.getTotalPages()) {
 			throw new Exception();
@@ -112,7 +118,7 @@ public class SyncController {
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date_from = format.parse(from);
 		Date date_until = format.parse(until);
-		Page<Sync> pageSync = syncServiceImpl.findByDistrictId(district_id,
+		Page<Sync> pageSync = syncServiceImpl.findByDistrictIdAndDateRange(district_id,
 				new PageRequest(page - 1, size),date_from,date_until);
 		if (page - 1 > pageSync.getTotalPages()) {
 			throw new Exception();
@@ -126,7 +132,7 @@ public class SyncController {
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date_from = format.parse(from);
 		Date date_until = format.parse(until);
-		Page<Sync> pageSync = syncServiceImpl.findAllByDate(
+		Page<Sync> pageSync = syncServiceImpl.findAllByDateRange(
 				new PageRequest(page - 1, size),date_from,date_until);
 		if (page - 1 > pageSync.getTotalPages()) {
 			throw new Exception();
@@ -140,7 +146,7 @@ public class SyncController {
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date_from = format.parse(from);
 		Date date_until = format.parse(until);
-		Page<Sync> pageSync = syncServiceImpl.findByServerId(server_id,
+		Page<Sync> pageSync = syncServiceImpl.findByServerIdAndDateRange(server_id,
 				new PageRequest(page - 1, size),date_from,date_until);
 		if (page - 1 > pageSync.getTotalPages()) {
 			throw new Exception();
@@ -156,7 +162,7 @@ public class SyncController {
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date_from = format.parse(from);
 		Date date_until = format.parse(until);
-		Page<Sync> pageSync = syncServiceImpl.findByUserId(
+		Page<Sync> pageSync = syncServiceImpl.findByUserIdAndDateRange(
 				new PageRequest(page - 1, size),date_from,date_until,currentPrincipalName);
 
 		if (page - 1 > pageSync.getTotalPages()) {
@@ -165,7 +171,7 @@ public class SyncController {
 		return pageSync;	
 	}
 
-	@RequestMapping(value = "/syncs/{uuid}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/syncs/{uuid}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Object deleteSync(@PathVariable String uuid) throws Exception {
 		Sync sync = null;
@@ -178,7 +184,7 @@ public class SyncController {
 		return sync;
 	}
 
-	@RequestMapping(value = "/syncs", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/syncs", method = RequestMethod.PUT)
 	@ResponseBody
 	public String update(@RequestBody Sync sync) throws Exception {
 		try {

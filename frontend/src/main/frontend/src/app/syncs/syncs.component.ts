@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { SyncsService } from "./shared/syncs.service";
@@ -15,11 +15,16 @@ import { Server } from '../servers/shared/server';
 import { TranslateService } from 'ng2-translate';
 import * as alasql from 'alasql';
 import * as myGlobals from '../../globals';
+
 @Component({
   selector: 'app-syncs',
   templateUrl: './syncs.component.html',
   styleUrls: ['./syncs.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class SyncsComponent implements OnInit {
   public syncs; syncsreport: Sync[] = [];
   public sync_id: number;
@@ -38,7 +43,7 @@ export class SyncsComponent implements OnInit {
 
   public p;
   public alldistricts: District[] = [];
-  public allservers: Server[] = [];
+  public allservers;allserversfd: Server[] = [];
   public form: FormGroup;
   public districts_filter; servers_filter; date_filter: boolean;
 
@@ -54,6 +59,8 @@ export class SyncsComponent implements OnInit {
     onClose: () => this.search()
   };
   public total; totali; number = 0;
+  
+     
   constructor(public datepipe: DatePipe, public syncsService: SyncsService,
     public translate: TranslateService, public districtsService: DistrictsService, formBuilder: FormBuilder, public serversService: ServersService) {
     this.form = formBuilder.group({
@@ -78,8 +85,17 @@ export class SyncsComponent implements OnInit {
     this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
 
     if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
-      var filteredd=user.districts.filter(item => item.parentdistrict==null);
-      this.alldistricts = filteredd.sort(function (a, b) {
+      
+       var districts;
+       if(!this.ROLE_SIS&&user.districts.find(item => item.parentdistrict!=null)){
+        districts = user.districts.filter(item => item.parentdistrict==null);
+      }
+      else if(!this.ROLE_SIS&&user.districts.find(item => item.parentdistrict==null)){
+        districts = user.districts;
+      }
+      
+
+      this.alldistricts = districts.sort(function (a, b) {
         var nameA = a.name.toUpperCase(); // ignore upper and lowercase
         var nameB = b.name.toUpperCase(); // ignore upper and lowercase
         if (nameA < nameB) {
@@ -94,6 +110,7 @@ export class SyncsComponent implements OnInit {
       this.serversService.getServersByUser()
         .subscribe(data => {
           this.allservers = data;
+          this.allserversfd=data;
           this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
 
         });
@@ -108,13 +125,14 @@ export class SyncsComponent implements OnInit {
 
       this.districtsService.getDistricts()
         .subscribe(data => {
-          var filteredd=user.districts.filter(item => item.parentdistrict==null);
+          var filteredd=data.filter(item => item.parentdistrict==null);
           this.alldistricts = filteredd;
         });
 
       this.serversService.getServers()
         .subscribe(data => {
           this.allservers = data;
+          this.allserversfd=data;
           this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
 
         });
@@ -454,6 +472,17 @@ export class SyncsComponent implements OnInit {
           this.syncsService.getSyncsByUserDate(1, 1000000, this.from, this.until)
             .subscribe(data => {
               this.syncsreport = data.content;
+              this.syncsreport=alasql("SELECT * FROM ?syncsreport ORDER BY server->districtname ASC,start_time DESC ",[this.syncsreport]);
+
+              for(let s of this.allserversfd){
+                if(!this.syncsreport.find(item=>item.serverreport==s.name+"\n"+s.districtname)){
+                 let sync= new Sync();
+                 sync.serverreport= s.name+"\n"+s.districtname;
+                 sync.observations="Não registou sincronização neste periodo.";
+                 this.syncsreport.push(sync);
+                }
+               }
+
             },
               error => {
                 this.isHidden = "hide";
@@ -471,7 +500,7 @@ export class SyncsComponent implements OnInit {
                   { title: "Duração", dataKey: "duration" },
                   { title: "Nº itens na\nHora inicial", dataKey: "startitems" },
                   { title: "Nº itens na\nHora final", dataKey: "enditems" },
-                  { title: "Encontrou\nerro?", dataKey: "syncerror" },
+                  { title: "Ocorrências", dataKey: "syncerror" },
                   { title: "Sincronizado\npor", dataKey: "syncer" },
                   { title: "Observação", dataKey: "observations" }
                   
@@ -510,9 +539,9 @@ export class SyncsComponent implements OnInit {
                     duration: { columnWidth: 20,fontSize:10 },
                     startitems: { columnWidth: 33,fontSize:10 },
                     enditems: { columnWidth: 33,fontSize:10 },
-                    syncerror: { columnWidth: 22,fontSize:10 },
+                    syncerror: { columnWidth: 24,fontSize:7 },
                     syncer: { columnWidth: 28,fontSize:10 },
-                    observations: { columnWidth: 61,fontSize:10 }
+                    observations: { columnWidth: 55,fontSize:10 }
                     
                   },
                   theme: 'grid',
@@ -539,6 +568,19 @@ export class SyncsComponent implements OnInit {
           this.syncsService.getSyncsByDate(1, 1000000, this.from, this.until)
             .subscribe(data => {
               this.syncsreport = data.content;
+              this.syncsreport=alasql("SELECT * FROM ?syncsreport ORDER BY server->districtname ASC,start_time DESC ",[this.syncsreport]);
+
+          for(let s of this.allserversfd){
+            if(!this.syncsreport.find(item=>item.serverreport==s.name+"\n"+s.districtname)){
+             let sync= new Sync();
+             sync.serverreport= s.name+"\n"+s.districtname;
+             sync.observations="Não registou sincronização neste periodo.";
+             this.syncsreport.push(sync);
+            }
+           }
+
+            
+
             },
               error => {
                 this.isHidden = "hide";
@@ -556,7 +598,7 @@ export class SyncsComponent implements OnInit {
                   { title: "Duração", dataKey: "duration" },
                   { title: "Nº itens na\nHora inicial", dataKey: "startitems" },
                   { title: "Nº itens na\nHora final", dataKey: "enditems" },
-                  { title: "Encontrou\nerro?", dataKey: "syncerror" },
+                  { title: "Ocorrências", dataKey: "syncerror" },
                   { title: "Sincronização\niniciada por", dataKey: "syncer" },
                   { title: "Observação", dataKey: "observations" }
                   
@@ -595,9 +637,9 @@ export class SyncsComponent implements OnInit {
                     duration: { columnWidth: 26,fontSize:10 },
                     startitems: { columnWidth: 33,fontSize:10 },
                     enditems: { columnWidth: 33,fontSize:10 },
-                    syncerror: { columnWidth: 22,fontSize:10 },
+                    syncerror: { columnWidth: 24,fontSize:7 },
                     syncer: { columnWidth: 28,fontSize:10 },
-                    observations: { columnWidth: 56,fontSize:10 }
+                    observations: { columnWidth: 55,fontSize:10 }
                     
                   },
                   theme: 'grid',
@@ -643,7 +685,7 @@ export class SyncsComponent implements OnInit {
               { title: "Duração", dataKey: "duration" },
               { title: "Nº itens na\nHora inicial", dataKey: "startitems" },
               { title: "Nº itens na\nHora final", dataKey: "enditems" },
-              { title: "Encontrou\nerro?", dataKey: "syncerror" },
+              { title: "Ocorrências", dataKey: "syncerror" },
               { title: "Sincronização\niniciada por", dataKey: "syncer" },
               { title: "Observação", dataKey: "observations" }
               
@@ -682,9 +724,9 @@ export class SyncsComponent implements OnInit {
                 duration: { columnWidth: 20,fontSize:10 },
                 startitems: { columnWidth: 33,fontSize:10 },
                 enditems: { columnWidth: 33,fontSize:10 },
-                syncerror: { columnWidth: 22,fontSize:10 },
+                syncerror: { columnWidth: 24,fontSize:7 },
                 syncer: { columnWidth: 28,fontSize:10 },
-                observations: { columnWidth: 61,fontSize:10 }
+                observations: { columnWidth: 55,fontSize:10 }
                 
               },
               theme: 'grid',
@@ -714,6 +756,9 @@ export class SyncsComponent implements OnInit {
         this.syncsService.getSyncsByServerDate(1, 1000000, this.server_id, this.from, this.until)
         .subscribe(data => {
           this.syncsreport = data.content;
+
+          
+
         },
           error => {
             this.isHidden = "hide";
@@ -731,7 +776,7 @@ export class SyncsComponent implements OnInit {
               { title: "Duração", dataKey: "duration" },
               { title: "Nº itens na\nHora inicial", dataKey: "startitems" },
               { title: "Nº itens na\nHora final", dataKey: "enditems" },
-              { title: "Encontrou\nerro?", dataKey: "syncerror" },
+              { title: "Ocorrências", dataKey: "syncerror" },
               { title: "Sincronizado\npor", dataKey: "syncer" },
               { title: "Observação", dataKey: "observations" }
               
@@ -770,9 +815,9 @@ export class SyncsComponent implements OnInit {
                     duration: { columnWidth: 20,fontSize:10 },
                     startitems: { columnWidth: 33,fontSize:10 },
                     enditems: { columnWidth: 33,fontSize:10 },
-                    syncerror: { columnWidth: 22,fontSize:10 },
+                    syncerror: { columnWidth: 24,fontSize:7 },
                     syncer: { columnWidth: 28,fontSize:10 },
-                    observations: { columnWidth: 61,fontSize:10 }
+                    observations: { columnWidth: 55,fontSize:10 }
                 
               },
               theme: 'grid',

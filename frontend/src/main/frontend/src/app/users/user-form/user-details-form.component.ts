@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -9,7 +9,6 @@ import { User } from '../shared/user';
 import { UsersService } from '../shared/users.service';
 import { DistrictsService } from './../../districts/shared/districts.service';
 import { District } from './../../districts/shared/district';
-import { PersonsService } from './../../persons/shared/persons.service';
 import { Person } from './../../persons/shared/person';
 import { AuthoritiesService } from './../../authorities/shared/authorities.service';
 import { Authority } from './../../authorities/shared/authority';
@@ -22,6 +21,10 @@ import * as CryptoJS from 'crypto-js';
   templateUrl: './user-details-form.component.html',
   styleUrls: ['./user-form.component.css']
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class UserDetailsFormComponent implements OnInit {
   public form: FormGroup;
   public title: string;
@@ -54,7 +57,6 @@ export class UserDetailsFormComponent implements OnInit {
     public route: ActivatedRoute,
     public usersService: UsersService,
     public districtsService: DistrictsService,
-    public personsService: PersonsService,
     public authoritiesService: AuthoritiesService,
     public toastService: MzToastService,
     public translate: TranslateService

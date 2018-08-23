@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.controller;
 
 import java.util.List;
@@ -21,7 +25,9 @@ import mz.org.fgh.scb.service.impl.EvaluationServiceImpl;
 import mz.org.fgh.scb.specification.EvaluationSpecificationsBuilder;
 
 /**
- * @author damasceno.lopes
+ * Defines the rest endpoint configuration for Evaluations
+ * 
+ * @author Damasceno Lopes
  *
  */
 @RestController
@@ -53,7 +59,7 @@ public class EvaluationController {
 		return pageEvaluation;
 	}
 
-	@RequestMapping(value = "/evaluations", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/evaluations", method = RequestMethod.POST)
 	@ResponseBody
 	public String create(
 			@RequestBody Evaluation evaluation) {
@@ -71,7 +77,7 @@ public class EvaluationController {
 		return evaluationServiceImpl.findByUuid(uuid);
 	}
 
-	@RequestMapping(value = "/evaluations/{uuid}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/evaluations/{uuid}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public String deleteEvaluation(@PathVariable String uuid) throws Exception {
 		Evaluation evaluation = null;
@@ -85,7 +91,7 @@ public class EvaluationController {
 		}
 	}
 
-	@RequestMapping(value = "/evaluations", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/evaluations", method = RequestMethod.PUT)
 	@ResponseBody
 	public String update(@RequestBody Evaluation evaluation) throws Exception {
 		try {

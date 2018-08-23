@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.controller;
 
 import java.text.DateFormat;
@@ -21,7 +25,9 @@ import mz.org.fgh.scb.model.entity.Send;
 import mz.org.fgh.scb.service.impl.SendServiceImpl;
 
 /**
- * @author damasceno.lopes
+ * Defines the rest endpoint configuration for Sends
+ * 
+ * @author Damasceno Lopes
  *
  */
 @RestController
@@ -31,7 +37,7 @@ public class SendController {
 	@Autowired
 	private SendServiceImpl sendServiceImpl;
 
-	@RequestMapping(value = "/sends", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/sends", method = RequestMethod.POST)
 	@ResponseBody
 	public String create(@RequestBody Send send) {
 		try {
@@ -72,7 +78,7 @@ public class SendController {
 	public Page<Send> findByUserId(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size) throws Exception {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();
-		Page<Send> pageSend = sendServiceImpl.findByUserId(
+		Page<Send> pageSend = sendServiceImpl.findByUsername(
 				new PageRequest(page - 1, 10),currentPrincipalName);
 		if (page - 1 > pageSend.getTotalPages()) {
 			throw new Exception();
@@ -95,7 +101,7 @@ public class SendController {
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date_from = format.parse(from);
 		Date date_until = format.parse(until);
-		Page<Send> pageSend = sendServiceImpl.findByDistrictId(district_id,
+		Page<Send> pageSend = sendServiceImpl.findByDistrictIdAndBackupDateRange(district_id,
 				new PageRequest(page - 1, 10),date_from,date_until);
 		if (page - 1 > pageSend.getTotalPages()) {
 			throw new Exception();
@@ -111,7 +117,7 @@ public class SendController {
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date_from = format.parse(from);
 		Date date_until = format.parse(until);
-		Page<Send> pageSend = sendServiceImpl.findByUserId(
+		Page<Send> pageSend = sendServiceImpl.findByUsernameAndBackupDateRange(
 				new PageRequest(page - 1, 10),date_from,date_until,currentPrincipalName);
 
 		if (page - 1 > pageSend.getTotalPages()) {
@@ -120,7 +126,7 @@ public class SendController {
 		return pageSend;	
 	}
 
-	@RequestMapping(value = "/sends/{uuid}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/sends/{uuid}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Object deleteSend(@PathVariable String uuid) throws Exception {
 		Send send = null;
@@ -133,7 +139,7 @@ public class SendController {
 		return send;
 	}
 
-	@RequestMapping(value = "/sends", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/sends", method = RequestMethod.PUT)
 	@ResponseBody
 	public String update(@RequestBody Send send) throws Exception {
 		try {

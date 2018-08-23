@@ -184,98 +184,122 @@
 </mz-modal>
 
 <mz-modal #basicModalSync [fixedFooter]="true">
-    <mz-modal-header>
-      <h4>{{ "syncdetails" | translate }}</h4>
-      <div class="progress {{isHidden2m}}">
+  <mz-modal-header>
+    <h4>{{ "syncdetails" | translate }}</h4>
+    <div class="progress {{isHidden2m}}">
       <div class="indeterminate"></div>
     </div>
   </mz-modal-header>
   <mz-modal-content *ngIf="isHidden2m=='hide'">
-  
-      <div class="row" style="margin-top: -11px;">
-        <div class="col s12">
-          <h5 class="light">{{sync.server.name}}</h5>
-        </div>
+
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12">
+        <h5 class="light">{{sync.server.name}}</h5>
       </div>
-  
-      <div class="row" style="margin-top: -11px;">
-        <div class="col s12 l2 m2">{{ "district" | translate }}:</div>
-        <div class="col s12 l10 m10">{{sync.server.district.name}}</div>
+    </div>
+
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "district" | translate }}:</div>
+      <div class="col s12 l10 m10">{{sync.server.district.name}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "sync_time" | translate }}:</div>
+      <div class="col s12 l10 m10" *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.start_time | date: 'dd/MM/yyyy HH:mm' }} - {{ sync.end_time | date: 'HH:mm' }}</div>
+      <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'">{{ sync.start_time | date: 'dd/MM/yyyy HH:mm' }}</div>
+    </div>
+
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "duration" | translate }}:</div>
+      <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==true"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span></div>
+      <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==false"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge red' data-badge-caption="NÃO CONCLUIDA"></span></div>
+      <div class="col s12 l10 m10" *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.duration }}</div>
+    </div>
+
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "items_onstart" | translate }}:</div>
+      <div class="col s12 l10 m10">{{ sync.start_items_to_send }} {{ "items_send" | translate }}
+        <br>{{ sync.start_items_to_receive }} {{ "items_receive" | translate }}</div>
+    </div>
+
+    <div class="row" style="margin-top: -11px;" *ngIf="sync.end_time!=null">
+      <div class="col s12 l2 m2">{{ "items_onend" | translate }}:</div>
+      <div class="col s12 l10 m10" >{{ sync.end_items_to_send }} {{ "items_send" | translate }}
+        <br>{{ sync.end_items_to_receive }} {{ "items_receive" | translate }}</div>
+    </div>
+
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <input type="checkbox" id="update_finished" checked="{{sync.sync_error==true?'checked':''}}" onclick="return false;" />
+        <label for="update_finished">{{ "sync_error_desc" | translate }}</label>
       </div>
-      <div class="row" style="margin-top: -11px;">
-        <div class="col s12 l2 m2">{{ "sync_time" | translate }}:</div>
-        <div class="col s12 l10 m10" *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.start_time | date: 'dd/MM/yyyy HH:mm' }} - {{ sync.end_time | date: 'HH:mm' }}</div>
-        <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'">{{ sync.start_time | date: 'dd/MM/yyyy HH:mm' }}</div>
+    </div>
+
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <input type="checkbox" id="serverfault" checked="{{sync.serverfault==true?'checked':''}}" onclick="return false;" />
+        <label for="serverfault">{{ "serverfault" | translate }}</label>
       </div>
-  
-      <div class="row" style="margin-top: -11px;">
-        <div class="col s12 l2 m2">{{ "duration" | translate }}:</div>
-        <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==true"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span></div>
-        <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==false"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge red' data-badge-caption="NÃO CONCLUIDA"></span></div>
-        <div class="col s12 l10 m10" *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.duration }}</div>
+    </div>
+
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <input type="checkbox" id="laptopfault" checked="{{sync.laptopfault==true?'checked':''}}" onclick="return false;" />
+        <label for="laptopfault">{{ "laptopfault" | translate }}</label>
       </div>
-  
-      <div class="row" style="margin-top: -11px;">
-        <div class="col s12 l2 m2">{{ "items_onstart" | translate }}:</div>
-        <div class="col s12 l10 m10"  *ngIf="sync.end_time!=null">{{ sync.start_items_to_send }} {{ "items_send" | translate }}
-          <br>{{ sync.start_items_to_receive }} {{ "items_receive" | translate }}</div>
+    </div>
+
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <input type="checkbox" id="powercut" checked="{{sync.powercut==true?'checked':''}}" onclick="return false;" />
+        <label for="powercut">{{ "powercut" | translate }}</label>
       </div>
-  
-      <div class="row" style="margin-top: -11px;">
-        <div class="col s12 l2 m2">{{ "items_onend" | translate }}:</div>
-        <div class="col s12 l10 m10">{{ sync.end_items_to_send }} {{ "items_send" | translate }}
-          <br>{{ sync.end_items_to_receive }} {{ "items_receive" | translate }}</div>
+    </div>
+
+    <div class="row" *ngIf="sync.state=='Complete'">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <span style="float: left;text-align: center;" class='new badge green' data-badge-caption="SYNCHRONIZED"></span>
       </div>
-  
-      <div class="row" style="margin-top: -11px;">
+    </div>
+
+    <div class="row" *ngIf="sync.state=='Incomplete'">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <input type="checkbox" id="update_finished" checked="{{sync.sync_error==true?'checked':''}}" onclick="return false;" />
-          <label for="update_finished">{{ "sync_error_desc" | translate }}</label>
+          <span style="float: left;text-align: center;" class='new badge red' data-badge-caption="NOT SYNCHRONIZED"></span>
         </div>
       </div>
-  
-      <div class="row" *ngIf="sync.state=='Complete'">
-        <div class="col s12 l2 m2"></div>
-        <div class="col s12 l10 m10">
-          <span style="float: left;text-align: center;" class='new badge green' data-badge-caption="SYNCHRONIZED"></span>
-        </div>
+
+      <div class="row" style="margin-top: -11px;" *ngIf="sync.observation!=null">
+      <div class="col s12 l2 m2">{{ "obs_district" | translate }}:</div>
+      <div class="col s12 l10 m10">{{sync.observation}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;" *ngIf="sync.observation_his!=null">
+      <div class="col s12 l2 m2">{{ "obs_his" | translate }}:</div>
+      <div class="col s12 l10 m10">{{sync.observation_his}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{sync.created_by.person.others_names}} {{sync.created_by.person.surname}} - {{sync.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
+    </div>
+
+    <div class="row" *ngIf="sync.updated_by!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{sync.updated_by.person.others_names}} {{sync.updated_by.person.surname}} - {{sync.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
+    </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <span style="color:lightgrey;">{{sync.uuid}}</span>
       </div>
-  
-      <div class="row" *ngIf="sync.state=='Incomplete'">
-          <div class="col s12 l2 m2"></div>
-          <div class="col s12 l10 m10">
-            <span style="float: left;text-align: center;" class='new badge red' data-badge-caption="NOT SYNCHRONIZED"></span>
-          </div>
-        </div>
-  
-        <div class="row" style="margin-top: -11px;" *ngIf="sync.observation!=null">
-        <div class="col s12 l2 m2">{{ "obs_district" | translate }}:</div>
-        <div class="col s12 l10 m10">{{sync.observation}}</div>
-      </div>
-      <div class="row" style="margin-top: -11px;" *ngIf="sync.observation_his!=null">
-        <div class="col s12 l2 m2">{{ "obs_his" | translate }}:</div>
-        <div class="col s12 l10 m10">{{sync.observation_his}}</div>
-      </div>
-      <div class="row" style="margin-top: -11px;">
-        <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-        <div class="col s12 l10 m10">{{sync.created_by.person.others_names}} {{sync.created_by.person.surname}} - {{sync.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
-      </div>
-  
-      <div class="row" *ngIf="sync.updated_by!=null" style="margin-top: -11px;">
-        <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-        <div class="col s12 l10 m10">{{sync.updated_by.person.others_names}} {{sync.updated_by.person.surname}} - {{sync.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
-      </div>
-      <div class="row" style="margin-top: -11px;">
-        <div class="col s12 l2 m2"></div>
-        <div class="col s12 l10 m10">
-          <span style="color:lightgrey;">{{sync.uuid}}</span>
-        </div>
-      </div>
-    </mz-modal-content>
-    <mz-modal-footer>
-      <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
-    </mz-modal-footer>
+    </div>
+  </mz-modal-content>
+  <mz-modal-footer>
+    <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
+  </mz-modal-footer>
   </mz-modal>
 
 <div class="fixed-action-btn" style="bottom: 20px; right: 89px;">

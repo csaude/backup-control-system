@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.model.entity;
 
 import java.util.HashSet;
@@ -15,7 +19,9 @@ import javax.persistence.SequenceGenerator;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
- * @author damasceno.lopes
+ * A Authority is a definition of the User previleges on the System.
+ * 
+ * @author Damasceno Lopes
  *
  */
 @Entity(name = "authority")
@@ -35,6 +41,9 @@ public class Authority {
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "authorities")
 	private Set<User> users = new HashSet<User>(0);
 
+	// -------------------------------------------------
+	// Constructors
+	// -------------------------------------------------
 	public Authority() {
 
 	}

@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.controller;
 
 import java.text.DateFormat;
@@ -21,7 +25,9 @@ import mz.org.fgh.scb.model.entity.Receive;
 import mz.org.fgh.scb.service.impl.ReceiveServiceImpl;
 
 /**
- * @author damasceno.lopes
+ * Defines the rest endpoint configuration for Receives
+ * 
+ * @author Damasceno Lopes
  *
  */
 @RestController
@@ -45,7 +51,7 @@ public class ReceiveController {
 	public Page<Receive> findByUserId(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size) throws Exception {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();
-		Page<Receive> pageReceive = receiveServiceImpl.findByUserId(
+		Page<Receive> pageReceive = receiveServiceImpl.findByUsername(
 				new PageRequest(page - 1, 10),currentPrincipalName);
 		if (page - 1 > pageReceive.getTotalPages()) {
 			throw new Exception();
@@ -55,7 +61,7 @@ public class ReceiveController {
 	
 	@RequestMapping(value = "/receivesall/get", method = RequestMethod.GET)
 	public Page<Receive> findAllReceived(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size) throws Exception {
-		Page<Receive> pageReceive = receiveServiceImpl.findAllReceived(
+		Page<Receive> pageReceive = receiveServiceImpl.findAllReceives(
 				new PageRequest(page - 1, 10));
 		if (page - 1 > pageReceive.getTotalPages()) {
 			throw new Exception();
@@ -68,7 +74,7 @@ public class ReceiveController {
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date_from = format.parse(from);
 		Date date_until = format.parse(until);
-		Page<Receive> pageReceive = receiveServiceImpl.findByDate(new PageRequest(page - 1, size),date_from,date_until);
+		Page<Receive> pageReceive = receiveServiceImpl.findBySendBackupDateRange(new PageRequest(page - 1, size),date_from,date_until);
 		if (page - 1 > pageReceive.getTotalPages()) {
 			throw new Exception();
 		}
@@ -80,7 +86,7 @@ public class ReceiveController {
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date_from = format.parse(from);
 		Date date_until = format.parse(until);
-		Page<Receive> pageReceive = receiveServiceImpl.findByDistrictId(district_id,
+		Page<Receive> pageReceive = receiveServiceImpl.findByDistrictIdAndSendBackupDateRange(district_id,
 				new PageRequest(page - 1, size),date_from,date_until);
 		if (page - 1 > pageReceive.getTotalPages()) {
 			throw new Exception();
@@ -96,7 +102,7 @@ public class ReceiveController {
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date date_from = format.parse(from);
 		Date date_until = format.parse(until);
-		Page<Receive> pageReceive = receiveServiceImpl.findByUserId(
+		Page<Receive> pageReceive = receiveServiceImpl.findByUsernameAndSendDateBackupRange(
 				new PageRequest(page - 1, 10),date_from,date_until,currentPrincipalName);
 		if (page - 1 > pageReceive.getTotalPages()) {
 			throw new Exception();
@@ -104,7 +110,7 @@ public class ReceiveController {
 		return pageReceive;	
 	}
 
-	@RequestMapping(value = "/receives", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/receives", method = RequestMethod.POST)
 	@ResponseBody
 	public String create(@RequestBody Receive receive) {
 		try {
@@ -126,7 +132,7 @@ public class ReceiveController {
 		return receiveServiceImpl.findBySendId(send_id);
 	}
 
-	@RequestMapping(value = "/receives/{uuid}", method = RequestMethod.DELETE, produces = "application/json")
+	@RequestMapping(value = "/receives/{uuid}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Object deleteReceive(@PathVariable String uuid) throws Exception {
 		Receive receive = null;
@@ -139,7 +145,7 @@ public class ReceiveController {
 		return receive;
 	}
 
-	@RequestMapping(value = "/receives", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/receives", method = RequestMethod.PUT)
 	@ResponseBody
 	public String update(@RequestBody Receive receive) throws Exception {
 		try {

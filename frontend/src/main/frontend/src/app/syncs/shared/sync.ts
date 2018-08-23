@@ -1,10 +1,13 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Server } from './../../servers/shared/server';
 import { User } from './../../users/shared/user';
 
+/** 
+* @author Damasceno Lopes
+*/
 export class Sync {
   sync_id: number;
   server: Server=new Server();
@@ -27,6 +30,10 @@ export class Sync {
   state: string;
   duration:string;
   editable: boolean;
-
+  serverfault: boolean;
+  laptopfault: boolean;
+  powercut: boolean;
+  serverreport: String;
+  observations: String;
 
 }

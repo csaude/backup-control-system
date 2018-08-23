@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -13,6 +13,7 @@ import { IronkeyFormComponent } from './ironkey-form/ironkey-form.component';
 import { MzTooltipModule, MzSelectModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzDatepickerModule } from 'ng2-materialize';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { TranslateModule } from "ng2-translate";
+
 @NgModule({
   imports: [
     FormsModule,
@@ -43,4 +44,8 @@ import { TranslateModule } from "ng2-translate";
     IronkeysService
   ]
 })
+
+/** 
+* @author Damasceno Lopes
+*/
 export class IronkeysModule { }

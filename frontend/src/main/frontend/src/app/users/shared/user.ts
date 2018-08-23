@@ -1,10 +1,14 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { District } from './../../districts/shared/district';
 import { Person } from './../../persons/shared/person';
 import { Authority } from './../../authorities/shared/authority';
+
+/** 
+* @author Damasceno Lopes
+*/
 export class User {
   user_id: number;
   username: string;

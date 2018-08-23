@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.model.entity;
 
 import java.text.SimpleDateFormat;
@@ -22,7 +26,10 @@ import javax.persistence.UniqueConstraint;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
- * @author damasceno.lopes
+ * A Ironkey is a definition of storage device that is 
+ * used to carry the backups from Districts to Headquarters.
+ * 
+ * @author Damasceno Lopes
  *
  */
 @Entity(name = "ironkey")
@@ -70,6 +77,9 @@ public class Ironkey {
 	@ManyToOne
 	private User updated_by;
 
+	// -------------------------------------------------
+	// Constructors
+	// -------------------------------------------------
 	public Ironkey() {
 		this.uuid = UUID.randomUUID().toString();
 	}
@@ -93,24 +103,25 @@ public class Ironkey {
 	public String getObservation() {
 		return observation;
 	}
-	
+
 	public String getObservationf() {
-		if(this.observation==null)
+		if (this.observation == null)
 			return "";
 		else
-		return observation;
+			return observation;
 	}
-	
+
 	public String getLastupdate() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		if(this.getUpdated_by()==null) {
-		if(this.getCreated_by()==null)
-			return "";
-		else
-		return this.getCreated_by().getPerson().getOthers_names()+"\n"+this.getCreated_by().getPerson().getSurname()+"\n"+sdf.format(this.getDate_created());
-		}else {
-			return this.getUpdated_by().getPerson().getOthers_names()+"\n"+this.getUpdated_by().getPerson().getSurname()+"\n"+sdf.format(this.getDate_updated());	
-		}}
+		if (this.getUpdated_by() == null) {
+			if (this.getCreated_by() == null)
+				return "";
+			else
+				return this.getCreated_by().getPerson().getOthers_names() + "\n" + this.getCreated_by().getPerson().getSurname() + "\n" + sdf.format(this.getDate_created());
+		} else {
+			return this.getUpdated_by().getPerson().getOthers_names() + "\n" + this.getUpdated_by().getPerson().getSurname() + "\n" + sdf.format(this.getDate_updated());
+		}
+	}
 
 	public void setObservation(String observation) {
 		this.observation = observation;
@@ -125,7 +136,7 @@ public class Ironkey {
 	}
 
 	public Set<District> getDistricts() {
-			return districts;
+		return districts;
 	}
 
 	public void setDistricts(Set<District> districts) {
@@ -214,9 +225,8 @@ public class Ironkey {
 
 	@Override
 	public String toString() {
-		return "Ironkey [ironkey_id=" + ironkey_id + ", serial=" + serial + ", size=" + size + ", version=" + version
-				+ ", status=" + status + ", date_purchased=" + date_purchased + ", observation=" + observation
-				+ ", uuid=" + uuid + ", date_created=" + date_created + ", date_updated=" + date_updated + "]";
+		return "Ironkey [ironkey_id=" + ironkey_id + ", serial=" + serial + ", size=" + size + ", version=" + version + ", status=" + status + ", date_purchased=" + date_purchased + ", observation=" + observation + ", uuid=" + uuid
+				+ ", date_created=" + date_created + ", date_updated=" + date_updated + "]";
 	}
 
 	@Override

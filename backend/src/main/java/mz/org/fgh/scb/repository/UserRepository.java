@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.repository;
 
 import java.util.List;
@@ -8,15 +12,34 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import mz.org.fgh.scb.model.entity.User;
 
 /**
- * @author damasceno.lopes
+ * Defines the functionality for persisting Users
+ * 
+ * @author Damasceno Lopes
  *
  */
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
 
-	User findOneByUsername(String username);
-	
-	List<User> findAllByOrderByUsernameAsc();
-	
+	/**
+	 * Returns the User with the given uuid
+	 * 
+	 * @param uuid the uuid
+	 * @return the User with the given uuid
+	 */
 	User findByUuid(String uuid);
+
+	/**
+	 * Returns the User with the given username
+	 * 
+	 * @param username the username
+	 * @return the User with the given username
+	 */
+	User findOneByUsername(String username);
+
+	/**
+	 * Returns all Users
+	 * 
+	 * @return all Users
+	 */
+	List<User> findAllByOrderByUsernameAsc();
 
 }

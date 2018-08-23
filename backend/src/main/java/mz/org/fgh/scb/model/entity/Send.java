@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.model.entity;
 
 import java.util.Date;
@@ -15,7 +19,10 @@ import javax.persistence.SequenceGenerator;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
- * @author damasceno.lopes
+ * A Send is a definition of all backups that 
+ * have been Send to Headquarter.
+ * 
+ * @author Damasceno Lopes
  *
  */
 @Entity(name = "send")
@@ -85,12 +92,22 @@ public class Send {
 	@JoinColumn(name = "canceled_by")
 	@ManyToOne
 	private User canceled_by;
-	
+
 	@Column(nullable = false)
 	private boolean ik_received;
-	
-	private Date date_ik_received;
 
+	private Date date_ik_received;
+	
+	/**
+	 * Indicates if iDART backup is included
+	 */
+	private boolean idart_backup;
+	
+	private Date idart_backup_date;
+
+	// -------------------------------------------------
+	// Constructors
+	// -------------------------------------------------
 	public Send() {
 		this.canceled = false;
 		this.received = false;
@@ -135,9 +152,9 @@ public class Send {
 			this.created_by.setDistricts(null);
 			this.created_by.setAuthorities(null);
 			return this.created_by;
-			}else {
-				return null;
-			}
+		} else {
+			return null;
+		}
 	}
 
 	public void setCreated_by(User created_by) {
@@ -275,11 +292,11 @@ public class Send {
 	public void setCross_idart_finished(boolean cross_idart_finished) {
 		this.cross_idart_finished = cross_idart_finished;
 	}
-	
+
 	public String getTransporter_f() {
-		return transporter.getName()+", "+transporter.getPhone_number();
+		return transporter.getName() + ", " + transporter.getPhone_number();
 	}
-	
+
 	public boolean isIk_received() {
 		return ik_received;
 	}
@@ -295,16 +312,29 @@ public class Send {
 	public void setDate_ik_received(Date date_ik_received) {
 		this.date_ik_received = date_ik_received;
 	}
-	
+
+	public boolean isIdart_backup() {
+		return idart_backup;
+	}
+
+	public void setIdart_backup(boolean idart_backup) {
+		this.idart_backup = idart_backup;
+	}
+
+	public Date getIdart_backup_date() {
+		return idart_backup_date;
+	}
+
+	public void setIdart_backup_date(Date idart_backup_date) {
+		this.idart_backup_date = idart_backup_date;
+	}
+
 	@Override
 	public String toString() {
-		return "Send [send_id=" + send_id + ", backup_date=" + backup_date + ", update_finished=" + update_finished
-				+ ", validation_finished=" + validation_finished + ", sync_finished=" + sync_finished
-				+ ", cross_dhis2_finished=" + cross_dhis2_finished + ", cross_idart_finished=" + cross_idart_finished
-				+ ", received=" + received + ", observation=" + observation + ", date_created=" + date_created
-				+ ", date_updated=" + date_updated + ", uuid=" + uuid + ", date_canceled=" + date_canceled
-				+ ", canceled=" + canceled + ", canceled_reason=" + canceled_reason + ", ik_received=" + ik_received
-				+ ", date_ik_received=" + date_ik_received + "]";
+		return "Send [send_id=" + send_id + ", backup_date=" + backup_date + ", update_finished=" + update_finished + ", validation_finished=" + validation_finished + ", sync_finished=" + sync_finished + ", cross_dhis2_finished="
+				+ cross_dhis2_finished + ", cross_idart_finished=" + cross_idart_finished + ", received=" + received + ", observation=" + observation + ", date_created=" + date_created + ", date_updated=" + date_updated + ", uuid=" + uuid
+				+ ", date_canceled=" + date_canceled + ", canceled=" + canceled + ", canceled_reason=" + canceled_reason + ", ik_received=" + ik_received + ", date_ik_received=" + date_ik_received + ", idart_backup=" + idart_backup
+				+ ", idart_backup_date=" + idart_backup_date + "]";
 	}
 
 	@Override

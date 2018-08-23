@@ -1,7 +1,7 @@
 /**
- * @author damasceno.lopes
- * @email damasceno.lopes@fgh.org.mz
-*/
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { EvaluationsService } from "./shared/evaluations.service";
@@ -13,15 +13,19 @@ import { TranslateService } from 'ng2-translate';
   templateUrl: './evaluations.component.html',
   styleUrls: ['./evaluations.component.css']
 })
+
+/**
+ * @author Damasceno Lopes
+ */
 export class EvaluationsComponent implements OnInit {
   public evaluations: Evaluation[] = [];
   public evaluation: Evaluation = new Evaluation();
-  public isHidden: string;
+  public isHidden;name;openmrs_sql_dataset_uuid: string;
   public p: number = 1;
   public total: number = 0;
   public form: FormGroup;
-  public name: string;
-  public openmrs_sql_dataset_uuid: string;
+
+   
   constructor(
     public evaluationsService: EvaluationsService,
     public toastService: MzToastService,
@@ -32,11 +36,13 @@ export class EvaluationsComponent implements OnInit {
       openmrs_sql_dataset_uuid: []
     });
   }
+
   ngOnInit() {
     this.name = "";
     this.openmrs_sql_dataset_uuid = "";
     this.getPage(1);
   }
+
   getPage(page: number) {
     this.isHidden = "";
     this.evaluationsService.getEvaluationsPaginated(page, 10, this.name, this.openmrs_sql_dataset_uuid)
@@ -56,6 +62,7 @@ export class EvaluationsComponent implements OnInit {
         }
       );
   }
+
   search() {
     var userValue = this.form.value;
     if (userValue.name) {
@@ -90,10 +97,14 @@ export class EvaluationsComponent implements OnInit {
         }
       );
   }
+
   setEvaluation(uuid) {
     this.evaluation = this.evaluations.find(item => item.uuid == uuid);
   }
+
+
   showMsg(evaluation) {
     this.toastService.show('Avaliação: ' + evaluation + ', excluida com sucesso!', 2000, 'green', null);
   }
+
 }

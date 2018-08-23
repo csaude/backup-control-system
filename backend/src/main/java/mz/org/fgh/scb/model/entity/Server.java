@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ */
 package mz.org.fgh.scb.model.entity;
 
 import java.util.Date;
@@ -15,7 +19,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 /**
- * @author damasceno.lopes
+ * A Server is a definition of all Sync Computers that 
+ * Send and receive data from a Parent Server
+ * 
+ * @author Damasceno Lopes
  *
  */
 @Entity(name = "server")
@@ -29,11 +36,11 @@ public class Server {
 
 	@Column(nullable = false)
 	private String name;
-	
+
 	@JoinColumn(name = "district_id")
 	@ManyToOne
 	private District district;
-	
+
 	@Column(nullable = false)
 	private String type;
 
@@ -54,7 +61,7 @@ public class Server {
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
-	
+
 	@Column(nullable = false)
 	private boolean canceled;
 
@@ -66,6 +73,9 @@ public class Server {
 	@ManyToOne
 	private User canceled_by;
 
+	// -------------------------------------------------
+	// Constructors
+	// -------------------------------------------------
 	public Server() {
 		this.uuid = UUID.randomUUID().toString();
 	}
@@ -177,13 +187,13 @@ public class Server {
 	public void setCanceled_by(User canceled_by) {
 		this.canceled_by = canceled_by;
 	}
-	
+
 	public District getDistrict() {
 		district.setCreated_by(null);
 		district.setUpdated_by(null);
 		return district;
 	}
-	
+
 	public String getDistrictname() {
 		return district.getName();
 	}
@@ -202,9 +212,8 @@ public class Server {
 
 	@Override
 	public String toString() {
-		return "Server [server_id=" + server_id + ", name=" + name + ", observation=" + observation + ", uuid=" + uuid
-				+ ", date_created=" + date_created + ", date_updated=" + date_updated + ", canceled=" + canceled
-				+ ", canceled_reason=" + canceled_reason + ", date_canceled=" + date_canceled  + "]";
+		return "Server [server_id=" + server_id + ", name=" + name + ", observation=" + observation + ", uuid=" + uuid + ", date_created=" + date_created + ", date_updated=" + date_updated + ", canceled=" + canceled + ", canceled_reason="
+				+ canceled_reason + ", date_canceled=" + date_canceled + "]";
 	}
 
 	@Override
@@ -237,7 +246,5 @@ public class Server {
 			return false;
 		return true;
 	}
-
-	
 
 }
