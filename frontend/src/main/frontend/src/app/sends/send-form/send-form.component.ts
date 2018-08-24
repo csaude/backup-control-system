@@ -194,6 +194,9 @@ export class SendFormComponent implements OnInit {
         else if (userValue.ik_received == true && (userValue.date_ik_received == null)) {
           this.showMsgErr4();
           this.isDisabled = false;
+        }else if (userValue.idart_backup == true && (userValue.idart_backup_date == null||(new Date(userValue.idart_backup_date)>new Date()))) {
+          this.showMsgErr5();
+          this.isDisabled = false;
         }
         else {
           userValue.send_id = this.send.send_id;
@@ -209,6 +212,9 @@ export class SendFormComponent implements OnInit {
     } else {
       if (new Date(userValue.backup_date) > new Date()) {
         this.showMsgErr();
+        this.isDisabled = false;
+      }else if (userValue.idart_backup == true && (userValue.idart_backup_date == null||(new Date(userValue.idart_backup_date)>new Date()))) {
+        this.showMsgErr5();
         this.isDisabled = false;
       }
       else {
@@ -231,5 +237,8 @@ export class SendFormComponent implements OnInit {
   }
   showMsgErr4() {
     this.toastService.show('A Data de Recepção deve ser preenchida!', 2000, 'red', null);
+  }
+  showMsgErr5() {
+    this.toastService.show('A data do backup de iDART deve ser preenchida e não deve estar no futuro!', 2000, 'red', null);
   }
 }

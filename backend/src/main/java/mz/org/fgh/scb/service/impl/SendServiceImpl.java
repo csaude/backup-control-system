@@ -36,7 +36,7 @@ public class SendServiceImpl implements SendService {
 	@Autowired
 	private Environment env;
 
-	private String at, vt, st, c_dhis, c_idart, data, obs, transporter_name, transporter_phone, district,transporter_role;
+	private String at, vt, st, c_dhis, c_idart, data, obs, transporter_name, transporter_phone, district,transporter_role,idart_backup;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -51,6 +51,7 @@ public class SendServiceImpl implements SendService {
 			send.setDate_created(new Date());
 			send.setDate_updated(new Date());
 
+			DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
 			if (send.isUpdate_finished() == true) {
 				at = "Sim";
 			} else {
@@ -76,8 +77,14 @@ public class SendServiceImpl implements SendService {
 			} else {
 				c_idart = "Não";
 			}
+			
+			if (send.isIdart_backup() == true) {
+				idart_backup = "Sim - "+dateFormat1.format(send.getIdart_backup_date());;
+			} else {
+				idart_backup = "Não";
+			}
 
-			DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
+			
 			data = dateFormat1.format(send.getBackup_date());
 			obs = send.getObservation();
 			transporter_name = send.getTransporter().getName() + "";
@@ -116,6 +123,7 @@ public class SendServiceImpl implements SendService {
 								+ "<tr><td bgcolor='#F3F3F3'>Cruzamento com DHIS2?</td><td>" + c_dhis + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Cruzamento com iDART?</td><td>" + c_idart + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Validação Terminada?</td><td>" + vt + "</td></tr>"
+								+ "<tr><td bgcolor='#F3F3F3'>Inclui backup de\niDART?</td><td>" + idart_backup + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3' aling='top'>Observação Distrital:</td><td>" + obs
 								+ "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Enviado por:</td><td>"
 								+ send.getCreated_by().getPerson().getOthers_names() + " "

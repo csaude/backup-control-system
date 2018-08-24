@@ -508,10 +508,13 @@ export class ReceivesComponent implements OnInit {
   printList() {
     this.isHidden = "";
     var userValue = this.form.value;
+    var total;
     if (userValue.district == null || userValue.district == 'all') {
+      
       this.receivesService.getReceivesByDate(1, 1000000, userValue.backup_from, userValue.backup_until)
         .subscribe(data => {
           this.receivesreport = data.content;
+          total=data.totalElements;
 
           for(let d of this.alldistricts){
              if(!this.receivesreport.find(item=>item.districtname==d.namef)){
@@ -546,7 +549,7 @@ export class ReceivesComponent implements OnInit {
               { title: "Recebido\npor", dataKey: "receiver" }
 
             ];
-            var listSize = this.receivesreport.length;
+            var listSize = total;
             var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
 
             // HEADER

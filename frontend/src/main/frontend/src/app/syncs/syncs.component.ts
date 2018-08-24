@@ -468,11 +468,12 @@ export class SyncsComponent implements OnInit {
       if ((userValue.district == 'all' || userValue.district == null) && (userValue.start_from != null && userValue.start_from != "") && (userValue.start_until != null && userValue.start_until != "")) {
 
         if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
-        
+        var total;
           this.syncsService.getSyncsByUserDate(1, 1000000, this.from, this.until)
             .subscribe(data => {
               this.syncsreport = data.content;
               this.syncsreport=alasql("SELECT * FROM ?syncsreport ORDER BY server->districtname ASC,start_time DESC ",[this.syncsreport]);
+              total=data.totalElements;
 
               for(let s of this.allserversfd){
                 if(!this.syncsreport.find(item=>item.serverreport==s.name+"\n"+s.districtname)){
@@ -505,7 +506,7 @@ export class SyncsComponent implements OnInit {
                   { title: "Observação", dataKey: "observations" }
                   
                 ];
-                var listSize = this.syncsreport.length;
+                var listSize = total;
                 var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
       
                 // HEADER
@@ -569,6 +570,7 @@ export class SyncsComponent implements OnInit {
             .subscribe(data => {
               this.syncsreport = data.content;
               this.syncsreport=alasql("SELECT * FROM ?syncsreport ORDER BY server->districtname ASC,start_time DESC ",[this.syncsreport]);
+              total=data.totalElements;
 
           for(let s of this.allserversfd){
             if(!this.syncsreport.find(item=>item.serverreport==s.name+"\n"+s.districtname)){
@@ -603,7 +605,7 @@ export class SyncsComponent implements OnInit {
                   { title: "Observação", dataKey: "observations" }
                   
                 ];
-                var listSize = this.syncsreport.length;
+                var listSize = total;
                 var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
       
                 // HEADER
@@ -668,6 +670,16 @@ export class SyncsComponent implements OnInit {
         this.syncsService.getSyncsByDistrictDate(1, 1000000, this.district_id, this.from, this.until)
         .subscribe(data => {
           this.syncsreport = data.content;
+          total=data.totalElements;
+
+          for(let s of this.allserversfd){
+            if(!this.syncsreport.find(item=>item.serverreport==s.name+"\n"+s.districtname)){
+             let sync= new Sync();
+             sync.serverreport= s.name+"\n"+s.districtname;
+             sync.observations="Não registou sincronização neste periodo.";
+             this.syncsreport.push(sync);
+            }
+           }
         },
           error => {
             this.isHidden = "hide";
@@ -690,7 +702,7 @@ export class SyncsComponent implements OnInit {
               { title: "Observação", dataKey: "observations" }
               
             ];
-            var listSize = this.syncsreport.length;
+            var listSize = total;
             var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
   
             // HEADER

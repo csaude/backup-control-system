@@ -309,6 +309,16 @@
         <label for="validation_finished">{{ "vt" | translate }}</label>
       </div>
     </div>
+
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l3 m3">
+        <input type="checkbox" id="idart_backup" checked="{{send.idart_backup==true?'checked':''}}" onclick="return false;" />
+        <label for="idart_backup">{{ "include_idart_backup" | translate }}</label>
+      </div>
+      <div class="col s12 l7 m7" *ngIf="send.idart_backup">{{send.idart_backup_date | date: 'dd/MM/yyyy'}}</div>
+    </div>
+
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "obs_district" | translate }}:</div>
       <div class="col s12 l10 m10">{{send.observation}}</div>
