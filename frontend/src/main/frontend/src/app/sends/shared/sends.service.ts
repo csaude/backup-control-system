@@ -24,7 +24,7 @@ export class SendsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url+"notreceived", { headers: headers })
+    return this.http.get(this.url + "notreceived", { headers: headers })
       .map(res => res.json());
   }
 
@@ -44,110 +44,52 @@ export class SendsService {
   }
 
   /**
-   * Return Sen with the given id
-   * 
-   * @param send_id the Send id
-   */
-  getSendById(send_id) {
+     * Returns all Sends
+     * 
+     * @param page the page number
+     * @param size the size of page
+     * @param received the received status
+     * @param canceled the canceled status
+     * @param from the Backup date from
+     * @param until the Backup date until
+     * @param district the Send District id
+     */
+  getSendsPaginated(page, size, received, canceled, from, until, district) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.getSendUrl3(send_id), { headers: headers })
+    return this.http.get(this.url + "?search=received~" + received + ",canceled~" + canceled + ",backupdate>" + from + ",backupdate<" + until + ",district:" + district + ",user!user&page=" + page + "&size=" + size, { headers: headers })
       .map(res => res.json());
   }
+
   /**
-   * Returns Sends of the given DIstrict
-   * 
-   * @param page the page number
-   * @param size the page size
-   * @param district_id the District id
-   */
-  getSendsByDistrict(page,size,district_id) {
+     * Returns all Receives 
+     * 
+     * @param page the page number
+     * @param size the size of page
+     * @param received the received status
+     * @param canceled the canceled status
+     * @param from the Backup date from
+     * @param until the Backup date until
+     * @param district the Send District id
+     */
+  getAllSendsPaginated(page, size, received, canceled, from, until, district) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.getSendUrl4()+"get?page="+page+"&size="+size+"&district="+district_id, { headers: headers })
-      .map(res  => res.json());
-    }
+    return this.http.get(this.url + "?search=received~" + received + ",canceled~" + canceled + ",backupdate>" + from + ",backupdate<" + until + ",district:" + district + "&page=" + page + "&size=" + size, { headers: headers })
+      .map(res => res.json());
+  }
 
-    /**
-     * Return all Sends of Districts of specific User
-     * 
-     * @param page the page number
-     * @param size the page size
-     */
-    getSendsByUser(page,size) {
-      var headers: any = new Headers();
-      var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-      var user = JSON.parse(window.sessionStorage.getItem('user'));
-      headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-      headers.append('Content-Type', 'application/json');
-      return this.http.get(this.getSendUrl6()+"get?page="+page+"&size="+size, { headers: headers })
-        .map(res  => res.json());
-      }
-
-      /**
-     * Return all Sends not received
-     * 
-     * @param page the page number
-     * @param size the page size
-     */
-      getAllSendsNotReceived(page,size) {
-        var headers: any = new Headers();
-        var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-        var user = JSON.parse(window.sessionStorage.getItem('user'));
-        headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-        headers.append('Content-Type', 'application/json');
-        return this.http.get(this.getSendUrl8()+"get?page="+page+"&size="+size, { headers: headers })
-          .map(res  => res.json());
-        }
-
-        /**
-         * Returns all Sends with the given District and date range
-         * 
-         * @param page the page number
-         * @param size the size of page
-         * @param district_id the District id
-         * @param from the Backup date from
-         * @param until the Backup date until
-         */
-    getSendsByDistrictDate(page,size,district_id,from,until) {
-      var headers: any = new Headers();
-      var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-      var user = JSON.parse(window.sessionStorage.getItem('user'));
-      headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-      headers.append('Content-Type', 'application/json');
-      return this.http.get(this.getSendUrl5()+"get?page="+page+"&size="+size+"&district="+district_id+"&from="+from+"&until="+until, { headers: headers })
-        .map(res  => res.json());
-      }
-
-      /**
-         * Returns all Sends Districts of a specific User
-         * 
-         * @param page the page number
-         * @param size the size of page
-         * @param from the Backup date from
-         * @param until the Backup date until
-         */
-      getSendsByUserDate(page,size,from,until) {
-        var headers: any = new Headers();
-        var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-        var user = JSON.parse(window.sessionStorage.getItem('user'));
-        headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-        headers.append('Content-Type', 'application/json');
-        return this.http.get(this.getSendUrl7()+"get?page="+page+"&size="+size+"&from="+from+"&until="+until, { headers: headers })
-          .map(res  => res.json());
-        }
-
-        /**
-         * Add new Send
-         * 
-         * @param send the Send
-         */
+  /**
+   * Add new Send
+   * 
+   * @param send the Send
+   */
   addSend(send) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
@@ -158,10 +100,10 @@ export class SendsService {
   }
 
   /**
-         * Update the Send
-         * 
-         * @param send the Send
-         */
+   * Update the Send
+   * 
+   * @param send the Send
+   */
   updateSend(send) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
@@ -190,20 +132,5 @@ export class SendsService {
   public getSendUrl3(send_id) {
     return this.url + "s/" + send_id;
   }
-  public getSendUrl4() {
-    return this.url + "district/" ;
-  }
-  public getSendUrl6() {
-    return this.url + "user/" ;
-  }
-  public getSendUrl8() {
-    return this.url + "all/" ;
-  }
-  public getSendUrl5() {
-    return this.url + "districtdate/" ;
-  }
-  public getSendUrl7() {
-    return this.url + "userdate/" ;
-  }
-  
+
 }

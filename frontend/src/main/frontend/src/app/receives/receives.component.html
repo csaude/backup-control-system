@@ -12,7 +12,7 @@
   <div class="row">
     <div class="input-field col s12 l4 m4" *ngIf="translate.currentLang=='pt'">
       <mz-select-container>
-        <select mz-select mz-validation required id="district" [label]="'Distrito'" formControlName="district" (change)="search2()">
+        <select mz-select mz-validation required id="district" [label]="'Distrito'" formControlName="district" (change)="search()">
           <option value="all" selected>Todos Distritos</option>
           <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.namef }}</option>
         </select>
@@ -21,7 +21,7 @@
     <div class="input-field col s12 l4 m4" *ngIf="translate.currentLang=='en'">
       <mz-select-container>
 
-        <select mz-select mz-validation required id="district" [label]="'District'" formControlName="district" (change)="search2()">
+        <select mz-select mz-validation required id="district" [label]="'District'" formControlName="district" (change)="search()">
           <option value="all" selected>All Districts</option>
           <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.namef }}</option>
         </select>
@@ -30,31 +30,31 @@
 
    
     <div class="col s12 l2 m2" style="margin-top: 45px;">
-      <input type="checkbox" class="filled-in" id="receiveds" formControlName="received" (change)="search2()" />
+      <input type="checkbox" class="filled-in" id="receiveds" formControlName="received" (change)="search()" />
       <label for="receiveds">{{ "hisreceived" | translate }}</label>
     </div>
 
-  <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='pt'&&received==true" >
+  <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='pt'" >
       <mz-datepicker-container>
-        <input mz-datepicker [label]="'Backup de:'" [options]="options" formControlName="backup_from" type="date" (change)="search2()"
+        <input mz-datepicker [label]="'Backup de:'" [options]="options" formControlName="backup_from" type="date" (change)="search()"
         />
       </mz-datepicker-container>
     </div>
-    <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='en'&&received==true">
+    <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='en'">
       <mz-datepicker-container>
-        <input mz-datepicker [label]="'Backup from:'" [options]="options" formControlName="backup_from" type="date" (change)="search2()"
+        <input mz-datepicker [label]="'Backup from:'" [options]="options" formControlName="backup_from" type="date" (change)="search()"
         />
       </mz-datepicker-container>
     </div>
-    <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='pt'&&received==true">
+    <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='pt'">
       <mz-datepicker-container>
-        <input mz-datepicker [label]="'até:'" [options]="options" formControlName="backup_until" type="date" (change)="search2()"
+        <input mz-datepicker [label]="'até:'" [options]="options" formControlName="backup_until" type="date" (change)="search()"
         />
       </mz-datepicker-container>
     </div>
-    <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='en'&&received==true">
+    <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='en'">
       <mz-datepicker-container>
-        <input mz-datepicker [label]="'Until:'" [options]="options" formControlName="backup_until" type="date" (change)="search2()"
+        <input mz-datepicker [label]="'Until:'" [options]="options" formControlName="backup_until" type="date" (change)="search()"
         />
       </mz-datepicker-container>
     </div>
@@ -89,11 +89,24 @@
         <td *ngIf="!send.received" >
           <span style="color:red;">{{ "no" | translate }}</span>
         </td>
+
+        <td *ngIf="received==true&&receive.restored">
+          {{ "yes" | translate }}
+        </td>
+        <td *ngIf="received==true&&!receive.restored" >
+          <span style="color:red;">{{ "no" | translate }}</span>
+        </td>
+        <td *ngIf="received==true&&receive.send.ik_received">
+          {{ "yes" | translate }}
+        </td>
+        <td *ngIf="received==true&&!receive.send.ik_received">
+          <span style="color:red;">{{ "no" | translate }}</span>
+        </td>
         
         <td>{{ send.date_updated | date: 'dd/MM/yyyy' }}</td>
         <td>
 
-            <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.send_id)" (click)="basicModal2.open()"
+            <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.uuid)" (click)="basicModal2.open()"
             [routerLink]="">
             <i class="material-icons icon-green">info</i>
           </a>
@@ -102,7 +115,7 @@
             <i class="material-icons icon-orange">mode_edit</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Imprimir Protocolo'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.send_id)" (click)="printSend()" [routerLink]="" *ngIf="ROLE_SIS">
+          <a mz-tooltip [tooltip]="'Imprimir Protocolo'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.uuid)" (click)="printSend()" [routerLink]="" *ngIf="ROLE_SIS">
             <i class="material-icons icon-green">print</i>
           </a>
          
@@ -156,12 +169,8 @@
 
   </table>
 </div>
-<pagination-controls *ngIf="received==false&&districts_filter==false&&date_filter==false" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageSend($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="received==true&&districtr_filter==false&&date_filter==false" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageReceive($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="received==false&&districts_filter==true&&date_filter==false" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageSendByDistrict($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="received==true&&districtr_filter==true&&date_filter==false" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageReceiveByDistrict($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="received==true&&districtr_filter==false&&date_filter==true" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageReceiveByDate($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="received==true&&districtr_filter==true&&date_filter==true" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageReceiveByDistrictDate($event)" id="server" class="right-align"></pagination-controls>
+<pagination-controls *ngIf="received==false" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageSend($event)" id="server" class="right-align"></pagination-controls>
+<pagination-controls *ngIf="received==true" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageReceive($event)" id="server" class="right-align"></pagination-controls>
 
 
 <mz-modal #basicModal2 [fixedFooter]="true">
@@ -414,7 +423,7 @@
     </mz-modal-footer>
   </mz-modal>
 
-  <div class="fixed-action-btn" style="bottom: 20px; right: 89px;" *ngIf="date_filter==true">
+  <div class="fixed-action-btn" style="bottom: 20px; right: 20px;" *ngIf="received==true">
       <a class="btn-floating btn-large orange">
         <i class="large material-icons">insert_chart</i>
       </a>

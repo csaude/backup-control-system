@@ -4,25 +4,27 @@
  */
 package mz.org.fgh.scb.controller;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import mz.org.fgh.scb.model.entity.Receive;
 import mz.org.fgh.scb.service.impl.ReceiveServiceImpl;
+import mz.org.fgh.scb.specification.ReceiveSpecificationsBuilder;
 
 /**
  * Defines the rest endpoint configuration for Receives
@@ -37,80 +39,24 @@ public class ReceiveController {
 	@Autowired
 	private ReceiveServiceImpl receiveServiceImpl;
 
-	@RequestMapping(value = "/receivesdistrict/get", method = RequestMethod.GET)
-	public Page<Receive> findByDistrictId(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "district", required = true) Long district_id) throws Exception {
-		Page<Receive> pageReceive = receiveServiceImpl.findByDistrictId(district_id,
-				new PageRequest(page - 1, 10));
-		if (page - 1 > pageReceive.getTotalPages()) {
+	@GetMapping(value = "/receives")
+	public Page<Receive> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
+		ReceiveSpecificationsBuilder builder = new ReceiveSpecificationsBuilder();
+		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
+		Matcher matcher = pattern.matcher(search + ",");
+		while (matcher.find()) {
+			builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+		}
+		Specification<Receive> spec = builder.build();
+		PageRequest pageRequest = PageRequestBuilder.getPageRequest(size, page, "-send.backupdate");
+		Page<Receive> pageReceive = receiveServiceImpl.findAll(spec, pageRequest);
+		if (page > pageReceive.getTotalPages()) {
 			throw new Exception();
 		}
 		return pageReceive;
 	}
-	
-	@RequestMapping(value = "/receivesuser/get", method = RequestMethod.GET)
-	public Page<Receive> findByUserId(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size) throws Exception {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		Page<Receive> pageReceive = receiveServiceImpl.findByUsername(
-				new PageRequest(page - 1, 10),currentPrincipalName);
-		if (page - 1 > pageReceive.getTotalPages()) {
-			throw new Exception();
-		}
-		return pageReceive;	
-	}
-	
-	@RequestMapping(value = "/receivesall/get", method = RequestMethod.GET)
-	public Page<Receive> findAllReceived(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size) throws Exception {
-		Page<Receive> pageReceive = receiveServiceImpl.findAllReceives(
-				new PageRequest(page - 1, 10));
-		if (page - 1 > pageReceive.getTotalPages()) {
-			throw new Exception();
-		}
-		return pageReceive;	
-	}
-	
-	@RequestMapping(value = "/receivesdate/get", method = RequestMethod.GET)
-	public Page<Receive> findAllByDate(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "from", required = true) String from,@RequestParam(value = "until", required = true) String until) throws Exception {
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Date date_from = format.parse(from);
-		Date date_until = format.parse(until);
-		Page<Receive> pageReceive = receiveServiceImpl.findBySendBackupDateRange(new PageRequest(page - 1, size),date_from,date_until);
-		if (page - 1 > pageReceive.getTotalPages()) {
-			throw new Exception();
-		}
-		return pageReceive;	
-	}
-	
-	@RequestMapping(value = "/receivesdistrictdate/get", method = RequestMethod.GET)
-	public Page<Receive> findByDistrictId(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "district", required = true) Long district_id,@RequestParam(value = "from", required = true) String from,@RequestParam(value = "until", required = true) String until) throws Exception {
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Date date_from = format.parse(from);
-		Date date_until = format.parse(until);
-		Page<Receive> pageReceive = receiveServiceImpl.findByDistrictIdAndSendBackupDateRange(district_id,
-				new PageRequest(page - 1, size),date_from,date_until);
-		if (page - 1 > pageReceive.getTotalPages()) {
-			throw new Exception();
-		}
-		return pageReceive;	
-	}
-	
-	@RequestMapping(value = "/receivesuserdate/get", method = RequestMethod.GET)
-	public Page<Receive> findByUserIdDate(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "from", required = true) String from,@RequestParam(value = "until", required = true) String until
-					) throws Exception {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Date date_from = format.parse(from);
-		Date date_until = format.parse(until);
-		Page<Receive> pageReceive = receiveServiceImpl.findByUsernameAndSendDateBackupRange(
-				new PageRequest(page - 1, 10),date_from,date_until,currentPrincipalName);
-		if (page - 1 > pageReceive.getTotalPages()) {
-			throw new Exception();
-		}
-		return pageReceive;	
-	}
 
-	@RequestMapping(value = "/receives", method = RequestMethod.POST)
+	@PostMapping(value = "/receives")
 	@ResponseBody
 	public String create(@RequestBody Receive receive) {
 		try {
@@ -122,17 +68,17 @@ public class ReceiveController {
 		}
 	}
 
-	@RequestMapping(value = "/receives/{uuid}", method = RequestMethod.GET)
-	public Object getReceive(@PathVariable String uuid) throws Exception {
+	@GetMapping(value = "/receives/{uuid}")
+	public Receive getReceive(@PathVariable String uuid) throws Exception {
 		return receiveServiceImpl.findByUuid(uuid);
 	}
 	
-	@RequestMapping(value = "/receivessend/{send_id}", method = RequestMethod.GET)
-	public Object getReceiveByid(@PathVariable Long send_id) throws Exception {
-		return receiveServiceImpl.findBySendId(send_id);
+	@GetMapping(value = "/receivessend/{uuid}")
+	public Object findBySendUuid(@PathVariable String uuid) throws Exception {
+		return receiveServiceImpl.findBySendUuid(uuid);
 	}
 
-	@RequestMapping(value = "/receives/{uuid}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/receives/{uuid}")
 	@ResponseBody
 	public Object deleteReceive(@PathVariable String uuid) throws Exception {
 		Receive receive = null;
@@ -145,7 +91,7 @@ public class ReceiveController {
 		return receive;
 	}
 
-	@RequestMapping(value = "/receives", method = RequestMethod.PUT)
+	@PutMapping(value = "/receives")
 	@ResponseBody
 	public String update(@RequestBody Receive receive) throws Exception {
 		try {

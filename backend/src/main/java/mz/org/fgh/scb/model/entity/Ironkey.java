@@ -12,6 +12,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,43 +38,83 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "serial", "version" }) })
 public class Ironkey {
 
+	/**
+	 * The Ironkey id
+	 */
 	@Id
 	@SequenceGenerator(name = "seq_ironkey", initialValue = 1)
 	@GeneratedValue(generator = "seq_ironkey", strategy = GenerationType.AUTO)
 	private Long ironkey_id;
 
+	/**
+	 * The Ironkey serial
+	 */
 	@Column(nullable = false)
 	private String serial;
 
+	/**
+	 * The Ironkey size
+	 */
 	@Column(nullable = false)
 	private int size;
 
+	/**
+	 * The Ironkey version
+	 */
 	@Column(nullable = false)
 	private String version;
 
+	/**
+	 * The Ironkey Ironkey status
+	 */
 	@Column(nullable = false)
-	private String status;
+	@Enumerated(EnumType.STRING)
+	private IronkeyStatus status;
 
+	/**
+	 * The Ironkey date purchased
+	 */
 	private Date date_purchased;
 
+	/**
+	 * The Ironkey observation
+	 */
 	private String observation;
 
+	/**
+	 * The Ironkey uuid
+	 */
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
+	/**
+	 * The Districts using this Ironkey {@link District}
+	 */
 	@JsonBackReference(value = "ironkeys-districts")
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "ironkeys")
 	private Set<District> districts = new HashSet<District>(0);
 
+	/**
+	 * The Ironkey date created
+	 */
 	@Column(nullable = false)
 	private Date date_created;
 
+	/**
+	 * The Ironkey date updated
+	 */
 	private Date date_updated;
 
+	/**
+	 * The User that created this Ironkey {@link User}
+	 */
 	@JoinColumn(name = "created_by")
 	@ManyToOne
 	private User created_by;
 
+	/**
+	 * The User that updated this Ironkey {@link User}
+	 */
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
@@ -211,11 +253,11 @@ public class Ironkey {
 		this.updated_by = updated_by;
 	}
 
-	public String getStatus() {
+	public IronkeyStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(IronkeyStatus status) {
 		this.status = status;
 	}
 

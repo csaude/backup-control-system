@@ -236,7 +236,6 @@ export class IronkeysComponent implements OnInit {
         if (data.text() == "Success") {
           this.getPage(this.p);
           this.showMsg(this.ironkey.serial);
-          this.isHidden = "hide";
           this.isDisabledt = "";
         } else {
           this.showMsgErr(this.ironkey.serial);

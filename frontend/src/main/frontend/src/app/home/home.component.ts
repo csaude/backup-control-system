@@ -425,9 +425,9 @@ export class HomeComponent implements OnInit {
     if (this.ROLE_SIS || this.ROLE_IT || this.ROLE_OA || this.ROLE_GMA) {
 
 
-      this.districtsService.getDistricts()
+      this.districtsService.getDistrictsPaginated(1,100000,"",false)
         .subscribe(data => {
-          var filteredd = data.filter(item => item.parentdistrict == null);
+          var filteredd = data.content.filter(item => item.parentdistrict == null);
           this.alldistricts = filteredd;
         });
 

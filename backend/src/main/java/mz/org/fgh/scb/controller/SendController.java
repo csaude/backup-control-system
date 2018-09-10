@@ -4,16 +4,18 @@
  */
 package mz.org.fgh.scb.controller;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import mz.org.fgh.scb.model.entity.Send;
 import mz.org.fgh.scb.service.impl.SendServiceImpl;
+import mz.org.fgh.scb.specification.SendSpecificationsBuilder;
 
 /**
  * Defines the rest endpoint configuration for Sends
@@ -37,7 +40,7 @@ public class SendController {
 	@Autowired
 	private SendServiceImpl sendServiceImpl;
 
-	@RequestMapping(value = "/sends", method = RequestMethod.POST)
+	@PostMapping(value = "/sends")
 	@ResponseBody
 	public String create(@RequestBody Send send) {
 		try {
@@ -49,84 +52,29 @@ public class SendController {
 		}
 	}
 
-	@RequestMapping(value = "/sends/{uuid}", method = RequestMethod.GET)
+	@GetMapping(value = "/sends/{uuid}")
 	public Object getSend(@PathVariable String uuid) throws Exception {
 		return sendServiceImpl.findByUuid(uuid);
 	}
 	
-	@RequestMapping(value = "/sendsnotreceived", method = RequestMethod.GET)
-	public int findByAllNotReceived() throws Exception {
-		return sendServiceImpl.findByAllNotReceived();
-	}
-	
-	@RequestMapping(value = "/sendss/{id}", method = RequestMethod.GET)
-	public Object getSendById(@PathVariable Long id) throws Exception {
-		return sendServiceImpl.findById(id);
-	}
-	
-	@RequestMapping(value = "/sendsdistrict/get", method = RequestMethod.GET)
-	public Page<Send> findByDistrictId(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "district", required = true) Long district_id) throws Exception {
-		Page<Send> pageSend = sendServiceImpl.findByDistrictId(district_id,
-				new PageRequest(page - 1, 10));
-		if (page - 1 > pageSend.getTotalPages()) {
+	@GetMapping(value = "/sends")
+	public Page<Send> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
+		SendSpecificationsBuilder builder = new SendSpecificationsBuilder();
+		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
+		Matcher matcher = pattern.matcher(search + ",");
+		while (matcher.find()) {
+			builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+		}
+		Specification<Send> spec = builder.build();
+		PageRequest pageRequest = PageRequestBuilder.getPageRequest(size, page, "-backupdate");
+		Page<Send> pageSend = sendServiceImpl.findAll(spec, pageRequest);
+		if (page > pageSend.getTotalPages()) {
 			throw new Exception();
 		}
-		return pageSend;	
-	}
-	
-	@RequestMapping(value = "/sendsuser/get", method = RequestMethod.GET)
-	public Page<Send> findByUserId(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size) throws Exception {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		Page<Send> pageSend = sendServiceImpl.findByUsername(
-				new PageRequest(page - 1, 10),currentPrincipalName);
-		if (page - 1 > pageSend.getTotalPages()) {
-			throw new Exception();
-		}
-		return pageSend;	
-	}
-	
-	@RequestMapping(value = "/sendsall/get", method = RequestMethod.GET)
-	public Page<Send> findAllNotReceived(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size) throws Exception {
-		Page<Send> pageSend = sendServiceImpl.findAllNotReceived(new PageRequest(page - 1, 10));
-		if (page - 1 > pageSend.getTotalPages()) {
-			throw new Exception();
-		}
-		return pageSend;	
-	}
-	
-	@RequestMapping(value = "/sendsdistrictdate/get", method = RequestMethod.GET)
-	public Page<Send> findByDistrictIdDate(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "district", required = true) Long district_id,@RequestParam(value = "from", required = true) String from,@RequestParam(value = "until", required = true) String until
-					) throws Exception {
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Date date_from = format.parse(from);
-		Date date_until = format.parse(until);
-		Page<Send> pageSend = sendServiceImpl.findByDistrictIdAndBackupDateRange(district_id,
-				new PageRequest(page - 1, 10),date_from,date_until);
-		if (page - 1 > pageSend.getTotalPages()) {
-			throw new Exception();
-		}
-		return pageSend;	
-	}
-	
-	@RequestMapping(value = "/sendsuserdate/get", method = RequestMethod.GET)
-	public Page<Send> findByUserIdDate(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "from", required = true) String from,@RequestParam(value = "until", required = true) String until
-					) throws Exception {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Date date_from = format.parse(from);
-		Date date_until = format.parse(until);
-		Page<Send> pageSend = sendServiceImpl.findByUsernameAndBackupDateRange(
-				new PageRequest(page - 1, 10),date_from,date_until,currentPrincipalName);
-
-		if (page - 1 > pageSend.getTotalPages()) {
-			throw new Exception();
-		}
-		return pageSend;	
+		return pageSend;
 	}
 
-	@RequestMapping(value = "/sends/{uuid}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/sends/{uuid}")
 	@ResponseBody
 	public Object deleteSend(@PathVariable String uuid) throws Exception {
 		Send send = null;
@@ -139,7 +87,7 @@ public class SendController {
 		return send;
 	}
 
-	@RequestMapping(value = "/sends", method = RequestMethod.PUT)
+	@PutMapping(value = "/sends")
 	@ResponseBody
 	public String update(@RequestBody Send send) throws Exception {
 		try {
@@ -150,5 +98,18 @@ public class SendController {
 			return "Error";
 		}
 	}
-
+	
+	@RequestMapping(value = "/sendss/{id}", method = RequestMethod.GET)
+	public Object getSendById(@PathVariable Long id) throws Exception {
+		return sendServiceImpl.findById(id);
+	}
+	
+	//-------------------------------------------------
+	//FOR USER NOTIFICATION
+	//-------------------------------------------------
+	@GetMapping(value = "/sendsnotreceived")
+	public int findByAllNotReceived() throws Exception {
+		return sendServiceImpl.findNumberOfAllNotReceived();
+	}
+	
 }

@@ -28,38 +28,69 @@ import org.hibernate.validator.constraints.NotBlank;
  * @author Damasceno Lopes
  *
  */
+/**
+ * @author Damasceno Lopes
+ *
+ */
 @Entity(name = "evaluation")
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "openmrs_sql_dataset_uuid" }) })
 public class Evaluation {
 
+	/**
+	 * The Evaluation id
+	 */
 	@Id
 	@SequenceGenerator(name = "seq_evaluation", initialValue = 1)
 	@GeneratedValue(generator = "seq_evaluation", strategy = GenerationType.AUTO)
 	private Long evaluation_id;
 
+	/**
+	 * The Evaluation name
+	 */
 	@Column(nullable = false)
 	@NotBlank
 	private String name;
 
+	/**
+	 * The Evaluation openmrs sql dataset uuid
+	 */
 	@Column(nullable = false)
 	@NotBlank
 	private String openmrs_sql_dataset_uuid;
 
+	/**
+	 * The Evaluation description
+	 */
 	private String description;
 
+	/**
+	 * The Evaluation date created
+	 */
 	@Column(nullable = false)
 	private Date date_created;
 
+	/**
+	 * The Evaluation date updated
+	 */
 	private Date date_updated;
 
+	/**
+	 * The User that created this Evaluation {@link User}
+	 */
 	@JoinColumn(name = "created_by")
 	@ManyToOne
 	private User created_by;
 
+	/**
+	 * The User that updated this Evaluation {@link User}
+	 */
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
 
+	/**
+	 * The Evaluation uuid
+	 */
 	@Column(nullable = false, unique = true)
 	private String uuid;
 

@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import mz.org.fgh.scb.model.entity.Receive;
@@ -189,38 +190,13 @@ public class ReceiveServiceImpl implements ReceiveService {
 	}
 
 	@Override
-	public Receive findBySendId(Long send_id) {
-		return receiveRepository.findBySendId(send_id);
+	public Receive findBySendUuid(String uuid) {
+		return receiveRepository.findBySendUuid(uuid);
 	}
 
 	@Override
-	public Page<Receive> findByDistrictId(Long district_id, Pageable pageable) {
-		return receiveRepository.findByDistrictId(district_id, pageable);
-	}
-
-	@Override
-	public Page<Receive> findByDistrictIdAndSendBackupDateRange(Long district_id, Pageable pageable, Date from, Date until) {
-		return receiveRepository.findByDistrictIdAndSendBackupDateRange(district_id, pageable, from, until);
-	}
-
-	@Override
-	public Page<Receive> findByUsername(Pageable pageable, String username) {
-		return receiveRepository.findByUsername(pageable, username);
-	}
-
-	@Override
-	public Page<Receive> findByUsernameAndSendDateBackupRange(Pageable pageable, Date from, Date until, String username) {
-		return receiveRepository.findByUsernameAndSendBackupDateRange(pageable, from, until, username);
-	}
-
-	@Override
-	public Page<Receive> findAllReceives(Pageable pageable) {
-		return receiveRepository.findAllReceives(pageable);
-	}
-
-	@Override
-	public Page<Receive> findBySendBackupDateRange(Pageable pageable, Date from, Date until) {
-		return receiveRepository.findBySendBackupDateRange(pageable, from, until);
+	public Page<Receive> findAll(Specification<Receive> spec, PageRequest pageRequest) {
+		return receiveRepository.findAll(spec,pageRequest);
 	}
 
 }

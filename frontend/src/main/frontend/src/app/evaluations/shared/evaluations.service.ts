@@ -20,19 +20,6 @@ export class EvaluationsService {
   }
 
   /**
-   * Returns all Evaluations
-   */
-  getEvaluations() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url, { headers: headers })
-      .map(res => res.json());
-  }
-
-  /**
    * Returns all Evaluations filtered name and openmrs sql uuid
    * 
    * @param page the page number
@@ -46,7 +33,7 @@ export class EvaluationsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/get?page=" + page + "&size=" + size + "&search=name:" + name + ",openmrs_sql_dataset_uuid~" + openmrs_sql_dataset_uuid, { headers: headers })
+    return this.http.get(this.url + "?search=name:" + name + ",openmrs_sql_dataset_uuid~" + openmrs_sql_dataset_uuid+"&page=" + page + "&size=" + size, { headers: headers })
       .map(res => res.json());
   }
   /**

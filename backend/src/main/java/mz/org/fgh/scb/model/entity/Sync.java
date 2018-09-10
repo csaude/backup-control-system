@@ -41,8 +41,8 @@ public class Sync {
 	@ManyToOne
 	private Server server;
 
-	@Column(nullable = false)
-	private Date start_time;
+	@Column(name="start_time",nullable = false)
+	private Date starttime;
 
 	@Column(nullable = false)
 	private int start_items_to_send;
@@ -130,11 +130,11 @@ public class Sync {
 	}
 
 	public Date getStart_time() {
-		return start_time;
+		return starttime;
 	}
 
 	public void setStart_time(Date start_time) {
-		this.start_time = start_time;
+		this.starttime = start_time;
 	}
 
 	public int getStart_items_to_send() {
@@ -207,7 +207,7 @@ public class Sync {
 		} else if (this.end_time == null && getEditable() == true) {
 			return "EM\nPROGRESSO";
 		} else if (this.end_time != null) {
-			long diff = this.end_time.getTime() - this.start_time.getTime();
+			long diff = this.end_time.getTime() - this.starttime.getTime();
 			long diffMinutes = diff / (60 * 1000) % 60;
 			long diffHours = diff / (60 * 60 * 1000) % 24;
 			long diffDays = diff / (24 * 60 * 60 * 1000);
@@ -235,11 +235,11 @@ public class Sync {
 		if (this.end_time == null) {
 			DecimalFormat decimalFormat = new DecimalFormat("00");
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			return sdf.format(this.start_time) + "\n" + decimalFormat.format(this.start_time.getHours()) + ":" + decimalFormat.format(this.start_time.getMinutes());
+			return sdf.format(this.starttime) + "\n" + decimalFormat.format(this.starttime.getHours()) + ":" + decimalFormat.format(this.starttime.getMinutes());
 		} else {
 			DecimalFormat decimalFormat = new DecimalFormat("00");
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			return sdf.format(this.start_time) + "\n" + decimalFormat.format(this.start_time.getHours()) + ":" + decimalFormat.format(this.start_time.getMinutes()) + "-" + decimalFormat.format(this.end_time.getHours()) + ":"
+			return sdf.format(this.starttime) + "\n" + decimalFormat.format(this.starttime.getHours()) + ":" + decimalFormat.format(this.starttime.getMinutes()) + "-" + decimalFormat.format(this.end_time.getHours()) + ":"
 					+ decimalFormat.format(this.end_time.getMinutes());
 		}
 	}
@@ -248,17 +248,17 @@ public class Sync {
 	public String getSynctimeemailstart() {
 		DecimalFormat decimalFormat = new DecimalFormat("00");
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		return sdf.format(this.start_time) + " " + decimalFormat.format(this.start_time.getHours()) + ":" + decimalFormat.format(this.start_time.getMinutes());
+		return sdf.format(this.starttime) + " " + decimalFormat.format(this.starttime.getHours()) + ":" + decimalFormat.format(this.starttime.getMinutes());
 	}
 
 	@SuppressWarnings("deprecation")
 	public String getSynctimeemail() {
-		if (this.start_time == null || this.end_time == null) {
+		if (this.starttime == null || this.end_time == null) {
 			return "";
 		} else {
 			DecimalFormat decimalFormat = new DecimalFormat("00");
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-			return sdf.format(this.start_time) + " " + decimalFormat.format(this.start_time.getHours()) + ":" + decimalFormat.format(this.start_time.getMinutes()) + "-" + decimalFormat.format(this.end_time.getHours()) + ":"
+			return sdf.format(this.starttime) + " " + decimalFormat.format(this.starttime.getHours()) + ":" + decimalFormat.format(this.starttime.getMinutes()) + "-" + decimalFormat.format(this.end_time.getHours()) + ":"
 					+ decimalFormat.format(this.end_time.getMinutes());
 		}
 	}
@@ -335,7 +335,7 @@ public class Sync {
 		Date syncDate = null;
 		try {
 			todayDate = formatter.parse(formatter.format(today));
-			syncDate = formatter.parse(formatter.format(this.start_time));
+			syncDate = formatter.parse(formatter.format(this.starttime));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -372,11 +372,11 @@ public class Sync {
 
 	@SuppressWarnings("deprecation")
 	public String getStart_time_time() {
-		if (this.start_time == null) {
+		if (this.starttime == null) {
 			return "";
 		} else {
 			DecimalFormat decimalFormat = new DecimalFormat("00");
-			return decimalFormat.format(this.start_time.getHours()) + ":" + decimalFormat.format(this.start_time.getMinutes());
+			return decimalFormat.format(this.starttime.getHours()) + ":" + decimalFormat.format(this.starttime.getMinutes());
 		}
 	}
 
@@ -482,7 +482,7 @@ public class Sync {
 
 	@Override
 	public String toString() {
-		return "Sync [sync_id=" + sync_id + ", start_time=" + start_time + ", start_items_to_send=" + start_items_to_send + ", start_items_to_receive=" + start_items_to_receive + ", end_time=" + end_time + ", end_items_to_send="
+		return "Sync [sync_id=" + sync_id + ", start_time=" + starttime + ", start_items_to_send=" + start_items_to_send + ", start_items_to_receive=" + start_items_to_receive + ", end_time=" + end_time + ", end_items_to_send="
 				+ end_items_to_send + ", end_items_to_receive=" + end_items_to_receive + ", observation=" + observation + ", date_created=" + date_created + ", date_updated=" + date_updated + ", uuid=" + uuid + ", date_canceled="
 				+ date_canceled + ", canceled=" + canceled + ", canceled_reason=" + canceled_reason + ", canceled_by=" + canceled_by + "]";
 	}

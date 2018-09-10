@@ -13,10 +13,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,14 +41,14 @@ public class UserController {
 	@Autowired
 	private UserServiceImpl userServiceImpl;
 	
-	@RequestMapping(value = "/usersauthenticate", method = RequestMethod.GET)
+	@GetMapping(value = "/authenticate")
 	public User authenticate() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();
 		return userServiceImpl.authenticate(currentPrincipalName);
 	}
 
-	@RequestMapping(value = "/users/get", method = RequestMethod.GET)
+	@GetMapping(value = "/users")
 	public Page<User> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
 		UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
 		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
@@ -62,7 +65,7 @@ public class UserController {
 		return pageUser;
 	}
 
-	@RequestMapping(value = "/users", method = RequestMethod.POST)
+	@PostMapping(value = "/users")
 	@ResponseBody
 	public String create(
 			@RequestBody User user) {
@@ -75,13 +78,13 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping(value = "/users/{uuid}", method = RequestMethod.GET)
+	@GetMapping(value = "/users/{uuid}")
 	public User getUser(
 			@PathVariable String uuid) throws Exception {
 		return userServiceImpl.findByUuid(uuid);
 	}
 
-	@RequestMapping(value = "/users/{uuid}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/users/{uuid}")
 	@ResponseBody
 	public String deleteUser(@PathVariable String uuid) throws Exception {
 		User user = null;
@@ -95,7 +98,7 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping(value = "/users/{creator}/{updater}", method = RequestMethod.PUT)
+	@PutMapping(value = "/users/{creator}/{updater}")
 	@ResponseBody
 	public Object update(@RequestBody User user, @PathVariable Long creator,@PathVariable Long updater) throws Exception {
 

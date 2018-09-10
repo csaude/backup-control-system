@@ -4,8 +4,6 @@
  */
 package mz.org.fgh.scb.service.api;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -42,13 +40,6 @@ public interface EvaluationService {
 	 * @return the Evaluation with the given uuid
 	 */
 	Evaluation findByUuid(String uuid);
-
-	/**
-	 * Returns all Evaluations
-	 * 
-	 * @return all Evaluations
-	 */
-	List<Evaluation> findAllByOrderByNameAsc();
 
 	/**
 	 * Returns all Evaluations paginated

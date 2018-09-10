@@ -4,8 +4,6 @@
  */
 package mz.org.fgh.scb.service.api;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -42,13 +40,6 @@ public interface TransporterService {
 	 * @return the Transporter with the given uuid
 	 */
 	Transporter findByUuid(String uuid);
-
-	/**
-	 * Returns all Transporters
-	 * 
-	 * @return all Transporters
-	 */
-	List<Transporter> findAllByOrderByNameAsc();
 
 	/**
 	 * Returns all Transporters paginated with given specification

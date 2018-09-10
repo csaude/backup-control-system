@@ -85,16 +85,14 @@ export class DistrictsComponent implements OnInit {
     this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
     this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
     this.total = 0;
-    if (this.ROLE_SIS || this.ROLE_IT || this.ROLE_GMA || this.ROLE_OA) {
-      this.getPageAll(1);
-    } else if (this.ROLE_ODMA || this.ROLE_ORMA || this.ROLE_GDD) {
-      this.getPageFiltered(1);
-    }
+    this.getPage(1);
+    
   }
 
-  getPageAll(page: number) {
+  getPage(page: number) {
     this.isHidden = "";
-    this.districtsService.getDistrictsAll(page, 10, this.name, this.canceled)
+   
+    this.districtsService.getDistrictsPaginated(page, 10, this.name, this.canceled)
       .subscribe(data => {
         this.totali = data.totalElements;
         this.p = page;
@@ -104,6 +102,7 @@ export class DistrictsComponent implements OnInit {
           this.isHidden = "hide";
           this.total = 0;
           this.p = 1;
+          this.districts=[];
         },
         () => {
           this.districtsService.getDistrictsReceiveInfo()
@@ -124,9 +123,9 @@ export class DistrictsComponent implements OnInit {
                         },
                           error => { },
                           () => {
-                            var received = alasql("SELECT [0] AS send_id_rec,[1] AS district_id,[2] AS last_backup_received FROM ?", [this.districtsinfo]);
-                            var restored = alasql("SELECT [0] AS send_id_res,[1] AS district_id,[2] AS last_backup_restored FROM ?", [this.districtsresinfo]);
-                            var synced = alasql("SELECT [0] AS sync_id,[1] AS district_id,[2] AS server,[3] AS start_time,[4] AS end_time, [5] AS server_report FROM ?", [this.districtssyncinfo]);
+                            var received = alasql("SELECT [0] AS send_uuid_rec,[1] AS district_id,[2] AS last_backup_received FROM ?", [this.districtsinfo]);
+                            var restored = alasql("SELECT [0] AS send_uuid_res,[1] AS district_id,[2] AS last_backup_restored FROM ?", [this.districtsresinfo]);
+                            var synced = alasql("SELECT [0] AS sync_uuid,[1] AS district_id,[2] AS server,[3] AS start_time,[4] AS end_time, [5] AS server_report FROM ?", [this.districtssyncinfo]);
                             var recres = alasql("SELECT * FROM ?alldistricts LEFT JOIN ?received USING district_id LEFT JOIN ?restored USING district_id", [this.alldistricts, received, restored]);
                             this.districts = alasql("SELECT * FROM ?recres LEFT JOIN ?synced USING district_id ", [recres, synced]);
                             this.isHidden = "hide";
@@ -141,60 +140,13 @@ export class DistrictsComponent implements OnInit {
       );
   }
  
-  getPageFiltered(page: number) {
-    this.isHidden = "";
-    this.districtsService.getDistrictsFiltered(page, 10, this.name, this.canceled)
-      .subscribe(data => {
-        this.totali = data.totalElements;
-        this.p = page;
-        this.alldistricts = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.total = 0;
-          this.p = 1;
-          this.districts = [];
-        },
-        () => {
-          this.districtsService.getDistrictsReceiveInfo()
-            .subscribe(data => {
-              this.districtsinfo = data
-            },
-              error => { },
-              () => {
-                this.districtsService.getDistrictsRestoreInfo()
-                  .subscribe(data => {
-                    this.districtsresinfo = data;
-                  },
-                    error => { },
-                    () => {
-                      this.districtsService.getDistrictsSyncInfo()
-                        .subscribe(data => {
-                          this.districtssyncinfo = data;
-                        },
-                          error => { },
-                          () => {
-                            var received = alasql("SELECT [0] AS send_id_rec,[1] AS district_id,[2] AS last_backup_received FROM ?", [this.districtsinfo]);
-                            var restored = alasql("SELECT [0] AS send_id_res,[1] AS district_id,[2] AS last_backup_restored FROM ?", [this.districtsresinfo]);
-                            var synced = alasql("SELECT [0] AS sync_id,[1] AS district_id,[2] AS server,[3] AS start_time,[4] AS end_time, [5] AS server_report FROM ?", [this.districtssyncinfo]);
-                            var recres = alasql("SELECT * FROM ?alldistricts LEFT JOIN ?received USING district_id LEFT JOIN ?restored USING district_id", [this.alldistricts, received, restored]);
-                            this.districts = alasql("SELECT * FROM ?recres LEFT JOIN ?synced USING district_id ", [recres, synced]);
-                            this.isHidden = "hide";
-                            this.isDisabledt = "";
-                            this.total = this.totali;
-                          });
-                    }
-                  );
-              }
-            );
-        }
-      );
-  }
+  
   
   search1() {
     var userValue = this.form1.value;
     if (userValue.name) {
       this.name = userValue.name;
+      this.name = this.name.split(" ").join("SPACE");
     }
     else {
       this.name = "";
@@ -204,11 +156,9 @@ export class DistrictsComponent implements OnInit {
     } else {
       this.canceled = false;
     }
-    if (this.ROLE_SIS || this.ROLE_IT || this.ROLE_GMA || this.ROLE_OA) {
-      this.getPageAll(1);
-    } else if (this.ROLE_ODMA || this.ROLE_ORMA || this.ROLE_GDD) {
-      this.getPageFiltered(1);
-    }
+   
+      this.getPage(1);
+   
   }
 
   
@@ -223,13 +173,14 @@ export class DistrictsComponent implements OnInit {
     this.districtsService.deleteDistrict(this.district.uuid)
       .subscribe(data => {
         if (data.text() == "Success") {
+          this.isHidden = "";
           this.search1()
           this.showMsg(this.district.name);
-          this.isHidden = "hide";
           this.isDisabledt = "disabled";
         } else {
           this.isHidden = "hide";
           this.isDisabledt = "";
+          this.showMsgErr(this.district.name);
         }
       },
         error => {
@@ -238,15 +189,15 @@ export class DistrictsComponent implements OnInit {
   }
 
   
-  setSend(send_id) {
+  setSend(uuid) {
     this.isHidden2m = "";
-    this.sendsService.getSendById(send_id)
+    this.sendsService.getSend(uuid)
       .subscribe(data => {
         this.send = data;
       }, error => {
       }, () => {
         if (this.send.received == true) {
-          this.receivesService.getReceiveBySendId(send_id)
+          this.receivesService.getReceiveBySendUuid(uuid)
             .subscribe(data => {
               this.receive = data;
               if (this.receive != null) {
@@ -313,9 +264,9 @@ export class DistrictsComponent implements OnInit {
   }
 
   
-  setSync(sync_id) {
+  setSync(uuid) {
     this.isHidden2m = "";
-    this.syncsService.getSyncById(sync_id)
+    this.syncsService.getSync(uuid)
       .subscribe(
         sync => {
           this.sync = sync;
@@ -327,8 +278,8 @@ export class DistrictsComponent implements OnInit {
     this.isHidden = "";
     this.isDisabledt = "disabled";
 
-    if (this.ROLE_SIS || this.ROLE_IT || this.ROLE_GMA || this.ROLE_OA) {
-      this.districtsService.getDistrictsAll(1, 1000000, this.name, this.canceled)
+    
+      this.districtsService.getDistrictsPaginated(1, 1000000, this.name, this.canceled)
         .subscribe(data => {
           this.districtsreport = data.content;
         },
@@ -356,99 +307,9 @@ export class DistrictsComponent implements OnInit {
                           },
                             error => { },
                             () => {
-                              var received = alasql("SELECT [0] AS send_id_rec,[1] AS district_id,[2] AS last_backup_received FROM ?", [this.districtsinfo]);
-                              var restored = alasql("SELECT [0] AS send_id_res,[1] AS district_id,[2] AS last_backup_restored FROM ?", [this.districtsresinfo]);
-                              var synced = alasql("SELECT [0] AS sync_id,[1] AS district_id,[2] AS server,[3] AS start_time,[4] AS end_time, [5] AS server_report FROM ?", [this.districtssyncinfo]);
-                              var recres = alasql("SELECT * FROM ?alldistricts LEFT JOIN ?received USING district_id LEFT JOIN ?restored USING district_id", [this.districtsreport, received, restored]);
-                              this.districtsreport = alasql("SELECT * FROM ?recres LEFT JOIN ?synced USING district_id ", [recres, synced]);
-                              this.isHidden = "hide";
-                              this.isDisabledt = "";
-                              this.total = this.totali;
-                              var user = JSON.parse(window.sessionStorage.getItem('user'));
-                              var doc = new jsPDF('landscape');
-                              var totalPagesExp = "{total_pages_count_string}";
-                              var columns = [
-                                { title: "Distrito/ US", dataKey: "namef" },
-                                { title: "Último Backup\nRecebido", dataKey: "last_backup_received" },
-                                { title: "Último backup\nRestaurado", dataKey: "last_backup_restored" },
-                                { title: "Última\nSincronização", dataKey: "server_report" },
-                                { title: "Ironkey(s)", dataKey: "ironkeysnames" }
-                              ];
-                              var listSize = this.districtsreport.length;
-                              var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
-                              // HEADER
-                              doc.setFontSize(18);
-                              doc.text('Lista de Distritos/US', 14, 22);
-                              doc.setFontSize(14);
-                              doc.text(listSize + ' distritos/us encontrados.', 14, 45);
-                              doc.setFontSize(11);
-                              doc.setTextColor(100);
-                              var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-                              var text = doc.splitTextToSize('Distritos/US representam locais apoiados por FGH onde existe uma Base de Dados OpenMRS.', pageWidth - 25, {});
-                              doc.text(text, 14, 32);
-                              var pageContent = function (data) {
-                                // FOOTER
-                                var str = "Página " + data.pageCount;
-                                if (typeof doc.putTotalPages === 'function') {
-                                  str = str + " de " + totalPagesExp;
-                                }
-                                doc.setFontSize(10);
-                                var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-                                doc.text(str, data.settings.margin.left, pageHeight - 5);
-                              };
-                              doc.autoTable(columns, this.districtsreport, {
-                                startY: 50,
-                                styles: { overflow: 'linebreak' },
-                                bodyStyles: { valign: 'top' },
-                                theme: 'grid',
-                                headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
-                                addPageContent: pageContent
-                              });
-                              doc.setFontSize(11);
-                              doc.setTextColor(100);
-                              doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
-                              doc.setTextColor(0, 0, 200);
-                              doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
-                              if (typeof doc.putTotalPages === 'function') {
-                                doc.putTotalPages(totalPagesExp);
-                              }
-                              doc.save('SCB_Distritos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
-                            });
-                      });
-                });
-          });
-    } else if (this.ROLE_ODMA || this.ROLE_ORMA || this.ROLE_GDD) {
-      this.districtsService.getDistrictsFiltered(1, 1000000, this.name, this.canceled)
-        .subscribe(data => {
-          this.districtsreport = data.content;
-        },
-          error => {
-            this.isHidden = "hide";
-            this.isDisabledt = "";
-            this.districtsreport = [];
-          },
-          () => {
-            this.districtsService.getDistrictsReceiveInfo()
-              .subscribe(data => {
-                this.districtsinfo = data
-              },
-                error => { },
-                () => {
-                  this.districtsService.getDistrictsRestoreInfo()
-                    .subscribe(data => {
-                      this.districtsresinfo = data;
-                    },
-                      error => { },
-                      () => {
-                        this.districtsService.getDistrictsSyncInfo()
-                          .subscribe(data => {
-                            this.districtssyncinfo = data;
-                          },
-                            error => { },
-                            () => {
-                              var received = alasql("SELECT [0] AS send_id_rec,[1] AS district_id,[2] AS last_backup_received FROM ?", [this.districtsinfo]);
-                              var restored = alasql("SELECT [0] AS send_id_res,[1] AS district_id,[2] AS last_backup_restored FROM ?", [this.districtsresinfo]);
-                              var synced = alasql("SELECT [0] AS sync_id,[1] AS district_id,[2] AS server,[3] AS start_time,[4] AS end_time, [5] AS server_report FROM ?", [this.districtssyncinfo]);
+                              var received = alasql("SELECT [0] AS send_uuid_rec,[1] AS district_id,[2] AS last_backup_received FROM ?", [this.districtsinfo]);
+                              var restored = alasql("SELECT [0] AS send_uuid_res,[1] AS district_id,[2] AS last_backup_restored FROM ?", [this.districtsresinfo]);
+                              var synced = alasql("SELECT [0] AS sync_uuid,[1] AS district_id,[2] AS server,[3] AS start_time,[4] AS end_time, [5] AS server_report FROM ?", [this.districtssyncinfo]);
                               var recres = alasql("SELECT * FROM ?alldistricts LEFT JOIN ?received USING district_id LEFT JOIN ?restored USING district_id", [this.districtsreport, received, restored]);
                               this.districtsreport = alasql("SELECT * FROM ?recres LEFT JOIN ?synced USING district_id ", [recres, synced]);
                               this.isHidden = "hide";
@@ -508,17 +369,14 @@ export class DistrictsComponent implements OnInit {
                 });
           });
     }
-  }
-
-
+  
   getEvaluations() {
     this.disabled1 = true;
-    this.evaluationsService.getEvaluations()
-      .subscribe(data => { this.evaluations = data; }, error => { }, () => { this.disabled1 = false; }
+    this.evaluationsService.getEvaluationsPaginated(1,100000,"","")
+      .subscribe(data => { this.evaluations = data.content; }, error => { }, () => { this.disabled1 = false; }
       );
   }
 
- 
   showMsg(district) {
     this.toastService.show('Distrito: ' + district + ', excluido com sucesso!', 2000, 'green', null);
   }

@@ -43,21 +43,21 @@
       <tr style="line-height: 15px;" *ngFor="let district of districts | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
         <td>{{ district.namef }}</td>
         <td>
-          <a (click)="setSend(district.send_id_rec)" (click)="basicModal4.open()" class="waves-effect waves-teal ">
+          <a (click)="setSend(district.send_uuid_rec)" (click)="basicModal4.open()" class="waves-effect waves-teal ">
             <span class="orange-text text-darken-3">
               {{ district.last_backup_received }}
             </span>
           </a>
         </td>
         <td>
-          <a (click)="setSend(district.send_id_res)" (click)="basicModal4.open()" class="waves-effect waves-teal ">
+          <a (click)="setSend(district.send_uuid_res)" (click)="basicModal4.open()" class="waves-effect waves-teal ">
             <span class="orange-text text-darken-3">
               {{ district.last_backup_restored }}
             </span>
           </a>
         </td>
         <td>
-            <a (click)="setSync(district.sync_id)" (click)="basicModalSync.open()" class="waves-effect waves-teal ">
+            <a (click)="setSync(district.sync_uuid)" (click)="basicModalSync.open()" class="waves-effect waves-teal ">
                 <span class="orange-text text-darken-3">
           {{ district.server }}</span>
         </a><br><span *ngIf="district.server" style="font-size: 13px;color:rgb(121, 120, 120);">{{ district.start_time }}-{{ district.end_time }}</span></td>
@@ -88,10 +88,9 @@
     </tbody>
   </table>
 </div>
-<pagination-controls *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageAll($event)"
+<pagination-controls  autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPage($event)"
   id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="ROLE_ODMA||ROLE_ORMA||ROLE_GDD" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageFiltered($event)"
-  id="server" class="right-align"></pagination-controls>
+
 
 <mz-modal #basicModal>
   <mz-modal-header>

@@ -41,8 +41,8 @@ public class Send {
 	@ManyToOne
 	private Transporter transporter;
 
-	@Column(nullable = false)
-	private Date backup_date;
+	@Column(name="backup_date",nullable = false)
+	private Date backupdate;
 
 	@Column(nullable = false)
 	private boolean update_finished;
@@ -214,14 +214,17 @@ public class Send {
 	}
 
 	public Date getBackup_date() {
-		return backup_date;
+		return backupdate;
 	}
 
 	public void setBackup_date(Date backup_date) {
-		this.backup_date = backup_date;
+		this.backupdate = backup_date;
 	}
 
 	public District getDistrict() {
+		district.setIronkeys(null);
+		district.setCreated_by(null);
+		district.setUpdated_by(null);
 		return district;
 	}
 
@@ -230,6 +233,8 @@ public class Send {
 	}
 
 	public Transporter getTransporter() {
+		transporter.setCreated_by(null);
+		transporter.setUpdated_by(null);
 		return transporter;
 	}
 
@@ -331,7 +336,7 @@ public class Send {
 
 	@Override
 	public String toString() {
-		return "Send [send_id=" + send_id + ", backup_date=" + backup_date + ", update_finished=" + update_finished + ", validation_finished=" + validation_finished + ", sync_finished=" + sync_finished + ", cross_dhis2_finished="
+		return "Send [send_id=" + send_id + ", backup_date=" + backupdate + ", update_finished=" + update_finished + ", validation_finished=" + validation_finished + ", sync_finished=" + sync_finished + ", cross_dhis2_finished="
 				+ cross_dhis2_finished + ", cross_idart_finished=" + cross_idart_finished + ", received=" + received + ", observation=" + observation + ", date_created=" + date_created + ", date_updated=" + date_updated + ", uuid=" + uuid
 				+ ", date_canceled=" + date_canceled + ", canceled=" + canceled + ", canceled_reason=" + canceled_reason + ", ik_received=" + ik_received + ", date_ik_received=" + date_ik_received + ", idart_backup=" + idart_backup
 				+ ", idart_backup_date=" + idart_backup_date + "]";

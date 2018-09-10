@@ -4,8 +4,6 @@
  */
 package mz.org.fgh.scb.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -26,12 +24,5 @@ public interface TransporterRepository extends JpaRepository<Transporter, Long>,
 	 * @return the Transporter with the given uuid
 	 */
 	Transporter findByUuid(String uuid);
-
-	/**
-	 * Returns all Transporters
-	 * 
-	 * @return all Transporters
-	 */
-	List<Transporter> findAllByOrderByNameAsc();
 
 }

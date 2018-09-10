@@ -41,7 +41,7 @@ export class IronkeyFormComponent implements OnInit {
     { name: "Activado" },
     { name: "Desactivado" },
     { name: "Perdido" },
-    { name: "Com Problema" },
+    { name: "Problema" },
     { name: "Outro" }
   ];
   public form: FormGroup;
@@ -92,7 +92,7 @@ export class IronkeyFormComponent implements OnInit {
         return;
       }
       else {
-        this.ironkeysService.getIronkeyByUuid(uuid)
+        this.ironkeysService.getIronkey(uuid)
           .subscribe(
             ironkey => {
               this.ironkey = ironkey;

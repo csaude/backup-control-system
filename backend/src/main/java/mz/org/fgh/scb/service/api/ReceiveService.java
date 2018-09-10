@@ -4,10 +4,9 @@
  */
 package mz.org.fgh.scb.service.api;
 
-import java.util.Date;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 
 import mz.org.fgh.scb.model.entity.Receive;
 
@@ -43,69 +42,20 @@ public interface ReceiveService {
 	Receive findByUuid(String uuid);
 
 	/**
-	 * Returns all Receives paginated with the given District id
+	 * Returns all Receive paginated
 	 * 
-	 * @param district_id the District id
-	 * @param pageable    he pageable properties
-	 * @return all Receives paginated with the given District id
+	 * @param spec        the Receive Spcification
+	 * @param pageRequest the PageRequest
+	 * @return all Sends paginated
 	 */
-	Page<Receive> findByDistrictId(Long district_id, Pageable pageable);
+	Page<Receive> findAll(Specification<Receive> spec, PageRequest pageRequest);
 
 	/**
-	 * Returns all Receives paginated with the given District id and Send backup date range
+	 * Returns the Receive with the given Send uuid
 	 * 
-	 * @param district_id the District id
-	 * @param pageable    the pageable properties
-	 * @param from        the Send backup date from
-	 * @param until       the Send backup date until
-	 * @return all Receives paginated with the given District id and Send backup date range
+	 * @param uuid the Send uuid
+	 * @return the Receive with the given Send uuid
 	 */
-	Page<Receive> findByDistrictIdAndSendBackupDateRange(Long district_id, Pageable pageable, Date from, Date until);
-
-	/**
-	 * Returns all Receives of Districts of the given Logged User username
-	 * 
-	 * @param pageable the pageable properties
-	 * @param username the Logged User username
-	 * @return all Receives of Districts of the given Logged User username
-	 */
-	Page<Receive> findByUsername(Pageable pageable, String username);
-
-	/**
-	 * Returns all Receives of Districts of the given Logged User username and Send backup date range
-	 * 
-	 * @param pageable the pageable properties
-	 * @param from     the Send backup date from
-	 * @param until    the Send backup date until
-	 * @param username the Logged User username
-	 * @return all Receives of Districts of the given Logged User username and Send backup date range
-	 */
-	Page<Receive> findByUsernameAndSendDateBackupRange(Pageable pageable, Date from, Date until, String username);
-	
-	/**
-	 * Returns all Receives with the given Send backup date range
-	 * 
-	 * @param pageable the pageable properties
-	 * @param from     the Send backup date from
-	 * @param until    the Send backup date until
-	 * @return all Receives with the given Send backup date range
-	 */
-	Page<Receive> findBySendBackupDateRange(Pageable pageable, Date from, Date until);
-
-	/**
-	 * Returns the Receive with the given Send id
-	 * 
-	 * @param send_id the Send id
-	 * @return the Receive with the given Send id
-	 */
-	Receive findBySendId(Long send_id);
-
-	/**
-	 * Returns all Receives paginated
-	 * 
-	 * @param pageable the pageable properties
-	 * @return all Receives paginated
-	 */
-	Page<Receive> findAllReceives(Pageable pageable);
+	Receive findBySendUuid(String uuid);
 
 }

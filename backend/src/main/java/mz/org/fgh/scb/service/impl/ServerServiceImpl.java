@@ -35,11 +35,6 @@ public class ServerServiceImpl implements ServerService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public List<Server> findAllByOrderByNameAsc() {
-		return serverRepository.findAllByOrderByNameAsc();
-	}
-
-	@Override
 	public Server findByUuid(String uuid) {
 		return serverRepository.findByUuid(uuid);
 	}
@@ -72,16 +67,6 @@ public class ServerServiceImpl implements ServerService {
 	@Override
 	public Page<Server> findAll(Specification<Server> spec, PageRequest pageRequest) {
 		return serverRepository.findAll(spec, pageRequest);
-	}
-
-	@Override
-	public List<Server> findByDistrictId(Long district_id) {
-		return serverRepository.findByDistrictId(district_id);
-	}
-
-	@Override
-	public List<Server> findByUsername(String username) {
-		return serverRepository.findByUsername(username);
 	}
 
 	@Override

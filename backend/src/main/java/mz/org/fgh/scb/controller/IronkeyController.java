@@ -4,7 +4,6 @@
  */
 package mz.org.fgh.scb.controller;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,12 +39,7 @@ public class IronkeyController {
 	@Autowired
 	private IronkeyServiceImpl ironkeyServiceImpl;
 
-	@RequestMapping(value = "/ironkeys", method = RequestMethod.GET)
-	public List<Ironkey> findAllByOrderBySerialAsc() {
-		return ironkeyServiceImpl.findAllByOrderBySerialAsc();
-	}
-
-	@RequestMapping(value = "/ironkeys/get", method = RequestMethod.GET)
+	@GetMapping(value = "/ironkeys")
 	public Page<Ironkey> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
 		
 		IronkeySpecificationsBuilder builder = new IronkeySpecificationsBuilder();
@@ -60,7 +57,7 @@ public class IronkeyController {
 		return pageIronkey;
 	}
 
-	@RequestMapping(value = "/ironkeys", method = RequestMethod.POST)
+	@PostMapping(value = "/ironkeys")
 	@ResponseBody
 	public String create(@RequestBody Ironkey ironkey) {
 		try {
@@ -72,7 +69,7 @@ public class IronkeyController {
 		return "Success";
 	}
 
-	@RequestMapping(value = "/ironkeys/{uuid}", method = RequestMethod.GET)
+	@GetMapping(value = "/ironkeys/{uuid}")
 	public Ironkey getIronkey(@PathVariable String uuid) throws Exception {
 		return ironkeyServiceImpl.findByUuid(uuid);
 	}
@@ -91,7 +88,7 @@ public class IronkeyController {
 		}
 	}
 
-	@RequestMapping(value = "/ironkeys", method = RequestMethod.PUT)
+	@PutMapping(value = "/ironkeys")
 	@ResponseBody
 	public String update(@RequestBody Ironkey ironkey) throws Exception {
 		try {

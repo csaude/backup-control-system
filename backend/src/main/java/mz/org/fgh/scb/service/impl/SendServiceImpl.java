@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import mz.org.fgh.scb.model.entity.Send;
@@ -123,7 +124,7 @@ public class SendServiceImpl implements SendService {
 								+ "<tr><td bgcolor='#F3F3F3'>Cruzamento com DHIS2?</td><td>" + c_dhis + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Cruzamento com iDART?</td><td>" + c_idart + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Validação Terminada?</td><td>" + vt + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Inclui backup de\niDART?</td><td>" + idart_backup + "</td></tr>"
+								+ "<tr><td bgcolor='#F3F3F3'>Incluiu backup de\niDART?</td><td>" + idart_backup + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3' aling='top'>Observação Distrital:</td><td>" + obs
 								+ "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Enviado por:</td><td>"
 								+ send.getCreated_by().getPerson().getOthers_names() + " "
@@ -183,33 +184,13 @@ public class SendServiceImpl implements SendService {
 		return sendRepository.findOne(id);
 	}
 
-	@Override
-	public Page<Send> findByDistrictId(Long district_id, Pageable pageable) {
-		return sendRepository.findByDistrictId(district_id, pageable);
+	public int findNumberOfAllNotReceived() {
+		return sendRepository.findNumberOfAllNotReceived();
 	}
-
+	
 	@Override
-	public Page<Send> findByDistrictIdAndBackupDateRange(Long district_id, Pageable pageable, Date from, Date until) {
-		return sendRepository.findByDistrictIdAndBackupDateRange(district_id, pageable, from, until);
-	}
-
-	@Override
-	public Page<Send> findByUsername(Pageable pageable, String username) {
-		return sendRepository.findByUsername(pageable, username);
-	}
-
-	@Override
-	public Page<Send> findByUsernameAndBackupDateRange(Pageable pageable, Date from, Date until, String username) {
-		return sendRepository.findByUsernameAndBackupDateRange(pageable, from, until, username);
-	}
-
-	@Override
-	public Page<Send> findAllNotReceived(Pageable pageable) {
-		return sendRepository.findByAllNotReceived(pageable);
-	}
-
-	public int findByAllNotReceived() {
-		return sendRepository.findByAllNotReceived();
+	public Page<Send> findAll(Specification<Send> spec, PageRequest pageRequest) {
+		return sendRepository.findAll(spec, pageRequest);
 	}
 
 }

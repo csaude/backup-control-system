@@ -114,9 +114,9 @@ export class UserDetailsFormComponent implements OnInit {
             this.user = user2;
             var userdistrict = this.user.districts;
             var userauthority = this.user.authorities;
-            this.districtsService.getDistricts()
+            this.districtsService.getDistrictsPaginated(1,100000,"",false)
               .subscribe(data => {
-                  this.alldistricts = data;
+                  this.alldistricts = data.content;
                 var filtereddistricts = this.alldistricts;
                 for (let i of userdistrict) {
                   filtereddistricts = filtereddistricts.filter(item => item.district_id !== i.district_id);

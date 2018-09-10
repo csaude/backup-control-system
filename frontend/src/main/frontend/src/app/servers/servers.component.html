@@ -83,7 +83,7 @@
         <td>{{ server.type }}</td>
         <td>
           
-            <a (click)="setSync(server.sync_id)" (click)="basicModalSync.open()" class="waves-effect waves-teal ">
+            <a (click)="setSync(server.sync_uuid)" (click)="basicModalSync.open()" class="waves-effect waves-teal ">
                 <span class="orange-text text-darken-3">
           {{ server.duration }}</span>
         </a><br><span *ngIf="server.end_items_to_send" style="font-size: 13px;color:rgb(121, 120, 120);">{{ server.end_items_to_send }} {{"items_to_s" | translate}},&nbsp;</span>
@@ -135,7 +135,7 @@
   <mz-modal-content>
     <div class="row">
       <div class="col s12">
-        <h5 class="light">{{server.type}}</h5>
+        <h5 class="light">{{server.name}}</h5>
       </div>
     </div>
 

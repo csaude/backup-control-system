@@ -12,12 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,51 +40,9 @@ public class ServerController {
 	@Autowired
 	private ServerServiceImpl serverServiceImpl;
 
-	@RequestMapping(value = "/servers", method = RequestMethod.GET)
-	public List<Server> findAllByOrderBySerialAsc() {
-		return serverServiceImpl.findAllByOrderByNameAsc();
-	}
-	
-	@RequestMapping(value = "/serversdistrict/{district_id}", method = RequestMethod.GET)
-	public List<Server> findByDistrictId(@PathVariable Long district_id) {
-		return serverServiceImpl.findByDistrictId(district_id);
-	}
-	
-	@RequestMapping(value = "/serverssyncspreviousweek", method = RequestMethod.GET)
-	public List<Object[]> findSyncsOfPreviousWeek() {
-		return serverServiceImpl.findSyncsOfPreviousWeek();
-	}
-	
-	@RequestMapping(value = "/serverssyncsthisweek", method = RequestMethod.GET)
-	public List<Object[]> findSyncsOfThisWeek() {
-		return serverServiceImpl.findSyncsOfThisWeek();
-	}
-	
-	@RequestMapping(value = "/serverssyncsitemspreviousweek", method = RequestMethod.GET)
-	public List<Object[]> findSyncsItemsOfPreviousWeek() {
-		return serverServiceImpl.findSyncsRemainingItemsOfPreviousWeek();
-	}
-	
-	@RequestMapping(value = "/serverssyncsitemsthisweek", method = RequestMethod.GET)
-	public List<Object[]> findSyncsItemsOfThisWeek() {
-		return serverServiceImpl.findSyncsRemainingItemsOfThisWeek();
-	}
-	
-	@RequestMapping(value = "/serversuser", method = RequestMethod.GET)
-	public List<Server> findByUserId() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		return serverServiceImpl.findByUsername(currentPrincipalName);
-	}
-	
-	@RequestMapping(value = "/serverssyncinfo", method = RequestMethod.GET)
-	public List<Object[]> findLastSyncByServer() {
-		return serverServiceImpl.findLastSyncByServer();
-	}
+	@GetMapping(value = "/servers")
+	public Page<Server> findAllPaginated(@RequestParam(value = "page", required = true) int page, @RequestParam(value = "size", required = true) int size, @RequestParam(value = "search", required = false) String search) throws Exception {
 
-	@RequestMapping(value = "/servers/get", method = RequestMethod.GET)
-	public Page<Server> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
-		
 		ServerSpecificationsBuilder builder = new ServerSpecificationsBuilder();
 		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
 		Matcher matcher = pattern.matcher(search + ",");
@@ -99,7 +58,7 @@ public class ServerController {
 		return pageServer;
 	}
 
-	@RequestMapping(value = "/servers", method = RequestMethod.POST)
+	@PostMapping(value = "/servers")
 	@ResponseBody
 	public String create(@RequestBody Server server) {
 		try {
@@ -111,12 +70,12 @@ public class ServerController {
 		return "Success";
 	}
 
-	@RequestMapping(value = "/servers/{uuid}", method = RequestMethod.GET)
+	@GetMapping(value = "/servers/{uuid}")
 	public Server getServer(@PathVariable String uuid) throws Exception {
 		return serverServiceImpl.findByUuid(uuid);
 	}
 
-	@RequestMapping(value = "/servers/{uuid}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/servers/{uuid}")
 	@ResponseBody
 	public String deleteServer(@PathVariable String uuid) throws Exception {
 		Server server = null;
@@ -130,7 +89,7 @@ public class ServerController {
 		}
 	}
 
-	@RequestMapping(value = "/servers", method = RequestMethod.PUT)
+	@PutMapping(value = "/servers")
 	@ResponseBody
 	public String update(@RequestBody Server server) throws Exception {
 		try {
@@ -140,5 +99,33 @@ public class ServerController {
 			ex.printStackTrace();
 			return "Erro";
 		}
+	}
+
+	// ----------------------------------------------
+	// DATA FOR DASHBOARD
+	// ----------------------------------------------
+	@GetMapping(value = "/serverssyncspreviousweek")
+	public List<Object[]> findSyncsOfPreviousWeek() {
+		return serverServiceImpl.findSyncsOfPreviousWeek();
+	}
+
+	@GetMapping(value = "/serverssyncsthisweek")
+	public List<Object[]> findSyncsOfThisWeek() {
+		return serverServiceImpl.findSyncsOfThisWeek();
+	}
+
+	@GetMapping(value = "/serverssyncsitemspreviousweek")
+	public List<Object[]> findSyncsItemsOfPreviousWeek() {
+		return serverServiceImpl.findSyncsRemainingItemsOfPreviousWeek();
+	}
+
+	@GetMapping(value = "/serverssyncsitemsthisweek")
+	public List<Object[]> findSyncsItemsOfThisWeek() {
+		return serverServiceImpl.findSyncsRemainingItemsOfThisWeek();
+	}
+
+	@GetMapping(value = "/serverssyncinfo")
+	public List<Object[]> findLastSyncByServer() {
+		return serverServiceImpl.findLastSyncByServer();
 	}
 }

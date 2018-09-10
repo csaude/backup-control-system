@@ -9,11 +9,11 @@
 		<artifactId>mz.org.fgh.scb</artifactId>
 		<version>3.0</version>
 	</parent>
-	
+
 	<artifactId>mz.org.fgh.scb.backend</artifactId>
 	<packaging>war</packaging>
-    <name>SCB Project Module - Backend</name>
-    <description>This is the main module of the project. It contains Application.java class, that contains main method, necessary to run Spring Boot applications. It contains all necessary application configuration properties.  It contains all Rest Controllers.</description>
+	<name>SCB Project Module - Backend</name>
+	<description>This is the main module of the project. It contains Application.java class, that contains main method, necessary to run Spring Boot applications. It contains all necessary application configuration properties.  It contains all Rest Controllers.</description>
 
 	<dependencies>
 
@@ -71,16 +71,16 @@
 			<artifactId>commons-email</artifactId>
 			<version>1.3.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.6</version>
 		</dependency>
-		
+
 	</dependencies>
-	
-	
+
+
 	<build>
 		<plugins>
 			<plugin>

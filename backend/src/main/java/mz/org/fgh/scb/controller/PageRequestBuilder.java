@@ -25,17 +25,14 @@ public final class PageRequestBuilder {
 	}
 
 	public static PageRequest getPageRequest(Integer pageSize, Integer pageNumber, String sortingCriteria) {
+		
+		Set<String> sortingFileds = new LinkedHashSet<>(Arrays.asList(StringUtils.split(StringUtils.defaultIfEmpty(sortingCriteria, ""), ",")));
 
-		Set<String> sortingFileds = new LinkedHashSet<>(
-				Arrays.asList(StringUtils.split(StringUtils.defaultIfEmpty(sortingCriteria, ""), ",")));
-
-		List<Order> sortingOrders = sortingFileds.stream().map(PageRequestBuilder::getOrder)
-				.collect(Collectors.toList());
+		List<Order> sortingOrders = sortingFileds.stream().map(PageRequestBuilder::getOrder).collect(Collectors.toList());
 
 		Sort sort = sortingOrders.isEmpty() ? null : new Sort(sortingOrders);
 
-		return new PageRequest(ObjectUtils.defaultIfNull(pageNumber, 1) - 1, ObjectUtils.defaultIfNull(pageSize, 20),
-				sort);
+		return new PageRequest(ObjectUtils.defaultIfNull(pageNumber, 1) - 1, ObjectUtils.defaultIfNull(pageSize, 20),sort);
 	}
 
 	private static Order getOrder(String value) {

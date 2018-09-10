@@ -20,9 +20,25 @@ public class SearchCriteria {
         this.operation = operation;
         this.value=value;	
         
+        if(key.equals("backupdate")){	
+        	String str = new StringBuilder(this.value.toString()).insert(this.value.toString().length()-4, "-").toString();
+        	this.value= new StringBuilder(str).insert(str.length()-2, "-").toString();
+        }
+        
+        if(key.equals("starttime")){	
+        	String str = new StringBuilder(this.value.toString()).insert(this.value.toString().length()-4, "-").toString();
+        	this.value= new StringBuilder(str).insert(str.length()-2, "-").toString();
+        }
+        
         if(key.equals("canceled")&&value.equals("true")){
         	this.value = true;	
         }else if(key.equals("canceled")&&value.equals("false")){
+        	this.value = false;
+        }
+        
+        if(key.equals("received")&&value.equals("true")){
+        	this.value = true;	
+        }else if(key.equals("received")&&value.equals("false")){
         	this.value = false;
         }
         

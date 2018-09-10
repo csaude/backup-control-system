@@ -86,9 +86,9 @@ export class ServersComponent implements OnInit {
     this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
     this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
     this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
-    this.districtsService.getDistricts()
+    this.districtsService.getDistrictsPaginated(1,100000,"",false)
       .subscribe(data => {
-        this.alldistricts = data.filter(item => item.parentdistrict == null);;
+        this.alldistricts = data.content.filter(item => item.parentdistrict == null);;
       });
   }
   getPage(page: number) {
@@ -107,7 +107,7 @@ export class ServersComponent implements OnInit {
               this.total = data.totalElements;
               this.p = page;
               var result = data.content;
-              var synced = alasql("SELECT [0] AS sync_id,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
+              var synced = alasql("SELECT [0] AS sync_uuid,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
               this.servers = alasql("SELECT * FROM ?result LEFT JOIN ?synced USING server_id ", [result, synced]);
 
             },
@@ -178,9 +178,8 @@ export class ServersComponent implements OnInit {
     this.serversService.deleteServer(this.server.uuid)
       .subscribe(data => {
         if (data.text() == "Success") {
-          this.getPage(this.p);
+          this.search();
           this.showMsg(this.server.name);
-          this.isHidden = "hide";
           this.isDisabledt = "";
         } else {
           this.showMsgErr(this.server.name);
@@ -217,7 +216,7 @@ export class ServersComponent implements OnInit {
           this.serversService.getServersPaginated(1, 10000000, this.district, this.name, this.canceled, this.type)
             .subscribe(data => {
               var result = data.content;
-              var synced = alasql("SELECT [0] AS sync_id,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
+              var synced = alasql("SELECT [0] AS sync_uuid,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
               this.serversreport = alasql("SELECT * FROM ?result LEFT JOIN ?synced USING server_id ", [result, synced]);
             },
               error => {
@@ -294,9 +293,9 @@ export class ServersComponent implements OnInit {
 
   }
 
-  setSync(id) {
+  setSync(uuid) {
     this.isHidden2m = "";
-    this.syncsService.getSyncById(id)
+    this.syncsService.getSync(uuid)
       .subscribe(
         sync => {
           this.sync = sync;

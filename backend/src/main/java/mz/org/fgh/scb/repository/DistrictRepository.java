@@ -6,12 +6,9 @@ package mz.org.fgh.scb.repository;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import mz.org.fgh.scb.model.entity.District;
 
@@ -30,56 +27,27 @@ public interface DistrictRepository extends JpaRepository<District, Long>, JpaSp
 	 * @return the District with the given uuid
 	 */
 	public District findByUuid(String uuid);
-
-	/* JPQL */
-	/**
-	 * Returns all Districts
-	 * 
-	 * @return all Districts
-	 */
-	@Query("SELECT d FROM district d LEFT JOIN d.parent p ORDER BY IF(ISNULL(p.name),d.name,CONCAT(p.name,' / ',d.name)) ASC")
-	public List<District> findAllByOrderByNameAsc();
-
-	/**
-	 * Returns all Districts paginated with the given District name, Logged User username or lifecycle
-	 * 
-	 * @param name     the District name
-	 * @param username the Logged User username
-	 * @param canceled the District lifecycle (canceled or not canceled)
-	 * @param pageable the pageable properties
-	 * @return all Districts paginated with the given District name, Logged username or lifecycle
-	 */
-	@Query("SELECT d FROM district d JOIN d.users u LEFT JOIN d.parent p WHERE u.username=:username AND d.name LIKE CONCAT('%',:name,'%') AND d.canceled=:canceled ORDER BY d.province,IF(ISNULL(p.name),d.name,CONCAT(p.name,' / ',d.name)) ASC")
-	public Page<District> findAllByNameAndUsername(@Param("name") String name, @Param("username") String username, @Param("canceled") boolean canceled, Pageable pageable);
-
-	/**
-	 * Returns all District paginated with the given name and lifecycle
-	 * 
-	 * @param name     the District name
-	 * @param canceled the District lifecycle (canceled or not canceled)
-	 * @param pageable the pageable properties
-	 * @return all Districts paginated with the given District name and lifecycle
-	 */
-	@Query("SELECT d FROM district d LEFT JOIN d.parent p WHERE d.name LIKE CONCAT('%',:name,'%') AND d.canceled=:canceled ORDER BY d.province,IF(ISNULL(p.name),d.name,CONCAT(p.name,' / ',d.name)) ASC")
-	public Page<District> findAllByName(@Param("name") String name, @Param("canceled") boolean canceled, Pageable pageable);
-
+	
 	/* Native Queries for complex data extraction */
+	//------------------------------------------------
+	// DASHBOARD
+	//------------------------------------------------
 	/**
 	 * @return date of last backup received by District
 	 */
-	@Query(value = "SELECT  MAX(details.send_id) AS send_id,details.district_id,details.last_backup_received FROM (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT(MAX(backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 )) backup_received GROUP BY name) lbr, (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT((backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 )) backup_received ) details WHERE lbr.last_backup_received=details.last_backup_received AND  lbr.district_id=details.district_id GROUP BY details.district_id", nativeQuery = true)
+	@Query(value = "SELECT send.uuid,info.district_id,info.last_backup_received FROM (SELECT  MAX(details.send_id) AS send_id,details.district_id,details.last_backup_received FROM (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT(MAX(backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 )) backup_received GROUP BY name) lbr, (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT((backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 )) backup_received ) details WHERE lbr.last_backup_received=details.last_backup_received AND  lbr.district_id=details.district_id GROUP BY details.district_id) info, send WHERE info.send_id=send.send_id", nativeQuery = true)
 	public List<Object[]> findLastBackupReceivedByDistrict();
 
 	/**
 	 * @return date of last backup restored by District
 	 */
-	@Query(value = "SELECT  MAX(details.send_id) AS send_id,details.district_id,details.last_backup_received FROM (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT(MAX(backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 AND r.restored=1)) backup_received GROUP BY name) lbr, (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT((backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 AND r.restored=1 )) backup_received ) details WHERE lbr.last_backup_received=details.last_backup_received AND  lbr.district_id=details.district_id GROUP BY details.district_id", nativeQuery = true)
+	@Query(value = "SELECT send.uuid,info.district_id,info.last_backup_received FROM (SELECT MAX(details.send_id) AS send_id,details.district_id,details.last_backup_received FROM (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT(MAX(backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 AND r.restored=1)) backup_received GROUP BY name) lbr, (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT((backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 AND r.restored=1 )) backup_received ) details WHERE lbr.last_backup_received=details.last_backup_received AND  lbr.district_id=details.district_id GROUP BY details.district_id) info, send WHERE info.send_id=send.send_id", nativeQuery = true)
 	public List<Object[]> findLastBackupRestoredByDistrict();
 
 	/**
 	 * @return server and date of last sync by District
 	 */
-	@Query(value = "SELECT s.sync_id,d.district_id,se.name,Date_format(s.start_time, '%d/%m/%Y %H:%i') start_time,Date_format(s.end_time,'%H:%i') end_time,CONCAT(se.name,'\\n',Date_format(s.start_time,'%d/%m/%Y %H:%i'),'-',Date_format(s.end_time,'%H:%i'),'\\n',p.others_names,' ',p.surname) AS server_report FROM sync s,server se,district d,user u,person p WHERE sync_id IN(SELECT Max(sync_id) Sync_id FROM (SELECT sync.sync_id, server.district_id FROM server INNER JOIN sync ON server.server_id = sync.server_id WHERE sync.canceled = 0 AND server.canceled = 0) syncs GROUP BY district_id ) AND s.server_id=se.server_id AND d.district_id=se.district_id AND u.user_id=s.created_by AND p.person_id=u.person_id", nativeQuery = true)
+	@Query(value = "SELECT s.uuid,d.district_id,se.name,Date_format(s.start_time, '%d/%m/%Y %H:%i') start_time,Date_format(s.end_time,'%H:%i') end_time,CONCAT(se.name,'\\n',Date_format(s.start_time,'%d/%m/%Y %H:%i'),'-',Date_format(s.end_time,'%H:%i'),'\\n',p.others_names,' ',p.surname) AS server_report FROM sync s,server se,district d,user u,person p WHERE sync_id IN(SELECT Max(sync_id) Sync_id FROM (SELECT sync.sync_id, server.district_id FROM server INNER JOIN sync ON server.server_id = sync.server_id WHERE sync.canceled = 0 AND server.canceled = 0) syncs GROUP BY district_id ) AND s.server_id=se.server_id AND d.district_id=se.district_id AND u.user_id=s.created_by AND p.person_id=u.person_id", nativeQuery = true)
 	public List<Object[]> findLastSyncByDistrict();
 
 	/**

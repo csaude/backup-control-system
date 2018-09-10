@@ -172,25 +172,8 @@
 
   </table>
 </div>
-<pagination-controls *ngIf="(ROLE_GDD||ROLE_ODMA||ROLE_ORMA)&&districts_filter==false&&servers_filter==false&&date_filter==false"
-  autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageSync($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="(ROLE_SIS||ROLE_OA||ROLE_GMA)&&districts_filter==false&&servers_filter==false&&date_filter==false"
-  autoHide="true" previousLabel="" nextLabel="" (pageChange)="getAllPageSync($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="districts_filter==true&&servers_filter==false&&date_filter==false" autoHide="true" previousLabel=""
-  nextLabel="" (pageChange)="getPageSyncByDistrict($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="(ROLE_GDD||ROLE_ODMA||ROLE_ORMA)&&districts_filter==false&&servers_filter==false&&date_filter==true"
-  autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageSyncDate($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="(ROLE_SIS||ROLE_OA||ROLE_GMA)&&districts_filter==false&&servers_filter==false&&date_filter==true"
-  autoHide="true" previousLabel="" nextLabel="" (pageChange)="getAllPageSyncDate($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="districts_filter==true&&servers_filter==false&&date_filter==true" autoHide="true" previousLabel=""
-  nextLabel="" (pageChange)="getPageSyncByDistrictDate($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="districts_filter==false&&servers_filter==true&&date_filter==false" autoHide="true" previousLabel=""
-  nextLabel="" (pageChange)="getPageSyncByServer($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="districts_filter==false&&servers_filter==true&&date_filter==true" autoHide="true" previousLabel=""
-  nextLabel="" (pageChange)="getPageSyncByServerDate($event)" id="server" class="right-align"></pagination-controls>
-
-
-
+<pagination-controls 
+  autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPage($event)" id="server" class="right-align"></pagination-controls>
 
 <mz-modal #basicModal2 [fixedFooter]="true">
   <mz-modal-header>
@@ -309,7 +292,7 @@
 </mz-modal>
 
 
-<div class="fixed-action-btn" style="bottom: 20px; right: 89px;" *ngIf="date_filter==true">
+<div class="fixed-action-btn" style="bottom: 20px; right: 89px;">
   <a class="btn-floating btn-large orange">
     <i class="large material-icons">insert_chart</i>
   </a>

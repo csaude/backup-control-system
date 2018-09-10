@@ -4,14 +4,22 @@
  */
 package mz.org.fgh.scb.specification;
 
+import java.util.Set;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import mz.org.fgh.scb.model.entity.District;
 import mz.org.fgh.scb.model.entity.Server;
+import mz.org.fgh.scb.model.entity.User;
 
 public class ServerSpecification implements Specification<Server> {
 	
@@ -48,6 +56,26 @@ public class ServerSpecification implements Specification<Server> {
             return builder.equal(root.get("district").get("district_id"), criteria.getValue().toString());
            
     }
+        else if (criteria.getOperation().equalsIgnoreCase(">")) {
+    		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    		String currentPrincipalName = authentication.getName();
+    		
+    		if(authentication.getAuthorities().toString().contains("ROLE_SIS")||authentication.getAuthorities().toString().contains("ROLE_GMA")||authentication.getAuthorities().toString().contains("OA")||authentication.getAuthorities().toString().contains("IT")) {
+    			
+    		}else {
+    			
+    			Root<Server> server = root;
+    	        Subquery<User> userSubQuery = query.subquery(User.class);
+    	        Root<User> user = userSubQuery.from(User.class);
+    	        Expression<Set<District>> userDistricts = user.get("districts");
+    	        userSubQuery.select(user);
+    	        userSubQuery.where(builder.equal(user.get("username"), currentPrincipalName), builder.isMember(server.get("district"), userDistricts));
+    	       
+    	        return builder.exists(userSubQuery);
+    		
+    		
+    		}
+            }
 		
 		return null;
 	}

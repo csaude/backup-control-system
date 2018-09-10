@@ -81,24 +81,24 @@ export class DistrictFormComponent implements OnInit {
       this.title = uuid ? 'Editar Distrito' : 'Novo Distrito';
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
-        this.districtsService.getDistricts()
+        this.districtsService.getDistrictsPaginated(1,100000,"",false)
           .subscribe(data => {
-            this.alldistricts = data;
+            this.alldistricts = data.content;
           });
-        this.ironkeysService.getIronkeys()
-          .subscribe(data => { this.allironkeys = data }, error => { },
+        this.ironkeysService.getIronkeysPaginated(1,100000,"","","","")
+          .subscribe(data => { this.allironkeys = data.content }, error => { },
             () => {
               this.disabled1 = false;
             });
         return;
       } else {
-        this.districtsService.getDistrictByUuid(uuid).subscribe(
+        this.districtsService.getDistrict(uuid).subscribe(
           district => {
             this.district = district;
             var districtik = district.ironkeysDistrict;
-            this.ironkeysService.getIronkeys()
+            this.ironkeysService.getIronkeysPaginated(1,100000,"","","","")
               .subscribe(data => {
-                this.allironkeys = data;
+                this.allironkeys = data.content;
                 var filteredironkeys = this.allironkeys;
                 for (let i of districtik) {
                   filteredironkeys = filteredironkeys.filter(item => item.ironkey_id !== i.ironkey_id);
@@ -119,9 +119,9 @@ export class DistrictFormComponent implements OnInit {
                 });
               }, error => { },
                 () => {
-                  this.districtsService.getDistricts()
+                  this.districtsService.getDistrictsPaginated(1,100000,"",false)
                     .subscribe(data => {
-                      this.alldistricts = data;
+                      this.alldistricts = data.content;
                       if (this.district.parentdistrict != null) {
                         this.alldistricts = this.alldistricts.filter(item => item.district_id !== this.district.parentdistrict.district_id);
                         this.alldistricts.push(this.district.parentdistrict);

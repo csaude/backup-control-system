@@ -5,7 +5,6 @@
 package mz.org.fgh.scb.service.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +29,6 @@ public class EvaluationServiceImpl implements EvaluationService {
 	EvaluationRepository evaluationRepository;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-	@Override
-	public List<Evaluation> findAllByOrderByNameAsc() {
-		return evaluationRepository.findAllByOrderByNameAsc();
-	}
 
 	@Override
 	public Page<Evaluation> findAll(Specification<Evaluation> spec, PageRequest pageRequest) {

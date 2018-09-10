@@ -27,16 +27,28 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity(name = "authority")
 public class Authority {
 
+	/**
+	 * The Authority id
+	 */
 	@Id
 	@SequenceGenerator(name = "seq_authority", initialValue = 1)
 	@GeneratedValue(generator = "seq_authority", strategy = GenerationType.AUTO)
 	private Long authority_id;
 
+	/**
+	 * The Authority name
+	 */
 	@Column(nullable = false, unique = true)
 	private String name;
 
+	/**
+	 * The Authority description
+	 */
 	private String description;
 
+	/**
+	 * Users using this Authority
+	 */
 	@JsonBackReference(value = "user-authorities")
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "authorities")
 	private Set<User> users = new HashSet<User>(0);

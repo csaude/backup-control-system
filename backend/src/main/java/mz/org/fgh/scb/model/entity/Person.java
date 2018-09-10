@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -62,7 +64,8 @@ public class Person {
 	private User updated_by;
 
 	@Column(nullable = false)
-	private char gender;
+	@Enumerated(EnumType.STRING)
+	private PersonGender gender;
 
 	@Column(nullable = false, unique = true)
 	private String uuid;
@@ -122,11 +125,11 @@ public class Person {
 		this.phone_number = phone_number;
 	}
 
-	public char getGender() {
+	public PersonGender getGender() {
 		return gender;
 	}
 
-	public void setGender(char gender) {
+	public void setGender(PersonGender gender) {
 		this.gender = gender;
 	}
 

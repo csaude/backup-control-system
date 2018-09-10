@@ -105,9 +105,8 @@ export class TransportersComponent implements OnInit {
     this.transportersService.deleteTransporter(this.transporter.uuid)
       .subscribe(data => {
         if (data.text() == "Success") {
-          this.getPage(this.p);
+          this.search();
           this.showMsg(this.transporter.name);
-          this.isHidden = "hide";
         } else {
           this.showMsgErr(this.transporter.name);
           this.isHidden = "hide";

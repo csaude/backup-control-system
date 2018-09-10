@@ -78,16 +78,16 @@ export class ServerFormComponent implements OnInit {
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
         
-        this.districtsService.getDistricts()
+        this.districtsService.getDistrictsPaginated(1,100000,"",false)
         .subscribe(data => {
-          this.alldistricts = data.filter(item => item.parentdistrict==null);;
+          this.alldistricts = data.content.filter(item => item.parentdistrict==null);;
         
         },error=>{},
       ()=>{this.disabled1 = false;});
 
       }
       else {
-        this.serversService.getServerByUuid(uuid)
+        this.serversService.getServer(uuid)
           .subscribe(
             server => {
               this.server = server;
@@ -100,9 +100,9 @@ export class ServerFormComponent implements OnInit {
             }, () => {
 
 
-              this.districtsService.getDistricts()
+              this.districtsService.getDistrictsPaginated(1,100000,"",false)
               .subscribe(data => {
-                this.alldistricts = data.filter(item => item.parentdistrict==null);;
+                this.alldistricts = data.content.filter(item => item.parentdistrict==null);;
                 this.alldistricts = this.alldistricts.filter(item => item.district_id !== this.server.district.district_id);
                 this.alldistricts.push(this.server.district);
                 this.alldistricts =  this.alldistricts.sort(function (a, b) {

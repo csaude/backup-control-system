@@ -15,7 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import mz.org.fgh.scb.model.entity.Sync;
@@ -288,56 +289,17 @@ public class SyncServiceImpl implements SyncService {
 		syncRepository.delete(sync);
 	}
 
-	public Sync findById(Long id) {
-		return syncRepository.findOne(id);
-	}
-
-	@Override
-	public Page<Sync> findByDistrictId(Long district_id, Pageable pageable) {
-		return syncRepository.findByDistrictId(district_id, pageable);
-	}
-
-	@Override
-	public Page<Sync> findByDistrictIdAndDateRange(Long district_id, Pageable pageable, Date from, Date until) {
-		return syncRepository.findByDistrictIdAndDateRange(district_id, pageable, from, until);
-	}
-
-	@Override
-	public Page<Sync> findByUsername(Pageable pageable, String username) {
-		return syncRepository.findByUsername(pageable, username);
-	}
-
-	@Override
-	public Page<Sync> findByUserIdAndDateRange(Pageable pageable, Date from, Date until, String username) {
-		return syncRepository.findByUsernameAndDateRange(pageable, from, until, username);
-	}
-
-	@Override
-	public Page<Sync> findAll(Pageable pageable) {
-		return syncRepository.findAll(pageable);
-	}
-
-	@Override
-	public Page<Sync> findByServerId(Long server_id, Pageable pageable) {
-		return syncRepository.findByServerId(server_id,pageable);
-	}
-
-	@Override
-	public Page<Sync> findByServerIdAndDateRange(Long server_id, Pageable pageable, Date from, Date until) {
-		return syncRepository.findByServerIdAndDateRange(server_id, pageable, from, until);
-	}
-
-	@Override
-	public Page<Sync> findAllByDateRange(Pageable pageable, Date from, Date until) {
-		return syncRepository.findAllByDateRange(pageable, from, until);
-	}
-	
 	public int findInProgress() {
 		return syncRepository.findInProgress();
 	}
 	
 	public int findInProgressByUser(String username) {
 		return syncRepository.findInProgressByUser(username);
+	}
+
+	@Override
+	public Page<Sync> findAll(Specification<Sync> spec, PageRequest pageRequest) {
+		return syncRepository.findAll(spec, pageRequest);
 	}
 
 }

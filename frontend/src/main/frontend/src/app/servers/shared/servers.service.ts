@@ -19,32 +19,6 @@ export class ServersService {
   }
 
   /*
-  *Returns all Servers
-  */
-  getServers() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url, { headers: headers })
-      .map(res => res.json());
-  }
-
-  /*
-  *Return all Servers of Districts of specific User
-  */
-  getServersByUser() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "user", { headers: headers })
-      .map(res => res.json());
-  }
-
-  /*
   *Return last sync by Server
   */
   getServersSyncInfo() {
@@ -72,7 +46,7 @@ export class ServersService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/get?page=" + page + "&size=" + size + "&search=district~" + district + ",name:" + name + ",canceled!" + canceled + ",type!" + type, { headers: headers })
+    return this.http.get(this.url + "?search=district~" + district + ",name:" + name + ",canceled!" + canceled + ",type!" + type+",user>user&page="+page+"&size=" + size, { headers: headers })
       .map(res => res.json());
   }
 
@@ -81,7 +55,7 @@ export class ServersService {
    * 
    * @param uuid the Server uuid
    */
-  getServerByUuid(uuid) {
+  getServer(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
@@ -91,20 +65,6 @@ export class ServersService {
       .map(res => res.json());
   }
 
-  /**
-   * Returns Servers with thw given District
-   * 
-   * @param district_id the District id
-   */
-  getServersByDistrict(district_id) {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'district/' + district_id, { headers: headers })
-      .map(res => res.json());
-  }
 
   /**
    * Returns number of Syncs that occured by Server on previous week

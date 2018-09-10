@@ -26,10 +26,9 @@ import javax.persistence.UniqueConstraint;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
- * A District is a definition of location where have an EPTS
- * database installed, this location send backups every month
- * to Headquarters and Database Synchronization is supposed 
- * to occur every Friday.
+ * A District is a definition of location where have an EPTS database installed, 
+ * this location send backups every month to Headquarters
+ * Synchronization of data is supposed to occur every Friday.
  * 
  * @author Damasceno Lopes
  *
@@ -38,60 +37,114 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "province", "name" }) })
 public class District {
 
+	/**
+	 * The District id
+	 */
 	@Id
 	@SequenceGenerator(name = "seq_district", initialValue = 1)
 	@GeneratedValue(generator = "seq_district", strategy = GenerationType.AUTO)
 	private Long district_id;
 
+	/**
+	 * The District province
+	 */
 	@Column(nullable = false)
 	private String province;
 
+	/**
+	 * The District name
+	 */
 	@Column(nullable = false)
 	private String name;
 
+	/**
+	 * The District openmrs instance url
+	 */
 	private String instance_url;
 
+	/**
+	 * The District openmrs instance username
+	 */
 	private String instance_username;
 
+	/**
+	 * The District openmrs instance password
+	 */
 	private String instance_password;
 
+	/**
+	 * The District ironkeys
+	 */
 	@JsonBackReference(value = "district-ironkeys")
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "district_ironkey", joinColumns = { @JoinColumn(name = "district_id", nullable = false, updatable = false) }, inverseJoinColumns = {
 			@JoinColumn(name = "ironkey_id", nullable = false, updatable = false) }, uniqueConstraints = { @UniqueConstraint(columnNames = { "district_id", "ironkey_id" }) })
 	private Set<Ironkey> ironkeys = new HashSet<Ironkey>(0);
 
+	/**
+	 * The District date created
+	 */
 	@Column(nullable = false)
 	private Date date_created;
 
+	/**
+	 * The District date updated
+	 */
 	private Date date_updated;
 
+	/**
+	 * The User that created this District {@link User}
+	 */
 	@JoinColumn(name = "created_by")
 	@ManyToOne
 	private User created_by;
 
+	/**
+	 * The User that updated this District {@link User}
+	 */
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
 
+	/**
+	 * The District users
+	 */
 	@JsonBackReference(value = "district-users")
-	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "districts")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "districts")
 	private Set<User> users = new HashSet<User>(0);
 
+	/**
+	 * The District uuid
+	 */
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
+	/**
+	 * Indicates if this District is canceled or not
+	 */
 	@Column(nullable = false)
 	private boolean canceled;
 
+	/**
+	 * The District canceled reason
+	 */
 	private String canceled_reason;
 
+	/**
+	 * The User that canceled this District {@link User}
+	 */
 	@JoinColumn(name = "canceled_by")
 	@ManyToOne
 	private User canceled_by;
 
+	/**
+	 * The District date canceled
+	 */
 	private Date date_canceled;
 
+	/**
+	 * The parent of this location
+	 */
 	@JsonBackReference(value = "district-parent")
 	@JoinColumn(name = "parent_id")
 	@ManyToOne
@@ -112,16 +165,16 @@ public class District {
 	public void setDate_canceled(Date date_canceled) {
 		this.date_canceled = date_canceled;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
 
 	public String getNamef() {
-		if(this.parent==null)
-		return name;
+		if (this.parent == null)
+			return name;
 		else
-		return this.parent.getName()+" / "+name;
+			return this.parent.getName() + " / " + name;
 	}
 
 	public void setName(String name) {
@@ -223,13 +276,17 @@ public class District {
 	}
 
 	public Set<Ironkey> getIronkeysDistrict() {
-		Set<Ironkey> ironkeys = new HashSet<Ironkey>(0);
-		for (Ironkey i : this.ironkeys) {
-			i.setCreated_by(null);
-			i.setUpdated_by(null);
-			ironkeys.add(i);
+		if (this.ironkeys != null) {
+			Set<Ironkey> ironkeys = new HashSet<Ironkey>(0);
+			for (Ironkey i : this.ironkeys) {
+				i.setCreated_by(null);
+				i.setUpdated_by(null);
+				ironkeys.add(i);
+			}
+			return ironkeys;
+		} else {
+			return null;
 		}
-		return ironkeys;
 	}
 
 	public void setIronkeys(Set<Ironkey> ironkeys) {

@@ -19,19 +19,6 @@ export class IronkeysService {
   }
 
   /**
-   * Return all Ironkeys
-   */
-  getIronkeys() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url, { headers: headers })
-      .map(res => res.json());
-  }
-
-  /**
    * Return all Ironkeys with the given serial, version, status or capacity
    * 
    * @param page the page number
@@ -47,7 +34,7 @@ export class IronkeysService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/get?page=" + page + "&size=" + size + "&search=serial:" + serial + ",version:" + version + ",status~" + status + ",size~" + capacity, { headers: headers })
+    return this.http.get(this.url + "?search=serial:" + serial + ",version:" + version + ",status~" + status + ",size~" + capacity+"&page=" + page + "&size=" + size , { headers: headers })
       .map(res => res.json());
   }
   /**
@@ -55,7 +42,7 @@ export class IronkeysService {
    * 
    * @param uuid the Ironkey uuid
    */
-  getIronkeyByUuid(uuid) {
+  getIronkey(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));

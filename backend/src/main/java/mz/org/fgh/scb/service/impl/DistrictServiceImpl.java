@@ -11,7 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import mz.org.fgh.scb.model.entity.District;
@@ -29,11 +30,6 @@ public class DistrictServiceImpl implements DistrictService {
 	DistrictRepository districtRepository;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-	@Override
-	public List<District> findAllByOrderByNameAsc() {
-		return districtRepository.findAllByOrderByNameAsc();
-	}
 
 	@Override
 	public District findByUuid(String uuid) {
@@ -60,16 +56,6 @@ public class DistrictServiceImpl implements DistrictService {
 	public void delete(District district) {
 		logger.info("Deleted District: " + district.toString());
 		districtRepository.delete(district);
-	}
-
-	@Override
-	public Page<District> findAllByName(String name, boolean canceled, Pageable pageRequest) {
-		return this.districtRepository.findAllByName(name, canceled, pageRequest);
-	}
-
-	@Override
-	public Page<District> findAllByNameAndUsername(String name, String username, boolean canceled, Pageable pageRequest) {
-		return this.districtRepository.findAllByNameAndUsername(name, username, canceled, pageRequest);
 	}
 
 	@Override
@@ -100,5 +86,10 @@ public class DistrictServiceImpl implements DistrictService {
 	@Override
 	public List<Object[]> findLastSyncByDistrict() {
 		return districtRepository.findLastSyncByDistrict();
+	}
+	
+	@Override
+	public Page<District> findAll(Specification<District> spec, PageRequest pageRequest) {
+		return districtRepository.findAll(spec, pageRequest);
 	}
 }

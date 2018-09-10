@@ -86,9 +86,8 @@ export class EvaluationsComponent implements OnInit {
     this.evaluationsService.deleteEvaluation(this.evaluation.uuid)
       .subscribe(data => {
         if (data.text() == "Success") {
-          this.getPage(this.p);
+          this.search();
           this.showMsg(this.evaluation.name);
-          this.isHidden = "hide";
         } else {
           this.isHidden = "hide";
         }

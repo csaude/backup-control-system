@@ -41,26 +41,23 @@ export class SyncsComponent implements OnInit {
   public ROLE_OA: string;
   public ROLE_GMA: string;
 
-  public p;
   public alldistricts: District[] = [];
   public allservers;allserversfd: Server[] = [];
   public form: FormGroup;
   public districts_filter; servers_filter; date_filter: boolean;
 
   public disabled1; disabled2: boolean;
-  public from; until;
+  public from; until;district_id;server_id;p;
 
   public user: Object[] = [];
-  public district_id: number;
-  public server_id: number;
   public options: Pickadate.DateOptions = {
     format: 'dd/mm/yyyy',
-    formatSubmit: 'yyyy-mm-dd',
+    formatSubmit: 'yyyymmdd',
     onClose: () => this.search()
   };
   public total; totali; number = 0;
-  
-     
+
+
   constructor(public datepipe: DatePipe, public syncsService: SyncsService,
     public translate: TranslateService, public districtsService: DistrictsService, formBuilder: FormBuilder, public serversService: ServersService) {
     this.form = formBuilder.group({
@@ -73,6 +70,10 @@ export class SyncsComponent implements OnInit {
   ngOnInit() {
     this.total = 0;
     this.isHidden = "";
+    this.server_id = "";
+    this.from="";
+    this.until="";
+    this.district_id="";
     this.districts_filter = false;
     this.servers_filter = false;
     var user = JSON.parse(window.sessionStorage.getItem('user'));
@@ -85,211 +86,42 @@ export class SyncsComponent implements OnInit {
     this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
 
     if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
-      
-       var districts;
-       if(!this.ROLE_SIS&&user.districts.find(item => item.parentdistrict!=null)){
-        districts = user.districts.filter(item => item.parentdistrict==null);
+
+      var districts;
+      if (!this.ROLE_SIS && user.districts.find(item => item.parentdistrict != null)) {
+        districts = user.districts.filter(item => item.parentdistrict == null);
       }
-      else if(!this.ROLE_SIS&&user.districts.find(item => item.parentdistrict==null)){
+      else if (!this.ROLE_SIS && user.districts.find(item => item.parentdistrict == null)) {
         districts = user.districts;
       }
-      
+      this.alldistricts = districts
 
-      this.alldistricts = districts.sort(function (a, b) {
-        var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-        var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-        return 0;
-      });
+    } else {
 
-      this.serversService.getServersByUser()
+      this.districtsService.getDistrictsPaginated(1, 100000, "", false)
         .subscribe(data => {
-          this.allservers = data;
-          this.allserversfd=data;
-          this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
-
-        });
-      this.date_filter = false;
-      this.districts_filter = false;
-      this.servers_filter = false;
-
-      this.getPageSync(1);
-
-
-    } else if (this.ROLE_SIS || this.ROLE_GMA || this.ROLE_OA) {
-
-      this.districtsService.getDistricts()
-        .subscribe(data => {
-          var filteredd=data.filter(item => item.parentdistrict==null);
+          var filteredd = data.content.filter(item => item.parentdistrict == null);
           this.alldistricts = filteredd;
         });
 
-      this.serversService.getServers()
-        .subscribe(data => {
-          this.allservers = data;
-          this.allserversfd=data;
-          this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
-
-        });
-      this.date_filter = false;
-      this.districts_filter = false;
-      this.servers_filter = false;
-
-      this.getAllPageSync(1);
-
     }
 
+    this.disabled1 = true;
+        this.serversService.getServersPaginated(1, 10000000, "", "", false, "")
+          .subscribe(data => {
+            this.allservers = data.content;
+            this.allserversfd=data.content;
+            this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
+
+          }, error => { }, () => { this.disabled1 = false; });
+
+    this.getPage(1);
 
   }
 
-  getPageSync(page: number) {
+  getPage(page: number) {
     this.isHidden = "";
-    this.syncsService.getSyncsByUser(page, 10)
-      .subscribe(data => {
-        this.total = data.totalElements;
-        this.p = page;
-        this.syncs = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.total = 0;
-          this.p = 1;
-          this.syncs = [];
-        },
-        () => {
-          this.isHidden = "hide";
-        }
-      );
-  }
-
-  getPageSyncDate(page: number) {
-    this.isHidden = "";
-    this.syncsService.getSyncsByUserDate(page, 10, this.from, this.until)
-      .subscribe(data => {
-        this.total = data.totalElements;
-        this.p = page;
-        this.syncs = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.total = 0;
-          this.p = 1;
-          this.syncs = [];
-        },
-        () => {
-          this.isHidden = "hide";
-        }
-      );
-  }
-
-  getAllPageSyncDate(page: number) {
-    this.isHidden = "";
-    this.syncsService.getSyncsByDate(page, 10, this.from, this.until)
-      .subscribe(data => {
-        this.total = data.totalElements;
-        this.p = page;
-        this.syncs = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.total = 0;
-          this.p = 1;
-          this.syncs = [];
-        },
-        () => {
-          this.isHidden = "hide";
-        }
-      );
-  }
-
-  getAllPageSync(page: number) {
-    this.isHidden = "";
-    this.syncsService.getAllSyncs(page, 10)
-      .subscribe(data => {
-        this.total = data.totalElements;
-        this.p = page;
-        this.syncs = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.total = 0;
-          this.p = 1;
-          this.syncs = [];
-        },
-        () => {
-          this.isHidden = "hide";
-        }
-      );
-  }
-
-  getPageSyncByDistrict(page: number) {
-    this.isHidden = "";
-    this.syncsService.getSyncsByDistrict(page, 10, this.district_id)
-      .subscribe(data => {
-        this.total = data.totalElements;
-        this.p = page;
-        this.syncs = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.total = 0;
-          this.p = 1;
-          this.syncs = [];
-        },
-        () => {
-          this.isHidden = "hide";
-        }
-      );
-  }
-
-  getPageSyncByDistrictDate(page: number) {
-    this.isHidden = "";
-    this.syncsService.getSyncsByDistrictDate(page, 10, this.district_id, this.from, this.until)
-      .subscribe(data => {
-        this.total = data.totalElements;
-        this.p = page;
-        this.syncs = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.total = 0;
-          this.p = 1;
-          this.syncs = [];
-        },
-        () => {
-          this.isHidden = "hide";
-        }
-      );
-  }
-
-  getPageSyncByServerDate(page: number) {
-    this.isHidden = "";
-    this.syncsService.getSyncsByServerDate(page, 10, this.server_id, this.from, this.until)
-      .subscribe(data => {
-        this.total = data.totalElements;
-        this.p = page;
-        this.syncs = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.total = 0;
-          this.p = 1;
-          this.syncs = [];
-        },
-        () => {
-          this.isHidden = "hide";
-        }
-      );
-  }
-
-  getPageSyncByServer(page: number) {
-    this.isHidden = "";
-    this.syncsService.getSyncsByServer(page, 10, this.server_id)
+    this.syncsService.getSyncs(page, 10, this.district_id, this.server_id, this.from, this.until)
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
@@ -331,257 +163,76 @@ export class SyncsComponent implements OnInit {
   search() {
 
     var userValue = this.form.value;
-    //District all
-    //No dates
+    
 
-    if (userValue.server == null || userValue.server == 'all') {
-      this.disabled2 = false;
-
-      if ((userValue.district == 'all' || userValue.district == null) && (userValue.start_from == null || userValue.start_from == "") && (userValue.start_until == null || userValue.start_until == "")) {
-        this.disabled1 = true;
-        if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
-          this.serversService.getServersByUser()
-            .subscribe(data => {
-              this.allservers = data;
-              this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
-
-            }, error => { }, () => { this.disabled1 = false; });
-          this.date_filter = false;
-          this.districts_filter = false;
-          this.servers_filter = false;
-          this.getPageSync(1);
-        } else if (this.ROLE_SIS || this.ROLE_GMA || this.ROLE_OA) {
-          this.serversService.getServers()
-            .subscribe(data => {
-              this.allservers = data;
-              this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
-
-            }, error => { }, () => { this.disabled1 = false; });
-          this.date_filter = false;
-          this.districts_filter = false;
-          this.servers_filter = false;
-          this.getAllPageSync(1);
-        }
-        //District given
-        //No dates
-      } else if (userValue.district != 'all' && (userValue.start_from == null || userValue.start_from == "") && (userValue.start_until == null || userValue.start_until == "")) {
-        this.disabled1 = true;
-        this.serversService.getServersByDistrict(userValue.district)
+    if (userValue.district == "all" || userValue.district == null) {
+      this.district_id = "";
+      this.disabled1 = true;
+        this.serversService.getServersPaginated(1, 10000000, "", "", false, "")
           .subscribe(data => {
-            this.allservers = data;
+            this.allservers = data.content;
+            this.allserversfd=data.content;
             this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
 
           }, error => { }, () => { this.disabled1 = false; });
-        this.date_filter = false;
-        this.districts_filter = true;
-        this.servers_filter = false;
-        this.district_id = userValue.district;
-        this.getPageSyncByDistrict(1);
-        //District all
-        //dates
-      } else if ((userValue.district == 'all' || userValue.district == null) && (userValue.start_from != null && userValue.start_from != "") && (userValue.start_until != null && userValue.start_until != "")) {
-
-        if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
-          if (userValue.district == 'all') {
-            this.disabled1 = true;
-            this.serversService.getServersByUser()
-              .subscribe(data => {
-                this.allservers = data;
-                this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
-
-              }, error => { }, () => { this.disabled1 = false; });
-          }
-          this.from = userValue.start_from;
-          this.until = userValue.start_until;
-          this.date_filter = true;
-          this.districts_filter = false;
-          this.servers_filter = false;
-          this.getPageSyncDate(1);
-        } else if (this.ROLE_SIS || this.ROLE_GMA || this.ROLE_OA) {
-          if (userValue.district == 'all') {
-            this.disabled1 = true;
-            this.serversService.getServers()
-              .subscribe(data => {
-                this.allservers = data;
-                this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
-
-              }, error => { }, () => { this.disabled1 = false; });
-          }
-          this.from = userValue.start_from;
-          this.until = userValue.start_until;
-          this.date_filter = true;
-          this.districts_filter = false;
-          this.servers_filter = false;
-          this.getAllPageSyncDate(1);
-        }
-        //District given
-        //dates
-      } else if ((userValue.district != 'all' && userValue.district != null) && (userValue.start_from != null && userValue.start_from != "") && (userValue.start_until != null && userValue.start_until != "")) {
-        this.disabled1 = true;
-        this.serversService.getServersByDistrict(userValue.district)
-          .subscribe(data => {
-            this.allservers = data;
-            this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
-
-          }, error => { }, () => { this.disabled1 = false; });
-        this.from = userValue.start_from;
-        this.until = userValue.start_until;
-        this.districts_filter = true;
-        this.date_filter = true;
-        this.servers_filter = false;
-        this.district_id = userValue.district;
-        this.getPageSyncByDistrictDate(1);
-      }
     } else {
-      this.disabled2 = true;
+      this.district_id = userValue.district;
+      this.disabled1 = true;
+      this.serversService.getServersPaginated(1, 10000000, this.district_id, "", false, "")
+        .subscribe(data => {
+          this.allservers = data.content;
+          this.allserversfd=data.content;
+          this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
 
-      if ((userValue.start_from == null || userValue.start_from == "") && (userValue.start_until == null || userValue.start_until == "")) {
-        this.date_filter = false;
-        this.districts_filter = false;
-        this.servers_filter = true;
-        this.server_id = userValue.server;
-        this.getPageSyncByServer(1);
-      } else if ((userValue.start_from != null && userValue.start_from != "") && (userValue.start_until != null && userValue.start_until != "")) {
-        this.from = userValue.start_from;
-        this.until = userValue.start_until;
-        this.districts_filter = false;
-        this.date_filter = true;
-        this.servers_filter = true;
-        this.server_id = userValue.server;
-        this.getPageSyncByServerDate(1);
-      }
-
+        }, error => { }, () => { this.disabled1 = false; });
     }
+
+    if (userValue.server == "all" || userValue.server == null) {
+      this.disabled2=false;
+      this.server_id = "";
+    } else {
+      this.server_id = userValue.server;
+      this.disabled2=true;
+    }
+
+    if ((userValue.start_from != "" && userValue.start_from != null) && (userValue.start_until != "" && userValue.start_until != null)) {
+      if (userValue.start_from < userValue.start_until) {
+        this.from = userValue.start_from;
+        this.until = userValue.start_until
+      }else{
+        this.from = "";
+        this.until = "";
+      }
+    }else{
+      this.from = "";
+      this.until = "";
+    }
+
+    this.getPage(1);
 
   }
 
 
   printList() {
     this.isHidden = "";
-    var userValue = this.form.value;
+    var total;
 
-
-
-
-    if (userValue.server == null || userValue.server == 'all') {
-
-      if ((userValue.district == 'all' || userValue.district == null) && (userValue.start_from != null && userValue.start_from != "") && (userValue.start_until != null && userValue.start_until != "")) {
-
-        if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
-        var total;
-          this.syncsService.getSyncsByUserDate(1, 1000000, this.from, this.until)
+          this.syncsService.getSyncs(1, 1000000, this.district_id, this.server_id, this.from, this.until)
             .subscribe(data => {
               this.syncsreport = data.content;
-              this.syncsreport=alasql("SELECT * FROM ?syncsreport ORDER BY server->districtname ASC,start_time DESC ",[this.syncsreport]);
-              total=data.totalElements;
-
-              for(let s of this.allserversfd){
-                if(!this.syncsreport.find(item=>item.serverreport==s.name+"\n"+s.districtname)){
-                 let sync= new Sync();
-                 sync.serverreport= s.name+"\n"+s.districtname;
-                 sync.observations="Não registou sincronização neste periodo.";
-                 this.syncsreport.push(sync);
+              this.syncsreport = alasql("SELECT * FROM ?syncsreport ORDER BY server->districtname ASC,start_time DESC ", [this.syncsreport]);
+              total = data.totalElements;
+              
+              for (let s of this.allserversfd) {
+                if (!this.syncsreport.find(item => item.serverreport == s.name + "\n" + s.districtname)) {
+                  let sync = new Sync();
+                  sync.serverreport = s.name + "\n" + s.districtname;
+                  sync.observations = "Não registou sincronização neste periodo.";
+                  this.syncsreport.push(sync);
                 }
-               }
-
-            },
-              error => {
-                this.isHidden = "hide";
-
-              },
-              () => {
-                this.isHidden = "hide";
-
-                var user = JSON.parse(window.sessionStorage.getItem('user'));
-                var doc = new jsPDF('landscape');
-                var totalPagesExp = "{total_pages_count_string}";
-                var columns = [
-                  { title: "Servidor", dataKey: "serverreport" },
-                  { title: "Horário de\nSincronização", dataKey: "synctime" },
-                  { title: "Duração", dataKey: "duration" },
-                  { title: "Nº itens na\nHora inicial", dataKey: "startitems" },
-                  { title: "Nº itens na\nHora final", dataKey: "enditems" },
-                  { title: "Ocorrências", dataKey: "syncerror" },
-                  { title: "Sincronizado\npor", dataKey: "syncer" },
-                  { title: "Observação", dataKey: "observations" }
-                  
-                ];
-                var listSize = total;
-                var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
-      
-                // HEADER
-                doc.setFontSize(18);
-                doc.text('Lista de Sincronizações efectuadas', 14, 22);
-                doc.setFontSize(14);
-                doc.text(listSize + ' sincronizações, efectuadas de ' + this.datepipe.transform(userValue.start_from, 'dd/MM/yyyy') + ' até ' + this.datepipe.transform(userValue.start_until, 'dd/MM/yyyy')+'.', 14, 45);
-                doc.setFontSize(11);
-                doc.setTextColor(100);
-                var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-                var text = doc.splitTextToSize('Sincronizações que ocorreram num determinado periodo.', pageWidth - 25, {});
-                doc.text(text, 14, 32);
-      
-                var pageContent = function (data) {
-                  // FOOTER
-                  var str = "Página " + data.pageCount;
-                  if (typeof doc.putTotalPages === 'function') {
-                    str = str + " de " + totalPagesExp;
-                  }
-                  doc.setFontSize(10);
-                  var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-                  doc.text(str, data.settings.margin.left, pageHeight - 5);
-                };
-                doc.autoTable(columns, this.syncsreport, {
-                  startY: 50,
-                  styles: { overflow: 'linebreak' },
-                  bodyStyles: { valign: 'top' },
-                  columnStyles: {
-                    serverreport: { columnWidth: 45,fontSize:10 },
-                    synctime: { columnWidth: 28,fontSize:10 },
-                    duration: { columnWidth: 20,fontSize:10 },
-                    startitems: { columnWidth: 33,fontSize:10 },
-                    enditems: { columnWidth: 33,fontSize:10 },
-                    syncerror: { columnWidth: 24,fontSize:7 },
-                    syncer: { columnWidth: 28,fontSize:10 },
-                    observations: { columnWidth: 55,fontSize:10 }
-                    
-                  },
-                  theme: 'grid',
-                  headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
-                  addPageContent: pageContent
-                });
-                doc.setFontSize(11);
-                doc.setTextColor(100);
-                doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
-                doc.setTextColor(0, 0, 200);
-                doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
-      
-                if (typeof doc.putTotalPages === 'function') {
-                  doc.putTotalPages(totalPagesExp);
-                }
-                doc.save('SCB_Sincronizações efectuadas_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
               }
-            );
 
 
-        } else if (this.ROLE_SIS || this.ROLE_GMA || this.ROLE_OA) {
-
-
-          this.syncsService.getSyncsByDate(1, 1000000, this.from, this.until)
-            .subscribe(data => {
-              this.syncsreport = data.content;
-              this.syncsreport=alasql("SELECT * FROM ?syncsreport ORDER BY server->districtname ASC,start_time DESC ",[this.syncsreport]);
-              total=data.totalElements;
-
-          for(let s of this.allserversfd){
-            if(!this.syncsreport.find(item=>item.serverreport==s.name+"\n"+s.districtname)){
-             let sync= new Sync();
-             sync.serverreport= s.name+"\n"+s.districtname;
-             sync.observations="Não registou sincronização neste periodo.";
-             this.syncsreport.push(sync);
-            }
-           }
-
-            
 
             },
               error => {
@@ -603,22 +254,22 @@ export class SyncsComponent implements OnInit {
                   { title: "Ocorrências", dataKey: "syncerror" },
                   { title: "Sincronização\niniciada por", dataKey: "syncer" },
                   { title: "Observação", dataKey: "observations" }
-                  
+
                 ];
                 var listSize = total;
                 var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
-      
+
                 // HEADER
                 doc.setFontSize(18);
                 doc.text('Lista de Sincronizações efectuadas', 14, 22);
                 doc.setFontSize(14);
-                doc.text(listSize + ' sincronizações, efectuadas de ' + this.datepipe.transform(userValue.start_from, 'dd/MM/yyyy') + ' até ' + this.datepipe.transform(userValue.start_until, 'dd/MM/yyyy')+'.', 14, 45);
+                doc.text(listSize + ' sincronizações, efectuadas de ' + this.from + ' até ' + this.until + '.', 14, 45);
                 doc.setFontSize(11);
                 doc.setTextColor(100);
                 var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
                 var text = doc.splitTextToSize('Sincronizações que ocorreram num determinado periodo.', pageWidth - 25, {});
                 doc.text(text, 14, 32);
-      
+
                 var pageContent = function (data) {
                   // FOOTER
                   var str = "Página " + data.pageCount;
@@ -634,15 +285,15 @@ export class SyncsComponent implements OnInit {
                   styles: { overflow: 'linebreak' },
                   bodyStyles: { valign: 'top' },
                   columnStyles: {
-                    serverreport: { columnWidth: 45,fontSize:10 },
-                    synctime: { columnWidth: 28,fontSize:10 },
-                    duration: { columnWidth: 26,fontSize:10 },
-                    startitems: { columnWidth: 33,fontSize:10 },
-                    enditems: { columnWidth: 33,fontSize:10 },
-                    syncerror: { columnWidth: 24,fontSize:7 },
-                    syncer: { columnWidth: 28,fontSize:10 },
-                    observations: { columnWidth: 55,fontSize:10 }
-                    
+                    serverreport: { columnWidth: 45, fontSize: 10 },
+                    synctime: { columnWidth: 28, fontSize: 10 },
+                    duration: { columnWidth: 26, fontSize: 10 },
+                    startitems: { columnWidth: 33, fontSize: 10 },
+                    enditems: { columnWidth: 33, fontSize: 10 },
+                    syncerror: { columnWidth: 24, fontSize: 7 },
+                    syncer: { columnWidth: 28, fontSize: 10 },
+                    observations: { columnWidth: 55, fontSize: 10 }
+
                   },
                   theme: 'grid',
                   headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
@@ -653,205 +304,14 @@ export class SyncsComponent implements OnInit {
                 doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
                 doc.setTextColor(0, 0, 200);
                 doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
-      
+
                 if (typeof doc.putTotalPages === 'function') {
                   doc.putTotalPages(totalPagesExp);
                 }
                 doc.save('SCB_Sincronizações efectuadas_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
 
-        }
-      );
-        //District given
-        //dates
-      }
-    } else if ((userValue.district != 'all' && userValue.district != null) && (userValue.start_from != null && userValue.start_from != "") && (userValue.start_until != null && userValue.start_until != "")) {
-        
-
-        this.syncsService.getSyncsByDistrictDate(1, 1000000, this.district_id, this.from, this.until)
-        .subscribe(data => {
-          this.syncsreport = data.content;
-          total=data.totalElements;
-
-          for(let s of this.allserversfd){
-            if(!this.syncsreport.find(item=>item.serverreport==s.name+"\n"+s.districtname)){
-             let sync= new Sync();
-             sync.serverreport= s.name+"\n"+s.districtname;
-             sync.observations="Não registou sincronização neste periodo.";
-             this.syncsreport.push(sync);
-            }
-           }
-        },
-          error => {
-            this.isHidden = "hide";
-
-          },
-          () => {
-            this.isHidden = "hide";
-
-            var user = JSON.parse(window.sessionStorage.getItem('user'));
-            var doc = new jsPDF('landscape');
-            var totalPagesExp = "{total_pages_count_string}";
-            var columns = [
-              { title: "Servidor", dataKey: "serverreport" },
-              { title: "Horário de\nSincronização", dataKey: "synctime" },
-              { title: "Duração", dataKey: "duration" },
-              { title: "Nº itens na\nHora inicial", dataKey: "startitems" },
-              { title: "Nº itens na\nHora final", dataKey: "enditems" },
-              { title: "Ocorrências", dataKey: "syncerror" },
-              { title: "Sincronização\niniciada por", dataKey: "syncer" },
-              { title: "Observação", dataKey: "observations" }
-              
-            ];
-            var listSize = total;
-            var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
-  
-            // HEADER
-            doc.setFontSize(18);
-            doc.text('Lista de Sincronizações efectuadas', 14, 22);
-            doc.setFontSize(14);
-            doc.text(listSize + ' sincronizações, efectuadas de ' + this.datepipe.transform(userValue.start_from, 'dd/MM/yyyy') + ' até ' + this.datepipe.transform(userValue.start_until, 'dd/MM/yyyy')+'.', 14, 45);
-            doc.setFontSize(11);
-            doc.setTextColor(100);
-            var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-            var text = doc.splitTextToSize('Sincronizações que ocorreram num determinado periodo e distrito.', pageWidth - 25, {});
-            doc.text(text, 14, 32);
-  
-            var pageContent = function (data) {
-              // FOOTER
-              var str = "Página " + data.pageCount;
-              if (typeof doc.putTotalPages === 'function') {
-                str = str + " de " + totalPagesExp;
               }
-              doc.setFontSize(10);
-              var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-              doc.text(str, data.settings.margin.left, pageHeight - 5);
-            };
-            doc.autoTable(columns, this.syncsreport, {
-              startY: 50,
-              styles: { overflow: 'linebreak' },
-              bodyStyles: { valign: 'top' },
-              columnStyles: {
-                serverreport: { columnWidth: 45,fontSize:10 },
-                synctime: { columnWidth: 28,fontSize:10 },
-                duration: { columnWidth: 20,fontSize:10 },
-                startitems: { columnWidth: 33,fontSize:10 },
-                enditems: { columnWidth: 33,fontSize:10 },
-                syncerror: { columnWidth: 24,fontSize:7 },
-                syncer: { columnWidth: 28,fontSize:10 },
-                observations: { columnWidth: 55,fontSize:10 }
-                
-              },
-              theme: 'grid',
-              headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
-              addPageContent: pageContent
-            });
-            doc.setFontSize(11);
-            doc.setTextColor(100);
-            doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
-            doc.setTextColor(0, 0, 200);
-            doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
-  
-            if (typeof doc.putTotalPages === 'function') {
-              doc.putTotalPages(totalPagesExp);
-            }
-            doc.save('SCB_Sincronizações efectuadas_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
-
-    }
-  );
-
-      }
-    }
-    
-  else {
-       if ((userValue.start_from != null && userValue.start_from != "") && (userValue.start_until != null && userValue.start_until != "")) {
-       
-        this.syncsService.getSyncsByServerDate(1, 1000000, this.server_id, this.from, this.until)
-        .subscribe(data => {
-          this.syncsreport = data.content;
-
-          
-
-        },
-          error => {
-            this.isHidden = "hide";
-
-          },
-          () => {
-            this.isHidden = "hide";
-
-            var user = JSON.parse(window.sessionStorage.getItem('user'));
-            var doc = new jsPDF('landscape');
-            var totalPagesExp = "{total_pages_count_string}";
-            var columns = [
-              { title: "Servidor", dataKey: "serverreport" },
-              { title: "Horário de\nSincronização", dataKey: "synctime" },
-              { title: "Duração", dataKey: "duration" },
-              { title: "Nº itens na\nHora inicial", dataKey: "startitems" },
-              { title: "Nº itens na\nHora final", dataKey: "enditems" },
-              { title: "Ocorrências", dataKey: "syncerror" },
-              { title: "Sincronizado\npor", dataKey: "syncer" },
-              { title: "Observação", dataKey: "observations" }
-              
-            ];
-            var listSize = this.syncsreport.length;
-            var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
-  
-            // HEADER
-            doc.setFontSize(18);
-            doc.text('Lista de Sincronizações efectuadas', 14, 22);
-            doc.setFontSize(14);
-            doc.text(listSize + ' sincronizações, efectuadas de ' + this.datepipe.transform(userValue.start_from, 'dd/MM/yyyy') + ' até ' + this.datepipe.transform(userValue.start_until, 'dd/MM/yyyy')+'.', 14, 45);
-            doc.setFontSize(11);
-            doc.setTextColor(100);
-            var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-            var text = doc.splitTextToSize('Sincronizações que ocorreram num determinado periodo e servidor.', pageWidth - 25, {});
-            doc.text(text, 14, 32);
-  
-            var pageContent = function (data) {
-              // FOOTER
-              var str = "Página " + data.pageCount;
-              if (typeof doc.putTotalPages === 'function') {
-                str = str + " de " + totalPagesExp;
-              }
-              doc.setFontSize(10);
-              var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-              doc.text(str, data.settings.margin.left, pageHeight - 5);
-            };
-            doc.autoTable(columns, this.syncsreport, {
-              startY: 50,
-              styles: { overflow: 'linebreak' },
-              bodyStyles: { valign: 'top' },
-              columnStyles: {
-                serverreport: { columnWidth: 45,fontSize:10 },
-                    synctime: { columnWidth: 28,fontSize:10 },
-                    duration: { columnWidth: 20,fontSize:10 },
-                    startitems: { columnWidth: 33,fontSize:10 },
-                    enditems: { columnWidth: 33,fontSize:10 },
-                    syncerror: { columnWidth: 24,fontSize:7 },
-                    syncer: { columnWidth: 28,fontSize:10 },
-                    observations: { columnWidth: 55,fontSize:10 }
-                
-              },
-              theme: 'grid',
-              headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
-              addPageContent: pageContent
-            });
-            doc.setFontSize(11);
-            doc.setTextColor(100);
-            doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
-            doc.setTextColor(0, 0, 200);
-            doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
-  
-            if (typeof doc.putTotalPages === 'function') {
-              doc.putTotalPages(totalPagesExp);
-            }
-            doc.save('SCB_Sincronizações efectuadas_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
-
-          });
-    
-      }
-
-    }
+            );
 
   }
 

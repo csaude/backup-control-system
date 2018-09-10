@@ -7,8 +7,8 @@ package mz.org.fgh.scb.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import mz.org.fgh.scb.model.entity.Authority;
@@ -27,7 +27,7 @@ public class AuthorityController {
 	@Autowired
 	private AuthorityServiceImpl authorityServiceImpl;
 
-	@RequestMapping(value = "/authorities", method = RequestMethod.GET)
+	@GetMapping(value = "/authorities")
 	public List<Authority> findAllByOrderByNameAsc() {
 		return authorityServiceImpl.findAllByOrderByNameAsc();
 	}

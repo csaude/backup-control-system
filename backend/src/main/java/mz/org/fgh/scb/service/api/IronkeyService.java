@@ -4,8 +4,6 @@
  */
 package mz.org.fgh.scb.service.api;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -51,12 +49,5 @@ public interface IronkeyService {
 	 * @return all Ironkeys Paginated with given specification
 	 */
 	Page<Ironkey> findAll(Specification<Ironkey> spec, PageRequest pageRequest);
-
-	/**
-	 * Returns all Ironkeys
-	 * 
-	 * @return all Ironkeys
-	 */
-	List<Ironkey> findAllByOrderBySerialAsc();
 
 }

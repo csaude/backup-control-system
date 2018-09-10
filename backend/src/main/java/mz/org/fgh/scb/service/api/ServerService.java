@@ -52,29 +52,9 @@ public interface ServerService {
 	 */
 	Page<Server> findAll(Specification<Server> spec, PageRequest pageRequest);
 
-	/**
-	 * Returns all Servers
-	 * 
-	 * @return all Servers
-	 */
-	List<Server> findAllByOrderByNameAsc();
-
-	/**
-	 * Returns all Servers with the given District id
-	 * 
-	 * @param district_id the District id
-	 * @return all Servers with the given District id
-	 */
-	List<Server> findByDistrictId(Long district_id);
-
-	/**
-	 * Returns all Servers of Districts of the given Logged User username
-	 * 
-	 * @param username the Logged User username
-	 * @return all Servers of Districts of the given Logged User username
-	 */
-	List<Server> findByUsername(String username);
-
+	// ----------------------------------------------
+	// DATA FOR DASHBOARD
+	// ----------------------------------------------
 	/**
 	 * @return date of last Sync by Server
 	 */

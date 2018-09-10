@@ -4,7 +4,6 @@
  */
 package mz.org.fgh.scb.controller;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,10 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,13 +38,8 @@ public class EvaluationController {
 
 	@Autowired
 	private EvaluationServiceImpl evaluationServiceImpl;
-
-	@RequestMapping(value = "/evaluations", method = RequestMethod.GET)
-	public List<Evaluation> findAll() {
-		return evaluationServiceImpl.findAllByOrderByNameAsc();
-	}
 	
-	@RequestMapping(value = "/evaluations/get", method = RequestMethod.GET)
+	@GetMapping(value = "/evaluations")
 	public Page<Evaluation> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
 		EvaluationSpecificationsBuilder builder = new EvaluationSpecificationsBuilder();
 		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
@@ -59,7 +56,7 @@ public class EvaluationController {
 		return pageEvaluation;
 	}
 
-	@RequestMapping(value = "/evaluations", method = RequestMethod.POST)
+	@PostMapping(value = "/evaluations")
 	@ResponseBody
 	public String create(
 			@RequestBody Evaluation evaluation) {
@@ -72,12 +69,12 @@ public class EvaluationController {
 		}
 	}
 
-	@RequestMapping(value = "/evaluations/{uuid}", method = RequestMethod.GET)
+	@GetMapping(value = "/evaluations/{uuid}")
 	public Evaluation getEvaluation(@PathVariable String uuid) throws Exception {
 		return evaluationServiceImpl.findByUuid(uuid);
 	}
 
-	@RequestMapping(value = "/evaluations/{uuid}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/evaluations/{uuid}")
 	@ResponseBody
 	public String deleteEvaluation(@PathVariable String uuid) throws Exception {
 		Evaluation evaluation = null;
@@ -91,7 +88,7 @@ public class EvaluationController {
 		}
 	}
 
-	@RequestMapping(value = "/evaluations", method = RequestMethod.PUT)
+	@PutMapping(value = "/evaluations")
 	@ResponseBody
 	public String update(@RequestBody Evaluation evaluation) throws Exception {
 		try {

@@ -23,50 +23,40 @@ import { TranslateService } from 'ng2-translate';
 * @author Damasceno Lopes
 */
 export class SendsComponent implements OnInit {
-  public ROLE_SIS: string;
-  public ROLE_IT: string;
-  public ROLE_ODMA: string;
-  public ROLE_GDD: string;
-  public ROLE_ORMA: string;
-  public ROLE_OA: string;
-  public ROLE_GMA: string;
+  public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD;isHidden; isHidden2m: string;
   public sends: Send[] = [];
-  public send_id: number;
   public send: Send = new Send();
-  public isHidden;isHidden2m: string;
-  public allsends: Send[] = [];
-  public allsends2: Send[] = [];
-  public receives: Receive[] = [];
   public receive: Receive = new Receive();
-  public p;
+  public from; until;district_id;p;
   public alldistricts: District[] = [];
   public form: FormGroup;
-  public received;districts_filter;districtr_filter: boolean;
-  
-  public user: Object[] = [];
-  public district_id: number;
+  public received; canceled;
+  public user: Object[] = []; 
+
   public options: Pickadate.DateOptions = {
     format: 'dd/mm/yyyy',
-    formatSubmit: 'yyyy-mm-dd',
+    formatSubmit: 'yyyymmdd',
     onClose: () => this.search()
   };
   public total; totali; number = 0;
-  
-     
+
+
   constructor(public datepipe: DatePipe, public sendsService: SendsService, public receivesService: ReceivesService,
-    public translate: TranslateService,public districtsService: DistrictsService, formBuilder: FormBuilder) {
-      this.form = formBuilder.group({
-        district: [],
-        backup_from: [],
-        backup_until: [],
-        received: []
-      });
-     }
+    public translate: TranslateService, public districtsService: DistrictsService, formBuilder: FormBuilder) {
+    this.form = formBuilder.group({
+      district: [],
+      backup_from: [],
+      backup_until: [],
+      received: []
+    });
+  }
   ngOnInit() {
     this.isHidden = "";
     this.received = false;
-    this.districts_filter=false;
-    this.districtr_filter=false;
+    this.canceled = false;
+    this.from="";
+    this.until="";
+    this.district_id="";
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
     this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
@@ -75,14 +65,14 @@ export class SendsComponent implements OnInit {
     this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
     this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
     this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
-    
-    
-    if(this.ROLE_SIS){
+
+
+    if (this.ROLE_SIS) {
       this.alldistricts = user.districts;
-    }else if(!this.ROLE_SIS&&user.districts.find(item => item.parentdistrict!=null)){
-      this.alldistricts = user.districts.filter(item => item.parentdistrict!=null);
+    } else if (!this.ROLE_SIS && user.districts.find(item => item.parentdistrict != null)) {
+      this.alldistricts = user.districts.filter(item => item.parentdistrict != null);
     }
-    else if(!this.ROLE_SIS){
+    else if (!this.ROLE_SIS) {
       this.alldistricts = user.districts;
     }
 
@@ -97,12 +87,12 @@ export class SendsComponent implements OnInit {
       }
       return 0;
     });
-    this.getPageSend(1);
+    this.getPage(1);
   }
 
-  getPageSend(page: number) {
+  getPage(page: number) {
     this.isHidden = "";
-    this.sendsService.getSendsByUser(page, 10)
+    this.sendsService.getSendsPaginated(page, 10, this.received, this.canceled, this.from, this.until, this.district_id)
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
@@ -113,63 +103,6 @@ export class SendsComponent implements OnInit {
           this.total = 0;
           this.p = 1;
           this.sends = [];
-        },
-        () => {
-          this.isHidden = "hide";
-        }
-      );
-  }
-  getPageSendByDistrict(page: number) {
-    this.isHidden = "";
-    this.sendsService.getSendsByDistrict(page, 10,this.district_id)
-      .subscribe(data => {
-        this.total = data.totalElements;
-        this.p = page;
-        this.sends = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.total = 0;
-          this.p = 1;
-          this.sends = [];
-        },
-        () => {
-          this.isHidden = "hide";
-        }
-      );
-  }
-  getPageReceive(page: number) {
-    this.isHidden = "";
-    this.receivesService.getReceivesByUser(page, 10)
-      .subscribe(data => {
-        this.total = data.totalElements;
-        this.p = page;
-        this.receives = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.total = 0;
-          this.p = 1;
-          this.receives = [];
-        },
-        () => {
-          this.isHidden = "hide";
-        }
-      );
-  }
-  getPageReceiveByDistrict(page: number) {
-    this.isHidden = "";
-    this.receivesService.getReceivesByDistrict(page, 10,this.district_id)
-      .subscribe(data => {
-        this.total = data.totalElements;
-        this.p = page;
-        this.receives = data.content;
-      },
-        error => {
-          this.isHidden = "hide";
-          this.total = 0;
-          this.p = 1;
-          this.receives = [];
         },
         () => {
           this.isHidden = "hide";
@@ -203,11 +136,11 @@ export class SendsComponent implements OnInit {
     doc.setFontSize(14);
     doc.setTextColor(255, 255, 255);
     doc.text('Protocolo de Envio de Backup', 70, 31);
-    
+
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
-    
-    doc.text(send.district.province+" / "+send.district.name, 40, 55);
+
+    doc.text(send.district.province + " / " + send.district.name, 40, 55);
     doc.setDrawColor(0);
     doc.setFillColor(243, 243, 243);
     doc.rect(40, 60, 65, 8, 'F')
@@ -281,11 +214,11 @@ export class SendsComponent implements OnInit {
     doc.text(splitTitle, 110, 125);
     doc.text('_______________________________', 30, 180);
     doc.setFontSize(11);
-    doc.text(user.person.others_names + ' ' + user.person.surname+"\n("+user.person.phone_number+")", 30, 185);
+    doc.text(user.person.others_names + ' ' + user.person.surname + "\n(" + user.person.phone_number + ")", 30, 185);
     doc.setFontSize(12);
     doc.text('_______________________________', 30, 200);
     doc.setFontSize(11);
-    doc.text(send.transporter.role+": "+send.transporter.name+"\n("+send.transporter.phone_number+")", 30, 205);
+    doc.text(send.transporter.role + ": " + send.transporter.name + "\n(" + send.transporter.phone_number + ")", 30, 205);
     doc.setFontSize(12);
     doc.text('_______________________________', 30, 220);
     doc.text('Oficial de SIS', 30, 225);
@@ -305,22 +238,22 @@ export class SendsComponent implements OnInit {
     doc.setTextColor(100);
     doc.save('SCB_Protocolo_Envio_' + send.district.name + '_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
   }
-  setSendid(send_id) {
-    this.send_id = send_id;
-  }
-  setSend(send_id) {
-    this.send = this.sends.find(item => item.send_id == send_id);
-  
-    if(this.send.received==true){
-      this.receivesService.getReceiveBySendId(send_id)
+
+
+  setSend(uuid) {
+    this.send = this.sends.find(item => item.uuid == uuid);
+    this.isHidden2m="hide";
+    if (this.send.received == true) {
+      this.isHidden2m="";
+      this.receivesService.getReceiveBySendUuid(uuid)
         .subscribe(data => {
           this.receive = data;
           if (this.receive != null) {
-            this.send.receivername = this.receive.created_by.person.others_names+" "+this.receive.created_by.person.surname;
+            this.send.receivername = this.receive.created_by.person.others_names + " " + this.receive.created_by.person.surname;
             this.send.receivedate = this.receive.receive_date;
             this.send.restored = this.receive.restored;
-            if(this.receive.restored_by!=null){
-              this.send.restorername = this.receive.restored_by.person.others_names+" "+this.receive.restored_by.person.surname;
+            if (this.receive.restored_by != null) {
+              this.send.restorername = this.receive.restored_by.person.others_names + " " + this.receive.restored_by.person.surname;
             }
             this.send.date_restored = this.receive.date_restored;
             this.send.sis_observation = this.receive.observation;
@@ -333,76 +266,41 @@ export class SendsComponent implements OnInit {
         }, error => {
         },
           () => {
-           
+            this.isHidden2m="hide";
           });
-        }else{
-        }
-  }
-  setSend2(uuid) {
-    this.sendsService.getSend(uuid).subscribe(data => {
-      this.send=data;
-    },error=>{},
-  ()=>{
-    this.printSend();
-  });
-  }
-  setReceive(receive_id) {
-    this.receive = this.receives.find(item => item.receive_id == receive_id);
+    } else {
+    }
   }
 
- 
-  search(){
+  search() {
     var userValue = this.form.value;
-    if(userValue.received==true){
-      this.sends= this.allsends2.filter(item => item.received==true);
-    }
-    else{
-      this.sends= this.allsends2.filter(item => item.received==false);
-    }
-    if(userValue.district&&userValue.district!="all"){
-      this.sends=this.sends.filter(item => item.district.district_id == userValue.district);
-    }
-    else if (userValue.district&&userValue.district!=="all"){
-      this.sends=this.allsends;
-    }
-    if(userValue.backup_from&&userValue.backup_until){
-      if(userValue.backup_from<=userValue.backup_until){
-        this.sends= this.sends.filter(item => this.datepipe.transform(item.backup_date,'yyyy-MM-dd')>=userValue.backup_from && this.datepipe.transform(item.backup_date,'yyyy-MM-dd')<=userValue.backup_until);
-      }
-    }
-    
-    
-  }
-
-
-  search2() {
-    var userValue = this.form.value;
-    if (userValue.received==null || userValue.received==false) {
+    if (userValue.received == null || userValue.received == false) {
       this.received = false;
-      if (((userValue.backup_from==""||userValue.backup_from==null)&&(userValue.backup_until==""||userValue.backup_until==null))&&(userValue.district=="all"||userValue.district==null)) {
-        this.isHidden = "";
-        this.getPageSend(1);
-      }
-      else if(((userValue.backup_from==""||userValue.backup_from==null)&&(userValue.backup_until==""||userValue.backup_until==null))&&(userValue.district!="all"||userValue.district!=null)){
-        this.districts_filter=true;
-        this.district_id = userValue.district;
-        this.isHidden = "";
-        this.getPageSendByDistrict(1);
-       
-      }
-      }
-    else {
+    } else {
       this.received = true;
-     if (((userValue.backup_from==""||userValue.backup_from==null)&&(userValue.backup_until==""||userValue.backup_until==null))&&(userValue.district=="all"||userValue.district==null)) {
-        this.isHidden = "";
-        this.getPageReceive(1);
+    }
+
+    if (userValue.district == "all" || userValue.district == null) {
+      this.district_id = "";
+    } else {
+      this.district_id = userValue.district;
+    }
+
+    if ((userValue.backup_from != "" && userValue.backup_from != null) && (userValue.backup_until != "" && userValue.backup_until != null)) {
+      if (userValue.backup_from < userValue.backup_until) {
+        this.from = userValue.backup_from;
+        this.until = userValue.backup_until
+      }else{
+        this.from = "";
+        this.until = "";
       }
-      else if(((userValue.backup_from==""||userValue.backup_from==null)&&(userValue.backup_until==""||userValue.backup_until==null))&&(userValue.district!="all"||userValue.district!=null)){
-        this.districtr_filter=true;
-        this.district_id = userValue.district;
-        this.isHidden = "";
-        this.getPageReceiveByDistrict(1);
-      }
+    }else{
+      this.from = "";
+      this.until = "";
+    }
+
+    this.getPage(1);
+   
   }
-  }
+
 }

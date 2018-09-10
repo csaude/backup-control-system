@@ -5,7 +5,6 @@
 package mz.org.fgh.scb.service.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +29,6 @@ public class TransporterServiceImpl implements TransporterService {
 	TransporterRepository transporterRepository;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-	@Override
-	public List<Transporter> findAllByOrderByNameAsc() {
-		return transporterRepository.findAllByOrderByNameAsc();
-	}
 
 	@Override
 	public Page<Transporter> findAll(Specification<Transporter> spec, PageRequest pageRequest) {

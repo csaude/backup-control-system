@@ -113,8 +113,8 @@ export class SendFormComponent implements OnInit {
           }
           return 0;
         });
-        this.transportersService.getTransporters()
-          .subscribe(data => { this.alltransporters = data; }
+        this.transportersService.getTransportersPaginated(1, 1000000, "", "", false)
+          .subscribe(data => { this.alltransporters = data.content; }
             , errot => { },
             () => {
               this.disabled1 = false;
@@ -147,9 +147,9 @@ export class SendFormComponent implements OnInit {
                 }
                 return 0;
               });
-              this.transportersService.getTransporters()
+              this.transportersService.getTransportersPaginated(1, 1000000, "", "", false)
                 .subscribe(data => {
-                  this.alltransporters = data;
+                  this.alltransporters = data.content;
                   var filteredtransporters = this.alltransporters;
                   filteredtransporters = filteredtransporters.filter(item => item.transporter_id !== this.send.transporter.transporter_id);
                   filteredtransporters.push(this.send.transporter);

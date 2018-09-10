@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,7 +44,8 @@ public class Server {
 	private District district;
 
 	@Column(nullable = false)
-	private String type;
+	@Enumerated(EnumType.STRING)
+	private ServerType type;
 
 	private String observation;
 
@@ -202,11 +205,11 @@ public class Server {
 		this.district = district;
 	}
 
-	public String getType() {
+	public ServerType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(ServerType type) {
 		this.type = type;
 	}
 

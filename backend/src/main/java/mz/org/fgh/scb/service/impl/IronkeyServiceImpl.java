@@ -7,7 +7,6 @@ package mz.org.fgh.scb.service.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +34,6 @@ public class IronkeyServiceImpl implements IronkeyService {
 	UserServiceImpl userServiceImpl;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-	@Override
-	public List<Ironkey> findAllByOrderBySerialAsc() {
-		return ironkeyRepository.findAllByOrderBySerialAsc();
-	}
 
 	@Override
 	public Ironkey findByUuid(String uuid) {

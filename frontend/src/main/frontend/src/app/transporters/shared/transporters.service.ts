@@ -19,19 +19,6 @@ export class TransportersService {
   }
 
   /**
-   * Returns all Transporters
-   */
-  getTransporters() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url, { headers: headers })
-      .map(res => res.json());
-  }
-
-  /**
    * Returns all Transporters with the given name, role or lifecicle status
    * 
    * @param page the page number
@@ -46,7 +33,7 @@ export class TransportersService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/get?page=" + page + "&size=" + size + "&search=name:" + name + ",role~" + role + ",canceled~" + canceled, { headers: headers })
+    return this.http.get(this.url + "?search=name:" + name + ",role~" + role + ",canceled~" + canceled+"&page=" + page + "&size=" + size, { headers: headers })
       .map(res => res.json());
   }
 
@@ -55,7 +42,7 @@ export class TransportersService {
    * 
    * @param uuid Transporter uuid
    */
-  getTransporterByUuid(uuid) {
+  getTransporter(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));

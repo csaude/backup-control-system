@@ -68,7 +68,7 @@ export class TransporterFormComponent implements OnInit {
       if (!uuid) {
         return;
       } else {
-        this.transportersService.getTransporterByUuid(uuid)
+        this.transportersService.getTransporter(uuid)
           .subscribe(
             transporter => this.transporter = transporter,
             response => {

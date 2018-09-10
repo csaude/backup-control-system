@@ -4,10 +4,9 @@
  */
 package mz.org.fgh.scb.service.api;
 
-import java.util.Date;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 
 import mz.org.fgh.scb.model.entity.Send;
 
@@ -41,53 +40,14 @@ public interface SendService {
 	 * @return the Send with the given uuid
 	 */
 	Send findByUuid(String uuid);
-
+	
 	/**
-	 * Returns all Sends paginated with the given District id
+	 * Returns all Send paginated
 	 * 
-	 * @param district_id the District id
-	 * @param pageable    he pageable properties
-	 * @return all Receives paginated with the given District id
-	 */
-	Page<Send> findByDistrictId(Long district_id, Pageable pageable);
-
-	/**
-	 * Returns all Sends paginated with the given District id and backup date range
-	 * 
-	 * @param district_id the District id
-	 * @param pageable    the pageable properties
-	 * @param from        the backup date from
-	 * @param until       the backup date until
-	 * @return all Sends paginated with the given District id and backup date range
-	 */
-	Page<Send> findByDistrictIdAndBackupDateRange(Long district_id, Pageable pageable, Date from, Date until);
-
-	/**
-	 * Returns all Sends of Districts of the given Logged User username
-	 * 
-	 * @param pageable the pageable properties
-	 * @param username the Logged User username
-	 * @return all Sends of Districts of the given Logged User username
-	 */
-	Page<Send> findByUsername(Pageable pageable, String username);
-
-	/**
-	 * Returns all Receives of Districts of the given Logged User username and backup date range
-	 * 
-	 * @param pageable the pageable properties
-	 * @param from     the backup date from
-	 * @param until    the backup date until
-	 * @param username the Logged User username
-	 * @return all Receives of Districts of the given Logged User username and backup date range
-	 */
-	Page<Send> findByUsernameAndBackupDateRange(Pageable pageable, Date from, Date until, String username);
-
-	/**
-	 * Returns all Sends not received
-	 * 
-	 * @param pageable the pageable properties
+	 * @param spec        the Send Spcification
+	 * @param pageRequest the PageRequest
 	 * @return all Sends paginated
 	 */
-	Page<Send> findAllNotReceived(Pageable pageable);
+	Page<Send> findAll(Specification<Send> spec, PageRequest pageRequest);
 
 }

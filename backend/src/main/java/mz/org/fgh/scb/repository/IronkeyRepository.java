@@ -4,8 +4,6 @@
  */
 package mz.org.fgh.scb.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -26,12 +24,5 @@ public interface IronkeyRepository extends JpaRepository<Ironkey, Long>, JpaSpec
 	 * @return the Ironkey with the given uuid
 	 */
 	Ironkey findByUuid(String uuid);
-
-	/**
-	 * Returns all Ironkeys
-	 * 
-	 * @return all Ironkeys
-	 */
-	List<Ironkey> findAllByOrderBySerialAsc();
 
 }

@@ -78,9 +78,9 @@ export class ReceiveFormComponent implements OnInit {
           .subscribe(send => {
             this.send = send;
           });
-        this.transportersService.getTransporters()
+        this.transportersService.getTransportersPaginated(1, 1000000, "", "", false)
           .subscribe(data => {
-            this.alltransporters = data;
+            this.alltransporters = data.content;
           });
       } else {
         //Edit here
@@ -89,9 +89,9 @@ export class ReceiveFormComponent implements OnInit {
           .subscribe(receive => {
             this.receive = receive;
             if (this.receive.transporter != null) {
-              this.transportersService.getTransporters()
+              this.transportersService.getTransportersPaginated(1, 1000000, "", "", false)
                 .subscribe(data => {
-                  this.alltransporters = data;
+                  this.alltransporters = data.content;
                   var filteredtransporters = this.alltransporters;
                   filteredtransporters = filteredtransporters.filter(item => item.transporter_id !== this.receive.transporter.transporter_id);
                   filteredtransporters.push(this.receive.transporter);
@@ -109,9 +109,9 @@ export class ReceiveFormComponent implements OnInit {
                 });
             }
             else {
-              this.transportersService.getTransporters()
+              this.transportersService.getTransportersPaginated(1, 1000000, "", "", false)
                 .subscribe(data => {
-                  this.alltransporters = data;
+                  this.alltransporters = data.content;
                 });
             }
           });
