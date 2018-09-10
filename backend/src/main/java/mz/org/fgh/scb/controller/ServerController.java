@@ -4,7 +4,6 @@
  */
 package mz.org.fgh.scb.controller;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
 import mz.org.fgh.scb.model.entity.Server;
 import mz.org.fgh.scb.service.impl.ServerServiceImpl;
 import mz.org.fgh.scb.specification.ServerSpecificationsBuilder;
@@ -35,13 +35,14 @@ import mz.org.fgh.scb.specification.ServerSpecificationsBuilder;
  */
 @RestController
 @RequestMapping("api")
+@Api(tags = {"Server"})
 public class ServerController {
 
 	@Autowired
 	private ServerServiceImpl serverServiceImpl;
 
 	@GetMapping(value = "/servers")
-	public Page<Server> findAllPaginated(@RequestParam(value = "page", required = true) int page, @RequestParam(value = "size", required = true) int size, @RequestParam(value = "search", required = false) String search) throws Exception {
+	public Page<Server> findServers(@RequestParam(value = "page", required = true) int page, @RequestParam(value = "size", required = true) int size, @RequestParam(value = "search", required = false) String search) throws Exception {
 
 		ServerSpecificationsBuilder builder = new ServerSpecificationsBuilder();
 		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
@@ -58,9 +59,9 @@ public class ServerController {
 		return pageServer;
 	}
 
-	@PostMapping(value = "/servers")
+	@PostMapping(value = "/server")
 	@ResponseBody
-	public String create(@RequestBody Server server) {
+	public String createServer(@RequestBody Server server) {
 		try {
 			serverServiceImpl.save(server);
 		} catch (Exception ex) {
@@ -70,17 +71,17 @@ public class ServerController {
 		return "Success";
 	}
 
-	@GetMapping(value = "/servers/{uuid}")
-	public Server getServer(@PathVariable String uuid) throws Exception {
-		return serverServiceImpl.findByUuid(uuid);
+	@GetMapping(value = "/server/{uuid}")
+	public Server findOneServerByUuid(@PathVariable String uuid) throws Exception {
+		return serverServiceImpl.findOneByUuid(uuid);
 	}
 
-	@DeleteMapping(value = "/servers/{uuid}")
+	@DeleteMapping(value = "/server/{uuid}")
 	@ResponseBody
 	public String deleteServer(@PathVariable String uuid) throws Exception {
 		Server server = null;
 		try {
-			server = serverServiceImpl.findByUuid(uuid);
+			server = serverServiceImpl.findOneByUuid(uuid);
 			serverServiceImpl.delete(server);
 			return "Success";
 		} catch (Exception ex) {
@@ -89,9 +90,9 @@ public class ServerController {
 		}
 	}
 
-	@PutMapping(value = "/servers")
+	@PutMapping(value = "/server")
 	@ResponseBody
-	public String update(@RequestBody Server server) throws Exception {
+	public String updateServer(@RequestBody Server server) throws Exception {
 		try {
 			serverServiceImpl.save(server);
 			return "Success";
@@ -100,32 +101,5 @@ public class ServerController {
 			return "Erro";
 		}
 	}
-
-	// ----------------------------------------------
-	// DATA FOR DASHBOARD
-	// ----------------------------------------------
-	@GetMapping(value = "/serverssyncspreviousweek")
-	public List<Object[]> findSyncsOfPreviousWeek() {
-		return serverServiceImpl.findSyncsOfPreviousWeek();
-	}
-
-	@GetMapping(value = "/serverssyncsthisweek")
-	public List<Object[]> findSyncsOfThisWeek() {
-		return serverServiceImpl.findSyncsOfThisWeek();
-	}
-
-	@GetMapping(value = "/serverssyncsitemspreviousweek")
-	public List<Object[]> findSyncsItemsOfPreviousWeek() {
-		return serverServiceImpl.findSyncsRemainingItemsOfPreviousWeek();
-	}
-
-	@GetMapping(value = "/serverssyncsitemsthisweek")
-	public List<Object[]> findSyncsItemsOfThisWeek() {
-		return serverServiceImpl.findSyncsRemainingItemsOfThisWeek();
-	}
-
-	@GetMapping(value = "/serverssyncinfo")
-	public List<Object[]> findLastSyncByServer() {
-		return serverServiceImpl.findLastSyncByServer();
-	}
+	
 }

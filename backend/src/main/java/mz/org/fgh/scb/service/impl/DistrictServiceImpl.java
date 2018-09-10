@@ -5,7 +5,6 @@
 package mz.org.fgh.scb.service.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +31,9 @@ public class DistrictServiceImpl implements DistrictService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public District findByUuid(String uuid) {
-		return districtRepository.findByUuid(uuid);
+	public District findOneByUuid(String uuid) {
+		return districtRepository.findOneByUuid(uuid);
 	}
-
-	
 
 	@Override
 	public District save(District district) {
@@ -56,36 +53,6 @@ public class DistrictServiceImpl implements DistrictService {
 	public void delete(District district) {
 		logger.info("Deleted District: " + district.toString());
 		districtRepository.delete(district);
-	}
-
-	@Override
-	public List<Object[]> findLastBackupReceivedByDistrict() {
-		return districtRepository.findLastBackupReceivedByDistrict();
-	}
-
-	@Override
-	public List<Object[]> findLastBackupRestoredByDistrict() {
-		return districtRepository.findLastBackupRestoredByDistrict();
-	}
-
-	@Override
-	public List<Object[]> findBackupReceivedByDistrictOnPreviousMonth() {
-		return districtRepository.findBackupReceivedByDistrictOnPreviousMonth();
-	}
-
-	@Override
-	public List<Object[]> findBackupReceivedByDistrictOnThisMonth() {
-		return districtRepository.findBackupReceivedByDistrictOnThisMonth();
-	}
-
-	@Override
-	public List<Object[]> findBackupReceivedOnLast12Months() {
-		return districtRepository.findBackupReceivedOnLast12Months();
-	}
-
-	@Override
-	public List<Object[]> findLastSyncByDistrict() {
-		return districtRepository.findLastSyncByDistrict();
 	}
 	
 	@Override

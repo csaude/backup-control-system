@@ -4,6 +4,9 @@
  */
 package mz.org.fgh.scb.specification;
 
+import mz.org.fgh.scb.model.entity.IronkeyStatus;
+import mz.org.fgh.scb.model.entity.ServerType;
+
 public class SearchCriteria {
 	
 	private String key;
@@ -19,6 +22,25 @@ public class SearchCriteria {
         this.key = key;
         this.operation = operation;
         this.value=value;	
+        
+        if(key.equals("type")&&value.equals("CHILD")){
+        	this.value = ServerType.CHILD;	
+        }else if(key.equals("type")&&value.equals("PARENT")){
+        	this.value = ServerType.PARENT;
+        }
+        
+        if(key.equals("status")&&value.equals("Activado")){
+        	this.value = IronkeyStatus.Activado;	
+        	System.out.println("AQUI");
+        }else if(key.equals("status")&&value.equals("Desactivado")){
+        	this.value = IronkeyStatus.Desactivado;
+        }else if(key.equals("status")&&value.equals("Perdido")){
+        	this.value = IronkeyStatus.Perdido;
+        }else if(key.equals("status")&&value.equals("Problema")){
+        	this.value = IronkeyStatus.Problema;
+        }else if(key.equals("status")&&value.equals("Outro")){
+        	this.value = IronkeyStatus.Outro;
+        }
         
         if(key.equals("backupdate")){	
         	String str = new StringBuilder(this.value.toString()).insert(this.value.toString().length()-4, "-").toString();
@@ -53,7 +75,7 @@ public class SearchCriteria {
         }
        
         
-        if(key.equals("name")||key.equals("role")||key.equals("serial")||key.equals("version")||key.equals("status")){
+        if(key.equals("name")||key.equals("role")||key.equals("serial")||key.equals("version")){
         	this.value=value.toString().replaceAll("SPACE", " ");
         }
         

@@ -10,8 +10,8 @@ import { AuthManagerTransportersEdit } from './authmanageredit';
 
 const transportersRoutes: Routes = [
   { path: 'transporters', component: TransportersComponent, pathMatch: 'full', canActivate: [AuthManagerTransportersRead] },
-  { path: 'transporters/new', component: TransporterFormComponent, canActivate: [AuthManagerTransportersEdit] },
-  { path: 'transporters/:uuid', component: TransporterFormComponent, canActivate: [AuthManagerTransportersEdit] }
+  { path: 'transporter/new', component: TransporterFormComponent, canActivate: [AuthManagerTransportersEdit] },
+  { path: 'transporter/:uuid', component: TransporterFormComponent, canActivate: [AuthManagerTransportersEdit] }
 ];
 
 /** 

@@ -92,7 +92,7 @@ export class IronkeyFormComponent implements OnInit {
         return;
       }
       else {
-        this.ironkeysService.getIronkey(uuid)
+        this.ironkeysService.findOneIronkeyByUuid(uuid)
           .subscribe(
             ironkey => {
               this.ironkey = ironkey;
@@ -144,7 +144,7 @@ export class IronkeyFormComponent implements OnInit {
       }
     } else {
       userValue.created_by = this.user;
-      result = this.ironkeysService.addIronkey(userValue);
+      result = this.ironkeysService.createIronkey(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {
           this.router.navigate(['ironkeys']);

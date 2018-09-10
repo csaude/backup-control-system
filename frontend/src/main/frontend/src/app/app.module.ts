@@ -36,6 +36,7 @@ import { HomesModule } from "./home/home.module";
 import { NavBarModule } from "./nav-bar/nav-bar.module";
 import { ServersModule } from "./servers/servers.module";
 import { SyncsModule } from "./syncs/syncs.module";
+import { ResourcesModule } from "./resources/resources.module";
 /*AuthManagers*/
 import { AuthManagerIronkeysRead } from './ironkeys/authmanagerread';
 import { AuthManagerIronkeysEdit } from './ironkeys/authmanageredit';
@@ -84,6 +85,7 @@ import { TranslateModule } from "ng2-translate";
     NavBarModule,
     ServersModule,
     SyncsModule,
+    ResourcesModule,
     districtsRouting,
     transportersRouting,
     ironkeysRouting,

@@ -17,12 +17,12 @@ import mz.org.fgh.scb.model.entity.Evaluation;
  */
 public interface EvaluationRepository extends JpaRepository<Evaluation, Long>, JpaSpecificationExecutor<Evaluation> {
 
-	/**s
+	/**
 	 * Returns the Evaluation with the given uuid
 	 * 
 	 * @param uuid the uuid
 	 * @return the Evaluation with the given uuid
 	 */
-	Evaluation findByUuid(String uuid);
+	Evaluation findOneByUuid(String uuid);
 
 }

@@ -39,7 +39,7 @@ public interface ReceiveService {
 	 * @param uuid the uuid
 	 * @return the Receive with the given uuid
 	 */
-	Receive findByUuid(String uuid);
+	Receive findOneByUuid(String uuid);
 
 	/**
 	 * Returns all Receive paginated
@@ -56,6 +56,6 @@ public interface ReceiveService {
 	 * @param uuid the Send uuid
 	 * @return the Receive with the given Send uuid
 	 */
-	Receive findBySendUuid(String uuid);
+	Receive findOneBySendUuid(String uuid);
 
 }

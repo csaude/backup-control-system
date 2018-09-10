@@ -36,8 +36,8 @@ public class IronkeyServiceImpl implements IronkeyService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public Ironkey findByUuid(String uuid) {
-		return ironkeyRepository.findByUuid(uuid);
+	public Ironkey findOneByUuid(String uuid) {
+		return ironkeyRepository.findOneByUuid(uuid);
 	}
 
 	@Override

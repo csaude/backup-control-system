@@ -12,7 +12,7 @@ import * as myGlobals from '../../../globals';
 */
 @Injectable()
 export class IronkeysService {
-  public url: string = myGlobals.API_ironkeys;
+  public url: string = myGlobals.API;
 
    
   constructor(public http: Http) {
@@ -28,13 +28,13 @@ export class IronkeysService {
    * @param status the Ironkey status
    * @param capacity the Ironkey capacity
    */
-  getIronkeysPaginated(page, size, serial, version, status, capacity) {
+  findIronkeys(page, size, serial, version, status, capacity) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "?search=serial:" + serial + ",version:" + version + ",status~" + status + ",size~" + capacity+"&page=" + page + "&size=" + size , { headers: headers })
+    return this.http.get(this.url + "/ironkeys?search=serial:" + serial + ",version:" + version + ",status~" + status + ",size~" + capacity+"&page=" + page + "&size=" + size , { headers: headers })
       .map(res => res.json());
   }
   /**
@@ -42,13 +42,13 @@ export class IronkeysService {
    * 
    * @param uuid the Ironkey uuid
    */
-  getIronkey(uuid) {
+  findOneIronkeyByUuid(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.getIronkeyUrl(uuid), { headers: headers })
+    return this.http.get(this.url + "/ironkey/" + uuid, { headers: headers })
       .map(res => res.json());
   }
 
@@ -57,13 +57,13 @@ export class IronkeysService {
    * 
    * @param ironkey the Ironkey
    */
-  addIronkey(ironkey) {
+  createIronkey(ironkey) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.post(this.url, JSON.stringify(ironkey), { headers: headers });
+    return this.http.post(this.url + "/ironkey", JSON.stringify(ironkey), { headers: headers });
   }
 
   /**
@@ -77,7 +77,7 @@ export class IronkeysService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.put(this.url, JSON.stringify(ironkey), { headers: headers });
+    return this.http.put(this.url + "/ironkey", JSON.stringify(ironkey), { headers: headers });
   }
 
   /**
@@ -91,9 +91,7 @@ export class IronkeysService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.delete(this.getIronkeyUrl(uuid), { headers: headers });
+    return this.http.delete(this.url + "/ironkey/" + uuid, { headers: headers });
   }
-  public getIronkeyUrl(ironkey_id) {
-    return this.url + "/" + ironkey_id;
-  }
+  
 }

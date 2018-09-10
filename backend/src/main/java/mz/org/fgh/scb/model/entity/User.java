@@ -25,6 +25,8 @@ import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * A User is a definition of Users that have specific 
  * previlege to access the System resources.
@@ -35,57 +37,105 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity(name = "user")
 public class User {
 
+	/**
+	 * The User id
+	 */
 	@Id
 	@SequenceGenerator(name = "seq_user", initialValue = 1)
 	@GeneratedValue(generator = "seq_user", strategy = GenerationType.AUTO)
 	private Long user_id;
 
+	/**
+	 * The User Person {@link Person}
+	 */
 	@JoinColumn(name = "person_id")
 	@OneToOne
 	private Person person;
 
+	/**
+	 * The User username
+	 */
 	@Column(unique = true, nullable = false)
 	private String username;
 
+	/**
+	 * The User password
+	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "user-password")
 	@Column(nullable = false)
 	private String password;
 
+	/**
+	 * The User date created
+	 */
 	@Column(nullable = false)
 	private Date date_created;
 
+	/**
+	 * The User date updated
+	 */
 	private Date date_updated;
 
+	/**
+	 * The User that created this User {@link User}
+	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "user-created_by")
 	@JoinColumn(name = "created_by")
 	@ManyToOne
 	private User created_by;
 
+	/**
+	 * The User that updated this User {@link User}
+	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "user-updated_by")
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
 
+	/**
+	 * The User Districts {@link District}
+	 */
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_district", joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "user_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "district_id", referencedColumnName = "district_id") }, uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "district_id" }) })
 	private Set<District> districts = new HashSet<District>(0);
 
+	/**
+	 * This User Authorities {@link Authority}
+	 */
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_authority", joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "user_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "authority_id", referencedColumnName = "authority_id") }, uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "authority_id" }) })
 	private Set<Authority> authorities = new HashSet<Authority>(0);;
 
+	/**
+	 * Indicates if this User is enabled or not
+	 */
 	private boolean enabled;
 
+	/**
+	 * The User locale
+	 */
 	private String locale;
 
+	/**
+	 * The User uuid
+	 */
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
+	/**
+	 * Indicates if this User must receice notification or not
+	 */
 	@Column(nullable = false)
 	private boolean notification;
 
+	/**
+	 * The User last login date
+	 */
 	private Date last_login;
 
 	// -------------------------------------------------
@@ -94,7 +144,7 @@ public class User {
 	public User() {
 		this.enabled = true;
 		this.notification = true;
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 	public User(Person person) {

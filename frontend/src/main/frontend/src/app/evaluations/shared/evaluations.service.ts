@@ -13,7 +13,7 @@ import * as myGlobals from '../../../globals';
 @Injectable()
 export class EvaluationsService {
 
-  public url: string = myGlobals.API_evaluations;
+  public url: string = myGlobals.API;
 
    
   constructor(public http: Http) {
@@ -27,13 +27,13 @@ export class EvaluationsService {
    * @param name the Evaluation name
    * @param openmrs_sql_dataset_uuid the openmrs sql sql dataset
    */
-  getEvaluationsPaginated(page, size, name, openmrs_sql_dataset_uuid) {
+  findEvaluations(page, size, name, openmrs_sql_dataset_uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "?search=name:" + name + ",openmrs_sql_dataset_uuid~" + openmrs_sql_dataset_uuid+"&page=" + page + "&size=" + size, { headers: headers })
+    return this.http.get(this.url + "/evaluations?search=name:" + name + ",openmrs_sql_dataset_uuid~" + openmrs_sql_dataset_uuid+"&page=" + page + "&size=" + size, { headers: headers })
       .map(res => res.json());
   }
   /**
@@ -41,13 +41,13 @@ export class EvaluationsService {
    * 
    * @param uuid the Evaluation uuid
    */
-  getEvaluationByUuid(uuid) {
+  findOneEvaluationByUuid(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.getEvaluationUrl(uuid), { headers: headers })
+    return this.http.get(this.url + "/evaluation/" + uuid, { headers: headers })
       .map(res => res.json());
   }
   
@@ -56,13 +56,13 @@ export class EvaluationsService {
    * 
    * @param evaluation the Evaluation
    */
-  addEvaluation(evaluation) {
+  createEvaluation(evaluation) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.post(this.url, JSON.stringify(evaluation), { headers: headers });
+    return this.http.post(this.url + "/evaluation", JSON.stringify(evaluation), { headers: headers });
   }
 
   /**
@@ -76,7 +76,7 @@ export class EvaluationsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.put(this.url, JSON.stringify(evaluation), { headers: headers });
+    return this.http.put(this.url + "/evaluation", JSON.stringify(evaluation), { headers: headers });
   }
 
   /**
@@ -90,10 +90,8 @@ export class EvaluationsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.delete(this.getEvaluationUrl(uuid), { headers: headers });
+    return this.http.delete(this.url + "/evaluation/" + uuid, { headers: headers });
   }
 
-  public getEvaluationUrl(uuid) {
-    return this.url + "/" + uuid;
-  }
+  
 }

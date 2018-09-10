@@ -104,7 +104,6 @@
         <th>{{ "servername" | translate }}</th>
         <th>{{ "sync_time" | translate }}</th>
         <th>{{ "duration" | translate }}</th>
-        <th>{{ "sync_error" | translate }}</th>
         <th>{{ "final_state" | translate }}</th>
         <th>{{ "updatedon" | translate }}</th>
         <th>{{ "actions" | translate }}</th>
@@ -125,12 +124,7 @@
             <span style="float: left;text-align: center; margin-left: 0px;" class='new badge red' data-badge-caption="NÃO CONCLUIDA"></span>
         </td>
         <td *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.duration }}</td>
-        <td *ngIf="sync.sync_error">
-          <span style="color:red;">{{ "yes" | translate }}</span>
-        </td>
-        <td *ngIf="!sync.sync_error">
-          {{ "no" | translate }}
-        </td>
+       
         <td *ngIf="sync.state=='Complete'">
           <span style="float: left;text-align: center;margin-left: 0px;" class='new badge green' data-badge-caption="SYNCHRONIZED"></span>
         </td>
@@ -158,7 +152,7 @@
             <i class="material-icons icon-green">info</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/syncs', sync.uuid]" *ngIf="(ROLE_SIS||ROLE_ODMA)&&sync.editable">
+          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/sync', sync.uuid]" *ngIf="(ROLE_SIS||ROLE_ODMA)&&sync.editable">
             <i class="material-icons icon-orange">mode_edit</i>
           </a>
           <a mz-tooltip [tooltip]="'Não pode editar registos do passado'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="" *ngIf="(ROLE_SIS||ROLE_ODMA)&&!sync.editable">
@@ -298,7 +292,7 @@
   </a>
   <ul>
     <li>
-      <a mz-tooltip [tooltip]="'Baixar Lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()" class="btn-floating blue {{isDisabledt}}">
+      <a mz-tooltip [tooltip]="'Baixar Lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()" class="btn-floating blue">
         <i class="material-icons">file_download</i>
       </a>
     </li>
@@ -307,7 +301,7 @@
 
 <div class="fixed-action-btn" style="bottom: 20px; right: 20px;" *ngIf="ROLE_SIS||ROLE_ODMA">
   <a mz-tooltip [tooltip]="'Registar Sincronização'" [position]="'top'" [html]="false" [delay]="100" class="btn-floating btn-large waves-effect waves-light green"
-    routerLink="/syncs/new">
+    routerLink="/sync/new">
     <i class="material-icons">add</i>
   </a>
 </div>

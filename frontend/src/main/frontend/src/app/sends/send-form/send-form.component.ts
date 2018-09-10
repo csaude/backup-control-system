@@ -113,7 +113,7 @@ export class SendFormComponent implements OnInit {
           }
           return 0;
         });
-        this.transportersService.getTransportersPaginated(1, 1000000, "", "", false)
+        this.transportersService.findTransporters(1, 1000000, "", "", false)
           .subscribe(data => { this.alltransporters = data.content; }
             , errot => { },
             () => {
@@ -122,7 +122,7 @@ export class SendFormComponent implements OnInit {
           );
 
       } else {
-        this.sendsService.getSend(uuid)
+        this.sendsService.findOneSendByUuid(uuid)
           .subscribe(
             send => {
               this.send = send;
@@ -147,7 +147,7 @@ export class SendFormComponent implements OnInit {
                 }
                 return 0;
               });
-              this.transportersService.getTransportersPaginated(1, 1000000, "", "", false)
+              this.transportersService.findTransporters(1, 1000000, "", "", false)
                 .subscribe(data => {
                   this.alltransporters = data.content;
                   var filteredtransporters = this.alltransporters;
@@ -219,7 +219,7 @@ export class SendFormComponent implements OnInit {
       }
       else {
         userValue.created_by = user;
-        result = this.sendsService.addSend(userValue);
+        result = this.sendsService.createSend(userValue);
         result.subscribe(data => this.router.navigate(['sends']));
         this.showMsg();
       }

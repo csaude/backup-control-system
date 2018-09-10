@@ -23,6 +23,6 @@ public interface TransporterRepository extends JpaRepository<Transporter, Long>,
 	 * @param uuid the uuid
 	 * @return the Transporter with the given uuid
 	 */
-	Transporter findByUuid(String uuid);
+	Transporter findOneByUuid(String uuid);
 
 }

@@ -48,7 +48,7 @@
             <i class="material-icons icon-green">info</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/users', user.uuid]">
+          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/user', user.uuid]">
             <i class="material-icons icon-orange">mode_edit</i>
           </a>
           &nbsp;
@@ -132,7 +132,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let district of user.districts">
-              <td><a (click)="basicModal2.close()" [routerLink]="['/districts', district.uuid]" class="waves-effect waves-teal">
+              <td><a (click)="basicModal2.close()" [routerLink]="['/district', district.uuid]" class="waves-effect waves-teal">
                 <span class="orange-text text-darken-3">{{ district.province }} / {{ district.namef }}</span></a></td>
               <td>{{ district.ironkeysnumber }}</td>
             </tr>
@@ -167,7 +167,7 @@
   [position]="'left'"
   [html]="false"
   [delay]="100"
-  class="btn-floating  btn-large waves-effect waves-light green" routerLink="/users/new">
+  class="btn-floating  btn-large waves-effect waves-light green" routerLink="/user/new">
     <i class="material-icons">add</i>
   </a>
 </div>

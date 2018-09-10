@@ -39,7 +39,7 @@ public interface EvaluationService {
 	 * @param uuid the uuid
 	 * @return the Evaluation with the given uuid
 	 */
-	Evaluation findByUuid(String uuid);
+	Evaluation findOneByUuid(String uuid);
 
 	/**
 	 * Returns all Evaluations paginated

@@ -45,7 +45,7 @@ export class EvaluationsComponent implements OnInit {
 
   getPage(page: number) {
     this.isHidden = "";
-    this.evaluationsService.getEvaluationsPaginated(page, 10, this.name, this.openmrs_sql_dataset_uuid)
+    this.evaluationsService.findEvaluations(page, 10, this.name, this.openmrs_sql_dataset_uuid)
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;

@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
 import mz.org.fgh.scb.model.entity.Send;
 import mz.org.fgh.scb.service.impl.SendServiceImpl;
 import mz.org.fgh.scb.specification.SendSpecificationsBuilder;
@@ -35,14 +35,15 @@ import mz.org.fgh.scb.specification.SendSpecificationsBuilder;
  */
 @RestController
 @RequestMapping("api")
+@Api(tags = {"Send"})
 public class SendController {
 
 	@Autowired
 	private SendServiceImpl sendServiceImpl;
 
-	@PostMapping(value = "/sends")
+	@PostMapping(value = "/send")
 	@ResponseBody
-	public String create(@RequestBody Send send) {
+	public String createSend(@RequestBody Send send) {
 		try {
 			sendServiceImpl.save(send);
 			return "Success";
@@ -52,13 +53,13 @@ public class SendController {
 		}
 	}
 
-	@GetMapping(value = "/sends/{uuid}")
-	public Object getSend(@PathVariable String uuid) throws Exception {
-		return sendServiceImpl.findByUuid(uuid);
+	@GetMapping(value = "/send/{uuid}")
+	public Object findOneSendByUuid(@PathVariable String uuid) throws Exception {
+		return sendServiceImpl.findOneByUuid(uuid);
 	}
 	
 	@GetMapping(value = "/sends")
-	public Page<Send> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
+	public Page<Send> findSends(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
 		SendSpecificationsBuilder builder = new SendSpecificationsBuilder();
 		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
 		Matcher matcher = pattern.matcher(search + ",");
@@ -74,12 +75,12 @@ public class SendController {
 		return pageSend;
 	}
 
-	@DeleteMapping(value = "/sends/{uuid}")
+	@DeleteMapping(value = "/send/{uuid}")
 	@ResponseBody
 	public Object deleteSend(@PathVariable String uuid) throws Exception {
 		Send send = null;
 		try {
-			send = sendServiceImpl.findByUuid(uuid);
+			send = sendServiceImpl.findOneByUuid(uuid);
 			sendServiceImpl.delete(send);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -87,9 +88,9 @@ public class SendController {
 		return send;
 	}
 
-	@PutMapping(value = "/sends")
+	@PutMapping(value = "/send")
 	@ResponseBody
-	public String update(@RequestBody Send send) throws Exception {
+	public String updateSend(@RequestBody Send send) throws Exception {
 		try {
 			sendServiceImpl.save(send);
 			return "Success";
@@ -99,17 +100,7 @@ public class SendController {
 		}
 	}
 	
-	@RequestMapping(value = "/sendss/{id}", method = RequestMethod.GET)
-	public Object getSendById(@PathVariable Long id) throws Exception {
-		return sendServiceImpl.findById(id);
-	}
 	
-	//-------------------------------------------------
-	//FOR USER NOTIFICATION
-	//-------------------------------------------------
-	@GetMapping(value = "/sendsnotreceived")
-	public int findByAllNotReceived() throws Exception {
-		return sendServiceImpl.findNumberOfAllNotReceived();
-	}
+	
 	
 }

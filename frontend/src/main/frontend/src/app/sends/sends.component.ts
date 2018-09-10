@@ -92,7 +92,7 @@ export class SendsComponent implements OnInit {
 
   getPage(page: number) {
     this.isHidden = "";
-    this.sendsService.getSendsPaginated(page, 10, this.received, this.canceled, this.from, this.until, this.district_id)
+    this.sendsService.findSends(page, 10, this.received, this.canceled, this.from, this.until, this.district_id)
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
@@ -245,7 +245,7 @@ export class SendsComponent implements OnInit {
     this.isHidden2m="hide";
     if (this.send.received == true) {
       this.isHidden2m="";
-      this.receivesService.getReceiveBySendUuid(uuid)
+      this.receivesService.findOneReceiveBySendUuid(uuid)
         .subscribe(data => {
           this.receive = data;
           if (this.receive != null) {

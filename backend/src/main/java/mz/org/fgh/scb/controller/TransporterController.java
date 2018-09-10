@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
 import mz.org.fgh.scb.model.entity.Transporter;
 import mz.org.fgh.scb.service.impl.TransporterServiceImpl;
 import mz.org.fgh.scb.specification.TransporterSpecificationsBuilder;
@@ -34,13 +35,14 @@ import mz.org.fgh.scb.specification.TransporterSpecificationsBuilder;
  */
 @RestController
 @RequestMapping("api")
+@Api(tags = {"Transporter"})
 public class TransporterController {
 
 	@Autowired
 	private TransporterServiceImpl transporterServiceImpl;
 
 	@GetMapping(value = "/transporters")
-	public Page<Transporter> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
+	public Page<Transporter> findTransporters(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
 		TransporterSpecificationsBuilder builder = new TransporterSpecificationsBuilder();
 		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
 		Matcher matcher = pattern.matcher(search + ",");
@@ -56,9 +58,9 @@ public class TransporterController {
 		return pageTransporter;
 	}
 
-	@PostMapping(value = "/transporters")
+	@PostMapping(value = "/transporter")
 	@ResponseBody
-	public String create(@RequestBody Transporter transporter) {
+	public String createTransporter(@RequestBody Transporter transporter) {
 
 		try {
 			transporterServiceImpl.save(transporter);
@@ -69,17 +71,17 @@ public class TransporterController {
 		}
 	}
 
-	@GetMapping(value = "/transporters/{uuid}")
-	public Transporter getTransporter(@PathVariable String uuid) throws Exception {
-		return transporterServiceImpl.findByUuid(uuid);
+	@GetMapping(value = "/transporter/{uuid}")
+	public Transporter findOneTransporterByUuid(@PathVariable String uuid) throws Exception {
+		return transporterServiceImpl.findOneByUuid(uuid);
 	}
 
-	@DeleteMapping(value = "/transporters/{uuid}")
+	@DeleteMapping(value = "/transporter/{uuid}")
 	@ResponseBody
 	public String deleteTransporter(@PathVariable String uuid) throws Exception {
 		Transporter transporter = null;
 		try {
-			transporter = transporterServiceImpl.findByUuid(uuid);
+			transporter = transporterServiceImpl.findOneByUuid(uuid);
 			transporterServiceImpl.delete(transporter);
 			return "Success";
 		} catch (Exception ex) {
@@ -88,9 +90,9 @@ public class TransporterController {
 		}
 	}
 
-	@PutMapping(value = "/transporters")
+	@PutMapping(value = "/transporter")
 	@ResponseBody
-	public String update(@RequestBody Transporter transporter) throws Exception {
+	public String updateTransporter(@RequestBody Transporter transporter) throws Exception {
 		try {
 			transporterServiceImpl.save(transporter);
 			return "Success";

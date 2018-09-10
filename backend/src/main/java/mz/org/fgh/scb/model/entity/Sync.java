@@ -22,6 +22,8 @@ import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * A Sync is a definition of the process of the 
  * data exchange between the Servers.
@@ -32,72 +34,142 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity(name = "sync")
 public class Sync {
 
+	/**
+	 * The Sync id
+	 */
 	@Id
 	@SequenceGenerator(name = "seq_sync", initialValue = 1)
 	@GeneratedValue(generator = "seq_sync", strategy = GenerationType.AUTO)
 	private Long sync_id;
 
+	/**
+	 * The Sync Server {@link Server}
+	 */
 	@JoinColumn(name = "server_id")
 	@ManyToOne
 	private Server server;
 
+	/**
+	 * The Sync start time
+	 */
 	@Column(name="start_time",nullable = false)
 	private Date starttime;
 
+	/**
+	 * The Sync number of items to send on start
+	 */
 	@Column(nullable = false)
 	private int start_items_to_send;
 
+	/**
+	 * The Sync number of items to receive on start
+	 */
 	@Column(nullable = false)
 	private int start_items_to_receive;
 
+	/**
+	 * The Sync end time
+	 */
 	@Column(nullable = true)
 	private Date end_time;
 
+	/**
+	 * The Sync number of items to send on end
+	 */
 	@Column(nullable = true)
 	private int end_items_to_send;
 
+	/**
+	 * The Sync number of items to receive on end
+	 */
 	@Column(nullable = true)
 	private int end_items_to_receive;
 
+	/**
+	 * The Sync M&E observation
+	 */
 	private String observation;
 
+	/**
+	 * The Sync HIS observation
+	 */
 	private String observation_his;
 
+	/**
+	 * The Sync date created
+	 */
 	@Column(nullable = false)
 	private Date date_created;
 
+	/**
+	 * The Sync date updated
+	 */
 	private Date date_updated;
 
+	/**
+	 * Indicates if sync error ocurred or not
+	 */
 	@Column(nullable = false)
 	private boolean sync_error;
 
+	/**
+	 * The User that created this Sync {@link User}
+	 */
 	@JoinColumn(name = "created_by")
 	@ManyToOne
 	private User created_by;
 
+	/**
+	 * The User that updated this Sync {@link User}
+	 */
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
 
+	/**
+	 * The Sync uuid
+	 */
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
+	/**
+	 * The Sync date canceled
+	 */
 	private Date date_canceled;
 
+	/**
+	 * Indicates if this Sync is canceled or not
+	 */
 	@Column(nullable = false)
 	private boolean canceled;
 	
+	/**
+	 * Indicates if the server fault or not
+	 */
 	@Column(nullable = false)
 	private boolean serverfault;
 	
+	/**
+	 * Indicates if the laptop fault or not
+	 */
 	@Column(nullable = false)
 	private boolean laptopfault;
 	
+	/**
+	 * Indicates if occured power cut or not
+	 */
 	@Column(nullable = false)
 	private boolean powercut;
 
+	/**
+	 * The Sync canceled reason
+	 */
 	private String canceled_reason;
 
+	/**
+	 * The User that canceled this Sync {@link User}
+	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "sync-canceled_by")
 	@JoinColumn(name = "canceled_by")
 	@ManyToOne
@@ -108,7 +180,7 @@ public class Sync {
 	// -------------------------------------------------
 	public Sync() {
 		this.canceled = false;
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 	public Long getSync_id() {

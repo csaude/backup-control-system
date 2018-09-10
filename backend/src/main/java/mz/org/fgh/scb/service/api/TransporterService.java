@@ -39,7 +39,7 @@ public interface TransporterService {
 	 * @param uuid the uuid
 	 * @return the Transporter with the given uuid
 	 */
-	Transporter findByUuid(String uuid);
+	Transporter findOneByUuid(String uuid);
 
 	/**
 	 * Returns all Transporters paginated with given specification

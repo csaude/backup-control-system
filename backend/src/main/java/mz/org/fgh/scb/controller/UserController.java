@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
 import mz.org.fgh.scb.model.entity.User;
 import mz.org.fgh.scb.service.impl.UserServiceImpl;
 import mz.org.fgh.scb.specification.UserSpecificationsBuilder;
@@ -36,6 +37,7 @@ import mz.org.fgh.scb.specification.UserSpecificationsBuilder;
  */
 @RestController
 @RequestMapping("api")
+@Api(tags = {"User"})
 public class UserController {
 
 	@Autowired
@@ -44,12 +46,12 @@ public class UserController {
 	@GetMapping(value = "/authenticate")
 	public User authenticate() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		return userServiceImpl.authenticate(currentPrincipalName);
+		String loggedUsername = authentication.getName();
+		return userServiceImpl.authenticate(loggedUsername);
 	}
 
 	@GetMapping(value = "/users")
-	public Page<User> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
+	public Page<User> findUsers(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
 		UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
 		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
 		Matcher matcher = pattern.matcher(search + ",");
@@ -65,9 +67,9 @@ public class UserController {
 		return pageUser;
 	}
 
-	@PostMapping(value = "/users")
+	@PostMapping(value = "/user")
 	@ResponseBody
-	public String create(
+	public String createUser(
 			@RequestBody User user) {
 		try {
 			userServiceImpl.save(user);
@@ -78,18 +80,18 @@ public class UserController {
 		}
 	}
 
-	@GetMapping(value = "/users/{uuid}")
-	public User getUser(
+	@GetMapping(value = "/user/{uuid}")
+	public User findOneUserByUuid(
 			@PathVariable String uuid) throws Exception {
-		return userServiceImpl.findByUuid(uuid);
+		return userServiceImpl.findOneByUuid(uuid);
 	}
 
-	@DeleteMapping(value = "/users/{uuid}")
+	@DeleteMapping(value = "/user/{uuid}")
 	@ResponseBody
 	public String deleteUser(@PathVariable String uuid) throws Exception {
 		User user = null;
 		try {
-			user = userServiceImpl.findByUuid(uuid);
+			user = userServiceImpl.findOneByUuid(uuid);
 			userServiceImpl.delete(user);
 			return "Success";
 		} catch (Exception ex) {
@@ -98,9 +100,9 @@ public class UserController {
 		}
 	}
 
-	@PutMapping(value = "/users/{creator}/{updater}")
+	@PutMapping(value = "/user/{creator}/{updater}")
 	@ResponseBody
-	public Object update(@RequestBody User user, @PathVariable Long creator,@PathVariable Long updater) throws Exception {
+	public Object updateUser(@RequestBody User user, @PathVariable Long creator,@PathVariable Long updater) throws Exception {
 
 		try {
 			user.setCreated_by(userServiceImpl.findById(creator));

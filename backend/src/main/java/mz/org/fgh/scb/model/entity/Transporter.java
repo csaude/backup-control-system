@@ -28,43 +28,82 @@ import javax.persistence.UniqueConstraint;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "phone_number" }) })
 public class Transporter {
 
+	/**
+	 * The Transporter id
+	 */
 	@Id
 	@SequenceGenerator(name = "seq_transporter", initialValue = 1)
 	@GeneratedValue(generator = "seq_transporter", strategy = GenerationType.AUTO)
 	private Long transporter_id;
 
+	/**
+	 * The Transporter name
+	 */
 	@Column(nullable = false)
 	private String name;
 
+	/**
+	 * The Transporter phone number
+	 */
 	private String phone_number;
 
+	/**
+	 * The Transporter role
+	 */
 	@Column(nullable = false)
 	private String role;
 
+	/**
+	 * The Transporter date created
+	 */
 	@Column(nullable = false)
 	private Date date_created;
 
+	/**
+	 * The Transporter date updated
+	 */
 	private Date date_updated;
 
+	/**
+	 * The User that created this Transporter {@link User}
+	 */
 	@JoinColumn(name = "created_by")
 	@ManyToOne
 	private User created_by;
 
+	/**
+	 * The User that updated this Transporter {@link User}
+	 */
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
 
+	/**
+	 * Indicates if this Transporter is canceled or not
+	 */
 	@Column(nullable = false)
 	private boolean canceled;
 
+	/**
+	 * The Transporter canceled reason
+	 */
 	private String canceled_reason;
 
+	/**
+	 * The Transporter date canceled
+	 */
 	private Date date_canceled;
 
+	/**
+	 * The User that canceled this Transporter {@link User}
+	 */
 	@JoinColumn(name = "canceled_by")
 	@ManyToOne
 	private User canceled_by;
 
+	/**
+	 * The User uuid
+	 */
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
@@ -73,7 +112,7 @@ public class Transporter {
 	// -------------------------------------------------
 	public Transporter() {
 		this.canceled = false;
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 	public String getName() {

@@ -28,10 +28,6 @@ import org.hibernate.validator.constraints.NotBlank;
  * @author Damasceno Lopes
  *
  */
-/**
- * @author Damasceno Lopes
- *
- */
 @Entity(name = "evaluation")
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "openmrs_sql_dataset_uuid" }) })
 public class Evaluation {
@@ -98,7 +94,7 @@ public class Evaluation {
 	// Constructors
 	// -------------------------------------------------
 	public Evaluation() {
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 	public String getDescription() {

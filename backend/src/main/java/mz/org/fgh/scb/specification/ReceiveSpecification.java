@@ -67,14 +67,14 @@ public class ReceiveSpecification implements Specification<Receive> {
         }
         else if (criteria.getOperation().equalsIgnoreCase("!")) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
+		String loggedUsername = authentication.getName();
 		
 		Root<Receive> Receive = root;
         Subquery<User> userSubQuery = query.subquery(User.class);
         Root<User> user = userSubQuery.from(User.class);
         Expression<Set<District>> userDistricts = user.get("districts");
         userSubQuery.select(user);
-        userSubQuery.where(builder.equal(user.get("username"), currentPrincipalName), builder.isMember(Receive.get("district"), userDistricts));
+        userSubQuery.where(builder.equal(user.get("username"), loggedUsername), builder.isMember(Receive.get("district"), userDistricts));
        
         return builder.exists(userSubQuery);
 		

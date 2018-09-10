@@ -56,7 +56,7 @@ export class LoginFormComponent implements OnInit {
   login() {
     window.sessionStorage.clear();
     this.isDisabled = true;
-    this.loginsService.getUser(this.localUser)
+    this.loginsService.findOneUserByCredentials(this.localUser)
       .subscribe(data => {
         this.user = data;
         if (this.user) {

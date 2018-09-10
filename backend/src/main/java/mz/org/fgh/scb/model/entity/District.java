@@ -25,6 +25,8 @@ import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * A District is a definition of location where have an EPTS database installed, 
  * this location send backups every month to Headquarters
@@ -75,6 +77,7 @@ public class District {
 	/**
 	 * The District ironkeys
 	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "district-ironkeys")
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "district_ironkey", joinColumns = { @JoinColumn(name = "district_id", nullable = false, updatable = false) }, inverseJoinColumns = {
@@ -109,6 +112,7 @@ public class District {
 	/**
 	 * The District users
 	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "district-users")
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "districts")
 	private Set<User> users = new HashSet<User>(0);
@@ -145,6 +149,7 @@ public class District {
 	/**
 	 * The parent of this location
 	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "district-parent")
 	@JoinColumn(name = "parent_id")
 	@ManyToOne
@@ -155,7 +160,7 @@ public class District {
 	// -------------------------------------------------
 	public District() {
 		this.canceled = false;
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 	public Date getDate_canceled() {

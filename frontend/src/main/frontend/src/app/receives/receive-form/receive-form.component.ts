@@ -74,22 +74,22 @@ export class ReceiveFormComponent implements OnInit {
       this.title = uuid ? 'Receber Backup' : 'Editar Recepção de Backup';
       if (uuid) {
         this.isHidden = uuid ? 'hide' : 'hide';
-        this.sendsService.getSend(uuid)
+        this.sendsService.findOneSendByUuid(uuid)
           .subscribe(send => {
             this.send = send;
           });
-        this.transportersService.getTransportersPaginated(1, 1000000, "", "", false)
+        this.transportersService.findTransporters(1, 1000000, "", "", false)
           .subscribe(data => {
             this.alltransporters = data.content;
           });
       } else {
         //Edit here
         var uuidr = params['uuidr'];
-        this.receivesService.getReceive(uuidr)
+        this.receivesService.findOneReceiveByUuid(uuidr)
           .subscribe(receive => {
             this.receive = receive;
             if (this.receive.transporter != null) {
-              this.transportersService.getTransportersPaginated(1, 1000000, "", "", false)
+              this.transportersService.findTransporters(1, 1000000, "", "", false)
                 .subscribe(data => {
                   this.alltransporters = data.content;
                   var filteredtransporters = this.alltransporters;
@@ -109,7 +109,7 @@ export class ReceiveFormComponent implements OnInit {
                 });
             }
             else {
-              this.transportersService.getTransportersPaginated(1, 1000000, "", "", false)
+              this.transportersService.findTransporters(1, 1000000, "", "", false)
                 .subscribe(data => {
                   this.alltransporters = data.content;
                 });
@@ -192,7 +192,7 @@ export class ReceiveFormComponent implements OnInit {
                 } else {
 
                   userValue.created_by = user;
-                  result = this.receivesService.addReceive(userValue);
+                  result = this.receivesService.createReceive(userValue);
                   result.subscribe(data => this.router.navigate(['receives']));
                 }
 

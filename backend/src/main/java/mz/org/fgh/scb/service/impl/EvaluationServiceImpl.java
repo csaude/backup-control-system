@@ -36,8 +36,8 @@ public class EvaluationServiceImpl implements EvaluationService {
 	}
 
 	@Override
-	public Evaluation findByUuid(String uuid) {
-		return evaluationRepository.findByUuid(uuid);
+	public Evaluation findOneByUuid(String uuid) {
+		return evaluationRepository.findOneByUuid(uuid);
 	}
 
 	@Override

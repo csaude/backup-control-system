@@ -39,7 +39,7 @@ public interface IronkeyService {
 	 * @param uuid the uuid
 	 * @return the Ironkey with the given uuid
 	 */
-	Ironkey findByUuid(String uuid);
+	Ironkey findOneByUuid(String uuid);
 
 	/**
 	 * Returns all Ironkeys Paginated with given specification

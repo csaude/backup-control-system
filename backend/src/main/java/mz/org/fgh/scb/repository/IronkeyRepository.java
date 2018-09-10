@@ -23,6 +23,6 @@ public interface IronkeyRepository extends JpaRepository<Ironkey, Long>, JpaSpec
 	 * @param uuid the uuid
 	 * @return the Ironkey with the given uuid
 	 */
-	Ironkey findByUuid(String uuid);
+	Ironkey findOneByUuid(String uuid);
 
 }

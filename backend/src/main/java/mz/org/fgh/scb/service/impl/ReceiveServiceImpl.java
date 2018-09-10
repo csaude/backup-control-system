@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import mz.org.fgh.scb.model.entity.Receive;
 import mz.org.fgh.scb.model.entity.Send;
 import mz.org.fgh.scb.repository.ReceiveRepository;
+import mz.org.fgh.scb.repository.ResourceRepository;
 import mz.org.fgh.scb.service.api.ReceiveService;
 import mz.org.fgh.scb.service.api.SendService;
 
@@ -35,6 +36,9 @@ public class ReceiveServiceImpl implements ReceiveService {
 
 	@Autowired
 	ReceiveRepository receiveRepository;
+	
+	@Autowired
+	ResourceRepository resourceRepository;
 
 	@Autowired
 	private SendService sendService;
@@ -49,8 +53,8 @@ public class ReceiveServiceImpl implements ReceiveService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public Receive findByUuid(String uuid) {
-		return receiveRepository.findByUuid(uuid);
+	public Receive findOneByUuid(String uuid) {
+		return receiveRepository.findOneByUuid(uuid);
 	}
 
 	@Override
@@ -58,7 +62,7 @@ public class ReceiveServiceImpl implements ReceiveService {
 		if (receive.getReceive_id() == null) {
 			receive.setDate_created(new Date());
 			receive.setDate_updated(new Date());
-			old_send = sendService.findByUuid(receive.getSend().getUuid());
+			old_send = sendService.findOneByUuid(receive.getSend().getUuid());
 			old_send.setReceived(true);
 			sendService.save(old_send);
 			if (receive.isIk_returned() == true) {
@@ -87,7 +91,7 @@ public class ReceiveServiceImpl implements ReceiveService {
 					data_recepcao = dateFormat1.format(receive.getReceive_date());
 					district = receive.getSend().getDistrict().getNamef();
 					try {
-						String r1 = receiveRepository.findUsersForNotification(receive.getSend().getDistrict().getDistrict_id()).toString().replace("[", "");
+						String r1 = resourceRepository.findUsersForReceiveNotification(receive.getSend().getDistrict().getDistrict_id()).toString().replace("[", "");
 						String r2 = r1.replace("]", " ");
 						String[] temp;
 						String divisor = ", ";
@@ -122,11 +126,11 @@ public class ReceiveServiceImpl implements ReceiveService {
 			}).start();
 			logger.info(receive.getCreated_by().getUsername() + ", created Receive: " + receive.toString());
 		} else {
-			Receive old_receive = this.findByUuid(receive.getUuid());
+			Receive old_receive = this.findOneByUuid(receive.getUuid());
 			if (receive.isCanceled() == true) {
 				receive.setDate_canceled(new Date());
 				receive.setCanceled_by(receive.getUpdated_by());
-				old_send = sendService.findByUuid(receive.getSend().getUuid());
+				old_send = sendService.findOneByUuid(receive.getSend().getUuid());
 				old_send.setReceived(false);
 				sendService.save(old_send);
 			} else {
@@ -190,8 +194,8 @@ public class ReceiveServiceImpl implements ReceiveService {
 	}
 
 	@Override
-	public Receive findBySendUuid(String uuid) {
-		return receiveRepository.findBySendUuid(uuid);
+	public Receive findOneBySendUuid(String uuid) {
+		return receiveRepository.findOneBySendUuid(uuid);
 	}
 
 	@Override

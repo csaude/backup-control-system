@@ -12,7 +12,7 @@ import * as myGlobals from '../../../globals';
 */
 @Injectable()
 export class TransportersService {
-  public url: string = myGlobals.API_transporters;
+  public url: string = myGlobals.API;
   
      
   constructor(public http: Http) {
@@ -27,13 +27,13 @@ export class TransportersService {
    * @param role the Transporter role
    * @param canceled the lifecycle status
    */
-  getTransportersPaginated(page, size, name, role, canceled) {
+  findTransporters(page, size, name, role, canceled) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "?search=name:" + name + ",role~" + role + ",canceled~" + canceled+"&page=" + page + "&size=" + size, { headers: headers })
+    return this.http.get(this.url + "/transporters?search=name:" + name + ",role~" + role + ",canceled~" + canceled+"&page=" + page + "&size=" + size, { headers: headers })
       .map(res => res.json());
   }
 
@@ -42,13 +42,13 @@ export class TransportersService {
    * 
    * @param uuid Transporter uuid
    */
-  getTransporter(uuid) {
+  findOneTransporterByUuid(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.getTransporterUrl(uuid), { headers: headers })
+    return this.http.get(this.url + "/transporter/" + uuid, { headers: headers })
       .map(res => res.json());
   }
 
@@ -57,13 +57,13 @@ export class TransportersService {
    * 
    * @param transporter the Transporter
    */
-  addTransporter(transporter) {
+  createTransporter(transporter) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.post(this.url, JSON.stringify(transporter), { headers: headers });
+    return this.http.post(this.url + "/transporter", JSON.stringify(transporter), { headers: headers });
   }
 
   /**
@@ -77,7 +77,7 @@ export class TransportersService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.put(this.url, JSON.stringify(transporter), { headers: headers });
+    return this.http.put(this.url + "/transporter", JSON.stringify(transporter), { headers: headers });
   }
 
   /**
@@ -91,9 +91,7 @@ export class TransportersService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.delete(this.getTransporterUrl(uuid), { headers: headers });
+    return this.http.delete(this.url + "/transporter/" + uuid, { headers: headers });
   }
-  public getTransporterUrl(uuid) {
-    return this.url + "/" + uuid;
-  }
+
 }

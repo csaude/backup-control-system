@@ -12,7 +12,7 @@ import * as myGlobals from '../../../globals';
 */
 @Injectable()
 export class ReceivesService {
-  public url: string = myGlobals.API_receives;
+  public url: string = myGlobals.API;
 
    
   constructor(public http: Http) {
@@ -29,13 +29,13 @@ export class ReceivesService {
      * @param until the Backup date until
      * @param district the Send District id
      */
-    getAllReceivesPaginated(page, size, canceled, from, until, district) {
+    findAllReceives(page, size, canceled, from, until, district) {
       var headers: any = new Headers();
       var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
       var user = JSON.parse(window.sessionStorage.getItem('user'));
       headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
       headers.append('Content-Type', 'application/json');
-      return this.http.get(this.url + "?search=canceled~" + canceled + ",backupdate>" + from + ",backupdate<" + until + ",district:" + district + "&page=" + page + "&size=" + size, { headers: headers })
+      return this.http.get(this.url + "/receives?search=canceled~" + canceled + ",backupdate>" + from + ",backupdate<" + until + ",district:" + district + "&page=" + page + "&size=" + size, { headers: headers })
         .map(res => res.json());
     }
 
@@ -44,13 +44,13 @@ export class ReceivesService {
    * 
    * @param uuid the Receive uuid
    */
-  getReceive(uuid) {
+  findOneReceiveByUuid(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.getReceiveUrl(uuid), { headers: headers })
+    return this.http.get(this.url + "/receive/"+uuid, { headers: headers })
       .map(res => res.json());
   }
   /**
@@ -58,13 +58,13 @@ export class ReceivesService {
    * 
    * @param uuid the Send uuid
    */
-  getReceiveBySendUuid(uuid) {
+  findOneReceiveBySendUuid(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.getReceiveUrl3(uuid), { headers: headers })
+    return this.http.get(this.url + "/receive/send/"+uuid, { headers: headers })
       .map(res => res.json());
   }
 
@@ -73,13 +73,13 @@ export class ReceivesService {
    * 
    * @param receive the Receive 
    */
-  addReceive(receive) {
+  createReceive(receive) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.post(this.url, JSON.stringify(receive), { headers: headers });
+    return this.http.post(this.url + "/receive", JSON.stringify(receive), { headers: headers });
   }
 
   /**
@@ -93,7 +93,7 @@ export class ReceivesService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.put(this.url, JSON.stringify(receive), { headers: headers });
+    return this.http.put(this.url + "/receive", JSON.stringify(receive), { headers: headers });
   }
 
   /**
@@ -107,12 +107,7 @@ export class ReceivesService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.delete(this.getReceiveUrl(uuid), { headers: headers });
+    return this.http.delete(this.url + "/receive/"+uuid, { headers: headers });
   }
-  public getReceiveUrl(receive_id) {
-    return this.url + "/" + receive_id;
-  }
- public getReceiveUrl3(send_id) {
-    return this.url + "send/" + send_id;
-  }
+  
 }

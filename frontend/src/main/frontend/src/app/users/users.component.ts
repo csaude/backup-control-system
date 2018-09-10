@@ -46,7 +46,7 @@ export class UsersComponent implements OnInit {
   }
   getPage(page: number) {
     this.isHidden = "";
-    this.usersService.getUsersPaginated(page, 10, this.username, this.enabled)
+    this.usersService.findUsers(page, 10, this.username, this.enabled)
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;

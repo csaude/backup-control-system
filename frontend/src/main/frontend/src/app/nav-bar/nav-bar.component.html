@@ -12,14 +12,14 @@
       </mz-dropdown-item>
       <mz-dropdown-divider></mz-dropdown-divider>
       <mz-dropdown-item *ngIf="ROLE_SIS||ROLE_GMA||ROLE_OA">
-        <a (click)="setBackup()" routerLink="/receives">{{ "receive" | translate }}</a>
+        <a (click)="setBackup()" routerLink="/receives">{{ "receive" | translate }} <span *ngIf="ROLE_SIS&&total>0" class="new badge red" data-badge-caption="">{{total}}</span></a>
       </mz-dropdown-item>
     </mz-dropdown>
 
     <mz-dropdown [id]="'dropdown-demo4'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true" [dropdownButtonId]="'btn-dropdown-demo4'"
       [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300" [stopPropagation]="true" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
       <mz-dropdown-item *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
-        <a (click)="setSync()" routerLink="/syncs">{{ "records" | translate }}</a>
+        <a (click)="setSync()" routerLink="/syncs">{{ "records" | translate }} <span *ngIf="(ROLE_SIS||ROLE_ODMA)&&total2>0" class="new badge red" data-badge-caption="">{{total2}}</span></a>
       </mz-dropdown-item>
     </mz-dropdown>
 
@@ -52,7 +52,11 @@
     <mz-dropdown [id]="'dropdown-demo3'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true" [dropdownButtonId]="'btn-dropdown-demo3'"
       [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300" [stopPropagation]="true">
       <mz-dropdown-item>
-        <a (click)="setUser()" [routerLink]="['/users/details', user.uuid]">{{ "profile" | translate }}</a>
+        <a (click)="setUser()" [routerLink]="['/user/profile', user.uuid]">{{ "profile" | translate }}</a>
+      </mz-dropdown-item>
+      <mz-dropdown-divider></mz-dropdown-divider>
+      <mz-dropdown-item *ngIf="ROLE_SIS">
+        <a target="_blank" href="http://196.28.230.195:8080/scb_dev/swagger-ui.html">Rest Docs</a>
       </mz-dropdown-item>
       <mz-dropdown-divider></mz-dropdown-divider>
       <mz-dropdown-item>

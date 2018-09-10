@@ -81,22 +81,22 @@ export class DistrictFormComponent implements OnInit {
       this.title = uuid ? 'Editar Distrito' : 'Novo Distrito';
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
-        this.districtsService.getDistrictsPaginated(1,100000,"",false)
+        this.districtsService.findDistricts(1,100000,"",false)
           .subscribe(data => {
             this.alldistricts = data.content;
           });
-        this.ironkeysService.getIronkeysPaginated(1,100000,"","","","")
+        this.ironkeysService.findIronkeys(1,100000,"","","","")
           .subscribe(data => { this.allironkeys = data.content }, error => { },
             () => {
               this.disabled1 = false;
             });
         return;
       } else {
-        this.districtsService.getDistrict(uuid).subscribe(
+        this.districtsService.findOneDistrictByUuid(uuid).subscribe(
           district => {
             this.district = district;
             var districtik = district.ironkeysDistrict;
-            this.ironkeysService.getIronkeysPaginated(1,100000,"","","","")
+            this.ironkeysService.findIronkeys(1,100000,"","","","")
               .subscribe(data => {
                 this.allironkeys = data.content;
                 var filteredironkeys = this.allironkeys;
@@ -119,7 +119,7 @@ export class DistrictFormComponent implements OnInit {
                 });
               }, error => { },
                 () => {
-                  this.districtsService.getDistrictsPaginated(1,100000,"",false)
+                  this.districtsService.findDistricts(1,100000,"",false)
                     .subscribe(data => {
                       this.alldistricts = data.content;
                       if (this.district.parentdistrict != null) {
@@ -175,7 +175,7 @@ export class DistrictFormComponent implements OnInit {
       });
     } else {
       userValue.created_by = user;
-      result = this.districtsService.addDistrict(userValue);
+      result = this.districtsService.createDistrict(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {
           this.router.navigate(['districts']);

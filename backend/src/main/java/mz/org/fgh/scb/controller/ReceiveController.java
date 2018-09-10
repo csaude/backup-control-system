@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
 import mz.org.fgh.scb.model.entity.Receive;
 import mz.org.fgh.scb.service.impl.ReceiveServiceImpl;
 import mz.org.fgh.scb.specification.ReceiveSpecificationsBuilder;
@@ -34,13 +35,14 @@ import mz.org.fgh.scb.specification.ReceiveSpecificationsBuilder;
  */
 @RestController
 @RequestMapping("api")
+@Api(tags = {"Receive"})
 public class ReceiveController {
 
 	@Autowired
 	private ReceiveServiceImpl receiveServiceImpl;
 
 	@GetMapping(value = "/receives")
-	public Page<Receive> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
+	public Page<Receive> findReceives(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
 		ReceiveSpecificationsBuilder builder = new ReceiveSpecificationsBuilder();
 		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
 		Matcher matcher = pattern.matcher(search + ",");
@@ -56,9 +58,9 @@ public class ReceiveController {
 		return pageReceive;
 	}
 
-	@PostMapping(value = "/receives")
+	@PostMapping(value = "/receive")
 	@ResponseBody
-	public String create(@RequestBody Receive receive) {
+	public String createReceive(@RequestBody Receive receive) {
 		try {
 			receiveServiceImpl.save(receive);
 			return "Success";
@@ -68,22 +70,22 @@ public class ReceiveController {
 		}
 	}
 
-	@GetMapping(value = "/receives/{uuid}")
-	public Receive getReceive(@PathVariable String uuid) throws Exception {
-		return receiveServiceImpl.findByUuid(uuid);
+	@GetMapping(value = "/receive/{uuid}")
+	public Receive findOneReceiveByUuid(@PathVariable String uuid) throws Exception {
+		return receiveServiceImpl.findOneByUuid(uuid);
 	}
 	
-	@GetMapping(value = "/receivessend/{uuid}")
-	public Object findBySendUuid(@PathVariable String uuid) throws Exception {
-		return receiveServiceImpl.findBySendUuid(uuid);
+	@GetMapping(value = "/receive/send/{uuid}")
+	public Object findOneReceiveBySendUuid(@PathVariable String uuid) throws Exception {
+		return receiveServiceImpl.findOneBySendUuid(uuid);
 	}
 
-	@DeleteMapping(value = "/receives/{uuid}")
+	@DeleteMapping(value = "/receive/{uuid}")
 	@ResponseBody
 	public Object deleteReceive(@PathVariable String uuid) throws Exception {
 		Receive receive = null;
 		try {
-			receive = receiveServiceImpl.findByUuid(uuid);
+			receive = receiveServiceImpl.findOneByUuid(uuid);
 			receiveServiceImpl.delete(receive);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -91,9 +93,9 @@ public class ReceiveController {
 		return receive;
 	}
 
-	@PutMapping(value = "/receives")
+	@PutMapping(value = "/receive")
 	@ResponseBody
-	public String update(@RequestBody Receive receive) throws Exception {
+	public String updateReceive(@RequestBody Receive receive) throws Exception {
 		try {
 			receiveServiceImpl.save(receive);
 			return "Success";

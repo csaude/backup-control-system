@@ -109,12 +109,12 @@ export class UserDetailsFormComponent implements OnInit {
         return;
       } else {
         this.isHidden2 = 'hide';
-        this.usersService.getUserByUuid(uuid).subscribe(
+        this.usersService.findOneUserByUuid(uuid).subscribe(
           user2 => {
             this.user = user2;
             var userdistrict = this.user.districts;
             var userauthority = this.user.authorities;
-            this.districtsService.getDistrictsPaginated(1,100000,"",false)
+            this.districtsService.findDistricts(1,100000,"",false)
               .subscribe(data => {
                   this.alldistricts = data.content;
                 var filtereddistricts = this.alldistricts;
@@ -136,7 +136,7 @@ export class UserDetailsFormComponent implements OnInit {
                   return 0;
                 });
               });
-            this.authoritiesService.getAuthorities()
+            this.authoritiesService.findAllAuthorities()
               .subscribe(data => {
                   this.allauthorities = data;
                 var filteredauthorities = this.allauthorities;

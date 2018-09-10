@@ -20,6 +20,8 @@ import javax.persistence.SequenceGenerator;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * A Receive is a definition of all backups that have been 
  * Received on Headquarter.
@@ -30,66 +32,127 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Entity(name = "receive")
 public class Receive {
 
+	/**
+	 * The Receive id
+	 */
 	@Id
 	@SequenceGenerator(name = "seq_receive", initialValue = 1)
 	@GeneratedValue(generator = "seq_receive", strategy = GenerationType.AUTO)
 	private Long receive_id;
 
+	/**
+	 *  The Receive Send {@link Send}
+	 */
 	@JoinColumn(name = "send_id")
 	@ManyToOne
 	private Send send;
 
+	/**
+	 * The Receive receive date
+	 */
 	@Column(nullable = false)
 	private Date receive_date;
 
+	/**
+	 * The Receive observation
+	 */
 	private String observation;
 
+	/**
+	 * Indicates if the Ironkey is returned to the District
+	 */
 	@Column(nullable = false)
 	private boolean ik_returned;
 
+	/**
+	 * The Receive date that Ironkey is returned
+	 */
 	private Date date_ik_returned;
 
+	/**
+	 * The Receive Transporter {@link Transporter}
+	 */
 	@JoinColumn(name = "transporter_id")
 	@ManyToOne
 	private Transporter transporter;
 
+	/**
+	 * The Receive date created
+	 */
 	@Column(nullable = false)
 	private Date date_created;
 
+	/**
+	 * The Receive date updated
+	 */
 	private Date date_updated;
 
+	/**
+	 * The User that created this Receive {@link User}
+	 */
 	@JoinColumn(name = "created_by")
 	@ManyToOne
 	private User created_by;
 
+	/**
+	 * The User that updated this Receive {@link User}
+	 */
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
 
+	/**
+	 * The Receive uuid
+	 */
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
+	/**
+	 * The Receive date canceled
+	 */
 	private Date date_canceled;
 
+	/**
+	 * Indicates if this receive is canceled or not
+	 */
 	@Column(nullable = false)
 	private boolean canceled;
 
+	/**
+	 * date restored
+	 */
 	private Date date_restored;
 
+	/**
+	 * Indicates if the backup received is restored or not
+	 */
 	@Column(nullable = false)
 	private boolean restored;
 
+	/**
+	 * The Receive canceled reason
+	 */
 	private String canceled_reason;
 
+	/**
+	 * The User that canceld this Receive {@link User}
+	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "receive-canceled_by")
 	@JoinColumn(name = "canceled_by")
 	@ManyToOne
 	private User canceled_by;
 
+	/**
+	 * The User that restored the backup of this Receive {@link User}
+	 */
 	@JoinColumn(name = "restored_by")
 	@ManyToOne
 	private User restored_by;
 
+	/**
+	 * The User that returned the Ironkey of this Receive {@link User}
+	 */
 	@JoinColumn(name = "ik_returned_by")
 	@ManyToOne
 	private User ik_returned_by;
@@ -99,7 +162,7 @@ public class Receive {
 	// -------------------------------------------------
 	public Receive() {
 		this.canceled = false;
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 	public Long getReceive_id() {

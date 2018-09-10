@@ -7,8 +7,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { NavbarService } from './nav-bar.service';
 import { TranslateService } from 'ng2-translate';
-import { SendsService } from "../sends/shared/sends.service";
-import { SyncsService } from "../syncs/shared/syncs.service";
+import { ResourcesService } from "./../resources/shared/resources.service";
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
@@ -33,8 +32,7 @@ export class NavBarComponent implements OnInit {
     public route: ActivatedRoute,
     public nav: NavbarService,
     public translate: TranslateService,
-    public sendsService: SendsService,
-    public syncsService: SyncsService
+    public resourcesService: ResourcesService
   ) {
 
     translate.addLangs(['pt', 'en']);
@@ -53,7 +51,7 @@ export class NavBarComponent implements OnInit {
     clearInterval(this.nIntervId2);
     clearInterval(this.nIntervId3);
     if (this.ROLE_SIS) {
-      this.sendsService.getSendsNotReceivedNum()
+      this.resourcesService.findOneSendByUuidsNotReceivedNum()
         .subscribe(data => {
           this.total = data;
         },
@@ -69,7 +67,7 @@ export class NavBarComponent implements OnInit {
           }
         );
 
-      this.syncsService.getSyncsInProgress()
+      this.resourcesService.findSyncsInProgress()
         .subscribe(data => {
           this.total2 = data;
         },
@@ -87,7 +85,7 @@ export class NavBarComponent implements OnInit {
     }
 
     else if (this.ROLE_ODMA) {
-      this.syncsService.getSyncsInProgressByUser()
+      this.resourcesService.findSyncsInProgressByUser()
         .subscribe(data => {
           this.total2 = data;
         },
@@ -176,7 +174,7 @@ export class NavBarComponent implements OnInit {
     if (window.sessionStorage.getItem('authenticated')) {
       this.isAuth = true;
       this.translate.use(this.user.locale);
-      if (this.ROLE_SIS) {
+      if (this.ROLE_SIS|| this.ROLE_ODMA) {
         this.callFuntionAtIntervals();
         this.nIntervId = setInterval(() => {
           this.callFuntionAtIntervals();

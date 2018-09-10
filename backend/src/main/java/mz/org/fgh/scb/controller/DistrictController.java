@@ -4,7 +4,6 @@
  */
 package mz.org.fgh.scb.controller;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import io.swagger.annotations.Api;
 import mz.org.fgh.scb.model.entity.District;
 import mz.org.fgh.scb.service.impl.DistrictServiceImpl;
 import mz.org.fgh.scb.specification.DistrictSpecificationsBuilder;
@@ -41,13 +41,14 @@ import mz.org.fgh.scb.specification.DistrictSpecificationsBuilder;
  */
 @RestController
 @RequestMapping("api")
+@Api(tags = {"District"})
 public class DistrictController {
 
 	@Autowired
 	private DistrictServiceImpl districtServiceImpl;
 	
 	@GetMapping(value = "/districts")
-	public Page<District> findAll(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
+	public Page<District> findDistricts(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
 		DistrictSpecificationsBuilder builder = new DistrictSpecificationsBuilder();
 		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
 		Matcher matcher = pattern.matcher(search + ",");
@@ -63,14 +64,14 @@ public class DistrictController {
 		return pageDistrict;
 	}
 	
-	@GetMapping(value = "/districts/{uuid}")
-	public District findByUuid(@PathVariable String uuid) throws Exception {
-		return districtServiceImpl.findByUuid(uuid);
+	@GetMapping(value = "/district/{uuid}")
+	public District findOneDistrictByUuid(@PathVariable String uuid) throws Exception {
+		return districtServiceImpl.findOneByUuid(uuid);
 	}
 	
-	@PostMapping(value = "/districts")
+	@PostMapping(value = "/district")
 	@ResponseBody
-	public String create(@RequestBody District district) {
+	public String createDistrict(@RequestBody District district) {
 		try {
 			districtServiceImpl.save(district);
 			return "Success";
@@ -80,12 +81,12 @@ public class DistrictController {
 		}
 	}
 
-	@DeleteMapping(value = "/districts/{uuid}")
+	@DeleteMapping(value = "/district/{uuid}")
 	@ResponseBody
-	public String delete(@PathVariable String uuid) throws Exception {
+	public String deleteDistrict(@PathVariable String uuid) throws Exception {
 		District district = null;
 		try {
-			district = districtServiceImpl.findByUuid(uuid);
+			district = districtServiceImpl.findOneByUuid(uuid);
 			districtServiceImpl.delete(district);
 			return "Success";
 		} catch (Exception ex) {
@@ -94,9 +95,9 @@ public class DistrictController {
 		}
 	}
 
-	@PutMapping(value = "/districts")
+	@PutMapping(value = "/district")
 	@ResponseBody
-	public String update(@RequestBody District district) throws Exception {
+	public String updateDistrict(@RequestBody District district) throws Exception {
 		try {
 			districtServiceImpl.save(district);
 			return "Success";
@@ -106,9 +107,9 @@ public class DistrictController {
 		}
 	}
 	
-	@GetMapping(value = "/districts/{uuid}/{evaluation}")
-	public Object evaluate(@PathVariable String uuid, @PathVariable String evaluation) {
-		District district = districtServiceImpl.findByUuid(uuid);
+	@GetMapping(value = "/district/{uuid}/{evaluation}")
+	public Object evaluateDistrict(@PathVariable String uuid, @PathVariable String evaluation) {
+		District district = districtServiceImpl.findOneByUuid(uuid);
 		String plainCreds = district.getInstance_username() + ":" + district.getInstance_password();
 		byte[] plainCredsBytes = plainCreds.getBytes();
 		byte[] base64CredsBytes = Base64.encode(plainCredsBytes);
@@ -121,39 +122,5 @@ public class DistrictController {
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
 		return response.getBody();
 	}
-	
-	//-------------------------------------------------
-	//INFO FOR DASHBOARD
-	//-------------------------------------------------
-	@GetMapping(value = "/districtsreceiveinfo")
-	public List<Object[]> findLastBackupReceivedByDistrict() {
-		return districtServiceImpl.findLastBackupReceivedByDistrict();
-	}
-
-	@GetMapping(value = "/districtsrestoreinfo")
-	public List<Object[]> findLastBackupRestoredByDistrict() {
-		return districtServiceImpl.findLastBackupRestoredByDistrict();
-	}
-	
-	@GetMapping(value = "/districtssyncinfo")
-	public List<Object[]> findLastSyncByDistrict() {
-		return districtServiceImpl.findLastSyncByDistrict();
-	}
-
-	@GetMapping(value = "/districtsreceivedpreviousmonth")
-	public List<Object[]> findBackupReceivedByDistrictOnPreviousMonth() {
-		return districtServiceImpl.findBackupReceivedByDistrictOnPreviousMonth();
-	}
-
-	@GetMapping(value = "/districtsreceivedthismonth")
-	public List<Object[]> findBackupReceivedByDistrictOnThisMonth() {
-		return districtServiceImpl.findBackupReceivedByDistrictOnThisMonth();
-	}
-
-	@GetMapping(value = "/districtsreceivedlastmonths")
-	public List<Object[]> findBackupReceivedOnLast12Months() {
-		return districtServiceImpl.findBackupReceivedOnLast12Months();
-	}
-
 	
 }

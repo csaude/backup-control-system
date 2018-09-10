@@ -74,7 +74,7 @@
             <i class="material-icons icon-green">assessment</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/districts', district.uuid]"
+          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/district', district.uuid]"
             *ngIf="ROLE_SIS">
             <i class="material-icons icon-orange">mode_edit</i>
           </a>
@@ -134,7 +134,7 @@
           <tbody>
             <tr *ngFor="let ironkey of district.ironkeysDistrict">
               <td>
-                <a (click)="basicModal2.close()" [routerLink]="['/ironkeys', ironkey.uuid]" class="waves-effect waves-teal">
+                <a (click)="basicModal2.close()" [routerLink]="['/ironkey', ironkey.uuid]" class="waves-effect waves-teal">
                   <span class="orange-text text-darken-3">{{ ironkey.serial }}</span>
                 </a>
               </td>
@@ -514,7 +514,7 @@
 
 <div class="fixed-action-btn" style="bottom: 20px; right: 20px;" *ngIf="ROLE_SIS">
   <a mz-tooltip [tooltip]="'Adicionar Distrito'" [position]="'top'" [html]="false" [delay]="100" class="btn-floating  btn-large waves-effect waves-light green"
-    routerLink="/districts/new">
+    routerLink="/district/new">
     <i class="material-icons">add</i>
   </a>
 </div>

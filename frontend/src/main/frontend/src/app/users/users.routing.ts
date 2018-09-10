@@ -11,9 +11,9 @@ import { AuthManagerUsersEdit } from './authmanageredit';
 
 const usersRoutes: Routes = [
   { path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [AuthManagerUsersRead] },
-  { path: 'users/new', component: UserFormComponent, canActivate: [AuthManagerUsersEdit] },
-  { path: 'users/:uuid', component: UserFormComponent, canActivate: [AuthManagerUsersEdit] },
-  { path: 'users/details/:uuid', component: UserDetailsFormComponent }
+  { path: 'user/new', component: UserFormComponent, canActivate: [AuthManagerUsersEdit] },
+  { path: 'user/:uuid', component: UserFormComponent, canActivate: [AuthManagerUsersEdit] },
+  { path: 'user/profile/:uuid', component: UserDetailsFormComponent }
 ];
 
 /** 

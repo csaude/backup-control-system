@@ -1,6 +1,3 @@
-/**
- * 
- */
 package mz.org.fgh.scb.model.entity;
 
 /**

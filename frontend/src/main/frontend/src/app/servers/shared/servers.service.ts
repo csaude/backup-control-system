@@ -12,24 +12,11 @@ import * as myGlobals from '../../../globals';
 */
 @Injectable()
 export class ServersService {
-  public url: string = myGlobals.API_servers;
-
+  public url: string = myGlobals.API;
 
   constructor(public http: Http) {
   }
 
-  /*
-  *Return last sync by Server
-  */
-  getServersSyncInfo() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'syncinfo', { headers: headers })
-      .map(res => res.json());
-  }
   /**
    * Returns all Servers paginated with the given district, name or lifecycle status
    * 
@@ -40,13 +27,13 @@ export class ServersService {
    * @param canceled the lifecycle status (canceled or not canceled)
    * @param type the Server type
    */
-  getServersPaginated(page, size, district, name, canceled, type) {
+  findServers(page, size, district, name, canceled, type) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "?search=district~" + district + ",name:" + name + ",canceled!" + canceled + ",type!" + type+",user>user&page="+page+"&size=" + size, { headers: headers })
+    return this.http.get(this.url + "/servers?search=district~" + district + ",name:" + name + ",canceled!" + canceled + ",type!" + type+",user>user&page="+page+"&size=" + size, { headers: headers })
       .map(res => res.json());
   }
 
@@ -55,81 +42,28 @@ export class ServersService {
    * 
    * @param uuid the Server uuid
    */
-  getServer(uuid) {
+  findOneServerByUuid(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.getServerUrl(uuid), { headers: headers })
+    return this.http.get(this.url + "/server/"+uuid, { headers: headers })
       .map(res => res.json());
   }
-
-
-  /**
-   * Returns number of Syncs that occured by Server on previous week
-   */
-  getSyncsPW() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'syncspreviousweek', { headers: headers })
-      .map(res => res.json());
-  }
-
-  /**
-   * Returns number of Syncs that occured by Server on this week
-   */
-  getSyncsTW() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'syncsthisweek', { headers: headers })
-      .map(res => res.json());
-  }
-
-  /**
-   * Returns number Syncs remaining items by Server on previous week
-   */
-  getSyncsItemsPW() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'syncsitemspreviousweek', { headers: headers })
-      .map(res => res.json());
-  }
-
-  /**
-     * Returns number Syncs remaining items by Server on this week
-     */
-  getSyncsItemsTW() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'syncsitemsthisweek', { headers: headers })
-      .map(res => res.json());
-  }
-
+  
   /**
    * Add new Server
    * 
    * @param server the Server
    */
-  addServer(server) {
+  createServer(server) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.post(this.url, JSON.stringify(server), { headers: headers });
+    return this.http.post(this.url + "/server", JSON.stringify(server), { headers: headers });
   }
 
   /**
@@ -143,7 +77,7 @@ export class ServersService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.put(this.url, JSON.stringify(server), { headers: headers });
+    return this.http.put(this.url + "/server", JSON.stringify(server), { headers: headers });
   }
 
   /**
@@ -157,9 +91,8 @@ export class ServersService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.delete(this.getServerUrl(uuid), { headers: headers });
+    return this.http.delete(this.url + "/server/"+uuid, { headers: headers });
   }
-  public getServerUrl(server_id) {
-    return this.url + "/" + server_id;
-  }
+  
+ 
 }

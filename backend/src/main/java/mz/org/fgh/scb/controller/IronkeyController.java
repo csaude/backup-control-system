@@ -11,17 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
 import mz.org.fgh.scb.model.entity.Ironkey;
 import mz.org.fgh.scb.service.impl.IronkeyServiceImpl;
 import mz.org.fgh.scb.specification.IronkeySpecificationsBuilder;
@@ -34,13 +35,14 @@ import mz.org.fgh.scb.specification.IronkeySpecificationsBuilder;
  */
 @RestController
 @RequestMapping("api")
+@Api(tags = {"Ironkey"})
 public class IronkeyController {
 
 	@Autowired
 	private IronkeyServiceImpl ironkeyServiceImpl;
 
 	@GetMapping(value = "/ironkeys")
-	public Page<Ironkey> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
+	public Page<Ironkey> findIronkeys(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
 		
 		IronkeySpecificationsBuilder builder = new IronkeySpecificationsBuilder();
 		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
@@ -57,9 +59,9 @@ public class IronkeyController {
 		return pageIronkey;
 	}
 
-	@PostMapping(value = "/ironkeys")
+	@PostMapping(value = "/ironkey")
 	@ResponseBody
-	public String create(@RequestBody Ironkey ironkey) {
+	public String createIronkey(@RequestBody Ironkey ironkey) {
 		try {
 			ironkeyServiceImpl.save(ironkey);
 		} catch (Exception ex) {
@@ -69,17 +71,17 @@ public class IronkeyController {
 		return "Success";
 	}
 
-	@GetMapping(value = "/ironkeys/{uuid}")
-	public Ironkey getIronkey(@PathVariable String uuid) throws Exception {
-		return ironkeyServiceImpl.findByUuid(uuid);
+	@GetMapping(value = "/ironkey/{uuid}")
+	public Ironkey findOneIronkeyByUuid(@PathVariable String uuid) throws Exception {
+		return ironkeyServiceImpl.findOneByUuid(uuid);
 	}
 
-	@RequestMapping(value = "/ironkeys/{uuid}", method = RequestMethod.DELETE)
+	@DeleteMapping(value = "/ironkey/{uuid}")
 	@ResponseBody
 	public String deleteIronkey(@PathVariable String uuid) throws Exception {
 		Ironkey ironkey = null;
 		try {
-			ironkey = ironkeyServiceImpl.findByUuid(uuid);
+			ironkey = ironkeyServiceImpl.findOneByUuid(uuid);
 			ironkeyServiceImpl.delete(ironkey);
 			return "Success";
 		} catch (Exception ex) {
@@ -88,9 +90,9 @@ public class IronkeyController {
 		}
 	}
 
-	@PutMapping(value = "/ironkeys")
+	@PutMapping(value = "/ironkey")
 	@ResponseBody
-	public String update(@RequestBody Ironkey ironkey) throws Exception {
+	public String updateIronkey(@RequestBody Ironkey ironkey) throws Exception {
 		try {
 			ironkeyServiceImpl.save(ironkey);
 			return "Success";

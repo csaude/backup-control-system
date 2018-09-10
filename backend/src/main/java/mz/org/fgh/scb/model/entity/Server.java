@@ -21,8 +21,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 /**
- * A Server is a definition of all Sync Computers that 
- * Send and receive data from a Parent Server
+ * A Server is a definition of Server that 
+ * exchange data with another Server
  * 
  * @author Damasceno Lopes
  *
@@ -31,47 +31,89 @@ import javax.persistence.UniqueConstraint;
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "district_id" }) })
 public class Server {
 
+	/**
+	 * The Server id
+	 */
 	@Id
 	@SequenceGenerator(name = "seq_server", initialValue = 1)
 	@GeneratedValue(generator = "seq_server", strategy = GenerationType.AUTO)
 	private Long server_id;
 
+	/**
+	 * The Server name
+	 */
 	@Column(nullable = false)
 	private String name;
 
+	/**
+	 * District {@link District}
+	 */
 	@JoinColumn(name = "district_id")
 	@ManyToOne
 	private District district;
 
+	/**
+	 * The Server type
+	 */
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private ServerType type;
 
+	/**
+	 * The Server observation
+	 */
 	private String observation;
 
+	/**
+	 * The Server uuid
+	 */
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
+	/**
+	 * The Server date created
+	 */
 	@Column(nullable = false)
 	private Date date_created;
 
+	/**
+	 * The Server date updated
+	 */
 	private Date date_updated;
 
+	/**
+	 * The User that created this Server {@link User}
+	 */
 	@JoinColumn(name = "created_by")
 	@ManyToOne
 	private User created_by;
 
+	/**
+	 * The User that updated this Server {@link User}
+	 */
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
 
+	/**
+	 * Indicates if this Server is canceled or not
+	 */
 	@Column(nullable = false)
 	private boolean canceled;
 
+	/**
+	 * The Server canceled reason
+	 */
 	private String canceled_reason;
 
+	/**
+	 * The Server date canceled
+	 */
 	private Date date_canceled;
 
+	/**
+	 * The User that canceled this Server {@link User}
+	 */
 	@JoinColumn(name = "canceled_by")
 	@ManyToOne
 	private User canceled_by;
@@ -80,7 +122,7 @@ public class Server {
 	// Constructors
 	// -------------------------------------------------
 	public Server() {
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 	public Long getServer_id() {

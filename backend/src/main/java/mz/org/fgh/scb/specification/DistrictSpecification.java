@@ -58,7 +58,7 @@ public class DistrictSpecification implements Specification<District> {
         }
         else if (criteria.getOperation().equalsIgnoreCase("!")) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
+		String loggedUsername = authentication.getName();
 		
 		if(authentication.getAuthorities().toString().contains("ROLE_SIS")||authentication.getAuthorities().toString().contains("ROLE_GMA")||authentication.getAuthorities().toString().contains("OA")||authentication.getAuthorities().toString().contains("IT")) {
 			
@@ -69,7 +69,7 @@ public class DistrictSpecification implements Specification<District> {
          Root<User> user = userSubQuery.from(User.class);
          Expression<Set<District>> userDistricts = user.get("districts");
          userSubQuery.select(user);
-         userSubQuery.where(builder.equal(user.get("username"), currentPrincipalName), builder.isMember(district, userDistricts));
+         userSubQuery.where(builder.equal(user.get("username"), loggedUsername), builder.isMember(district, userDistricts));
          
          return builder.exists(userSubQuery);
 		

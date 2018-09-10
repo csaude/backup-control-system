@@ -39,7 +39,7 @@ public interface UserService {
 	 * @param uuid the uuid
 	 * @return the User with the given uuid
 	 */
-	User findByUuid(String uuid);
+	User findOneByUuid(String uuid);
 
 	/**
 	 * Returns the User with the given username

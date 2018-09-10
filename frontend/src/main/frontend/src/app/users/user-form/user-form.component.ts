@@ -97,7 +97,7 @@ export class UserFormComponent implements OnInit {
       this.title = uuid ? 'Editar Utilizador' : 'Novo Utilizador';
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
-        this.districtsService.getDistrictsPaginated(1,100000,"",false)
+        this.districtsService.findDistricts(1,100000,"",false)
           .subscribe(data => {
             this.alldistricts = data.content;
           }, error => { },
@@ -105,7 +105,7 @@ export class UserFormComponent implements OnInit {
               this.disabled1 = false;
             }
           );
-        this.authoritiesService.getAuthorities()
+        this.authoritiesService.findAllAuthorities()
           .subscribe(data => {
             this.allauthorities = data;
           }, error => { },
@@ -116,12 +116,12 @@ export class UserFormComponent implements OnInit {
         return;
       } else {
         this.isHidden2 = 'hide';
-        this.usersService.getUserByUuid(uuid).subscribe(
+        this.usersService.findOneUserByUuid(uuid).subscribe(
           user2 => {
             this.user = user2;
             var userdistrict = this.user.districts;
             var userauthority = this.user.authorities;
-            this.districtsService.getDistrictsPaginated(1,100000,"",false)
+            this.districtsService.findDistricts(1,100000,"",false)
               .subscribe(data => {
                 this.alldistricts = data.content;
                 var filtereddistricts = this.alldistricts;
@@ -146,7 +146,7 @@ export class UserFormComponent implements OnInit {
                 () => {
                   this.disabled2 = false;
                 });
-            this.authoritiesService.getAuthorities()
+            this.authoritiesService.findAllAuthorities()
               .subscribe(data => {
                 this.allauthorities = data;
                 var filteredauthorities = this.allauthorities;
@@ -214,10 +214,10 @@ export class UserFormComponent implements OnInit {
         this.showMsgErr2();
         this.isDisabled = false;
       } else {
-        this.usersService.getUserByUuid(userLogged.uuid).subscribe(
+        this.usersService.findOneUserByUuid(userLogged.uuid).subscribe(
           userReturned => {
             userValue.created_by = userReturned;
-            result = this.usersService.addUser(userValue);
+            result = this.usersService.createUser(userValue);
             result.subscribe(data => {
               if (data.text() == "Success") {
                 this.router.navigate(['users']);

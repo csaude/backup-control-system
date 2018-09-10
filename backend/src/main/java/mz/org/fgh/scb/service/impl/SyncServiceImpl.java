@@ -20,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import mz.org.fgh.scb.model.entity.Sync;
+import mz.org.fgh.scb.repository.ResourceRepository;
 import mz.org.fgh.scb.repository.SyncRepository;
 import mz.org.fgh.scb.service.api.SyncService;
 
@@ -32,6 +33,9 @@ public class SyncServiceImpl implements SyncService {
 
 	@Autowired
 	SyncRepository syncRepository;
+	
+	@Autowired
+	ResourceRepository resourceRepository;
 
 	@Autowired
 	private Environment env;
@@ -41,8 +45,8 @@ public class SyncServiceImpl implements SyncService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public Sync findByUuid(String uuid) {
-		return syncRepository.findByUuid(uuid);
+	public Sync findOneByUuid(String uuid) {
+		return syncRepository.findOneByUuid(uuid);
 	}
 
 	@Override
@@ -67,9 +71,9 @@ public class SyncServiceImpl implements SyncService {
 			start_items_to_receive = sync.getStart_items_to_receive()+"";
 			
 			if (sync.isSync_error() == true) {
-				error = "Sim";
+				error = sync.getSyncerror().replaceAll("\n", "<br>");
 			} else {
-				error = "Não";
+				error = "";
 			}
 			
 			obs = sync.getObservations();
@@ -86,7 +90,7 @@ public class SyncServiceImpl implements SyncService {
 					email.setAuthenticator(new DefaultAuthenticator("scb.fgh@gmail.com", "Pepfar2014"));
 					email.setSSLOnConnect(true);
 					try {
-						String r1 = syncRepository.findUsersForNotification(sync.getServer().getDistrict().getDistrict_id()).toString().replace("[", "");
+						String r1 = resourceRepository.findUsersForSyncNotification(sync.getServer().getDistrict().getDistrict_id()).toString().replace("[", "");
 						String r2 = r1.replace("]", " ");
 						String[] temp;
 						String divisor = ", ";
@@ -122,7 +126,7 @@ public class SyncServiceImpl implements SyncService {
 								+ "<tr><td bgcolor='#F3F3F3'>Duração:</td><td>" + duration + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Nº de itens por enviar<br>na hora inicial</td><td>" + start_items_to_send+" por enviar<br>"+start_items_to_receive + " por receber</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Nº de itens por enviar<br>na hora final</td><td>" + end_items_to_send+"<br>"+end_items_to_receive + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Encontrou erro<br>ao sincronizar?</td><td>" + error + "</td></tr>"
+								+ "<tr><td bgcolor='#F3F3F3'>Ocorrências:</td><td>" + error + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Estado final:</td><td>" + final_state + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3' aling='top'>Observação:</td><td>" + obs
 								+ "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Sincronização<br>iniciada por:</td><td>"
@@ -188,9 +192,9 @@ public class SyncServiceImpl implements SyncService {
 				start_items_to_receive = sync.getStart_items_to_receive()+"";
 				
 				if (sync.isSync_error() == true) {
-					error = "Sim";
+					error = sync.getSyncerror().replaceAll("\n", "<br>");
 				} else {
-					error = "Não";
+					error = "";
 				}
 				
 				obs = sync.getObservations();
@@ -207,7 +211,7 @@ public class SyncServiceImpl implements SyncService {
 						email.setAuthenticator(new DefaultAuthenticator("scb.fgh@gmail.com", "Pepfar2014"));
 						email.setSSLOnConnect(true);
 						try {
-							String r1 = syncRepository.findUsersForNotification(sync.getServer().getDistrict().getDistrict_id()).toString().replace("[", "");
+							String r1 = resourceRepository.findUsersForSyncNotification(sync.getServer().getDistrict().getDistrict_id()).toString().replace("[", "");
 							String r2 = r1.replace("]", " ");
 							String[] temp;
 							String divisor = ", ";
@@ -246,7 +250,7 @@ public class SyncServiceImpl implements SyncService {
 									+ "<tr><td bgcolor='#F3F3F3'>Duração:</td><td>" + duration + "</td></tr>"
 									+ "<tr><td bgcolor='#F3F3F3'>Nº de itens por enviar<br>na hora inicial</td><td>" + start_items_to_send+" por enviar<br>"+start_items_to_receive + " por receber</td></tr>"
 									+ "<tr><td bgcolor='#F3F3F3'>Nº de itens por enviar<br>na hora final</td><td>" + end_items_to_send+"<br>"+end_items_to_receive + "</td></tr>"
-									+ "<tr><td bgcolor='#F3F3F3'>Encontrou erro<br>ao sincronizar?</td><td>" + error + "</td></tr>"
+									+ "<tr><td bgcolor='#F3F3F3'>Ocorrências:</td><td>" + error + "</td></tr>"
 									+ "<tr><td bgcolor='#F3F3F3'>Estado final:</td><td>" + final_state + "</td></tr>"
 									+ "<tr><td bgcolor='#F3F3F3' aling='top'>Observação:</td><td>" + obs
 									+ "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Sincronização<br>iniciada por:</td><td>"
@@ -276,7 +280,6 @@ public class SyncServiceImpl implements SyncService {
 			if (sync.getUpdated_by() != null) {
 				logger.info(sync.getUpdated_by().getUsername() + ", updated Sync: " + sync.toString());
 			}
-
 			
 		}
 		
@@ -287,14 +290,6 @@ public class SyncServiceImpl implements SyncService {
 	public void delete(Sync sync) {
 		logger.info("Deleted Sync: " + sync.toString());
 		syncRepository.delete(sync);
-	}
-
-	public int findInProgress() {
-		return syncRepository.findInProgress();
-	}
-	
-	public int findInProgressByUser(String username) {
-		return syncRepository.findInProgressByUser(username);
 	}
 
 	@Override

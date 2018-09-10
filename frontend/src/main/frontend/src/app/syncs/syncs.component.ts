@@ -98,7 +98,7 @@ export class SyncsComponent implements OnInit {
 
     } else {
 
-      this.districtsService.getDistrictsPaginated(1, 100000, "", false)
+      this.districtsService.findDistricts(1, 100000, "", false)
         .subscribe(data => {
           var filteredd = data.content.filter(item => item.parentdistrict == null);
           this.alldistricts = filteredd;
@@ -107,7 +107,7 @@ export class SyncsComponent implements OnInit {
     }
 
     this.disabled1 = true;
-        this.serversService.getServersPaginated(1, 10000000, "", "", false, "")
+        this.serversService.findServers(1, 10000000, "", "", false, "")
           .subscribe(data => {
             this.allservers = data.content;
             this.allserversfd=data.content;
@@ -121,7 +121,7 @@ export class SyncsComponent implements OnInit {
 
   getPage(page: number) {
     this.isHidden = "";
-    this.syncsService.getSyncs(page, 10, this.district_id, this.server_id, this.from, this.until)
+    this.syncsService.findSyncs(page, 10, this.district_id, this.server_id, this.from, this.until)
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
@@ -168,7 +168,7 @@ export class SyncsComponent implements OnInit {
     if (userValue.district == "all" || userValue.district == null) {
       this.district_id = "";
       this.disabled1 = true;
-        this.serversService.getServersPaginated(1, 10000000, "", "", false, "")
+        this.serversService.findServers(1, 10000000, "", "", false, "")
           .subscribe(data => {
             this.allservers = data.content;
             this.allserversfd=data.content;
@@ -178,7 +178,7 @@ export class SyncsComponent implements OnInit {
     } else {
       this.district_id = userValue.district;
       this.disabled1 = true;
-      this.serversService.getServersPaginated(1, 10000000, this.district_id, "", false, "")
+      this.serversService.findServers(1, 10000000, this.district_id, "", false, "")
         .subscribe(data => {
           this.allservers = data.content;
           this.allserversfd=data.content;
@@ -217,7 +217,7 @@ export class SyncsComponent implements OnInit {
     this.isHidden = "";
     var total;
 
-          this.syncsService.getSyncs(1, 1000000, this.district_id, this.server_id, this.from, this.until)
+          this.syncsService.findSyncs(1, 1000000, this.district_id, this.server_id, this.from, this.until)
             .subscribe(data => {
               this.syncsreport = data.content;
               this.syncsreport = alasql("SELECT * FROM ?syncsreport ORDER BY server->districtname ASC,start_time DESC ", [this.syncsreport]);

@@ -58,7 +58,7 @@ export class EvaluationFormComponent implements OnInit {
       if (!uuid) {
         return;
       } else {
-        this.evaluationsService.getEvaluationByUuid(uuid)
+        this.evaluationsService.findOneEvaluationByUuid(uuid)
           .subscribe(
             evaluation => {
               this.evaluation = evaluation;
@@ -94,7 +94,7 @@ export class EvaluationFormComponent implements OnInit {
       });
     } else {
       userValue.created_by = this.user;
-      result = this.evaluationsService.addEvaluation(userValue);
+      result = this.evaluationsService.createEvaluation(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {
           this.router.navigate(['evaluations']);

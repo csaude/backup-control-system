@@ -10,8 +10,8 @@ import { AuthManagerEvaluationsEdit } from './authmanageredit';
 
 const evaluationsRoutes: Routes = [
   { path: 'evaluations', component: EvaluationsComponent, pathMatch: 'full', canActivate: [AuthManagerEvaluationsRead] },
-  { path: 'evaluations/new', component: EvaluationFormComponent, canActivate: [AuthManagerEvaluationsEdit] },
-  { path: 'evaluations/:uuid', component: EvaluationFormComponent, canActivate: [AuthManagerEvaluationsEdit] }
+  { path: 'evaluation/new', component: EvaluationFormComponent, canActivate: [AuthManagerEvaluationsEdit] },
+  { path: 'evaluation/:uuid', component: EvaluationFormComponent, canActivate: [AuthManagerEvaluationsEdit] }
 ];
 
 /**

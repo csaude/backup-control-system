@@ -37,7 +37,7 @@ export class IronkeysComponent implements OnInit {
     { name: "Activado" },
     { name: "Desactivado" },
     { name: "Perdido" },
-    { name: "Com Problema" },
+    { name: "Problema" },
     { name: "Outro" }
   ];
   public sizes = [
@@ -83,7 +83,7 @@ export class IronkeysComponent implements OnInit {
   getPage(page: number) {
     this.isHidden = "";
     this.isDisabledt = "disabled";
-    this.ironkeysService.getIronkeysPaginated(page, 10, this.serial, this.version, this.status, this.size)
+    this.ironkeysService.findIronkeys(page, 10, this.serial, this.version, this.status, this.size)
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
@@ -144,7 +144,7 @@ export class IronkeysComponent implements OnInit {
   printList() {
     this.isHidden = "";
     this.isDisabledt = "disabled";
-    this.ironkeysService.getIronkeysPaginated(1, 1000000, this.serial, this.version, this.status, this.size)
+    this.ironkeysService.findIronkeys(1, 1000000, this.serial, this.version, this.status, this.size)
       .subscribe(data => {
         this.ironkeysreport = data.content;
       },

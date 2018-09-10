@@ -18,6 +18,8 @@ import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * A Authority is a definition of the User previleges on the System.
  * 
@@ -49,6 +51,7 @@ public class Authority {
 	/**
 	 * Users using this Authority
 	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "user-authorities")
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "authorities")
 	private Set<User> users = new HashSet<User>(0);

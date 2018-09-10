@@ -21,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import mz.org.fgh.scb.model.entity.Send;
+import mz.org.fgh.scb.repository.ResourceRepository;
 import mz.org.fgh.scb.repository.SendRepository;
 import mz.org.fgh.scb.service.api.SendService;
 
@@ -33,6 +34,9 @@ public class SendServiceImpl implements SendService {
 
 	@Autowired
 	SendRepository sendRepository;
+	
+	@Autowired
+	ResourceRepository resourceRepository;
 
 	@Autowired
 	private Environment env;
@@ -42,8 +46,8 @@ public class SendServiceImpl implements SendService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public Send findByUuid(String uuid) {
-		return sendRepository.findByUuid(uuid);
+	public Send findOneByUuid(String uuid) {
+		return sendRepository.findOneByUuid(uuid);
 	}
 
 	@Override
@@ -101,7 +105,7 @@ public class SendServiceImpl implements SendService {
 					email.setAuthenticator(new DefaultAuthenticator("scb.fgh@gmail.com", "Pepfar2014"));
 					email.setSSLOnConnect(true);
 					try {
-						String r1 = sendRepository.findUsersForNotification(send.getDistrict().getDistrict_id()).toString().replace("[", "");
+						String r1 = resourceRepository.findUsersForSendNotification(send.getDistrict().getDistrict_id()).toString().replace("[", "");
 						String r2 = r1.replace("]", " ");
 						String[] temp;
 						String divisor = ", ";
@@ -178,14 +182,6 @@ public class SendServiceImpl implements SendService {
 	public void delete(Send send) {
 		logger.info("Deleted Send: " + send.toString());
 		sendRepository.delete(send);
-	}
-
-	public Send findById(Long id) {
-		return sendRepository.findOne(id);
-	}
-
-	public int findNumberOfAllNotReceived() {
-		return sendRepository.findNumberOfAllNotReceived();
 	}
 	
 	@Override

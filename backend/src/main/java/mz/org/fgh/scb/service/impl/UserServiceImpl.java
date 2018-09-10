@@ -38,8 +38,8 @@ public class UserServiceImpl implements UserService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public User findByUuid(String uuid) {
-		return userRepository.findByUuid(uuid);
+	public User findOneByUuid(String uuid) {
+		return userRepository.findOneByUuid(uuid);
 	}
 
 	@Override

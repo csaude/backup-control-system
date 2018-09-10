@@ -5,6 +5,7 @@
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { DistrictsService } from "./shared/districts.service";
+import { ResourcesService } from "./../resources/shared/resources.service";
 import { District } from "./shared/district";
 import { SendsService } from "./../sends/shared/sends.service";
 import { Send } from "./../sends/shared/send";
@@ -59,6 +60,7 @@ export class DistrictsComponent implements OnInit {
     public districtsService: DistrictsService,
     public toastService: MzToastService,
     public sendsService: SendsService,
+    public resourcesService: ResourcesService,
     public receivesService: ReceivesService,
     public translate: TranslateService,
     public syncsService: SyncsService,
@@ -92,7 +94,7 @@ export class DistrictsComponent implements OnInit {
   getPage(page: number) {
     this.isHidden = "";
    
-    this.districtsService.getDistrictsPaginated(page, 10, this.name, this.canceled)
+    this.districtsService.findDistricts(page, 10, this.name, this.canceled)
       .subscribe(data => {
         this.totali = data.totalElements;
         this.p = page;
@@ -105,19 +107,19 @@ export class DistrictsComponent implements OnInit {
           this.districts=[];
         },
         () => {
-          this.districtsService.getDistrictsReceiveInfo()
+          this.resourcesService.findOneDistrictByUuidsReceiveInfo()
             .subscribe(data => {
               this.districtsinfo = data
             },
               error => { },
               () => {
-                this.districtsService.getDistrictsRestoreInfo()
+                this.resourcesService.findOneDistrictByUuidsRestoreInfo()
                   .subscribe(data => {
                     this.districtsresinfo = data;
                   },
                     error => { },
                     () => {
-                      this.districtsService.getDistrictsSyncInfo()
+                      this.resourcesService.findOneDistrictByUuidsSyncInfo()
                         .subscribe(data => {
                           this.districtssyncinfo = data;
                         },
@@ -191,13 +193,13 @@ export class DistrictsComponent implements OnInit {
   
   setSend(uuid) {
     this.isHidden2m = "";
-    this.sendsService.getSend(uuid)
+    this.sendsService.findOneSendByUuid(uuid)
       .subscribe(data => {
         this.send = data;
       }, error => {
       }, () => {
         if (this.send.received == true) {
-          this.receivesService.getReceiveBySendUuid(uuid)
+          this.receivesService.findOneReceiveBySendUuid(uuid)
             .subscribe(data => {
               this.receive = data;
               if (this.receive != null) {
@@ -232,7 +234,7 @@ export class DistrictsComponent implements OnInit {
     this.isDisabledt2 = "disabled";
     this.isDisabled = true;
     this.showResult = false;
-    this.districtsService.evaluate(this.district.uuid, this.evaluation.openmrs_sql_dataset_uuid)
+    this.districtsService.evaluateDistrict(this.district.uuid, this.evaluation.openmrs_sql_dataset_uuid)
       .subscribe(data => {
         this.resultEvaluation = data.rows;
       }, error => {
@@ -266,7 +268,7 @@ export class DistrictsComponent implements OnInit {
   
   setSync(uuid) {
     this.isHidden2m = "";
-    this.syncsService.getSync(uuid)
+    this.syncsService.findOneSyncByUuid(uuid)
       .subscribe(
         sync => {
           this.sync = sync;
@@ -279,7 +281,7 @@ export class DistrictsComponent implements OnInit {
     this.isDisabledt = "disabled";
 
     
-      this.districtsService.getDistrictsPaginated(1, 1000000, this.name, this.canceled)
+      this.districtsService.findDistricts(1, 1000000, this.name, this.canceled)
         .subscribe(data => {
           this.districtsreport = data.content;
         },
@@ -289,19 +291,19 @@ export class DistrictsComponent implements OnInit {
             this.districtsreport = [];
           },
           () => {
-            this.districtsService.getDistrictsReceiveInfo()
+            this.resourcesService.findOneDistrictByUuidsReceiveInfo()
               .subscribe(data => {
                 this.districtsinfo = data
               },
                 error => { },
                 () => {
-                  this.districtsService.getDistrictsRestoreInfo()
+                  this.resourcesService.findOneDistrictByUuidsRestoreInfo()
                     .subscribe(data => {
                       this.districtsresinfo = data;
                     },
                       error => { },
                       () => {
-                        this.districtsService.getDistrictsSyncInfo()
+                        this.resourcesService.findOneDistrictByUuidsSyncInfo()
                           .subscribe(data => {
                             this.districtssyncinfo = data;
                           },
@@ -372,7 +374,7 @@ export class DistrictsComponent implements OnInit {
   
   getEvaluations() {
     this.disabled1 = true;
-    this.evaluationsService.getEvaluationsPaginated(1,100000,"","")
+    this.evaluationsService.findEvaluations(1,100000,"","")
       .subscribe(data => { this.evaluations = data.content; }, error => { }, () => { this.disabled1 = false; }
       );
   }

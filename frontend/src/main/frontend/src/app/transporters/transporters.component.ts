@@ -58,7 +58,7 @@ export class TransportersComponent implements OnInit {
   }
   getPage(page: number) {
     this.isHidden = "";
-    this.transportersService.getTransportersPaginated(page, 10, this.name, this.role, this.canceled)
+    this.transportersService.findTransporters(page, 10, this.name, this.role, this.canceled)
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;

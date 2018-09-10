@@ -27,6 +27,8 @@ import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * A Ironkey is a definition of storage device that is 
  * used to carry the backups from Districts to Headquarters.
@@ -90,6 +92,7 @@ public class Ironkey {
 	/**
 	 * The Districts using this Ironkey {@link District}
 	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "ironkeys-districts")
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "ironkeys")
 	private Set<District> districts = new HashSet<District>(0);
@@ -123,7 +126,7 @@ public class Ironkey {
 	// Constructors
 	// -------------------------------------------------
 	public Ironkey() {
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 	public Long getIronkey_id() {

@@ -122,9 +122,9 @@ export class SyncFormComponent implements OnInit {
 
         if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
 
-          this.serversService.getServersPaginated(1, 10000000, "", "", false, "")
+          this.serversService.findServers(1, 10000000, "", "", false, "")
             .subscribe(data => {
-              this.allservers = data;
+              this.allservers = data.content;
               this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
 
             }, error => { }, () => { this.disabled1 = false; });
@@ -132,21 +132,21 @@ export class SyncFormComponent implements OnInit {
 
         } else if (this.ROLE_SIS || this.ROLE_GMA || this.ROLE_OA) {
 
-          this.serversService.getServersPaginated(1, 10000000, "", "", false, "")
+          this.serversService.findServers(1, 10000000, "", "", false, "")
             .subscribe(data => {
-              this.allservers = data;
+              this.allservers = data.content;
               this.allservers = alasql("SELECT district->name AS district,ARRAY(_) AS servers FROM ? GROUP BY district->name ORDER BY district->name,servers->name ASC", [this.allservers]);
             }, error => { }, () => { this.disabled1 = false; });
         }
       } else {
-        this.syncsService.getSync(uuid)
+        this.syncsService.findOneSyncByUuid(uuid)
           .subscribe(
             sync => {
               this.sync = sync;
               if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
-                this.serversService.getServersPaginated(1, 10000000, "", "", false, "")
+                this.serversService.findServers(1, 10000000, "", "", false, "")
                   .subscribe(data => {
-                    this.allservers = data;
+                    this.allservers = data.content;
                     var filteredservers = this.allservers;
                     filteredservers = filteredservers.filter(item => item.server_id !== this.sync.server.server_id);
                     filteredservers.push(this.sync.server);
@@ -161,9 +161,9 @@ export class SyncFormComponent implements OnInit {
               } else if (this.ROLE_SIS || this.ROLE_GMA || this.ROLE_OA) {
 
 
-                this.serversService.getServersPaginated(1, 10000000, "", "", false, "")
+                this.serversService.findServers(1, 10000000, "", "", false, "")
                   .subscribe(data => {
-                    this.allservers = data;
+                    this.allservers = data.content;
                     var filteredservers = this.allservers;
                     filteredservers = filteredservers.filter(item => item.server_id !== this.sync.server.server_id);
                     filteredservers.push(this.sync.server);
@@ -328,7 +328,7 @@ export class SyncFormComponent implements OnInit {
 
 
 
-              result = this.syncsService.addSync(userValue).subscribe(data => {},error=>{},()=>{this.router.navigate(['syncs']);this.nav.callMethodOfSecondComponent();});
+              result = this.syncsService.createSync(userValue).subscribe(data => {},error=>{},()=>{this.router.navigate(['syncs']);this.nav.callMethodOfSecondComponent();});
               this.showMsg();
               this.nav.callMethodOfSecondComponent();
 
@@ -356,7 +356,7 @@ export class SyncFormComponent implements OnInit {
               }
 
 
-              result = this.syncsService.addSync(userValue).subscribe(data => {},error=>{},()=>{this.router.navigate(['syncs']);this.nav.callMethodOfSecondComponent();});
+              result = this.syncsService.createSync(userValue).subscribe(data => {},error=>{},()=>{this.router.navigate(['syncs']);this.nav.callMethodOfSecondComponent();});
               this.showMsg();
               
 

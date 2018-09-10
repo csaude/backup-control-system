@@ -12,6 +12,7 @@ declare var jsPDF: any; // Important
 import { DatePipe } from '@angular/common';
 import { District } from './../districts/shared/district';
 import { DistrictsService } from './../districts/shared/districts.service';
+import { ResourcesService } from "./../resources/shared/resources.service";
 import * as myGlobals from '../../globals';
 import * as alasql from 'alasql';
 import { SyncsService } from "./../syncs/shared/syncs.service";
@@ -59,6 +60,7 @@ export class ServersComponent implements OnInit {
   constructor(
     public datepipe: DatePipe,
     public serversService: ServersService,
+    public resourcesService: ResourcesService,
     public toastService: MzToastService,
     public translate: TranslateService,
     public formBuilder: FormBuilder,
@@ -86,7 +88,7 @@ export class ServersComponent implements OnInit {
     this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
     this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
     this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
-    this.districtsService.getDistrictsPaginated(1,100000,"",false)
+    this.districtsService.findDistricts(1,100000,"",false)
       .subscribe(data => {
         this.alldistricts = data.content.filter(item => item.parentdistrict == null);;
       });
@@ -95,14 +97,14 @@ export class ServersComponent implements OnInit {
     this.isHidden = "";
     this.isDisabledt = "disabled";
 
-    this.serversService.getServersSyncInfo()
+    this.resourcesService.findOneServerByUuidsSyncInfo()
       .subscribe(data => {
         this.serverssyncinfo = data;
       },
         error => { },
         () => {
 
-          this.serversService.getServersPaginated(page, 10, this.district, this.name, this.canceled, this.type)
+          this.serversService.findServers(page, 10, this.district, this.name, this.canceled, this.type)
             .subscribe(data => {
               this.total = data.totalElements;
               this.p = page;
@@ -205,7 +207,7 @@ export class ServersComponent implements OnInit {
     this.isDisabledt = "disabled";
 
 
-    this.serversService.getServersSyncInfo()
+    this.resourcesService.findOneServerByUuidsSyncInfo()
       .subscribe(data => {
         this.serverssyncinfo = data;
       },
@@ -213,7 +215,7 @@ export class ServersComponent implements OnInit {
         () => {
 
 
-          this.serversService.getServersPaginated(1, 10000000, this.district, this.name, this.canceled, this.type)
+          this.serversService.findServers(1, 10000000, this.district, this.name, this.canceled, this.type)
             .subscribe(data => {
               var result = data.content;
               var synced = alasql("SELECT [0] AS sync_uuid,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
@@ -295,7 +297,7 @@ export class ServersComponent implements OnInit {
 
   setSync(uuid) {
     this.isHidden2m = "";
-    this.syncsService.getSync(uuid)
+    this.syncsService.findOneSyncByUuid(uuid)
       .subscribe(
         sync => {
           this.sync = sync;

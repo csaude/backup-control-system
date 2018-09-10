@@ -20,7 +20,7 @@ export class LoginsService {
    * 
    * @param usercreds the User credentials
    */
-  getUser(usercreds) {
+  findOneUserByCredentials(usercreds) {
     var headers: any = new Headers();
     headers.append('Authorization', 'Basic ' + btoa(usercreds.username + ':' + usercreds.password));
     headers.append('Content-Type', 'application/json');

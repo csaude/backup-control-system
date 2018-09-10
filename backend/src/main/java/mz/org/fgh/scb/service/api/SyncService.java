@@ -39,7 +39,7 @@ public interface SyncService {
 	 * @param uuid the uuid
 	 * @return the Sync with the given uuid
 	 */
-	Sync findByUuid(String uuid);
+	Sync findOneByUuid(String uuid);
 
 	/**
 	 * Returns all Syncs paginated

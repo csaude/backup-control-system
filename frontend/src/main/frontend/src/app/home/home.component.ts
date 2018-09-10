@@ -5,8 +5,8 @@
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { DistrictsService } from "../districts/shared/districts.service";
-import { ServersService } from "../servers/shared/servers.service";
 import { TranslateService } from 'ng2-translate';
+import { ResourcesService } from "./../resources/shared/resources.service";
 import * as alasql from 'alasql';
 import { District } from '../districts/shared/district';
 @Component({
@@ -393,7 +393,8 @@ export class HomeComponent implements OnInit {
   constructor(
     public translate: TranslateService,
     public districtsService: DistrictsService,
-    public serversService: ServersService, formBuilder: FormBuilder) {
+    public resourcesService: ResourcesService,
+    public formBuilder: FormBuilder) {
 
 
     this.form = formBuilder.group({
@@ -425,13 +426,13 @@ export class HomeComponent implements OnInit {
     if (this.ROLE_SIS || this.ROLE_IT || this.ROLE_OA || this.ROLE_GMA) {
 
 
-      this.districtsService.getDistrictsPaginated(1,100000,"",false)
+      this.districtsService.findDistricts(1,100000,"",false)
         .subscribe(data => {
           var filteredd = data.content.filter(item => item.parentdistrict == null);
           this.alldistricts = filteredd;
         });
 
-      this.districtsService.getReceivedPM()
+      this.resourcesService.getReceivedPM()
         .subscribe(data => {
           var result = alasql("SELECT [0] AS district, [1] AS exist FROM ?", [data]);
           var label: string[] = [];
@@ -448,7 +449,7 @@ export class HomeComponent implements OnInit {
           () => {
             this.chart1 = true;
           });
-      this.districtsService.getReceivedTM()
+      this.resourcesService.getReceivedTM()
         .subscribe(data => {
           var result = alasql("SELECT [0] AS district, [1] AS exist FROM ?", [data]);
           var label: string[] = [];
@@ -465,7 +466,7 @@ export class HomeComponent implements OnInit {
           () => {
             this.chart2 = true;
           });
-      this.districtsService.getReceivedLast()
+      this.resourcesService.getReceivedLast()
         .subscribe(data => {
           var result = alasql("SELECT [0] AS received, [1] AS month, [2] AS restored FROM ?", [data]);
           var label: string[] = [];
@@ -486,7 +487,7 @@ export class HomeComponent implements OnInit {
             this.chart3 = true;
           });
 
-      this.serversService.getSyncsPW()
+      this.resourcesService.findSyncsPW()
         .subscribe(data => {
           var result = alasql("SELECT [0] AS server,[1] AS district, [3] AS exist,[4] AS error FROM ?", [data]);
           var label: string[] = [];
@@ -527,7 +528,7 @@ export class HomeComponent implements OnInit {
             this.chart6 = true;
           });
 
-      this.serversService.getSyncsTW()
+      this.resourcesService.findSyncsTW()
         .subscribe(data => {
           var result = alasql("SELECT [0] AS server,[1] AS district, [3] AS exist,[4] AS error FROM ?", [data]);
           var label: string[] = [];
@@ -567,7 +568,7 @@ export class HomeComponent implements OnInit {
             this.chart7 = true;
           });
 
-      this.serversService.getSyncsItemsPW()
+      this.resourcesService.findSyncsItemsPW()
         .subscribe(data => {
           var result = alasql("SELECT [1] AS server,[2] AS district, [3] AS its,[4] AS itr FROM ? WHERE [3]>0 ORDER BY [3] DESC", [data]);
           var label: string[] = [];
@@ -601,7 +602,7 @@ export class HomeComponent implements OnInit {
             this.chart10 = true;
           });
 
-      this.serversService.getSyncsItemsTW()
+      this.resourcesService.findSyncsItemsTW()
         .subscribe(data => {
           var result = alasql("SELECT [1] AS server,[2] AS district, [3] AS its,[4] AS itr FROM ? WHERE [3]>0 ORDER BY [3] DESC", [data]);
           var label: string[] = [];
@@ -637,7 +638,7 @@ export class HomeComponent implements OnInit {
 
     }
     if (this.ROLE_ODMA || this.ROLE_GDD || this.ROLE_ORMA) {
-      this.districtsService.getReceivedPM()
+      this.resourcesService.getReceivedPM()
         .subscribe(data => {
           var districts;
           if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict != null)) {
@@ -665,7 +666,7 @@ export class HomeComponent implements OnInit {
             this.chart1 = true;
           });
 
-      this.districtsService.getReceivedTM()
+      this.resourcesService.getReceivedTM()
         .subscribe(data => {
 
           var districts;
@@ -694,7 +695,7 @@ export class HomeComponent implements OnInit {
             this.chart2 = true;
           });
 
-      this.serversService.getSyncsPW()
+      this.resourcesService.findSyncsPW()
         .subscribe(data => {
           var districts;
           if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict != null)) {
@@ -731,7 +732,7 @@ export class HomeComponent implements OnInit {
 
           });
 
-      this.serversService.getSyncsTW()
+      this.resourcesService.findSyncsTW()
         .subscribe(data => {
           var districts;
           if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict != null)) {
@@ -786,7 +787,7 @@ export class HomeComponent implements OnInit {
     this.chart11 = false;
     var userValue = this.form.value;
 
-    this.serversService.getSyncsPW()
+    this.resourcesService.findSyncsPW()
       .subscribe(data => {
         if (userValue.district == "all") {
           var result = alasql("SELECT [0] AS server,[1] AS district, [3] AS exist,[4] AS error FROM ?", [data]);
@@ -850,7 +851,7 @@ export class HomeComponent implements OnInit {
           this.chart6 = true;
         });
 
-    this.serversService.getSyncsTW()
+    this.resourcesService.findSyncsTW()
       .subscribe(data => {
 
         if (userValue.district == "all") {
@@ -919,7 +920,7 @@ export class HomeComponent implements OnInit {
 
 
 
-    this.serversService.getSyncsItemsPW()
+    this.resourcesService.findSyncsItemsPW()
       .subscribe(data => {
 
         if (userValue.district == "all") {
@@ -973,7 +974,7 @@ export class HomeComponent implements OnInit {
           this.chart10 = true;
         });
 
-    this.serversService.getSyncsItemsTW()
+    this.resourcesService.findSyncsItemsTW()
       .subscribe(data => {
         if (userValue.district == "all") {
           var result = alasql("SELECT [1] AS server,[2] AS district, [3] AS its,[4] AS itr FROM ? WHERE [3]>0 ORDER BY [3] DESC", [data]);

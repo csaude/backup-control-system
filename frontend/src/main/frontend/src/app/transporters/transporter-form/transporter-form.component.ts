@@ -68,7 +68,7 @@ export class TransporterFormComponent implements OnInit {
       if (!uuid) {
         return;
       } else {
-        this.transportersService.getTransporter(uuid)
+        this.transportersService.findOneTransporterByUuid(uuid)
           .subscribe(
             transporter => this.transporter = transporter,
             response => {
@@ -105,7 +105,7 @@ export class TransporterFormComponent implements OnInit {
       }
     } else {
       userValue.created_by = this.user;
-      result = this.transportersService.addTransporter(userValue);
+      result = this.transportersService.createTransporter(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {
           this.router.navigate(['transporters']);

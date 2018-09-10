@@ -4,8 +4,6 @@
  */
 package mz.org.fgh.scb.service.api;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -41,7 +39,7 @@ public interface ServerService {
 	 * @param uuid the uuid
 	 * @return the Server with the given uuid
 	 */
-	Server findByUuid(String uuid);
+	Server findOneByUuid(String uuid);
 
 	/**
 	 * Returns all Servers paginated with given specification
@@ -51,33 +49,5 @@ public interface ServerService {
 	 * @return all Servers paginated with given specification
 	 */
 	Page<Server> findAll(Specification<Server> spec, PageRequest pageRequest);
-
-	// ----------------------------------------------
-	// DATA FOR DASHBOARD
-	// ----------------------------------------------
-	/**
-	 * @return date of last Sync by Server
-	 */
-	List<Object[]> findLastSyncByServer();
-
-	/**
-	 * @return numbers of Syncs ocurred by Server on previous week
-	 */
-	List<Object[]> findSyncsOfPreviousWeek();
-
-	/**
-	 * @return numbers of Syncs ocurred by Server on this week
-	 */
-	List<Object[]> findSyncsOfThisWeek();
-
-	/**
-	 * @return numbers of Syncs ocurred by Server on this week
-	 */
-	List<Object[]> findSyncsRemainingItemsOfThisWeek();
-
-	/**
-	 * @return number of items remaining to send/receive by server on previous week
-	 */
-	List<Object[]> findSyncsRemainingItemsOfPreviousWeek();
 
 }

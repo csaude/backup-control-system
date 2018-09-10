@@ -5,7 +5,6 @@
 package mz.org.fgh.scb.service.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +34,8 @@ public class ServerServiceImpl implements ServerService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public Server findByUuid(String uuid) {
-		return serverRepository.findByUuid(uuid);
+	public Server findOneByUuid(String uuid) {
+		return serverRepository.findOneByUuid(uuid);
 	}
 
 	@Override
@@ -67,32 +66,6 @@ public class ServerServiceImpl implements ServerService {
 	@Override
 	public Page<Server> findAll(Specification<Server> spec, PageRequest pageRequest) {
 		return serverRepository.findAll(spec, pageRequest);
-	}
-
-	@Override
-	public List<Object[]> findLastSyncByServer() {
-		return serverRepository.findLastSyncByServer();
-	}
-
-	@Override
-	public List<Object[]> findSyncsOfPreviousWeek() {
-		return serverRepository.findSyncsOfPreviousWeek();
-	}
-
-
-	@Override
-	public List<Object[]> findSyncsOfThisWeek() {
-		return serverRepository.findSyncsOfThisWeek();
-	}
-
-	@Override
-	public List<Object[]> findSyncsRemainingItemsOfThisWeek() {
-		return serverRepository.findSyncsRemainingItemsOfThisWeek();
-	}
-
-	@Override
-	public List<Object[]> findSyncsRemainingItemsOfPreviousWeek() {
-		return serverRepository.findSyncsRemainingItemsOfPreviousWeek();
 	}
 
 }

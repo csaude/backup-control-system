@@ -97,13 +97,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="input-field col s12 m6 l6">
-                <i class="material-icons prefix">label_outline</i>
-                <input id="surname" type="text" class="validate" [(ngModel)]="user.person.surname" formControlName="surname" [class.invalid]="form.controls['surname'].touched && !form.controls['surname'].valid">
-                <label for="surname" [class.active]="user.person.surname" data-error="O Apelido deve ser preenchido.">
-                  {{ "surname" | translate }} *
-                </label>
-              </div>
+              
               <div class="input-field col s12 m6 l6">
                 <i class="material-icons prefix">label_outline</i>
                 <input id="others_names" type="text" class="validate" [(ngModel)]="user.person.others_names" formControlName="others_names"
@@ -112,6 +106,13 @@
                   {{ "others_names" | translate }} *
                 </label>
               </div>
+              <div class="input-field col s12 m6 l6">
+                  <i class="material-icons prefix">label_outline</i>
+                  <input id="surname" type="text" class="validate" [(ngModel)]="user.person.surname" formControlName="surname" [class.invalid]="form.controls['surname'].touched && !form.controls['surname'].valid">
+                  <label for="surname" [class.active]="user.person.surname" data-error="O Apelido deve ser preenchido.">
+                    {{ "surname" | translate }} *
+                  </label>
+                </div>
             </div>
             <div class="row">
               <div class="input-field col s12 m3 l3" *ngIf="translate.currentLang=='pt'">

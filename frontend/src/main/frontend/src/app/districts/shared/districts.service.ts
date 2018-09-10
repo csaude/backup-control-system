@@ -12,9 +12,9 @@ import * as myGlobals from '../../../globals';
 */
 @Injectable()
 export class DistrictsService {
-  public url: string = myGlobals.API_districts;
 
-   
+  public url: string = myGlobals.API;
+
   constructor(public http: Http) {
   }
 
@@ -23,13 +23,13 @@ export class DistrictsService {
    * 
    * @param uuid the District uuid
    */
-  getDistrict(uuid) {
+  findOneDistrictByUuid(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.getDistrictUrl(uuid), { headers: headers })
+    return this.http.get(this.url+"/district/"+uuid, { headers: headers })
       .map(res => res.json());
   }
 
@@ -41,29 +41,28 @@ export class DistrictsService {
    * @param name the district name
    * @param canceled the canceled status
    */
-  getDistrictsPaginated(page, size, name, canceled) {
+  findDistricts(page, size, name, canceled) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "?search=name:"+name+",canceled~" + canceled+",user!user&page=" + page + "&size=" + size , { headers: headers })
+    return this.http.get(this.url + "/districts?search=name:"+name+",canceled~" + canceled+",user!user&page=" + page + "&size=" + size , { headers: headers })
       .map(res => res.json());
   }
-
 
   /**
    * Add new District
    * 
    * @param district the District
    */
-  addDistrict(district) {
+  createDistrict(district) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.post(this.url, JSON.stringify(district), { headers: headers });
+    return this.http.post(this.url+"/district", JSON.stringify(district), { headers: headers });
   }
 
   /**
@@ -77,7 +76,7 @@ export class DistrictsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.put(this.url, JSON.stringify(district), { headers: headers });
+    return this.http.put(this.url+"/district", JSON.stringify(district), { headers: headers });
   }
   /**
    * Delete the District with the given uuid
@@ -90,7 +89,7 @@ export class DistrictsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.delete(this.getDistrictUrl(uuid), { headers: headers });
+    return this.http.delete(this.url+"/district/"+uuid, { headers: headers });
   }
 
   /**
@@ -99,98 +98,16 @@ export class DistrictsService {
    * @param url the OpenMRS instance url
    * @param datasetuuid the OpenMRS SQL dataset uuid
    */
-  evaluate(url, datasetuuid) {
+  evaluateDistrict(url, datasetuuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/" + url + "/" + datasetuuid, { headers: headers })
+    return this.http.get(this.url+"/district/"+url+"/"+ datasetuuid, { headers: headers })
       .map(res => res.json());
   }
 
-  //-------------------------------------------------
-  //DASHBOARD
-  //-------------------------------------------------
-  /**
-   * Returns date of last backup received by District
-   */
-  getDistrictsReceiveInfo() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'receiveinfo', { headers: headers })
-      .map(res => res.json());
-  }
+  
 
-  /**
-   * Returns date of last backup restored by District
-   */
-  getDistrictsRestoreInfo() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'restoreinfo', { headers: headers })
-      .map(res => res.json());
-  }
-
-  /**
-   * Returns the last sync by District
-   */
-  getDistrictsSyncInfo() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'syncinfo', { headers: headers })
-      .map(res => res.json());
-  }
-
-  /**
-   * Returns number of backup received on previous month by District
-   */
-  getReceivedPM() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'receivedpreviousmonth', { headers: headers })
-      .map(res => res.json());
-  }
-
-  /**
-   * Returns number of backup received on this month by District
-   */
-  getReceivedTM() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'receivedthismonth', { headers: headers })
-      .map(res => res.json());
-  }
-
-  /**
-   * Returns number of backup received on the last 12 months
-   */
-  getReceivedLast() {
-    var headers: any = new Headers();
-    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
-    headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'receivedlastmonths', { headers: headers })
-      .map(res => res.json());
-  }
-
-  private getDistrictUrl(uuid) {
-    return this.url + "/" + uuid;
-  }
 }

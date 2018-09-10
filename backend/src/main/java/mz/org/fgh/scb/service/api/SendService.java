@@ -39,7 +39,7 @@ public interface SendService {
 	 * @param uuid the uuid
 	 * @return the Send with the given uuid
 	 */
-	Send findByUuid(String uuid);
+	Send findOneByUuid(String uuid);
 	
 	/**
 	 * Returns all Send paginated

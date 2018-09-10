@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
 import mz.org.fgh.scb.model.entity.Sync;
 import mz.org.fgh.scb.service.impl.SyncServiceImpl;
 import mz.org.fgh.scb.specification.SyncSpecificationsBuilder;
@@ -36,13 +35,14 @@ import mz.org.fgh.scb.specification.SyncSpecificationsBuilder;
  */
 @RestController
 @RequestMapping("api")
+@Api(tags = {"Sync"})
 public class SyncController {
 
 	@Autowired
 	private SyncServiceImpl syncServiceImpl;
 	
 	@GetMapping(value = "/syncs")
-	public Page<Sync> findAllPaginated(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
+	public Page<Sync> findSyncs(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
 		SyncSpecificationsBuilder builder = new SyncSpecificationsBuilder();
 		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
 		Matcher matcher = pattern.matcher(search + ",");
@@ -58,9 +58,9 @@ public class SyncController {
 		return pageSync;
 	}
 
-	@PostMapping(value = "/syncs")
+	@PostMapping(value = "/sync")
 	@ResponseBody
-	public String create(@RequestBody Sync sync) {
+	public String createSync(@RequestBody Sync sync) {
 		try {
 			syncServiceImpl.save(sync);
 			return "Success";
@@ -70,29 +70,17 @@ public class SyncController {
 		}
 	}
 
-	@GetMapping(value = "/syncs/{uuid}")
-	public Object getSync(@PathVariable String uuid) throws Exception {
-		return syncServiceImpl.findByUuid(uuid);
-	}
-	
-	@GetMapping(value = "/syncsinprogress")
-	public int findInProgress() throws Exception {
-		return syncServiceImpl.findInProgress();
-	}
-	
-	@GetMapping(value = "/syncsinprogressuser")
-	public int findInProgressByUser() throws Exception {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		return syncServiceImpl.findInProgressByUser(currentPrincipalName);
+	@GetMapping(value = "/sync/{uuid}")
+	public Object findOneSyncByUuid(@PathVariable String uuid) throws Exception {
+		return syncServiceImpl.findOneByUuid(uuid);
 	}
 
-	@DeleteMapping(value = "/syncs/{uuid}")
+	@DeleteMapping(value = "/sync/{uuid}")
 	@ResponseBody
 	public Object deleteSync(@PathVariable String uuid) throws Exception {
 		Sync sync = null;
 		try {
-			sync = syncServiceImpl.findByUuid(uuid);
+			sync = syncServiceImpl.findOneByUuid(uuid);
 			syncServiceImpl.delete(sync);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -100,9 +88,9 @@ public class SyncController {
 		return sync;
 	}
 
-	@PutMapping(value = "/syncs")
+	@PutMapping(value = "/sync")
 	@ResponseBody
-	public String update(@RequestBody Sync sync) throws Exception {
+	public String updateSync(@RequestBody Sync sync) throws Exception {
 		try {
 			syncServiceImpl.save(sync);
 			return "Success";

@@ -36,8 +36,8 @@ public class TransporterServiceImpl implements TransporterService {
 	}
 
 	@Override
-	public Transporter findByUuid(String uuid) {
-		return transporterRepository.findByUuid(uuid);
+	public Transporter findOneByUuid(String uuid) {
+		return transporterRepository.findOneByUuid(uuid);
 	}
 
 	@Override

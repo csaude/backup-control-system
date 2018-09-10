@@ -111,7 +111,7 @@
             <i class="material-icons icon-green">info</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Receber'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receive', send.uuid]" *ngIf="ROLE_SIS">
+          <a mz-tooltip [tooltip]="'Receber'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receive/send', send.uuid]" *ngIf="ROLE_SIS">
             <i class="material-icons icon-orange">mode_edit</i>
           </a>
           &nbsp;
@@ -153,7 +153,7 @@
             <i class="material-icons icon-green">info</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receives', receive.uuid]" *ngIf="ROLE_SIS">
+          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receive', receive.uuid]" *ngIf="ROLE_SIS">
             <i class="material-icons icon-orange">mode_edit</i>
           </a>
           

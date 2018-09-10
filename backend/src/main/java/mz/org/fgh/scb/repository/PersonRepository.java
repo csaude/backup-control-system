@@ -22,6 +22,6 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
 	 * @param uuid the uuid
 	 * @return the Person with the given uuid
 	 */
-	Person findByUuid(String uuid);
+	Person findOneByUuid(String uuid);
 
 }

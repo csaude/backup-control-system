@@ -21,6 +21,8 @@ import javax.persistence.SequenceGenerator;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * A Person is a definition of metadada for identification of 
  * the users.
@@ -31,42 +33,77 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Entity(name = "person")
 public class Person {
 
+	/**
+	 * The Person id
+	 */
 	@Id
 	@SequenceGenerator(name = "seq_person", initialValue = 1)
 	@GeneratedValue(generator = "seq_person", strategy = GenerationType.AUTO)
 	private Long person_id;
 
+	/**
+	 * The Person others names
+	 */
 	@Column(nullable = false)
 	private String others_names;
 
+	/**
+	 * The Person surname
+	 */
 	@Column(nullable = false)
 	private String surname;
 
+	/**
+	 * The Person email
+	 */
 	private String email;
 
+	/**
+	 * The Person phone number
+	 */
 	private String phone_number;
 
+	/**
+	 * The Person date created
+	 */
 	@Column(nullable = false)
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date date_created;
 
+	/**
+	 * The Person date updated
+	 */
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date date_updated;
 
+	/**
+	 * The User that created this Person {@link User}
+	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "person-created_by")
 	@JoinColumn(name = "created_by")
 	@ManyToOne
 	private User created_by;
 
+	/**
+	 * The User that created this Person {@link User}
+	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "person-updated_by")
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
 
+	/**
+	 * The Person gender
+	 */
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private PersonGender gender;
 
+	/**
+	 * The Person uuid
+	 */
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
@@ -74,7 +111,7 @@ public class Person {
 	// Constructors
 	// -------------------------------------------------
 	public Person() {
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 	public Long getPerson_id() {

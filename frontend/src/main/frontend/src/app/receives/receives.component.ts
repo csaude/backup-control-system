@@ -68,7 +68,7 @@ export class ReceivesComponent implements OnInit {
     this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
     this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
 
-    this.districtsService.getDistrictsPaginated(1, 100000, "", false)
+    this.districtsService.findDistricts(1, 100000, "", false)
       .subscribe(data => {
         this.alldistricts = data.content;
       });
@@ -78,7 +78,7 @@ export class ReceivesComponent implements OnInit {
   getPageSend(page: number) {
 
     this.isHidden = "";
-    this.sendsService.getAllSendsPaginated(page, 10, this.received, this.canceled, this.from, this.until, this.district_id)
+    this.sendsService.findAllSends(page, 10, this.received, this.canceled, this.from, this.until, this.district_id)
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
@@ -99,7 +99,7 @@ export class ReceivesComponent implements OnInit {
   getPageReceive(page: number) {
 
     this.isHidden = "";
-    this.receivesService.getAllReceivesPaginated(page, 10, this.canceled, this.from, this.until, this.district_id)
+    this.receivesService.findAllReceives(page, 10, this.canceled, this.from, this.until, this.district_id)
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
@@ -239,7 +239,7 @@ export class ReceivesComponent implements OnInit {
     this.isHidden2m = "hide";
     if (this.send.received == true) {
       this.isHidden2m = "";
-      this.receivesService.getReceiveBySendUuid(uuid)
+      this.receivesService.findOneReceiveBySendUuid(uuid)
         .subscribe(data => {
           this.receive = data;
           if (this.receive != null) {
@@ -307,7 +307,7 @@ export class ReceivesComponent implements OnInit {
     this.isHidden = "";
     var total;
 
-    this.receivesService.getAllReceivesPaginated(1, 1000000, this.canceled, this.from, this.until, this.district_id)
+    this.receivesService.findAllReceives(1, 1000000, this.canceled, this.from, this.until, this.district_id)
       .subscribe(data => {
         this.receivesreport = data.content;
         total = data.totalElements;

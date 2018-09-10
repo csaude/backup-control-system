@@ -18,6 +18,8 @@ import javax.persistence.SequenceGenerator;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * A Send is a definition of all backups that 
  * have been Send to Headquarter.
@@ -28,74 +30,141 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity(name = "send")
 public class Send {
 
+	/**
+	 * The Send id
+	 */
 	@Id
 	@SequenceGenerator(name = "seq_send", initialValue = 1)
 	@GeneratedValue(generator = "seq_send", strategy = GenerationType.AUTO)
 	private Long send_id;
 
+	/**
+	 * The Send District {@link District}
+	 */
 	@JoinColumn(name = "district_id")
 	@ManyToOne
 	private District district;
 
+	/**
+	 * The Send Transporter {@link Transporter}
+	 */
 	@JoinColumn(name = "transporter_id")
 	@ManyToOne
 	private Transporter transporter;
 
+	/**
+	 * The Send backup date
+	 */
 	@Column(name="backup_date",nullable = false)
 	private Date backupdate;
 
+	/**
+	 * Indicates if the database updated is finished or not
+	 */
 	@Column(nullable = false)
 	private boolean update_finished;
 
+	/**
+	 * Indicates if the database validation is finished or not
+	 */
 	@Column(nullable = false)
 	private boolean validation_finished;
 
+	/**
+	 * Indicates if the database sync is finished or not
+	 */
 	@Column(nullable = false)
 	private boolean sync_finished;
 
+	/**
+	 * Indicates if the database cross with dhis2 is finished or not
+	 */
 	@Column(nullable = false)
 	private boolean cross_dhis2_finished;
 
+	/**
+	 * Indicates if the database cross with iDART is finished or not
+	 */
 	@Column(nullable = false)
 	private boolean cross_idart_finished;
 
+	/**
+	 * Indicates if the backup is received or not
+	 */
 	@Column(nullable = false)
 	private boolean received;
 
+	/**
+	 * The Send observation
+	 */
 	@Column(nullable = false)
 	private String observation;
 
+	/**
+	 * The Send date created
+	 */
 	@Column(nullable = false)
 	private Date date_created;
 
+	/**
+	 * The Send date updated
+	 */
 	private Date date_updated;
 
+	/**
+	 * The User that created this Send {@link User}
+	 */
 	@JoinColumn(name = "created_by")
 	@ManyToOne
 	private User created_by;
 
+	/**
+	 * The User that updated this Send {@link User}
+	 */
 	@JoinColumn(name = "updated_by")
 	@ManyToOne
 	private User updated_by;
 
+	/**
+	 * The Send uuid
+	 */
 	@Column(nullable = false, unique = true)
 	private String uuid;
 
+	/**
+	 * The Send date canceled
+	 */
 	private Date date_canceled;
 
+	/**
+	 * Indicates id this Send is canceled or not
+	 */
 	@Column(nullable = false)
 	private boolean canceled;
 
+	/**
+	 * The Send canceled reason
+	 */
 	private String canceled_reason;
 
+	/**
+	 * The User that canceled this Send {@link User}
+	 */
+	@ApiModelProperty(hidden = true)
 	@JsonBackReference(value = "send-canceled_by")
 	@JoinColumn(name = "canceled_by")
 	@ManyToOne
 	private User canceled_by;
 
+	/**
+	 * Indiscates if the Ironkey returned to District
+	 */
 	@Column(nullable = false)
 	private boolean ik_received;
 
+	/**
+	 * The Send date that the ironkey is returned
+	 */
 	private Date date_ik_received;
 	
 	/**
@@ -103,6 +172,9 @@ public class Send {
 	 */
 	private boolean idart_backup;
 	
+	/**
+	 * The Send iDART backup date
+	 */
 	private Date idart_backup_date;
 
 	// -------------------------------------------------
@@ -112,7 +184,7 @@ public class Send {
 		this.canceled = false;
 		this.received = false;
 		this.ik_received = false;
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 	public Long getSend_id() {

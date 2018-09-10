@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
 import mz.org.fgh.scb.model.entity.Authority;
 import mz.org.fgh.scb.service.impl.AuthorityServiceImpl;
 
@@ -22,13 +23,14 @@ import mz.org.fgh.scb.service.impl.AuthorityServiceImpl;
  */
 @RestController
 @RequestMapping("api")
+@Api(tags = {"Authority"})
 public class AuthorityController {
 
 	@Autowired
 	private AuthorityServiceImpl authorityServiceImpl;
 
 	@GetMapping(value = "/authorities")
-	public List<Authority> findAllByOrderByNameAsc() {
+	public List<Authority> findAllAuthorities() {
 		return authorityServiceImpl.findAllByOrderByNameAsc();
 	}
 }

@@ -78,7 +78,7 @@ export class ServerFormComponent implements OnInit {
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
         
-        this.districtsService.getDistrictsPaginated(1,100000,"",false)
+        this.districtsService.findDistricts(1,100000,"",false)
         .subscribe(data => {
           this.alldistricts = data.content.filter(item => item.parentdistrict==null);;
         
@@ -87,7 +87,7 @@ export class ServerFormComponent implements OnInit {
 
       }
       else {
-        this.serversService.getServer(uuid)
+        this.serversService.findOneServerByUuid(uuid)
           .subscribe(
             server => {
               this.server = server;
@@ -100,7 +100,7 @@ export class ServerFormComponent implements OnInit {
             }, () => {
 
 
-              this.districtsService.getDistrictsPaginated(1,100000,"",false)
+              this.districtsService.findDistricts(1,100000,"",false)
               .subscribe(data => {
                 this.alldistricts = data.content.filter(item => item.parentdistrict==null);;
                 this.alldistricts = this.alldistricts.filter(item => item.district_id !== this.server.district.district_id);
@@ -158,7 +158,7 @@ export class ServerFormComponent implements OnInit {
         }  
     } else {
       userValue.created_by = this.user;
-      result = this.serversService.addServer(userValue);
+      result = this.serversService.createServer(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {
           this.router.navigate(['servers']);
