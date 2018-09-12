@@ -15,7 +15,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 export class EvaluationsComponent implements OnInit {
   public evaluations: Evaluation[] = [];

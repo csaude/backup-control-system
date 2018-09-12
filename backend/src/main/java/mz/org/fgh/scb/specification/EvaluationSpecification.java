@@ -11,8 +11,14 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import mz.org.fgh.scb.filter.FilterOperation;
+import mz.org.fgh.scb.filter.SearchCriteria;
 import mz.org.fgh.scb.model.entity.Evaluation;
 
+/**
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
+ *
+ */
 public class EvaluationSpecification implements Specification<Evaluation> {
 	
 	private SearchCriteria criteria;
@@ -28,15 +34,7 @@ public class EvaluationSpecification implements Specification<Evaluation> {
 	@Override
 	public Predicate toPredicate(final Root<Evaluation> root, final CriteriaQuery<?> query, final CriteriaBuilder builder) {
 		
-		if (criteria.getOperation().equalsIgnoreCase(">")) {
-            return builder.greaterThanOrEqualTo(
-              root.<String> get(criteria.getKey()), criteria.getValue().toString());
-        } 
-        else if (criteria.getOperation().equalsIgnoreCase("<")) {
-            return builder.lessThanOrEqualTo(
-              root.<String> get(criteria.getKey()), criteria.getValue().toString());
-        } 
-        else if (criteria.getOperation().equalsIgnoreCase(":")) {
+		if (criteria.getOperation().equalsIgnoreCase(FilterOperation.CONTAINS.toString())) {
             if (root.get(criteria.getKey()).getJavaType() == String.class) {
                 return builder.like(
                   root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
@@ -44,10 +42,9 @@ public class EvaluationSpecification implements Specification<Evaluation> {
                 return builder.equal(root.get(criteria.getKey()), criteria.getValue());
             }
         }
-        else if (criteria.getOperation().equalsIgnoreCase("~")) {
+        else if (criteria.getOperation().equalsIgnoreCase(FilterOperation.EQUAL.toString())) {
                 return builder.equal(
                   root.<String>get(criteria.getKey()),criteria.getValue());
-           
         }
 		return null;
 	}

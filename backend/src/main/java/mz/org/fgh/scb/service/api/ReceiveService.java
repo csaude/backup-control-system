@@ -13,7 +13,7 @@ import mz.org.fgh.scb.model.entity.Receive;
 /**
  * Defines the services api of Receives
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface ReceiveService {

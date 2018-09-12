@@ -40,7 +40,6 @@
     "cancelitreason": "Reason to Void",
     "print": "Print",
     "description": "Description",
-
     "ironkeysfound": "ironkeys found.",
     "serialn": "Serial Nº",
     "version": "Version",
@@ -56,7 +55,6 @@
     "ironkeyedit": "Edit Ironkey",
     "ironkeydetails": "Ironkey details",
     "ironkeydelete": "Do you really want to delete the Iron Key with Serial Nº",
-
     "districtsfound": "districts found.",
     "province": "Province",
     "district": "District",
@@ -69,7 +67,6 @@
     "districtdetails": "District Details",
     "districtdelete": "Do you really want to exclude the District",
     "districtdqa": "Data Quality Evaluation through the API OpenMRS",
-
     "transportersfound": "transporters found.",
     "transportername": "Name",
     "transporter": "Transporter",
@@ -78,7 +75,6 @@
     "transporteredit": "Edit Transporter",
     "transporterdetails": "Transporter Details",
     "transporterdelete": "Do you really want to exclude the Transporter",
-
     "evaluationsfound": "Evaluations found.",
     "evaluationname": "Name",
     "openmrs_sql_dataset_uuid": "OpenMRS SQL UUID",
@@ -86,7 +82,6 @@
     "evaluationedit": "Edit Evaluation",
     "evaluationdetails": "Evaluation Details",
     "evaluationdelete": "Do you really want to exclude the Evaluation",
-
     "usersfound": "users found.",
     "fullname": "Full Name",
     "email": "Email",
@@ -118,7 +113,6 @@
     "obs_his": "HIS observation",
     "send_by": "Sent by",
     "historysends": "Backup Send History",
-
     "to_receive": "backups to receive",
     "receivesfound": "backups received",
     "receivenew": "Receive Backup",
@@ -145,7 +139,6 @@
     "searchbyopenmrsuuid": "Search by OpenMRS SQL Dataset UUID",
     "searchbyusername": "Search by username",
     "searchbydistrict":"Search by district",
-
     "servers":"Sync Servers",
     "servername":"Server",
     "serversfound":"synchronization servers found.",
@@ -179,9 +172,11 @@
     "items_receive": "to receive",
     "syncdetails":"Synchronization Details",
     "include_idart_backup":"Include iDART Backup?",
-
     "serverfault":"Server fault?",
     "laptopfault":"Laptop fault?",
-    "powercut":"Power cut?"
+    "powercut":"Power cut?",
+    "openmrsconnection":"OpenMRS Connection",
+    "lastbackuprestoreddate":"Date of last backup restored",
+    "lastbackuprestoredask":"Withou information of Last backup restored date! Ask HIS."
 
 }

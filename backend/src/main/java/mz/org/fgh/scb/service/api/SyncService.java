@@ -13,7 +13,7 @@ import mz.org.fgh.scb.model.entity.Sync;
 /**
  * Defines the services api of Syncs
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface SyncService {

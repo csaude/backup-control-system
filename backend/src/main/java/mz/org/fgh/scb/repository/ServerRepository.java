@@ -15,7 +15,7 @@ import mz.org.fgh.scb.model.entity.Server;
 /**
  * Defines the functionality for persisting Servers
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface ServerRepository extends JpaRepository<Server, Long>, JpaSpecificationExecutor<Server> {

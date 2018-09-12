@@ -12,7 +12,7 @@ import mz.org.fgh.scb.model.entity.Sync;
 /**
  * Defines the functionality for persisting Syncs
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface SyncRepository extends JpaRepository<Sync, Long>, JpaSpecificationExecutor<Sync> {

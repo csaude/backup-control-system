@@ -22,7 +22,7 @@ import { DatePipe } from '@angular/common';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class ReceiveFormComponent implements OnInit {
   public form: FormGroup;
@@ -78,7 +78,7 @@ export class ReceiveFormComponent implements OnInit {
           .subscribe(send => {
             this.send = send;
           });
-        this.transportersService.findTransporters(1, 1000000, "", "", false)
+        this.transportersService.findTransporters("", "", "", "", false)
           .subscribe(data => {
             this.alltransporters = data.content;
           });
@@ -89,7 +89,7 @@ export class ReceiveFormComponent implements OnInit {
           .subscribe(receive => {
             this.receive = receive;
             if (this.receive.transporter != null) {
-              this.transportersService.findTransporters(1, 1000000, "", "", false)
+              this.transportersService.findTransporters("", "", "", "", false)
                 .subscribe(data => {
                   this.alltransporters = data.content;
                   var filteredtransporters = this.alltransporters;
@@ -109,7 +109,7 @@ export class ReceiveFormComponent implements OnInit {
                 });
             }
             else {
-              this.transportersService.findTransporters(1, 1000000, "", "", false)
+              this.transportersService.findTransporters("", "", "", "", false)
                 .subscribe(data => {
                   this.alltransporters = data.content;
                 });

@@ -8,7 +8,7 @@ import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 @Injectable()
 export class IronkeysService {
@@ -34,7 +34,7 @@ export class IronkeysService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/ironkeys?search=serial:" + serial + ",version:" + version + ",status~" + status + ",size~" + capacity+"&page=" + page + "&size=" + size , { headers: headers })
+    return this.http.get(this.url + "/ironkeys?filterCriteria=serial=like:" + serial + ",version=like:" + version + ",status=eq:" + status + ",size=eq:" + capacity+"&sortingCriteria=+name&pageNumber=" + page + "&pageSize=" + size , { headers: headers })
       .map(res => res.json());
   }
   /**

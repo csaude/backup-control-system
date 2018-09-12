@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiModelProperty;
  * A User is a definition of Users that have specific 
  * previlege to access the System resources.
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "user")

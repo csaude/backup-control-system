@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiModelProperty;
  * A Send is a definition of all backups that 
  * have been Send to Headquarter.
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "send")
@@ -184,6 +184,7 @@ public class Send {
 		this.canceled = false;
 		this.received = false;
 		this.ik_received = false;
+		//uuid preferd withou '-' char
 		this.uuid = UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
@@ -406,6 +407,9 @@ public class Send {
 		this.idart_backup_date = idart_backup_date;
 	}
 
+	/* 
+	 * This method is beeing used to diplay information on logs
+	 */
 	@Override
 	public String toString() {
 		return "Send [send_id=" + send_id + ", backup_date=" + backupdate + ", update_finished=" + update_finished + ", validation_finished=" + validation_finished + ", sync_finished=" + sync_finished + ", cross_dhis2_finished="

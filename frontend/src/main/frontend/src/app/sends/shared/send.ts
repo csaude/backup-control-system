@@ -7,9 +7,10 @@ import { Transporter } from './../../transporters/shared/transporter';
 import { User } from './../../users/shared/user';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class Send {
+  
   send_id: number;
   backup_date: Date;
   update_finished: boolean;

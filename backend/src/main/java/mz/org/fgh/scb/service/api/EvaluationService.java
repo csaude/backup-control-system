@@ -13,7 +13,7 @@ import mz.org.fgh.scb.model.entity.Evaluation;
 /**
  * Defines the services api of Evaluations
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface EvaluationService {

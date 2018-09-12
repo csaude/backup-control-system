@@ -23,42 +23,68 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import mz.org.fgh.scb.exception.SearchControllerException;
 import mz.org.fgh.scb.model.entity.Server;
+import mz.org.fgh.scb.page.PageRequestBuilder;
 import mz.org.fgh.scb.service.impl.ServerServiceImpl;
 import mz.org.fgh.scb.specification.ServerSpecificationsBuilder;
 
 /**
  * Defines the rest endpoint configuration for Servers
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @RestController
 @RequestMapping("api")
-@Api(tags = {"Server"})
+@Api(tags = { "Server" })
 public class ServerController {
 
 	@Autowired
 	private ServerServiceImpl serverServiceImpl;
 
+	/**
+	 * @param filterCriteria  the filterCriteria
+	 * @param sortingCriteria the sortingCriteria
+	 * @param pageNumber      the pageNumber
+	 * @param pageSize        the pageSize
+	 * @return District records paginated
+	 * @throws Exception on bad request
+	 */
 	@GetMapping(value = "/servers")
-	public Page<Server> findServers(@RequestParam(value = "page", required = true) int page, @RequestParam(value = "size", required = true) int size, @RequestParam(value = "search", required = false) String search) throws Exception {
-
+	public Page<Server> findServers(@RequestParam(value = "filterCriteria", required = false) String filterCriteria, @RequestParam(value = "sortingCriteria", required = false) String sortingCriteria,
+			@RequestParam(value = "pageNumber", required = false) String pageNumber, @RequestParam(value = "pageSize", required = false) String pageSize) throws Exception {
 		ServerSpecificationsBuilder builder = new ServerSpecificationsBuilder();
-		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
-		Matcher matcher = pattern.matcher(search + ",");
+		if (pageNumber != null) {
+			if (pageNumber.isEmpty()) {
+				pageNumber = null;
+			}
+		}
+		if (pageSize != null) {
+			if (pageSize.isEmpty()) {
+				pageSize = null;
+			}
+		}
+		Pattern pattern = Pattern.compile("(\\w+?)(=eq:|=like:|!)(\\w+?),");
+		Matcher matcher = pattern.matcher(filterCriteria + ",");
 		while (matcher.find()) {
 			builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
 		}
 		Specification<Server> spec = builder.build();
-		PageRequest pageRequest = PageRequestBuilder.getPageRequest(size, page, "+district.name,+name");
+		PageRequest pageRequest = PageRequestBuilder.getPageRequest(pageSize, pageNumber, sortingCriteria);
 		Page<Server> pageServer = serverServiceImpl.findAll(spec, pageRequest);
-		if (page > pageServer.getTotalPages()) {
-			throw new Exception();
+		if (pageNumber != null) {
+			if (Integer.valueOf(pageNumber + "") > pageServer.getTotalPages()) {
+				throw new SearchControllerException("Could not retrieve results, if you are allocated to any District update the filter criteria or contact the System Administrator.");
+			}
 		}
 		return pageServer;
 	}
 
+	/**
+	 * @param server the Server
+	 * @return Success if persist as expected
+	 */
 	@PostMapping(value = "/server")
 	@ResponseBody
 	public String createServer(@RequestBody Server server) {
@@ -71,11 +97,21 @@ public class ServerController {
 		return "Success";
 	}
 
+	/**
+	 * @param uuid the Server uuid
+	 * @return the Server saved
+	 * @throws Exception if error occurred
+	 */
 	@GetMapping(value = "/server/{uuid}")
 	public Server findOneServerByUuid(@PathVariable String uuid) throws Exception {
 		return serverServiceImpl.findOneByUuid(uuid);
 	}
 
+	/**
+	 * @param uuid the Server uuid
+	 * @return the Server
+	 * @throws Exception if error occurred during delete
+	 */
 	@DeleteMapping(value = "/server/{uuid}")
 	@ResponseBody
 	public String deleteServer(@PathVariable String uuid) throws Exception {
@@ -90,6 +126,11 @@ public class ServerController {
 		}
 	}
 
+	/**
+	 * @param server the Server
+	 * @return Success or Error
+	 * @throws Exception if error occurred during update
+	 */
 	@PutMapping(value = "/server")
 	@ResponseBody
 	public String updateServer(@RequestBody Server server) throws Exception {
@@ -101,5 +142,5 @@ public class ServerController {
 			return "Erro";
 		}
 	}
-	
+
 }

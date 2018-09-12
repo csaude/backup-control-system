@@ -23,42 +23,70 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import mz.org.fgh.scb.exception.SearchControllerException;
 import mz.org.fgh.scb.model.entity.Ironkey;
+import mz.org.fgh.scb.page.PageRequestBuilder;
 import mz.org.fgh.scb.service.impl.IronkeyServiceImpl;
 import mz.org.fgh.scb.specification.IronkeySpecificationsBuilder;
 
 /**
  * Defines the rest endpoint configuration for Ironkeys
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @RestController
 @RequestMapping("api")
-@Api(tags = {"Ironkey"})
+@Api(tags = { "Ironkey" })
 public class IronkeyController {
 
 	@Autowired
 	private IronkeyServiceImpl ironkeyServiceImpl;
 
+	/**
+	 * @param filterCriteria  the filterCriteria
+	 * @param sortingCriteria the sortingCriteria
+	 * @param pageNumber      the pageNumber
+	 * @param pageSize        the pageSize
+	 * @return Send records paginated
+	 * @throws Exception on bad request
+	 */
 	@GetMapping(value = "/ironkeys")
-	public Page<Ironkey> findIronkeys(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
-		
+	public Page<Ironkey> findIronkeys(@RequestParam(value = "filterCriteria", required = false) String filterCriteria, @RequestParam(value = "sortingCriteria", required = false) String sortingCriteria,
+			@RequestParam(value = "pageNumber", required = false) String pageNumber, @RequestParam(value = "pageSize", required = false) String pageSize) throws Exception {
 		IronkeySpecificationsBuilder builder = new IronkeySpecificationsBuilder();
-		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
-		Matcher matcher = pattern.matcher(search + ",");
+		if (pageNumber != null) {
+			if (pageNumber.isEmpty()) {
+				pageNumber = null;
+			}
+		}
+		if (pageSize != null) {
+			if (pageSize.isEmpty()) {
+				pageSize = null;
+			}
+		}
+		Pattern pattern = Pattern.compile("(\\w+?)(=eq:|=like:)(\\w+?),");
+		Matcher matcher = pattern.matcher(filterCriteria + ",");
 		while (matcher.find()) {
 			builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
 		}
 		Specification<Ironkey> spec = builder.build();
-		PageRequest pageRequest = PageRequestBuilder.getPageRequest(size, page, "+serial");
+		PageRequest pageRequest = PageRequestBuilder.getPageRequest(pageSize, pageNumber, "+serial");
 		Page<Ironkey> pageIronkey = ironkeyServiceImpl.findAll(spec, pageRequest);
-		if (page > pageIronkey.getTotalPages()) {
-			throw new Exception();
+		if (pageNumber != null) {
+		if (pageNumber != null) {
+			if (Integer.valueOf(pageNumber + "") > pageIronkey.getTotalPages()) {
+				throw new SearchControllerException("Cant retrieve any data, update your filter or contact the System Administrator.");
+			}
+		}
 		}
 		return pageIronkey;
 	}
 
+	/**
+	 * @param ironkey the Ironkey
+	 * @return Success or error
+	 */
 	@PostMapping(value = "/ironkey")
 	@ResponseBody
 	public String createIronkey(@RequestBody Ironkey ironkey) {
@@ -71,11 +99,21 @@ public class IronkeyController {
 		return "Success";
 	}
 
+	/**
+	 * @param uuid the Ironkey uuid
+	 * @return the Ironkey
+	 * @throws Exception if error is found
+	 */
 	@GetMapping(value = "/ironkey/{uuid}")
 	public Ironkey findOneIronkeyByUuid(@PathVariable String uuid) throws Exception {
 		return ironkeyServiceImpl.findOneByUuid(uuid);
 	}
 
+	/**
+	 * @param uuid the Ironkey uuid
+	 * @return the Ironkey
+	 * @throws Exception if error occurred
+	 */
 	@DeleteMapping(value = "/ironkey/{uuid}")
 	@ResponseBody
 	public String deleteIronkey(@PathVariable String uuid) throws Exception {
@@ -90,6 +128,11 @@ public class IronkeyController {
 		}
 	}
 
+	/**
+	 * @param ironkey
+	 * @return
+	 * @throws Exception
+	 */
 	@PutMapping(value = "/ironkey")
 	@ResponseBody
 	public String updateIronkey(@RequestBody Ironkey ironkey) throws Exception {

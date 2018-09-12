@@ -12,7 +12,7 @@ import mz.org.fgh.scb.model.entity.Evaluation;
 /**
  * Defines the functionality for persisting Evaluations
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface EvaluationRepository extends JpaRepository<Evaluation, Long>, JpaSpecificationExecutor<Evaluation> {

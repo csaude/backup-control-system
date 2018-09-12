@@ -7,7 +7,7 @@ import { Person } from './../../persons/shared/person';
 import { Authority } from './../../authorities/shared/authority';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class User {
   user_id: number;

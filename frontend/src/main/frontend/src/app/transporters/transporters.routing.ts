@@ -15,6 +15,6 @@ const transportersRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const transportersRouting = RouterModule.forChild(transportersRoutes);

@@ -16,6 +16,6 @@ const receivesRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const receivesRouting = RouterModule.forChild(receivesRoutes);

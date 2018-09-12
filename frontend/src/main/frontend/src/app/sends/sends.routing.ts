@@ -15,6 +15,6 @@ const sendsRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const sendsRouting = RouterModule.forChild(sendsRoutes);

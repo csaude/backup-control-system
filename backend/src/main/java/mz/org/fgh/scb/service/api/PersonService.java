@@ -9,7 +9,7 @@ import mz.org.fgh.scb.model.entity.Person;
 /**
  * Defines the services api of Persons
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface PersonService {

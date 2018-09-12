@@ -15,7 +15,7 @@ import { ResourcesService } from "./../resources/shared/resources.service";
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class NavBarComponent implements OnInit {
   public user;

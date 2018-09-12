@@ -23,14 +23,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import mz.org.fgh.scb.exception.SearchControllerException;
 import mz.org.fgh.scb.model.entity.Transporter;
+import mz.org.fgh.scb.page.PageRequestBuilder;
 import mz.org.fgh.scb.service.impl.TransporterServiceImpl;
 import mz.org.fgh.scb.specification.TransporterSpecificationsBuilder;
 
 /**
  * Defines the rest endpoint configuration for Transporters
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @RestController
@@ -41,23 +43,50 @@ public class TransporterController {
 	@Autowired
 	private TransporterServiceImpl transporterServiceImpl;
 
+	/**
+	 * @param filterCriteria  the filterCriteria
+	 * @param sortingCriteria the sortingCriteria
+	 * @param pageNumber      the pageNumber
+	 * @param pageSize        the pageSize
+	 * @return Send records paginated
+	 * @throws Exception on bad request
+	 */
 	@GetMapping(value = "/transporters")
-	public Page<Transporter> findTransporters(@RequestParam(value = "page", required = true) int page,@RequestParam(value = "size", required = true) int size,@RequestParam(value = "search", required = false) String search) throws Exception {
+	public Page<Transporter> findTransporters(@RequestParam(value = "filterCriteria", required = false) String filterCriteria, @RequestParam(value = "sortingCriteria", required = false) String sortingCriteria,
+			@RequestParam(value = "pageNumber", required = false) String pageNumber, @RequestParam(value = "pageSize", required = false) String pageSize) throws Exception {
 		TransporterSpecificationsBuilder builder = new TransporterSpecificationsBuilder();
-		Pattern pattern = Pattern.compile("(\\w+?)(:|!|>|<|~)(\\w+?),");
-		Matcher matcher = pattern.matcher(search + ",");
+		if (pageNumber != null) {
+			if (pageNumber.isEmpty()) {
+				pageNumber = null;
+			}
+		}
+		if (pageSize != null) {
+			if (pageSize.isEmpty()) {
+				pageSize = null;
+			}
+		}
+		Pattern pattern = Pattern.compile("(\\w+?)(=eq:|=like:)(\\w+?),");
+		Matcher matcher = pattern.matcher(filterCriteria + ",");
 		while (matcher.find()) {
 			builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
 		}
 		Specification<Transporter> spec = builder.build();
-		PageRequest pageRequest = PageRequestBuilder.getPageRequest(size, page, "+name");
+		PageRequest pageRequest = PageRequestBuilder.getPageRequest(pageSize, pageNumber, sortingCriteria);
 		Page<Transporter> pageTransporter = transporterServiceImpl.findAll(spec, pageRequest);
-		if (page > pageTransporter.getTotalPages()) {
-			throw new Exception();
+		if (pageNumber != null) {
+			if (pageNumber != null) {
+				if (Integer.valueOf(pageNumber + "") > pageTransporter.getTotalPages()) {
+					throw new SearchControllerException("Cant find any data with this parameters, try again or contact the System Administrator.");
+				}
+			}
 		}
 		return pageTransporter;
 	}
 
+	/**
+	 * @param transporter the Transporter
+	 * @return the Transporter
+	 */
 	@PostMapping(value = "/transporter")
 	@ResponseBody
 	public String createTransporter(@RequestBody Transporter transporter) {
@@ -71,11 +100,21 @@ public class TransporterController {
 		}
 	}
 
+	/**
+	 * @param uuid the Transporter uuid
+	 * @return the Transporter with given uuuid
+	 * @throws Exception
+	 */
 	@GetMapping(value = "/transporter/{uuid}")
 	public Transporter findOneTransporterByUuid(@PathVariable String uuid) throws Exception {
 		return transporterServiceImpl.findOneByUuid(uuid);
 	}
 
+	/**
+	 * @param uuid the Transporter uuid
+	 * @return Success or error
+	 * @throws Exception if any error occurred
+	 */
 	@DeleteMapping(value = "/transporter/{uuid}")
 	@ResponseBody
 	public String deleteTransporter(@PathVariable String uuid) throws Exception {
@@ -90,6 +129,11 @@ public class TransporterController {
 		}
 	}
 
+	/**
+	 * @param transporter the Transporter
+	 * @return Success or error
+	 * @throws Exception if any error occurred
+	 */
 	@PutMapping(value = "/transporter")
 	@ResponseBody
 	public String updateTransporter(@RequestBody Transporter transporter) throws Exception {

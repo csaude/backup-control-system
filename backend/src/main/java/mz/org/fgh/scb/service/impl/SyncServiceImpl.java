@@ -25,7 +25,7 @@ import mz.org.fgh.scb.repository.SyncRepository;
 import mz.org.fgh.scb.service.api.SyncService;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Service

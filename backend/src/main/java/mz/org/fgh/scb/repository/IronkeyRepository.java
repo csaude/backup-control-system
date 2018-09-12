@@ -12,7 +12,7 @@ import mz.org.fgh.scb.model.entity.Ironkey;
 /**
  * Defines the functionality for persisting Ironkeys
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface IronkeyRepository extends JpaRepository<Ironkey, Long>, JpaSpecificationExecutor<Ironkey> {

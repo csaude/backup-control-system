@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiModelProperty;
  * this location send backups every month to Headquarters
  * Synchronization of data is supposed to occur every Friday.
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "district")

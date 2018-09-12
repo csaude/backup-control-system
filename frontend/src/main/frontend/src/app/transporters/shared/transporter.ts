@@ -5,7 +5,7 @@
 import { User } from './../../users/shared/user';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class Transporter {
   transporter_id: number;

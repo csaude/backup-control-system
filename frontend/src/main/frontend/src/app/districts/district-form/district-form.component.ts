@@ -19,7 +19,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 export class DistrictFormComponent implements OnInit {
   public provinces = [
@@ -81,11 +81,11 @@ export class DistrictFormComponent implements OnInit {
       this.title = uuid ? 'Editar Distrito' : 'Novo Distrito';
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
-        this.districtsService.findDistricts(1,100000,"",false)
+        this.districtsService.findDistricts("","","",false)
           .subscribe(data => {
             this.alldistricts = data.content;
           });
-        this.ironkeysService.findIronkeys(1,100000,"","","","")
+        this.ironkeysService.findIronkeys("","","","","","")
           .subscribe(data => { this.allironkeys = data.content }, error => { },
             () => {
               this.disabled1 = false;
@@ -96,7 +96,7 @@ export class DistrictFormComponent implements OnInit {
           district => {
             this.district = district;
             var districtik = district.ironkeysDistrict;
-            this.ironkeysService.findIronkeys(1,100000,"","","","")
+            this.ironkeysService.findIronkeys("","","","","","")
               .subscribe(data => {
                 this.allironkeys = data.content;
                 var filteredironkeys = this.allironkeys;

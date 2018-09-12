@@ -18,7 +18,7 @@ import mz.org.fgh.scb.service.impl.AuthorityServiceImpl;
 /**
  * Defines the rest endpoint configuration for Authorities
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @RestController
@@ -29,6 +29,9 @@ public class AuthorityController {
 	@Autowired
 	private AuthorityServiceImpl authorityServiceImpl;
 
+	/**
+	 * @return all Authorities that exists on the database
+	 */
 	@GetMapping(value = "/authorities")
 	public List<Authority> findAllAuthorities() {
 		return authorityServiceImpl.findAllByOrderByNameAsc();

@@ -23,7 +23,7 @@ import * as myGlobals from '../../globals';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class SyncsComponent implements OnInit {
   public syncs; syncsreport: Sync[] = [];
@@ -87,18 +87,22 @@ export class SyncsComponent implements OnInit {
 
     if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
 
-      var districts;
-      if (!this.ROLE_SIS && user.districts.find(item => item.parentdistrict != null)) {
-        districts = user.districts.filter(item => item.parentdistrict == null);
-      }
-      else if (!this.ROLE_SIS && user.districts.find(item => item.parentdistrict == null)) {
-        districts = user.districts;
-      }
-      this.alldistricts = districts
+      this.alldistricts=user.districts.filter(item => item.parentdistrict == null);
+      this.alldistricts.sort(function (a, b) {
+        var nameA = a.namef.toUpperCase(); // ignore upper and lowercase
+        var nameB = b.namef.toUpperCase(); // ignore upper and lowercase
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      });
 
     } else {
 
-      this.districtsService.findDistricts(1, 100000, "", false)
+      this.districtsService.findDistricts("", "", "", false)
         .subscribe(data => {
           var filteredd = data.content.filter(item => item.parentdistrict == null);
           this.alldistricts = filteredd;
@@ -107,7 +111,7 @@ export class SyncsComponent implements OnInit {
     }
 
     this.disabled1 = true;
-        this.serversService.findServers(1, 10000000, "", "", false, "")
+        this.serversService.findServers("", "", "", "", false, "")
           .subscribe(data => {
             this.allservers = data.content;
             this.allserversfd=data.content;
@@ -168,7 +172,7 @@ export class SyncsComponent implements OnInit {
     if (userValue.district == "all" || userValue.district == null) {
       this.district_id = "";
       this.disabled1 = true;
-        this.serversService.findServers(1, 10000000, "", "", false, "")
+        this.serversService.findServers("", "", "", "", false, "")
           .subscribe(data => {
             this.allservers = data.content;
             this.allserversfd=data.content;
@@ -178,7 +182,7 @@ export class SyncsComponent implements OnInit {
     } else {
       this.district_id = userValue.district;
       this.disabled1 = true;
-      this.serversService.findServers(1, 10000000, this.district_id, "", false, "")
+      this.serversService.findServers("", "", this.district_id, "", false, "")
         .subscribe(data => {
           this.allservers = data.content;
           this.allserversfd=data.content;
@@ -196,7 +200,7 @@ export class SyncsComponent implements OnInit {
     }
 
     if ((userValue.start_from != "" && userValue.start_from != null) && (userValue.start_until != "" && userValue.start_until != null)) {
-      if (userValue.start_from < userValue.start_until) {
+      if (userValue.start_from <= userValue.start_until) {
         this.from = userValue.start_from;
         this.until = userValue.start_until
       }else{
@@ -223,6 +227,7 @@ export class SyncsComponent implements OnInit {
               this.syncsreport = alasql("SELECT * FROM ?syncsreport ORDER BY server->districtname ASC,start_time DESC ", [this.syncsreport]);
               total = data.totalElements;
               
+              if(this.district_id==''&&this.server_id==''){
               for (let s of this.allserversfd) {
                 if (!this.syncsreport.find(item => item.serverreport == s.name + "\n" + s.districtname)) {
                   let sync = new Sync();
@@ -231,7 +236,7 @@ export class SyncsComponent implements OnInit {
                   this.syncsreport.push(sync);
                 }
               }
-
+            }
 
 
             },

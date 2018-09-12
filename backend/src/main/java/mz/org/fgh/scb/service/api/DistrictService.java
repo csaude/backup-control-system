@@ -13,7 +13,7 @@ import mz.org.fgh.scb.model.entity.District;
 /**
  * Defines the services api of Districts
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface DistrictService {

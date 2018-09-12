@@ -21,7 +21,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class SendFormComponent implements OnInit {
   public form: FormGroup;
@@ -93,18 +93,11 @@ export class SendFormComponent implements OnInit {
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
 
-        if (this.ROLE_SIS) {
-          this.alldistricts = user.districts;
-        } else if (!this.ROLE_SIS && user.districts.find(item => item.parentdistrict != null)) {
-          this.alldistricts = user.districts.filter(item => item.parentdistrict != null);
-        }
-        else if (!this.ROLE_SIS && user.districts.find(item => item.parentdistrict == null)) {
-          this.alldistricts = user.districts;
-        }
+        this.alldistricts = user.districts;
 
         this.alldistricts.sort(function (a, b) {
-          var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-          var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+          var nameA = a.namef.toUpperCase(); // ignore upper and lowercase
+          var nameB = b.namef.toUpperCase(); // ignore upper and lowercase
           if (nameA < nameB) {
             return -1;
           }
@@ -113,7 +106,7 @@ export class SendFormComponent implements OnInit {
           }
           return 0;
         });
-        this.transportersService.findTransporters(1, 1000000, "", "", false)
+        this.transportersService.findTransporters("", "", "", "", false)
           .subscribe(data => { this.alltransporters = data.content; }
             , errot => { },
             () => {
@@ -147,7 +140,7 @@ export class SendFormComponent implements OnInit {
                 }
                 return 0;
               });
-              this.transportersService.findTransporters(1, 1000000, "", "", false)
+              this.transportersService.findTransporters("", "", "", "", false)
                 .subscribe(data => {
                   this.alltransporters = data.content;
                   var filteredtransporters = this.alltransporters;

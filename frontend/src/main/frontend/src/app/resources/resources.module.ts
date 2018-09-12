@@ -15,6 +15,6 @@ import { ResourcesService } from './shared/resources.service';
 })
 
 /** 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 export class ResourcesModule { }

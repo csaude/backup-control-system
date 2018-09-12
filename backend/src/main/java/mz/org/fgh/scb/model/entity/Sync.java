@@ -28,7 +28,7 @@ import io.swagger.annotations.ApiModelProperty;
  * A Sync is a definition of the process of the 
  * data exchange between the Servers.
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "sync")

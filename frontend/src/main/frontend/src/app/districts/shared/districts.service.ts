@@ -8,7 +8,7 @@ import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 @Injectable()
 export class DistrictsService {
@@ -47,7 +47,7 @@ export class DistrictsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/districts?search=name:"+name+",canceled~" + canceled+",user!user&page=" + page + "&size=" + size , { headers: headers })
+    return this.http.get(this.url + "/districts?filterCriteria=name=like:"+name+",canceled=eq:" + canceled+",user!user&pageNumber=" + page + "&pageSize=" + size+"&sortingCriteria=+parent.name,+name", { headers: headers })
       .map(res => res.json());
   }
 
@@ -105,6 +105,16 @@ export class DistrictsService {
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url+"/district/"+url+"/"+ datasetuuid, { headers: headers })
+      .map(res => res.json());
+  }
+
+  checkConnection(uuid) {
+    var headers: any = new Headers();
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
+    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
+    headers.append('Content-Type', 'application/json');
+    return this.http.get(this.url+"/district/openmrs/"+uuid, { headers: headers })
       .map(res => res.json());
   }
 

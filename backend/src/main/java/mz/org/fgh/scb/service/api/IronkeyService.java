@@ -13,7 +13,7 @@ import mz.org.fgh.scb.model.entity.Ironkey;
 /**
  * Defines the services api of Ironkeys
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface IronkeyService {

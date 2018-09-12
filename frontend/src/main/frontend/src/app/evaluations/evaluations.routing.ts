@@ -15,6 +15,6 @@ const evaluationsRoutes: Routes = [
 ];
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 export const evaluationsRouting = RouterModule.forChild(evaluationsRoutes);

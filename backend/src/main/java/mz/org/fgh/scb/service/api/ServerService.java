@@ -13,7 +13,7 @@ import mz.org.fgh.scb.model.entity.Server;
 /**
  * Defines the services api of Server
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface ServerService {

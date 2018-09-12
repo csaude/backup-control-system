@@ -6,7 +6,7 @@ import { Server } from './../../servers/shared/server';
 import { User } from './../../users/shared/user';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class Sync {
   sync_id: number;

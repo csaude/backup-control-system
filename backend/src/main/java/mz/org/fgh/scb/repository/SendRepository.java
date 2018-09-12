@@ -12,7 +12,7 @@ import mz.org.fgh.scb.model.entity.Send;
 /**
  * Defines the functionality for persisting Sends
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface SendRepository extends JpaRepository<Send, Long>, JpaSpecificationExecutor<Send> {

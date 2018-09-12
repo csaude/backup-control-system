@@ -20,7 +20,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class SendsComponent implements OnInit {
   public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD;isHidden; isHidden2m: string;
@@ -67,18 +67,11 @@ export class SendsComponent implements OnInit {
     this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
 
 
-    if (this.ROLE_SIS) {
-      this.alldistricts = user.districts;
-    } else if (!this.ROLE_SIS && user.districts.find(item => item.parentdistrict != null)) {
-      this.alldistricts = user.districts.filter(item => item.parentdistrict != null);
-    }
-    else if (!this.ROLE_SIS) {
-      this.alldistricts = user.districts;
-    }
+    this.alldistricts = user.districts;
 
     this.alldistricts.sort(function (a, b) {
-      var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-      var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+      var nameA = a.namef.toUpperCase(); // ignore upper and lowercase
+      var nameB = b.namef.toUpperCase(); // ignore upper and lowercase
       if (nameA < nameB) {
         return -1;
       }
@@ -103,6 +96,7 @@ export class SendsComponent implements OnInit {
           this.total = 0;
           this.p = 1;
           this.sends = [];
+          console.log(error);
         },
         () => {
           this.isHidden = "hide";
@@ -287,7 +281,7 @@ export class SendsComponent implements OnInit {
     }
 
     if ((userValue.backup_from != "" && userValue.backup_from != null) && (userValue.backup_until != "" && userValue.backup_until != null)) {
-      if (userValue.backup_from < userValue.backup_until) {
+      if (userValue.backup_from <= userValue.backup_until) {
         this.from = userValue.backup_from;
         this.until = userValue.backup_until
       }else{

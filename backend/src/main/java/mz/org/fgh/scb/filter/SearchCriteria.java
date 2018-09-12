@@ -2,11 +2,15 @@
  * Copyright (C) 2014-2018, Friends in Global Health, LLC
  * All rights reserved.
  */
-package mz.org.fgh.scb.specification;
+package mz.org.fgh.scb.filter;
 
 import mz.org.fgh.scb.model.entity.IronkeyStatus;
 import mz.org.fgh.scb.model.entity.ServerType;
 
+/**
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
+ *
+ */
 public class SearchCriteria {
 	
 	private String key;
@@ -23,6 +27,9 @@ public class SearchCriteria {
         this.operation = operation;
         this.value=value;	
         
+        //--------------------------------------------
+        //Override @QueryParams data Types 
+        //--------------------------------------------
         if(key.equals("type")&&value.equals("CHILD")){
         	this.value = ServerType.CHILD;	
         }else if(key.equals("type")&&value.equals("PARENT")){
@@ -30,8 +37,7 @@ public class SearchCriteria {
         }
         
         if(key.equals("status")&&value.equals("Activado")){
-        	this.value = IronkeyStatus.Activado;	
-        	System.out.println("AQUI");
+        	this.value = IronkeyStatus.Activado;
         }else if(key.equals("status")&&value.equals("Desactivado")){
         	this.value = IronkeyStatus.Desactivado;
         }else if(key.equals("status")&&value.equals("Perdido")){
@@ -74,7 +80,6 @@ public class SearchCriteria {
         	this.value=value.toString().replaceAll("SPACEIFEN", "-");
         }
        
-        
         if(key.equals("name")||key.equals("role")||key.equals("serial")||key.equals("version")){
         	this.value=value.toString().replaceAll("SPACE", " ");
         }

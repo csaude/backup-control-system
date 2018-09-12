@@ -19,7 +19,7 @@ import { DistrictsService } from '../../districts/shared/districts.service';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class ServerFormComponent implements OnInit {
   public options: Pickadate.DateOptions = {
@@ -78,7 +78,7 @@ export class ServerFormComponent implements OnInit {
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
         
-        this.districtsService.findDistricts(1,100000,"",false)
+        this.districtsService.findDistricts("","","",false)
         .subscribe(data => {
           this.alldistricts = data.content.filter(item => item.parentdistrict==null);;
         
@@ -100,7 +100,7 @@ export class ServerFormComponent implements OnInit {
             }, () => {
 
 
-              this.districtsService.findDistricts(1,100000,"",false)
+              this.districtsService.findDistricts("","","",false)
               .subscribe(data => {
                 this.alldistricts = data.content.filter(item => item.parentdistrict==null);;
                 this.alldistricts = this.alldistricts.filter(item => item.district_id !== this.server.district.district_id);

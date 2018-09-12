@@ -22,7 +22,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class UserFormComponent implements OnInit {
   public form: FormGroup;
@@ -97,7 +97,7 @@ export class UserFormComponent implements OnInit {
       this.title = uuid ? 'Editar Utilizador' : 'Novo Utilizador';
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
-        this.districtsService.findDistricts(1,100000,"",false)
+        this.districtsService.findDistricts("","","",false)
           .subscribe(data => {
             this.alldistricts = data.content;
           }, error => { },
@@ -121,7 +121,7 @@ export class UserFormComponent implements OnInit {
             this.user = user2;
             var userdistrict = this.user.districts;
             var userauthority = this.user.authorities;
-            this.districtsService.findDistricts(1,100000,"",false)
+            this.districtsService.findDistricts("","","",false)
               .subscribe(data => {
                 this.alldistricts = data.content;
                 var filtereddistricts = this.alldistricts;

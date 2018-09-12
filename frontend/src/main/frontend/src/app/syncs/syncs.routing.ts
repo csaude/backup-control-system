@@ -15,6 +15,6 @@ const syncsRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const syncsRouting = RouterModule.forChild(syncsRoutes);

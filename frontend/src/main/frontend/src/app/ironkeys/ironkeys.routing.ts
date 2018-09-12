@@ -14,6 +14,6 @@ const ironkeysRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const ironkeysRouting = RouterModule.forChild(ironkeysRoutes);

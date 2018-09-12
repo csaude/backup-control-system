@@ -19,7 +19,7 @@ import mz.org.fgh.scb.repository.DistrictRepository;
 import mz.org.fgh.scb.service.api.DistrictService;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Service

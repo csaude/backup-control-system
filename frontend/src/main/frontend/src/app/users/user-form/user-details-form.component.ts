@@ -23,7 +23,7 @@ import * as CryptoJS from 'crypto-js';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class UserDetailsFormComponent implements OnInit {
   public form: FormGroup;
@@ -114,7 +114,7 @@ export class UserDetailsFormComponent implements OnInit {
             this.user = user2;
             var userdistrict = this.user.districts;
             var userauthority = this.user.authorities;
-            this.districtsService.findDistricts(1,100000,"",false)
+            this.districtsService.findDistricts("","","",false)
               .subscribe(data => {
                   this.alldistricts = data.content;
                 var filtereddistricts = this.alldistricts;

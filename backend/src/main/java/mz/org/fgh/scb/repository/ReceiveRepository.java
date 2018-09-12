@@ -14,7 +14,7 @@ import mz.org.fgh.scb.model.entity.Receive;
 /**
  * Defines the functionality for persisting Receives
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface ReceiveRepository extends JpaRepository<Receive, Long>, JpaSpecificationExecutor<Receive> {

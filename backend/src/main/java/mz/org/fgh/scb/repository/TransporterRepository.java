@@ -12,7 +12,7 @@ import mz.org.fgh.scb.model.entity.Transporter;
 /**
  * Defines the functionality for persisting Transporters
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface TransporterRepository extends JpaRepository<Transporter, Long>, JpaSpecificationExecutor<Transporter> {

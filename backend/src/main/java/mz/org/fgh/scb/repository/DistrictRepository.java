@@ -12,7 +12,7 @@ import mz.org.fgh.scb.model.entity.District;
 /**
  * Defines the functionality for persisting Districts
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface DistrictRepository extends JpaRepository<District, Long>, JpaSpecificationExecutor<District> {

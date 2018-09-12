@@ -24,7 +24,7 @@ import javax.persistence.UniqueConstraint;
  * A Server is a definition of Server that 
  * exchange data with another Server
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "server")

@@ -13,7 +13,7 @@ import mz.org.fgh.scb.model.entity.Send;
 /**
  * Defines the services api of Sends
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface SendService {

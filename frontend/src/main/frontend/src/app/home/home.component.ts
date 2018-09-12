@@ -16,7 +16,7 @@ import { District } from '../districts/shared/district';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class HomeComponent implements OnInit {
 
@@ -426,7 +426,7 @@ export class HomeComponent implements OnInit {
     if (this.ROLE_SIS || this.ROLE_IT || this.ROLE_OA || this.ROLE_GMA) {
 
 
-      this.districtsService.findDistricts(1,100000,"",false)
+      this.districtsService.findDistricts("","","",false)
         .subscribe(data => {
           var filteredd = data.content.filter(item => item.parentdistrict == null);
           this.alldistricts = filteredd;
@@ -640,21 +640,15 @@ export class HomeComponent implements OnInit {
     if (this.ROLE_ODMA || this.ROLE_GDD || this.ROLE_ORMA) {
       this.resourcesService.getReceivedPM()
         .subscribe(data => {
-          var districts;
-          if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict != null)) {
-            districts = this.user.districts.filter(item => item.parentdistrict != null);
-          }
-          else if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict == null)) {
-            districts = this.user.districts;
-          }
-
-
+          var districts=this.user.districts;
+         
           var resulti = alasql("SELECT [0] AS name, [1] AS exist FROM ?", [data]);
-          var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
+          var result = alasql("SELECT * FROM ?resulti JOIN ?districts ON resulti.name=districts.namef", [resulti, districts]);
+      
           var label: string[] = [];
           var value: number[] = [];
           for (let l of result) {
-            label.push(l.name);
+            label.push(l.namef);
             value.push(l.exist);
           }
           this.barChartLabels = label;
@@ -669,20 +663,14 @@ export class HomeComponent implements OnInit {
       this.resourcesService.getReceivedTM()
         .subscribe(data => {
 
-          var districts;
-          if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict != null)) {
-            districts = this.user.districts.filter(item => item.parentdistrict != null);
-          }
-          else if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict == null)) {
-            districts = this.user.districts;
-          }
-
+          var districts=this.user.districts;
+         
           var resulti = alasql("SELECT [0] AS name, [1] AS exist FROM ?", [data]);
-          var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
+          var result = alasql("SELECT * FROM ?resulti JOIN ?districts ON resulti.name=districts.namef", [resulti, districts]);
           var label: string[] = [];
           var value: number[] = [];
           for (let l of result) {
-            label.push(l.name);
+            label.push(l.namef);
             value.push(l.exist);
           }
           this.barChartLabels2 = label;
@@ -697,13 +685,8 @@ export class HomeComponent implements OnInit {
 
       this.resourcesService.findSyncsPW()
         .subscribe(data => {
-          var districts;
-          if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict != null)) {
-            districts = this.user.districts.filter(item => item.parentdistrict != null);
-          }
-          else if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict == null)) {
-            districts = this.user.districts;
-          }
+          var districts=this.user.districts.filter(item => item.parentdistrict == null);
+
           var resulti = alasql("SELECT [0] AS server,[1] AS name, [3] AS exist,[4] AS error FROM ?data ", [data, districts]);
           var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
           var label: string[] = [];
@@ -734,13 +717,7 @@ export class HomeComponent implements OnInit {
 
       this.resourcesService.findSyncsTW()
         .subscribe(data => {
-          var districts;
-          if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict != null)) {
-            districts = this.user.districts.filter(item => item.parentdistrict != null);
-          }
-          else if (!this.ROLE_SIS && this.user.districts.find(item => item.parentdistrict == null)) {
-            districts = this.user.districts;
-          }
+         var districts=this.user.districts.filter(item => item.parentdistrict == null);
           var resulti = alasql("SELECT [0] AS server,[1] AS name, [3] AS exist,[4] AS error FROM ?data ", [data, districts]);
           var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
           var label: string[] = [];

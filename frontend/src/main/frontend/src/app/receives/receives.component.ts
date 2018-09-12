@@ -22,7 +22,7 @@ import * as myGlobals from '../../globals';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class ReceivesComponent implements OnInit {
   public sends: Send[] = [];
@@ -68,7 +68,7 @@ export class ReceivesComponent implements OnInit {
     this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
     this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
 
-    this.districtsService.findDistricts(1, 100000, "", false)
+    this.districtsService.findDistricts("", "", "", false)
       .subscribe(data => {
         this.alldistricts = data.content;
       });
@@ -282,7 +282,7 @@ export class ReceivesComponent implements OnInit {
     }
 
     if ((userValue.backup_from != "" && userValue.backup_from != null) && (userValue.backup_until != "" && userValue.backup_until != null)) {
-      if (userValue.backup_from < userValue.backup_until) {
+      if (userValue.backup_from <= userValue.backup_until) {
         this.from = userValue.backup_from;
         this.until = userValue.backup_until
       } else {
@@ -311,13 +311,15 @@ export class ReceivesComponent implements OnInit {
       .subscribe(data => {
         this.receivesreport = data.content;
         total = data.totalElements;
+
+        if(this.district_id==''){
         for (let d of this.alldistricts) {
           if (!this.receivesreport.find(item => item.districtname == d.namef)) {
             let receive = new Receive();
             receive.districtname = d.namef
             receive.obsd = "Não registou envio de backup neste periodo.";
             this.receivesreport.push(receive);
-          }
+          }}
         }
       },
         error => {

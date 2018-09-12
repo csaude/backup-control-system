@@ -8,7 +8,7 @@ import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 @Injectable()
 export class SyncsService {
@@ -47,7 +47,7 @@ export class SyncsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/syncs?search=district:" + district_id + ",server~" + server_id + ",starttime>" + from + ",starttime<" + until + ",user!user&page=" + page + "&size=" + size, { headers: headers })
+    return this.http.get(this.url + "/syncs?filterCriteria=district=eq:" + district_id + ",server=eq:" + server_id + ",starttime=gte:" + from + ",starttime=lte:" + until + ",user!user&pageNumber=" + page + "&pageSize=" + size+"&sortingCriteria=-starttime", { headers: headers })
       .map(res => res.json());
   }
 

@@ -34,6 +34,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class HomesModule { }

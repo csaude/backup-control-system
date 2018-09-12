@@ -28,7 +28,7 @@ import mz.org.fgh.scb.service.api.ReceiveService;
 import mz.org.fgh.scb.service.api.SendService;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Service

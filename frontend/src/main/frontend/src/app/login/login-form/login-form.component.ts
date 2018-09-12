@@ -16,7 +16,7 @@ import { NavbarService } from '../../nav-bar/nav-bar.service';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class LoginFormComponent implements OnInit {
   public user: User = new User();

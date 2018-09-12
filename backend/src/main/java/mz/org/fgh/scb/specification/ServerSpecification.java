@@ -17,10 +17,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import mz.org.fgh.scb.filter.FilterOperation;
+import mz.org.fgh.scb.filter.SearchCriteria;
 import mz.org.fgh.scb.model.entity.District;
 import mz.org.fgh.scb.model.entity.Server;
 import mz.org.fgh.scb.model.entity.User;
 
+/**
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
+ *
+ */
 public class ServerSpecification implements Specification<Server> {
 	
 	private SearchCriteria criteria;
@@ -35,15 +41,8 @@ public class ServerSpecification implements Specification<Server> {
 
 	@Override
 	public Predicate toPredicate(final Root<Server> root, final CriteriaQuery<?> query, final CriteriaBuilder builder) {
-		if (criteria.getOperation().equalsIgnoreCase("!")) {
-            return builder.equal(
-              root.<String> get(criteria.getKey()), criteria.getValue());
-        } 
-        else if (criteria.getOperation().equalsIgnoreCase("<")) {
-            return builder.lessThanOrEqualTo(
-              root.<String> get(criteria.getKey()), criteria.getValue().toString());
-        } 
-        else if (criteria.getOperation().equalsIgnoreCase(":")) {
+		
+		if (criteria.getOperation().equalsIgnoreCase(FilterOperation.CONTAINS.toString())) {
             if (root.get(criteria.getKey()).getJavaType() == String.class) {
                 return builder.like(
                   root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
@@ -51,12 +50,13 @@ public class ServerSpecification implements Specification<Server> {
                 return builder.equal(root.get(criteria.getKey()), criteria.getValue());
             }
         }
-    	
-        else if (criteria.getOperation().equalsIgnoreCase("~")) {
-            return builder.equal(root.get("district").get("district_id"), criteria.getValue().toString());
-           
-    }
-        else if (criteria.getOperation().equalsIgnoreCase(">")) {
+        else if (criteria.getOperation().equalsIgnoreCase(FilterOperation.EQUAL.toString())) {
+        	if (criteria.getKey().equalsIgnoreCase("district"))
+				return builder.equal(root.get("district").get("district_id"), criteria.getValue().toString());
+			else
+				return builder.equal(root.<String>get(criteria.getKey()), criteria.getValue());
+        }
+        else if (criteria.getOperation().equalsIgnoreCase("!")) {
     		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     		String loggedUsername = authentication.getName();
     		
@@ -70,9 +70,7 @@ public class ServerSpecification implements Specification<Server> {
     	        Expression<Set<District>> userDistricts = user.get("districts");
     	        userSubQuery.select(user);
     	        userSubQuery.where(builder.equal(user.get("username"), loggedUsername), builder.isMember(server.get("district"), userDistricts));
-    	       
     	        return builder.exists(userSubQuery);
-    		
     		
     		}
             }

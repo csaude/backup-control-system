@@ -26,7 +26,7 @@ import mz.org.fgh.scb.repository.SendRepository;
 import mz.org.fgh.scb.service.api.SendService;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Service
@@ -34,14 +34,14 @@ public class SendServiceImpl implements SendService {
 
 	@Autowired
 	SendRepository sendRepository;
-	
+
 	@Autowired
 	ResourceRepository resourceRepository;
 
 	@Autowired
 	private Environment env;
 
-	private String at, vt, st, c_dhis, c_idart, data, obs, transporter_name, transporter_phone, district,transporter_role,idart_backup;
+	private String at, vt, st, c_dhis, c_idart, data, obs, transporter_name, transporter_phone, district, transporter_role, idart_backup;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -55,8 +55,10 @@ public class SendServiceImpl implements SendService {
 		if (send.getSend_id() == null) {
 			send.setDate_created(new Date());
 			send.setDate_updated(new Date());
-
-			DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
+			// ------------------------------
+			// E-mail notification properties
+			// ------------------------------
+			DateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 			if (send.isUpdate_finished() == true) {
 				at = "Sim";
 			} else {
@@ -82,21 +84,22 @@ public class SendServiceImpl implements SendService {
 			} else {
 				c_idart = "Não";
 			}
-			
 			if (send.isIdart_backup() == true) {
-				idart_backup = "Sim - "+dateFormat1.format(send.getIdart_backup_date());;
+				idart_backup = "Sim - " + simpleDateFormat.format(send.getIdart_backup_date());
+				;
 			} else {
 				idart_backup = "Não";
 			}
 
-			
-			data = dateFormat1.format(send.getBackup_date());
+			data = simpleDateFormat.format(send.getBackup_date());
 			obs = send.getObservation();
 			transporter_name = send.getTransporter().getName() + "";
 			transporter_phone = send.getTransporter().getPhone_number() + "";
 			transporter_role = send.getTransporter().getRole() + "";
 			district = send.getDistrict().getNamef();
-
+			// ---------------------------------
+			// create new thread for send E-mail
+			// ---------------------------------
 			new Thread(new Runnable() {
 				public void run() {
 					HtmlEmail email = new HtmlEmail();
@@ -117,29 +120,19 @@ public class SendServiceImpl implements SendService {
 							i++;
 						}
 						email.setFrom("scb.fgh@gmail.com", "SCB");
-						email.setSubject("[SCB-" + env.getProperty("org") + "] Envio de backup, " + district + "-"+ data + " (No Reply)");
-						email.setHtmlMsg(""
-								+ "<table border='1' style='border-color:#EEEEEE;' cellspacing='0' cellpadding='5' style='width:400px;'>"
-								+ "<thead><tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'>Novo registo de Envio de Backup</th></tr><thead>"
-								+ "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Distrito:</td><td>" + district + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Data do Backup:</td><td>" + data + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Actualização Terminada?</td><td>" + at + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Sincronização Terminada?</td><td>" + st + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Cruzamento com DHIS2?</td><td>" + c_dhis + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Cruzamento com iDART?</td><td>" + c_idart + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Validação Terminada?</td><td>" + vt + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Incluiu backup de\niDART?</td><td>" + idart_backup + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3' aling='top'>Observação Distrital:</td><td>" + obs
-								+ "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Enviado por:</td><td>"
-								+ send.getCreated_by().getPerson().getOthers_names() + " "
-								+ send.getCreated_by().getPerson().getSurname() + "<br>("
-								+ send.getCreated_by().getPerson().getPhone_number() + ")</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Transportado por:</td><td>" + transporter_role + ":<br>"
-								+ transporter_name + "<br>(" + transporter_phone + ")" + "</td></tr>"
+						email.setSubject("[SCB-" + env.getProperty("org") + "] Envio de backup, " + district + "-" + data + " (No Reply)");
+						email.setHtmlMsg("" + "<table border='1' style='border-color:#EEEEEE;' cellspacing='0' cellpadding='5' style='width:400px;'>"
+								+ "<thead><tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'>Novo registo de Envio de Backup</th></tr><thead>" + "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Distrito:</td><td>"
+								+ district + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Data do Backup:</td><td>" + data + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Actualização Terminada?</td><td>" + at + "</td></tr>"
+								+ "<tr><td bgcolor='#F3F3F3'>Sincronização Terminada?</td><td>" + st + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Cruzamento com DHIS2?</td><td>" + c_dhis + "</td></tr>"
+								+ "<tr><td bgcolor='#F3F3F3'>Cruzamento com iDART?</td><td>" + c_idart + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Validação Terminada?</td><td>" + vt + "</td></tr>"
+								+ "<tr><td bgcolor='#F3F3F3'>Incluiu backup de\niDART?</td><td>" + idart_backup + "</td></tr>" + "<tr><td bgcolor='#F3F3F3' aling='top'>Observação Distrital:</td><td>" + obs + "</td></tr>"
+								+ "<tr><td bgcolor='#F3F3F3'>Enviado por:</td><td>" + send.getCreated_by().getPerson().getOthers_names() + " " + send.getCreated_by().getPerson().getSurname() + "<br>("
+								+ send.getCreated_by().getPerson().getPhone_number() + ")</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Transportado por:</td><td>" + transporter_role + ":<br>" + transporter_name + "<br>(" + transporter_phone
+								+ ")" + "</td></tr>"
 								+ "<tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>Sistema de Controle de Backup</span></a><br/>Mantido por: <a href='mailto:his@fgh.org.mz'><span style='color:#00FFFF;'>his@fgh.org.mz</span></a></th></tr>"
 								+ "</tbody></table>");
-						email.setTextMsg(
-								"O seu cliente não aceita mensagens HTML. \nContacte o Administador para mais detalhes.");
+						email.setTextMsg("O seu cliente não aceita mensagens HTML. \nContacte o Administador para mais detalhes.");
 						email.setCharset("utf-8");
 						email.send();
 					} catch (Exception e) {
@@ -149,6 +142,7 @@ public class SendServiceImpl implements SendService {
 			}).start();
 			logger.info(send.getCreated_by().getUsername() + ", created Send: " + send.toString());
 		} else {
+			//Its not necessary send Notification on update
 			send.setDate_updated(new Date());
 			Send send_bd = sendRepository.findOne(send.getSend_id());
 			send.setDate_created(send_bd.getDate_created());
@@ -183,7 +177,7 @@ public class SendServiceImpl implements SendService {
 		logger.info("Deleted Send: " + send.toString());
 		sendRepository.delete(send);
 	}
-	
+
 	@Override
 	public Page<Send> findAll(Specification<Send> spec, PageRequest pageRequest) {
 		return sendRepository.findAll(spec, pageRequest);

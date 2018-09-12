@@ -10,7 +10,7 @@ import { Component, OnInit } from '@angular/core';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class NotFoundComponent implements OnInit {
   constructor() { }

@@ -21,7 +21,7 @@ import mz.org.fgh.scb.repository.IronkeyRepository;
 import mz.org.fgh.scb.service.api.IronkeyService;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Service

@@ -19,19 +19,16 @@
     </div>
     <div class="input-field col s12 l4 m4" *ngIf="translate.currentLang=='en'">
       <mz-select-container>
-
         <select mz-select mz-validation required id="district" [label]="'District'" formControlName="district" (change)="search()">
           <option value="all" selected>All Districts</option>
           <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.namef }}</option>
         </select>
       </mz-select-container>
     </div>
-   
     <div class="col s12 l2 m2" style="margin-top: 45px;">
       <input type="checkbox" class="filled-in" id="receiveds" formControlName="received" (change)="search()" />
       <label for="receiveds">{{ "hisreceived" | translate }}</label>
     </div>
-
     <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='pt'" >
       <mz-datepicker-container>
         <input mz-datepicker [label]="'Backup de:'" [options]="options" formControlName="backup_from" type="date" (change)="search()"
@@ -56,7 +53,6 @@
         />
       </mz-datepicker-container>
     </div>
-
   </div>
 </form>
 
@@ -85,17 +81,14 @@
         <td *ngIf="!send.received" >
           <span style="color:red;">{{ "no" | translate }}</span>
         </td>
-
         <td *ngIf="received==true&&send.ik_received">
           {{ "yes" | translate }}
         </td>
         <td *ngIf="received==true&&!send.ik_received" >
           <span style="color:red;">{{ "no" | translate }}</span>
         </td>
-       
         <td>{{ send.date_updated | date: 'dd/MM/yyyy' }}</td>
         <td>
-
             <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.uuid)" (click)="basicModal2.open()"
             [routerLink]="">
             <i class="material-icons icon-green">info</i>
@@ -108,7 +101,6 @@
           <a mz-tooltip [tooltip]="'Imprimir Protocolo'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.uuid)" (click)="printSend()" [routerLink]="">
             <i class="material-icons icon-green">print</i>
           </a>
-         
         </td>
       </tr>
     </tbody>

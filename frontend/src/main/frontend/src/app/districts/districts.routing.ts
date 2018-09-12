@@ -15,6 +15,6 @@ const districtsRoutes: Routes = [
 ];
 
 /** 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 export const districtsRouting = RouterModule.forChild(districtsRoutes);

@@ -25,7 +25,7 @@ import { Sync } from "./../syncs/shared/sync";
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class ServersComponent implements OnInit {
   public servers; serversreport: Server[] = [];
@@ -88,7 +88,7 @@ export class ServersComponent implements OnInit {
     this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
     this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
     this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
-    this.districtsService.findDistricts(1,100000,"",false)
+    this.districtsService.findDistricts("","","",false)
       .subscribe(data => {
         this.alldistricts = data.content.filter(item => item.parentdistrict == null);;
       });
@@ -215,7 +215,7 @@ export class ServersComponent implements OnInit {
         () => {
 
 
-          this.serversService.findServers(1, 10000000, this.district, this.name, this.canceled, this.type)
+          this.serversService.findServers("", "", this.district, this.name, this.canceled, this.type)
             .subscribe(data => {
               var result = data.content;
               var synced = alasql("SELECT [0] AS sync_uuid,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);

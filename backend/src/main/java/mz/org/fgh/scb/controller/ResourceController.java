@@ -19,7 +19,7 @@ import springfox.documentation.annotations.ApiIgnore;
 /**
  * Defines the rest endpoint configuration for Districts
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @RestController

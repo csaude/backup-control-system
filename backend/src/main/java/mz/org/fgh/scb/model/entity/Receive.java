@@ -26,7 +26,7 @@ import io.swagger.annotations.ApiModelProperty;
  * A Receive is a definition of all backups that have been 
  * Received on Headquarter.
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "receive")

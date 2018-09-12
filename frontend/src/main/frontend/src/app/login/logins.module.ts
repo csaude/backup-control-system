@@ -29,6 +29,6 @@ import { LoginsService } from './shared/logins.service';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class LoginsModule { }

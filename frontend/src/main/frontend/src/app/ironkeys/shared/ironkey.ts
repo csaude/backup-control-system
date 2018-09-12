@@ -6,7 +6,7 @@ import { User } from '../../users/shared/user';
 import { District } from '../../districts/shared/district';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class Ironkey {
   ironkey_id: number;
@@ -20,6 +20,8 @@ export class Ironkey {
   updated_by: User = new User();
   date_created: Date;
   districtsnumber: number;
+  districtsnames: string;
+  districtsnamesreport: string;
   uuid: string;
   districts: District[] = []
 

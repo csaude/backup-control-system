@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * A Authority is a definition of the User previleges on the System.
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "authority")

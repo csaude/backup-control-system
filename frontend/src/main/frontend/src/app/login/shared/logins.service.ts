@@ -7,7 +7,7 @@ import { Http, Headers } from '@angular/http';
 import * as myGlobals from 'globals';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 @Injectable()
 export class LoginsService {

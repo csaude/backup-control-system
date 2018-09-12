@@ -19,7 +19,7 @@ import * as myGlobals from '../../globals';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class IronkeysComponent implements OnInit {
   public ironkeys; ironkeysreport: Ironkey[] = [];
@@ -144,7 +144,7 @@ export class IronkeysComponent implements OnInit {
   printList() {
     this.isHidden = "";
     this.isDisabledt = "disabled";
-    this.ironkeysService.findIronkeys(1, 1000000, this.serial, this.version, this.status, this.size)
+    this.ironkeysService.findIronkeys("", "", this.serial, this.version, this.status, this.size)
       .subscribe(data => {
         this.ironkeysreport = data.content;
       },
@@ -166,7 +166,7 @@ export class IronkeysComponent implements OnInit {
             { title: "Capacidade", dataKey: "sized" },
             { title: "Estado", dataKey: "status" },
             { title: "Última\nactualização", dataKey: "lastupdate" },
-            { title: "Observação", dataKey: "observationf" }
+            { title: "Distritos", dataKey: "districtsnamesreport" }
           ];
           var listSize = this.ironkeysreport.length;
           var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
@@ -199,7 +199,7 @@ export class IronkeysComponent implements OnInit {
             bodyStyles: { valign: 'top' },
             columnStyles: {
               serial: { columnWidth: 60, fontSize: 10 },
-              observation: { columnWidth: 60, fontSize: 10 }
+              districtsnamesreport: { columnWidth: 60, fontSize: 10 }
             },
             theme: 'grid',
             headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },

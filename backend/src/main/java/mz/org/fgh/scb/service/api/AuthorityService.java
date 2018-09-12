@@ -11,7 +11,7 @@ import mz.org.fgh.scb.model.entity.Authority;
 /**
  * Defines the services api of Authorities
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface AuthorityService {

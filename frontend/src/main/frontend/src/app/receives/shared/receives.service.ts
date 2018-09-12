@@ -8,7 +8,7 @@ import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 @Injectable()
 export class ReceivesService {
@@ -35,7 +35,7 @@ export class ReceivesService {
       var user = JSON.parse(window.sessionStorage.getItem('user'));
       headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
       headers.append('Content-Type', 'application/json');
-      return this.http.get(this.url + "/receives?search=canceled~" + canceled + ",backupdate>" + from + ",backupdate<" + until + ",district:" + district + "&page=" + page + "&size=" + size, { headers: headers })
+      return this.http.get(this.url + "/receives?filterCriteria=canceled=eq:" + canceled + ",backupdate=gte:" + from + ",backupdate=lte:" + until + ",district=eq:" + district + "&pageNumber=" + page + "&pageSize=" + size+"&sortingCriteria=-send.backupdate", { headers: headers })
         .map(res => res.json());
     }
 

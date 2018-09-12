@@ -1,7 +1,7 @@
 package mz.org.fgh.scb.model.entity;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public enum PersonGender {

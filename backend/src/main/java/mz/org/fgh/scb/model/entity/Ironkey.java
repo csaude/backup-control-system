@@ -33,7 +33,7 @@ import io.swagger.annotations.ApiModelProperty;
  * A Ironkey is a definition of storage device that is 
  * used to carry the backups from Districts to Headquarters.
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "ironkey")
@@ -266,6 +266,58 @@ public class Ironkey {
 
 	public String getSized() {
 		return size + " GB";
+	}
+	
+	public String getDistrictsnames() {
+		String names = "";
+		if (this.districts == null) {
+			return "";
+		}
+
+		else {
+			if (this.districts.size() < 2) {
+				for (District i : this.districts) {
+					names = i.getNamef();
+				}
+			} else {
+				for (District i : this.districts) {
+					if (names.equals(""))
+						names = i.getNamef();
+					else
+						names = names + "<br/>" + i.getNamef();
+				}
+
+			}
+
+			return names;
+		}
+
+	}
+	
+	public String getDistrictsnamesreport() {
+		String names = "";
+		if (this.districts == null) {
+			return "";
+		}
+
+		else {
+			if (this.districts.size() < 2) {
+				for (District i : this.districts) {
+					names = i.getNamef();
+				}
+			} else {
+				for (District i : this.districts) {
+					if (names.equals(""))
+						names = i.getNamef();
+					else
+						names = names + "\n" + i.getNamef();
+				}
+
+			}
+
+			return names;
+		}
+
 	}
 
 	@Override

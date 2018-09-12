@@ -3,20 +3,17 @@
  * All rights reserved.
  */
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CanActivate, Router} from '@angular/router';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 @Injectable()
 export class AuthManagerSendsEdit implements CanActivate {
 
-  //-------------------------------------------------
-  //Constructors
-  //-------------------------------------------------
     constructor(public router: Router) { }
 
-    canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    canActivate() {
 
         if (window.sessionStorage.getItem('authenticated') == "Sim" && (
             window.sessionStorage.getItem('ROLE_GDD') ||

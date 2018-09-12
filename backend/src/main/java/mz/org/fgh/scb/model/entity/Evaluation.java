@@ -25,7 +25,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * allows the user to perform queries on the databse on this 
  * System are beeing used to do database QA.
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "evaluation")

@@ -16,7 +16,7 @@ import mz.org.fgh.scb.repository.PersonRepository;
 import mz.org.fgh.scb.service.api.PersonService;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Service

@@ -11,7 +11,7 @@ import mz.org.fgh.scb.model.entity.Person;
 /**
  * Defines the functionality for persisting Persons
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface PersonRepository extends JpaRepository<Person, Long> {

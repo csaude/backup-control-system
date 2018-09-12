@@ -10,6 +10,6 @@ const loginsRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const loginsRouting = RouterModule.forChild(loginsRoutes);

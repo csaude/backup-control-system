@@ -8,7 +8,7 @@ import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 @Injectable()
 export class TransportersService {
@@ -33,7 +33,7 @@ export class TransportersService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/transporters?search=name:" + name + ",role~" + role + ",canceled~" + canceled+"&page=" + page + "&size=" + size, { headers: headers })
+    return this.http.get(this.url + "/transporters?filterCriteria=name=like:" + name + ",role=eq:" + role + ",canceled=eq:" + canceled+"&pageNumber=" + page + "&pageSize=" + size + "&sortingCriteria=+name", { headers: headers })
       .map(res => res.json());
   }
 

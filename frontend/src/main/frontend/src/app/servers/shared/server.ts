@@ -6,7 +6,7 @@ import { User } from '../../users/shared/user';
 import { District } from '../../districts/shared/district';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class Server {
   server_id: number;

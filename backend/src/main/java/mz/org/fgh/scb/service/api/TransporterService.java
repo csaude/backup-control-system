@@ -13,7 +13,7 @@ import mz.org.fgh.scb.model.entity.Transporter;
 /**
  * Defines the services api of Transporters
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface TransporterService {

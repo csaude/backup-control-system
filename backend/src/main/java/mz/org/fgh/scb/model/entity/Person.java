@@ -27,7 +27,7 @@ import io.swagger.annotations.ApiModelProperty;
  * A Person is a definition of metadada for identification of 
  * the users.
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "person")

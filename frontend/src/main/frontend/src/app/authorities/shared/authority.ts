@@ -4,7 +4,7 @@
  */
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class Authority {
   authority_id: number;

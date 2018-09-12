@@ -14,7 +14,7 @@ import mz.org.fgh.scb.model.entity.User;
 /**
  * Defines the functionality for persisting Users
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {

@@ -1,7 +1,7 @@
 <!--
  Copyright (C) 2014-2018, Friends in Global Health, LLC
  All rights reserved.
- @author Damasceno Lopes
+ @author Damasceno Lopes <damascenolopess@gmail.com>
 -->
 
 <br>
@@ -15,7 +15,7 @@
         {{ 'searchbyname' | translate }}
       </label>
     </div>
-    <br/>
+    <br />
     <div class="col s12 m4 l4">
       <input type="checkbox" class="filled-in" id="canceled_d" formControlName="canceled" (change)="search1()" />
       <label for="canceled_d">{{ "canceled" | translate }}</label>
@@ -27,6 +27,9 @@
   <div class="progress {{isHidden}}">
     <div class="indeterminate"></div>
   </div>
+  <div class="progress {{isHiddenConnection}}">
+    <div class="indeterminate red"></div>
+  </div>
   <table class="bordered responsive-table highlight">
     <thead>
       <tr>
@@ -35,6 +38,7 @@
         <th>{{ "lastbackuprestored" | translate }}</th>
         <th>{{ "lastsync" | translate }}</th>
         <th>{{ "districtsironkeys" | translate }}</th>
+        <th>{{ "openmrsconnection" | translate }}</th>
         <th>{{ "updatedon" | translate }}</th>
         <th>{{ "actions" | translate }}</th>
       </tr>
@@ -57,11 +61,25 @@
           </a>
         </td>
         <td>
-            <a (click)="setSync(district.sync_uuid)" (click)="basicModalSync.open()" class="waves-effect waves-teal ">
-                <span class="orange-text text-darken-3">
-          {{ district.server }}</span>
-        </a><br><span *ngIf="district.server" style="font-size: 13px;color:rgb(121, 120, 120);">{{ district.start_time }}-{{ district.end_time }}</span></td>
+          <a (click)="setSync(district.sync_uuid)" (click)="basicModalSync.open()" class="waves-effect waves-teal ">
+            <span class="orange-text text-darken-3">
+              {{ district.server }}</span>
+          </a><br><span *ngIf="district.server" style="font-size: 13px;color:rgb(121, 120, 120);">{{
+            district.start_time }}-{{ district.end_time }}</span></td>
         <td>{{ district.ironkeysnumber }}</td>
+
+        <td *ngIf="getOpenMRSConnection(district.uuid)=='true'">
+          <i class="material-icons waves-effect left" style="color:green;">check_box</i>
+        </td>
+
+        <td *ngIf="getOpenMRSConnection(district.uuid)=='false'">
+          <i class="material-icons waves-effect left" style="color: red;">check_box_outline_blank</i>
+        </td>
+
+        <td *ngIf="!(getOpenMRSConnection(district.uuid)=='false'||getOpenMRSConnection(district.uuid)=='true')">
+        </td>
+
+
         <td>{{ district.date_updated | date: 'dd/MM/yyyy' }}</td>
         <td>
           <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setDistrict(district.uuid)"
@@ -69,9 +87,15 @@
             <i class="material-icons icon-green">info</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'AQD OpenMRS'" [position]="'top'" [html]="false" [delay]="100" (click)="setDistrict(district.uuid)"
-            (click)="clean()" (click)="basicModal3.open()" (click)="getEvaluations()" [routerLink]="">
+          <a *ngIf="getOpenMRSConnection(district.uuid)=='true'" mz-tooltip [tooltip]="'AQD OpenMRS'" [position]="'top'"
+            [html]="false" [delay]="100" (click)="setDistrict(district.uuid)" (click)="clean()" (click)="basicModal3.open()"
+            (click)="getEvaluations()" [routerLink]="">
             <i class="material-icons icon-green">assessment</i>
+          </a>
+
+          <a *ngIf="getOpenMRSConnection(district.uuid)!='true'" mz-tooltip [tooltip]="'Verifique a conexão com OpenMRS!'"
+            [position]="'top'" [html]="false" [delay]="100" [routerLink]="">
+            <i style="color:#CCC;" class="material-icons icon-green">assessment</i>
           </a>
           &nbsp;
           <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/district', district.uuid]"
@@ -88,8 +112,7 @@
     </tbody>
   </table>
 </div>
-<pagination-controls  autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPage($event)"
-  id="server" class="right-align"></pagination-controls>
+<pagination-controls autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPage($event)" id="server" class="right-align"></pagination-controls>
 
 
 <mz-modal #basicModal>
@@ -147,11 +170,13 @@
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{district.created_by.person.others_names}} {{district.created_by.person.surname}} - {{district.date_created | date:'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{district.created_by.person.others_names}} {{district.created_by.person.surname}} -
+        {{district.date_created | date:'dd/MM/yyyy HH:mm'}}</div>
     </div>
     <div class="row" *ngIf="district.updated_by!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{district.updated_by.person.others_names}} {{district.updated_by.person.surname}} - {{district.date_updated | date:'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{district.updated_by.person.others_names}} {{district.updated_by.person.surname}} -
+        {{district.date_updated | date:'dd/MM/yyyy HH:mm'}}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
@@ -177,17 +202,25 @@
       </div>
     </div>
 
-    <div class="row" *ngIf="district.instance_url!=null&&district.instance_username!=null&&district.instance_password!=null">
-      <div class="col s11 l11 m11">
+    <div class="row" style="margin-top: -11px;" *ngIf="district.last_backup_restored">
+      <div class="col s12 l12 m12">{{ "lastbackuprestoreddate" | translate }}: {{district.last_backup_restored}}</div>
+    </div>
+
+    <div class="row" style="margin-top: -11px;" *ngIf="!district.last_backup_restored">
+      <div class="col s12 l12 m12">{{ "lastbackuprestoredask" | translate }}</div>
+    </div>
+
+    <div class="row">
+      <div class="col s11 l11 m11" *ngIf="district.last_backup_restored">
         <mz-select-container *ngIf="translate.currentLang=='pt'">
-          <select mz-select [label]="'Avaliação da Qualidade de Dados'" [disabled]="isDisabled" (change)="evaluate()" [(ngModel)]="evaluation"
-            [placeholder]="'Seleccione a Avaliação'" [disabled]="disabled1">
+          <select mz-select [label]="'Avaliação da Qualidade de Dados'" [disabled]="isDisabled" (change)="evaluate()"
+            [(ngModel)]="evaluation" [placeholder]="'Seleccione a Avaliação'" [disabled]="disabled1">
             <option *ngFor="let evaluation of evaluations" [ngValue]="evaluation">{{ evaluation.name }}</option>
           </select>
         </mz-select-container>
         <mz-select-container *ngIf="translate.currentLang=='en'">
-          <select mz-select [label]="'Data Quality Evaluation'" [disabled]="isDisabled" (change)="evaluate()" [(ngModel)]="evaluation"
-            [placeholder]="'Select the Evaluation'" [disabled]="disabled1">
+          <select mz-select [label]="'Data Quality Evaluation'" [disabled]="isDisabled" (change)="evaluate()"
+            [(ngModel)]="evaluation" [placeholder]="'Select the Evaluation'" [disabled]="disabled1">
             <option *ngFor="let evaluation of evaluations" [ngValue]="evaluation">{{ evaluation.name }}</option>
           </select>
         </mz-select-container>
@@ -213,9 +246,8 @@
     <div class="row" style="margin-top: -11px;">
       <div class="col s12" *ngIf="showResult">
         {{resultEvaluation.length}} {{ "recordsfound" | translate }}
-        <br/>
-        <pagination-controls autoHide=true previousLabel="" nextLabel="" (pageChange)="p2 = $event" id="d" class="pagination"></pagination-controls>
-        <div class="card">
+        <br />
+          <div class="card">
           <table class="bordered">
             <thead>
               <tr>
@@ -237,8 +269,8 @@
       </div>
     </div>
     <div class="fixed-action-btn" style="bottom: 107px; right: 53px;">
-      <a class="btn-floating tooltipped btn-small waves-effect waves-light orange {{isDisabledt2}}" data-position="left" data-tooltip="Baixar a lista"
-        (click)="download()">
+      <a class="btn-floating tooltipped btn-small waves-effect waves-light orange {{isDisabledt2}}" data-position="left"
+        data-tooltip="Baixar a lista" (click)="download()">
         <i class="material-icons">file_download</i>
       </a>
     </div>
@@ -272,8 +304,7 @@
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">
-        <input type="checkbox" id="update_finished" checked="{{send.update_finished==true?'checked':''}}" onclick="return false;"
-        />
+        <input type="checkbox" id="update_finished" checked="{{send.update_finished==true?'checked':''}}" onclick="return false;" />
         <label for="update_finished">{{ "at" | translate }}</label>
       </div>
     </div>
@@ -287,24 +318,24 @@
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">
-        <input type="checkbox" id="cross_dhis2_finished" checked="{{send.cross_dhis2_finished==true?'checked':''}}" onclick="return false;"
-        />
+        <input type="checkbox" id="cross_dhis2_finished" checked="{{send.cross_dhis2_finished==true?'checked':''}}"
+          onclick="return false;" />
         <label for="cross_dhis2_finished">{{ "dhis2" | translate }}</label>
       </div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">
-        <input type="checkbox" id="cross_idart_finished" checked="{{send.cross_idart_finished==true?'checked':''}}" onclick="return false;"
-        />
+        <input type="checkbox" id="cross_idart_finished" checked="{{send.cross_idart_finished==true?'checked':''}}"
+          onclick="return false;" />
         <label for="cross_idart_finished">{{ "idart" | translate }}</label>
       </div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">
-        <input type="checkbox" id="validation_finished" checked="{{send.validation_finished==true?'checked':''}}" onclick="return false;"
-        />
+        <input type="checkbox" id="validation_finished" checked="{{send.validation_finished==true?'checked':''}}"
+          onclick="return false;" />
         <label for="validation_finished">{{ "vt" | translate }}</label>
       </div>
     </div>
@@ -328,7 +359,8 @@
         <input type="checkbox" id="received" checked="{{send.received==true?'checked':''}}" onclick="return false;" />
         <label for="received">{{ "hisreceived" | translate }}</label>
       </div>
-      <div class="col s12 l7 m7" *ngIf="send.received">{{send.receivername}} - {{send.receivedate | date: 'dd/MM/yyyy'}}</div>
+      <div class="col s12 l7 m7" *ngIf="send.received">{{send.receivername}} - {{send.receivedate | date:
+        'dd/MM/yyyy'}}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
@@ -336,7 +368,8 @@
         <input type="checkbox" id="ik_returned" checked="{{send.ik_returned==true?'checked':''}}" onclick="return false;" />
         <label for="ik_returned">{{ "ikreturned" | translate }}</label>
       </div>
-      <div class="col s12 l3 m3" *ngIf="send.ik_returned">{{send.ik_returnedto}} - {{send.ik_returneddate | date: 'dd/MM/yyyy'}}</div>
+      <div class="col s12 l3 m3" *ngIf="send.ik_returned">{{send.ik_returnedto}} - {{send.ik_returneddate | date:
+        'dd/MM/yyyy'}}</div>
       <div class="col s12 l3 m3">
         <input type="checkbox" id="ik_receivedd" checked="{{send.ik_received==true?'checked':''}}" onclick="return false;" />
         <label for="ik_receivedd">{{ "ik_received" | translate }}</label>
@@ -348,7 +381,8 @@
         <input type="checkbox" id="restored" checked="{{send.restored==true?'checked':''}}" onclick="return false;" />
         <label for="restored">{{ "backuprestored" | translate }}</label>
       </div>
-      <div class="col s12 l7 m7" *ngIf="send.restored">{{send.restorername}} - {{send.date_restored | date: 'dd/MM/yyyy'}}</div>
+      <div class="col s12 l7 m7" *ngIf="send.restored">{{send.restorername}} - {{send.date_restored | date:
+        'dd/MM/yyyy'}}</div>
     </div>
     <div class="row" style="margin-top: -11px;" *ngIf="send.sis_observation!=null">
       <div class="col s12 l2 m2">{{ "obs_his" | translate }}:</div>
@@ -356,13 +390,15 @@
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{send.created_by.person.others_names}} {{send.created_by.person.surname}} - {{send.date_created | date: 'dd/MM/yyyy HH:mm'}}
+      <div class="col s12 l10 m10">{{send.created_by.person.others_names}} {{send.created_by.person.surname}} -
+        {{send.date_created | date: 'dd/MM/yyyy HH:mm'}}
       </div>
     </div>
 
     <div class="row" *ngIf="send.updated_by!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{send.updated_by.person.others_names}} {{send.updated_by.person.surname}} - {{send.date_updated | date: 'dd/MM/yyyy HH:mm'}}
+      <div class="col s12 l10 m10">{{send.updated_by.person.others_names}} {{send.updated_by.person.surname}} -
+        {{send.date_updated | date: 'dd/MM/yyyy HH:mm'}}
       </div>
     </div>
     <div class="row" style="margin-top: -11px;">
@@ -398,14 +434,17 @@
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "sync_time" | translate }}:</div>
-      <div class="col s12 l10 m10" *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.start_time | date: 'dd/MM/yyyy HH:mm' }} - {{ sync.end_time | date: 'HH:mm' }}</div>
+      <div class="col s12 l10 m10" *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.start_time | date:
+        'dd/MM/yyyy HH:mm' }} - {{ sync.end_time | date: 'HH:mm' }}</div>
       <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'">{{ sync.start_time | date: 'dd/MM/yyyy HH:mm' }}</div>
     </div>
 
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "duration" | translate }}:</div>
-      <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==true"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span></div>
-      <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==false"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge red' data-badge-caption="NÃO CONCLUIDA"></span></div>
+      <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==true"><span style="float: left;text-align: center; margin-left: 0px;"
+          class='new badge orange' data-badge-caption="EM PROGRESSO"></span></div>
+      <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==false"><span style="float: left;text-align: center; margin-left: 0px;"
+          class='new badge red' data-badge-caption="NÃO CONCLUIDA"></span></div>
       <div class="col s12 l10 m10" *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.duration }}</div>
     </div>
 
@@ -417,7 +456,7 @@
 
     <div class="row" style="margin-top: -11px;" *ngIf="sync.end_time!=null">
       <div class="col s12 l2 m2">{{ "items_onend" | translate }}:</div>
-      <div class="col s12 l10 m10" >{{ sync.end_items_to_send }} {{ "items_send" | translate }}
+      <div class="col s12 l10 m10">{{ sync.end_items_to_send }} {{ "items_send" | translate }}
         <br>{{ sync.end_items_to_receive }} {{ "items_receive" | translate }}</div>
     </div>
 
@@ -461,13 +500,13 @@
     </div>
 
     <div class="row" *ngIf="sync.state=='Incomplete'">
-        <div class="col s12 l2 m2"></div>
-        <div class="col s12 l10 m10">
-          <span style="float: left;text-align: center;" class='new badge red' data-badge-caption="NOT SYNCHRONIZED"></span>
-        </div>
+      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l10 m10">
+        <span style="float: left;text-align: center;" class='new badge red' data-badge-caption="NOT SYNCHRONIZED"></span>
       </div>
+    </div>
 
-      <div class="row" style="margin-top: -11px;" *ngIf="sync.observation!=null">
+    <div class="row" style="margin-top: -11px;" *ngIf="sync.observation!=null">
       <div class="col s12 l2 m2">{{ "obs_district" | translate }}:</div>
       <div class="col s12 l10 m10">{{sync.observation}}</div>
     </div>
@@ -477,12 +516,14 @@
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.created_by.person.others_names}} {{sync.created_by.person.surname}} - {{sync.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{sync.created_by.person.others_names}} {{sync.created_by.person.surname}} -
+        {{sync.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
     </div>
 
     <div class="row" *ngIf="sync.updated_by!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.updated_by.person.others_names}} {{sync.updated_by.person.surname}} - {{sync.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{sync.updated_by.person.others_names}} {{sync.updated_by.person.surname}} -
+        {{sync.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
@@ -494,9 +535,15 @@
   <mz-modal-footer>
     <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
   </mz-modal-footer>
-  </mz-modal>
+</mz-modal>
 
-
+<div class="fixed-action-btn" style="bottom: 20px; right: 158px;">
+  <a mz-tooltip [tooltip]="'&Uacute;ltima verificação de conexão com OpenMRS: <span class=\'yellow-text\'>'+getLastCheck()+'</span>'"
+    [position]="'left'" [html]="true" [delay]="100" class="btn-floating  btn-large waves-effect waves-light blue pulse"
+    (click)="checkConnection()">
+    <i class="material-icons">sync</i>
+  </a>
+</div>
 
 <div class="fixed-action-btn" style="bottom: 20px; right: 89px;">
   <a class="btn-floating btn-large orange">

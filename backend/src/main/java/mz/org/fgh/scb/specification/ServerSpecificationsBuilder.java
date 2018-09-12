@@ -10,8 +10,13 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 
+import mz.org.fgh.scb.filter.SearchCriteria;
 import mz.org.fgh.scb.model.entity.Server;
 
+/**
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
+ *
+ */
 public class ServerSpecificationsBuilder {
 	
 	 private final List<SearchCriteria> params;

@@ -19,7 +19,7 @@ import mz.org.fgh.scb.repository.EvaluationRepository;
 import mz.org.fgh.scb.service.api.EvaluationService;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Service

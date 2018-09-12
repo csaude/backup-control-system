@@ -6,7 +6,7 @@ import { Ironkey } from './../../ironkeys/shared/ironkey';
 import { User } from './../../users/shared/user';
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 export class District {
   district_id: number;
@@ -25,4 +25,5 @@ export class District {
   canceled: boolean;
   canceled_reason: string;
   parentdistrict: District;
+  last_backup_restored: String
 }

@@ -15,7 +15,7 @@ import mz.org.fgh.scb.model.entity.District;
 /**
  * Defines the functionality for retrieving custom data from database
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface ResourceRepository extends JpaRepository<District, Long> {
@@ -35,12 +35,6 @@ public interface ResourceRepository extends JpaRepository<District, Long> {
 	 */
 	@Query(value = "SELECT send.uuid,info.district_id,info.last_backup_received FROM (SELECT MAX(details.send_id) AS send_id,details.district_id,details.last_backup_received FROM (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT(MAX(backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 AND r.restored=1)) backup_received GROUP BY name) lbr, (SELECT  send_id,name AS district_name,district_id,DATE_FORMAT((backup_date), '%d/%m/%Y') AS last_backup_received FROM (SELECT s.send_id,d.name,s.district_id,s.backup_date,r.date_restored FROM send s,district d,receive r WHERE received=1 AND s.district_id=d.district_id AND s.canceled=0 AND r.send_id=s.send_id AND s.send_id IN(SELECT  r.send_id FROM receive r WHERE r.canceled=0 AND r.restored=1 )) backup_received ) details WHERE lbr.last_backup_received=details.last_backup_received AND  lbr.district_id=details.district_id GROUP BY details.district_id) info, send WHERE info.send_id=send.send_id", nativeQuery = true)
 	public List<Object[]> findLastBackupRestoredByDistrict();
-
-	/**
-	 * @return server and date of last sync by District
-	 */
-	@Query(value = "SELECT s.uuid,d.district_id,se.name,Date_format(s.start_time, '%d/%m/%Y %H:%i') start_time,Date_format(s.end_time,'%H:%i') end_time,CONCAT(se.name,'\\n',Date_format(s.start_time,'%d/%m/%Y %H:%i'),'-',Date_format(s.end_time,'%H:%i'),'\\n',p.others_names,' ',p.surname) AS server_report FROM sync s,server se,district d,user u,person p WHERE sync_id IN(SELECT Max(sync_id) Sync_id FROM (SELECT sync.sync_id, server.district_id FROM server INNER JOIN sync ON server.server_id = sync.server_id WHERE sync.canceled = 0 AND server.canceled = 0) syncs GROUP BY district_id ) AND s.server_id=se.server_id AND d.district_id=se.district_id AND u.user_id=s.created_by AND p.person_id=u.person_id", nativeQuery = true)
-	public List<Object[]> findLastSyncByDistrict();
 
 	/**
 	 * @return number of backups received by District on previous month
@@ -93,6 +87,12 @@ public interface ResourceRepository extends JpaRepository<District, Long> {
 	 */
 	@Query(value = "SELECT sync.sync_id, server.name sname, district.name dname, sync.end_items_to_send, sync.end_items_to_receive FROM sync Inner Join server ON sync.server_id = server.server_id Inner Join district ON server.district_id = district.district_id WHERE Yearweek(sync.start_time)=Yearweek(current_date) AND  (sync.end_items_to_send>0 OR sync.end_items_to_receive>0) GROUP BY dname,sname", nativeQuery = true)
 	public List<Object[]> findSyncsRemainingItemsOfThisWeek();
+	
+	/**
+	 * @return server and date of last sync by District
+	 */
+	@Query(value = "SELECT s.uuid,d.district_id,se.name,Date_format(s.start_time, '%d/%m/%Y %H:%i') start_time,Date_format(s.end_time,'%H:%i') end_time,CONCAT(se.name,'\\n',Date_format(s.start_time,'%d/%m/%Y %H:%i'),'-',Date_format(s.end_time,'%H:%i'),'\\n',p.others_names,' ',p.surname) AS server_report FROM sync s,server se,district d,user u,person p WHERE sync_id IN(SELECT Max(sync_id) Sync_id FROM (SELECT sync.sync_id, server.district_id FROM server INNER JOIN sync ON server.server_id = sync.server_id WHERE sync.canceled = 0 AND server.canceled = 0 AND sync.end_time IS NOT NULL) syncs GROUP BY district_id ) AND s.server_id=se.server_id AND d.district_id=se.district_id AND u.user_id=s.created_by AND p.person_id=u.person_id", nativeQuery = true)
+	public List<Object[]> findLastSyncByDistrict();
 
 	// -----------------------------------------------------------
 	// RECEIVE NOTIFICATION

@@ -13,7 +13,7 @@ import mz.org.fgh.scb.model.entity.Authority;
 /**
  * Defines the functionality for persisting Authorities
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface AuthorityRepository extends JpaRepository<Authority, Long> {

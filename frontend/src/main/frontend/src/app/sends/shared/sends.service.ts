@@ -8,15 +8,16 @@ import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 @Injectable()
 export class SendsService {
+
   public url: string = myGlobals.API;
+  
   constructor(public http: Http) {
   }
   
-
   /**
    * Return Send with thw given uuid
    * 
@@ -49,7 +50,7 @@ export class SendsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/sends?search=received~" + received + ",canceled~" + canceled + ",backupdate>" + from + ",backupdate<" + until + ",district:" + district + ",user!user&page=" + page + "&size=" + size, { headers: headers })
+    return this.http.get(this.url + "/sends?filterCriteria=received=eq:" + received + ",canceled=eq:" + canceled + ",backupdate=gte:" + from + ",backupdate=lte:" + until + ",district=eq:" + district + ",user!user&pageNumber=" + page + "&pageSize=" + size+"&sortingCriteria=-backupdate", { headers: headers })
       .map(res => res.json());
   }
 
@@ -70,7 +71,7 @@ export class SendsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/sends?search=received~" + received + ",canceled~" + canceled + ",backupdate>" + from + ",backupdate<" + until + ",district:" + district + "&page=" + page + "&size=" + size, { headers: headers })
+    return this.http.get(this.url + "/sends?filterCriteria=received=eq:" + received + ",canceled=eq:" + canceled + ",backupdate=gte:" + from + ",backupdate=lte:" + until + ",district=eq:" + district + "&pageNumber=" + page + "&pageSize=" + size+"&sortingCriteria=-backupdate", { headers: headers })
       .map(res => res.json());
   }
 

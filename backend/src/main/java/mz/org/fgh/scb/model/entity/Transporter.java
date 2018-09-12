@@ -21,7 +21,7 @@ import javax.persistence.UniqueConstraint;
 /**
  * A Transporter is a definition of the backup carriers.
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "transporter")

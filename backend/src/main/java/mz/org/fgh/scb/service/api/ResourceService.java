@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Defines the services api of Custom Resource data
  * 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface ResourceService {

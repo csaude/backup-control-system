@@ -139,7 +139,6 @@
     "searchbyopenmrsuuid": "Pesquisar por OpenMRS SQL Dataset UUID",
     "searchbyusername": "Pesquisar por username",
     "searchbydistrict":"Pesquisar por distrito",
-
     "servers":"Sync Servers",
     "servername":"Nome do Servidor",
     "serversfound":"servidores de sincronização encontrados.",
@@ -173,8 +172,10 @@
     "items_receive": "por receber",
     "syncdetails":"Detalhes da Sincronização",
     "include_idart_backup":"Incluiu Backup de iDART?",
-
     "serverfault":"O Servidor avariou?",
     "laptopfault":"O Laptop avariou?",
-    "powercut":"Houve corte de energia?"
+    "powercut":"Houve corte de energia?",
+    "openmrsconnection":"Conexão OpenMRS",
+    "lastbackuprestoreddate":"Data do último backup restaurado",
+    "lastbackuprestoredask":"Sem informação da Data do último backup restaurado! contacte o SIS."
 }

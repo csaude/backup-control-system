@@ -30,11 +30,11 @@ import * as myGlobals from '../../globals';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class DistrictsComponent implements OnInit {
 
-  public districts; districtsreport; alldistricts: District[] = [];
+  public districts; districtsreport; alldistricts; userDistricts: District[] = [];
   public district: District = new District();
   public send: Send = new Send();
   public sends: Send[] = [];
@@ -44,7 +44,7 @@ export class DistrictsComponent implements OnInit {
   public syncs: Sync[] = [];
   public sync: Sync = new Sync();
   public p: number;
-  public isHidden; isHidden2m; isDisabledt; isDisabledt2; isHidden2; name: string;
+  public isHidden; isHidden2m; isDisabledt; isDisabledt2; isHidden2; name; isHiddenConnection: string;
   public isDisabled; showResult; disabled1; canceled: boolean;
   public resultEvaluation; districtsinfo; districtsresinfo; districtssyncinfo: Object[];
   public keys: string[] = [];
@@ -52,7 +52,7 @@ export class DistrictsComponent implements OnInit {
   public total; totali: number = 0;
   public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD: string;
 
-   
+
   constructor(
     public datepipe: DatePipe,
     public _csvService: CsvService,
@@ -75,6 +75,7 @@ export class DistrictsComponent implements OnInit {
     this.name = "";
     this.canceled = false;
     this.isHidden = "";
+    this.isHiddenConnection = "hide";
     this.isDisabledt = "disabled";
     this.isDisabledt2 = "disabled";
     this.isHidden2 = "hide";
@@ -88,12 +89,12 @@ export class DistrictsComponent implements OnInit {
     this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
     this.total = 0;
     this.getPage(1);
-    
+
   }
 
   getPage(page: number) {
     this.isHidden = "";
-   
+
     this.districtsService.findDistricts(page, 10, this.name, this.canceled)
       .subscribe(data => {
         this.totali = data.totalElements;
@@ -104,7 +105,7 @@ export class DistrictsComponent implements OnInit {
           this.isHidden = "hide";
           this.total = 0;
           this.p = 1;
-          this.districts=[];
+          this.districts = [];
         },
         () => {
           this.resourcesService.findOneDistrictByUuidsReceiveInfo()
@@ -141,9 +142,7 @@ export class DistrictsComponent implements OnInit {
         }
       );
   }
- 
-  
-  
+
   search1() {
     var userValue = this.form1.value;
     if (userValue.name) {
@@ -158,17 +157,17 @@ export class DistrictsComponent implements OnInit {
     } else {
       this.canceled = false;
     }
-   
-      this.getPage(1);
-   
+
+    this.getPage(1);
+
   }
 
-  
+
   setDistrict(uuid) {
     this.district = this.districts.find(item => item.uuid == uuid);
   }
 
- 
+
   deleteDistrict() {
     this.isDisabledt = "disabled";
     this.isHidden = "";
@@ -190,7 +189,7 @@ export class DistrictsComponent implements OnInit {
       );
   }
 
-  
+
   setSend(uuid) {
     this.isHidden2m = "";
     this.sendsService.findOneSendByUuid(uuid)
@@ -228,7 +227,7 @@ export class DistrictsComponent implements OnInit {
       });
   }
 
-  
+
   evaluate() {
     this.isHidden2 = "";
     this.isDisabledt2 = "disabled";
@@ -240,7 +239,7 @@ export class DistrictsComponent implements OnInit {
       }, error => {
         this.showMsgErr2();
         this.isHidden2 = "hide";
-        this.isDisabledt2 = "";
+        this.isDisabledt2 = "disabled";
         this.isDisabled = false;
       },
         () => {
@@ -253,19 +252,19 @@ export class DistrictsComponent implements OnInit {
       );
   }
 
-  
+
   download() {
     this._csvService.download(this.resultEvaluation, this.district.name + '_' + this.evaluation.name + '_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm'));
   }
 
-  
+
   clean() {
     this.resultEvaluation = [];
     this.keys = [];
     this.showResult = false;
   }
 
-  
+
   setSync(uuid) {
     this.isHidden2m = "";
     this.syncsService.findOneSyncByUuid(uuid)
@@ -275,108 +274,166 @@ export class DistrictsComponent implements OnInit {
         }, error => { }, () => { this.isHidden2m = "hide"; });
   }
 
- 
+
   printList() {
     this.isHidden = "";
     this.isDisabledt = "disabled";
 
-    
-      this.districtsService.findDistricts(1, 1000000, this.name, this.canceled)
-        .subscribe(data => {
-          this.districtsreport = data.content;
+
+    this.districtsService.findDistricts("", "", this.name, this.canceled)
+      .subscribe(data => {
+        this.districtsreport = data.content;
+      },
+        error => {
+          this.isHidden = "hide";
+          this.isDisabledt = "";
+          this.districtsreport = [];
         },
-          error => {
-            this.isHidden = "hide";
-            this.isDisabledt = "";
-            this.districtsreport = [];
-          },
-          () => {
-            this.resourcesService.findOneDistrictByUuidsReceiveInfo()
-              .subscribe(data => {
-                this.districtsinfo = data
-              },
-                error => { },
-                () => {
-                  this.resourcesService.findOneDistrictByUuidsRestoreInfo()
-                    .subscribe(data => {
-                      this.districtsresinfo = data;
-                    },
-                      error => { },
-                      () => {
-                        this.resourcesService.findOneDistrictByUuidsSyncInfo()
-                          .subscribe(data => {
-                            this.districtssyncinfo = data;
-                          },
-                            error => { },
-                            () => {
-                              var received = alasql("SELECT [0] AS send_uuid_rec,[1] AS district_id,[2] AS last_backup_received FROM ?", [this.districtsinfo]);
-                              var restored = alasql("SELECT [0] AS send_uuid_res,[1] AS district_id,[2] AS last_backup_restored FROM ?", [this.districtsresinfo]);
-                              var synced = alasql("SELECT [0] AS sync_uuid,[1] AS district_id,[2] AS server,[3] AS start_time,[4] AS end_time, [5] AS server_report FROM ?", [this.districtssyncinfo]);
-                              var recres = alasql("SELECT * FROM ?alldistricts LEFT JOIN ?received USING district_id LEFT JOIN ?restored USING district_id", [this.districtsreport, received, restored]);
-                              this.districtsreport = alasql("SELECT * FROM ?recres LEFT JOIN ?synced USING district_id ", [recres, synced]);
-                              this.isHidden = "hide";
-                              this.isDisabledt = "";
-                              this.total = this.totali;
-                              var user = JSON.parse(window.sessionStorage.getItem('user'));
-                              var doc = new jsPDF('landscape');
-                              var totalPagesExp = "{total_pages_count_string}";
-                              var columns = [
-                                { title: "Distrito/ US", dataKey: "namef" },
-                                { title: "Último Backup\nRecebido", dataKey: "last_backup_received" },
-                                { title: "Último backup\nRestaurado", dataKey: "last_backup_restored" },
-                                { title: "Última\nSincronização", dataKey: "server_report" },
-                                { title: "Ironkey(s)", dataKey: "ironkeysnames" }
-                              ];
-                              var listSize = this.districtsreport.length;
-                              var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
-                              // HEADER
-                              doc.setFontSize(18);
-                              doc.text('Lista de Distritos/US', 14, 22);
-                              doc.setFontSize(14);
-                              doc.text(listSize + ' distritos/us encontrados.', 14, 45);
-                              doc.setFontSize(11);
-                              doc.setTextColor(100);
-                              var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-                              var text = doc.splitTextToSize('Distritos/US representam locais apoiados por FGH onde existe uma Base de Dados OpenMRS.', pageWidth - 25, {});
-                              doc.text(text, 14, 32);
-                              var pageContent = function (data) {
-                                // FOOTER
-                                var str = "Página " + data.pageCount;
-                                if (typeof doc.putTotalPages === 'function') {
-                                  str = str + " de " + totalPagesExp;
-                                }
-                                doc.setFontSize(10);
-                                var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-                                doc.text(str, data.settings.margin.left, pageHeight - 5);
-                              };
-                              doc.autoTable(columns, this.districtsreport, {
-                                startY: 50,
-                                styles: { overflow: 'linebreak' },
-                                bodyStyles: { valign: 'top' },
-                                theme: 'grid',
-                                headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
-                                addPageContent: pageContent
-                              });
-                              doc.setFontSize(11);
-                              doc.setTextColor(100);
-                              doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
-                              doc.setTextColor(0, 0, 200);
-                              doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
+        () => {
+          this.resourcesService.findOneDistrictByUuidsReceiveInfo()
+            .subscribe(data => {
+              this.districtsinfo = data
+            },
+              error => { },
+              () => {
+                this.resourcesService.findOneDistrictByUuidsRestoreInfo()
+                  .subscribe(data => {
+                    this.districtsresinfo = data;
+                  },
+                    error => { },
+                    () => {
+                      this.resourcesService.findOneDistrictByUuidsSyncInfo()
+                        .subscribe(data => {
+                          this.districtssyncinfo = data;
+                        },
+                          error => { },
+                          () => {
+                            var received = alasql("SELECT [0] AS send_uuid_rec,[1] AS district_id,[2] AS last_backup_received FROM ?", [this.districtsinfo]);
+                            var restored = alasql("SELECT [0] AS send_uuid_res,[1] AS district_id,[2] AS last_backup_restored FROM ?", [this.districtsresinfo]);
+                            var synced = alasql("SELECT [0] AS sync_uuid,[1] AS district_id,[2] AS server,[3] AS start_time,[4] AS end_time, [5] AS server_report FROM ?", [this.districtssyncinfo]);
+                            var recres = alasql("SELECT * FROM ?alldistricts LEFT JOIN ?received USING district_id LEFT JOIN ?restored USING district_id", [this.districtsreport, received, restored]);
+                            this.districtsreport = alasql("SELECT * FROM ?recres LEFT JOIN ?synced USING district_id ", [recres, synced]);
+                            this.isHidden = "hide";
+                            this.isDisabledt = "";
+                            this.total = this.totali;
+                            var user = JSON.parse(window.sessionStorage.getItem('user'));
+                            var doc = new jsPDF('landscape');
+                            var totalPagesExp = "{total_pages_count_string}";
+                            var columns = [
+                              { title: "Distrito/ US", dataKey: "namef" },
+                              { title: "Último Backup\nRecebido", dataKey: "last_backup_received" },
+                              { title: "Último backup\nRestaurado", dataKey: "last_backup_restored" },
+                              { title: "Última\nSincronização", dataKey: "server_report" },
+                              { title: "Ironkey(s)", dataKey: "ironkeysnames" }
+                            ];
+                            var listSize = this.districtsreport.length;
+                            var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
+                            // HEADER
+                            doc.setFontSize(18);
+                            doc.text('Lista de Distritos/US', 14, 22);
+                            doc.setFontSize(14);
+                            doc.text(listSize + ' distritos/us encontrados.', 14, 45);
+                            doc.setFontSize(11);
+                            doc.setTextColor(100);
+                            var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+                            var text = doc.splitTextToSize('Distritos/US representam locais apoiados por FGH onde existe uma Base de Dados OpenMRS.', pageWidth - 25, {});
+                            doc.text(text, 14, 32);
+                            var pageContent = function (data) {
+                              // FOOTER
+                              var str = "Página " + data.pageCount;
                               if (typeof doc.putTotalPages === 'function') {
-                                doc.putTotalPages(totalPagesExp);
+                                str = str + " de " + totalPagesExp;
                               }
-                              doc.save('SCB_Distritos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
+                              doc.setFontSize(10);
+                              var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+                              doc.text(str, data.settings.margin.left, pageHeight - 5);
+                            };
+                            doc.autoTable(columns, this.districtsreport, {
+                              startY: 50,
+                              styles: { overflow: 'linebreak' },
+                              bodyStyles: { valign: 'top' },
+                              theme: 'grid',
+                              headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
+                              addPageContent: pageContent
                             });
-                      });
-                });
-          });
-    }
-  
+                            doc.setFontSize(11);
+                            doc.setTextColor(100);
+                            doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
+                            doc.setTextColor(0, 0, 200);
+                            doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
+                            if (typeof doc.putTotalPages === 'function') {
+                              doc.putTotalPages(totalPagesExp);
+                            }
+                            doc.save('SCB_Distritos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HH:mm') + '.pdf');
+                          });
+                    });
+              });
+        });
+  }
+
   getEvaluations() {
+    this.isDisabledt2 = "disabled";
     this.disabled1 = true;
-    this.evaluationsService.findEvaluations(1,100000,"","")
-      .subscribe(data => { this.evaluations = data.content; }, error => { }, () => { this.disabled1 = false; }
+    this.evaluationsService.findEvaluations(1, 100000, "", "")
+      .subscribe(data => { this.evaluations = data.content; }, error => {this.disabled1 = false; }, () => { this.disabled1 = false; }
       );
+  }
+
+
+  checkConnection() {
+
+    window.localStorage.removeItem("lastCheck");
+    window.localStorage.setItem("lastCheck", this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm'));
+
+    this.districtsService.findDistricts("", "", "", "")
+      .subscribe(data => {
+        this.userDistricts = data.content;
+      }, error => { },
+        () => {
+          var i = 0;
+          for (let district of this.userDistricts) {
+            this.isHiddenConnection = "";
+            this.districtsService.checkConnection(district.uuid).subscribe(
+              data => {
+              },
+              error => {
+                window.localStorage.removeItem(district.uuid.toString());
+                window.localStorage.setItem(district.uuid.toString(), 'false');
+                i = i + 1;
+                if (i == this.userDistricts.length) {
+                  this.isHiddenConnection = "hide";
+                }
+              },
+              () => {
+                window.localStorage.removeItem(district.uuid.toString());
+                window.localStorage.setItem(district.uuid.toString(), 'true');
+                i = i + 1;
+                if (i == this.userDistricts.length) {
+                  this.isHiddenConnection = "hide";
+                }
+              }
+            );
+          }
+        }
+      );
+  }
+
+  getOpenMRSConnection(uuid) {
+    if (window.localStorage.getItem(uuid)) {
+      return window.localStorage.getItem(uuid);
+    }
+    else {
+      return "";
+    }
+  }
+
+  getLastCheck() {
+    if (window.localStorage.getItem("lastCheck")) {
+      return window.localStorage.getItem("lastCheck");
+    }
+    else {
+      return "";
+    }
   }
 
   showMsg(district) {

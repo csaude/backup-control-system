@@ -8,7 +8,7 @@ import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 @Injectable()
 export class EvaluationsService {
@@ -33,7 +33,7 @@ export class EvaluationsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/evaluations?search=name:" + name + ",openmrs_sql_dataset_uuid~" + openmrs_sql_dataset_uuid+"&page=" + page + "&size=" + size, { headers: headers })
+    return this.http.get(this.url + "/evaluations?filterCriteria=name=like:" + name + ",openmrs_sql_dataset_uuid=eq:" + openmrs_sql_dataset_uuid+"&sortingCriteria=+name&pageNumber=" + page + "&pageSize=" + size, { headers: headers })
       .map(res => res.json());
   }
   /**

@@ -1,7 +1,7 @@
 <!--
  Copyright (C) 2014-2018, Friends in Global Health, LLC
  All rights reserved.
- @author Damasceno Lopes
+ @author Damasceno Lopes <damascenolopess@gmail.com>
 -->
 
 <br>
@@ -69,6 +69,7 @@
         <th>{{ "version" | translate }}</th>
         <th>{{ "capacity" | translate }}</th>
         <th>{{ "state" | translate }}</th>
+        <th>{{ "districts" | translate }}</th>
         <th>{{ "updatedon" | translate }}</th>
         <th>{{ "actions" | translate }}</th>
       </tr>
@@ -80,6 +81,7 @@
         <td *ngIf="ironkey.size==0">{{ "other" | translate }}</td>
         <td *ngIf="ironkey.size!=0">{{ ironkey.size }} GB</td>
         <td>{{ ironkey.status }}</td>
+        <td><span style="font-size: 13px;color:rgb(121, 120, 120);"><div [innerHTML]="ironkey.districtsnames"></div></span></td>
         <td>{{ ironkey.date_updated | date: 'dd/MM/yyyy' }}</td>
         <td>
           <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setIronkey(ironkey.uuid)" (click)="basicModal2.open()"
