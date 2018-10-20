@@ -1,30 +1,53 @@
 <!--
-@author damasceno.lopes
-@email damasceno.lopes@fgh.org.mz
+ Copyright (C) 2014-2018, Friends in Global Health, LLC
+ All rights reserved.
+ @author Damasceno Lopes
 -->
 <br>
-<h5 class="light">{{ total }} {{ "usersfound" | translate }}</h5>
+<h5 class="light">{{ "usersfound" | translate }}</h5>
 <form materialize [formGroup]="form">
-    <div class="row">
-      <div class="input-field col s12 m6 l6">
-        <input id="name" type="text" class="validate" formControlName="username" (keyup)="search()">
-        <label for="name">
-          {{ 'searchbyusername' | translate }}
-        </label>
-      </div>
-      <br/>
-      <div class="col s12 m6 l6">
-        <input type="checkbox" class="filled-in" id="enabled" formControlName="enabled" [(ngModel)]="enableds" (change)="search()" checked="checked" />
-        <label for="enabled">{{ "enabled" | translate }}</label>
-      </div>
+  <div class="row">
+    <div class="input-field col s12 m3 l3">
+      <input id="name" type="text" class="validate" placeholder="{{ 'searchbyusername' | translate }}" [formControl]="nameValueControl">
+      <label for="name">
+        {{ 'searchbyusername' | translate }}
+      </label>
     </div>
-  </form>
-  
-<div class="col s12 card" style="margin-top: -20px;">
+    <br />
+    <div class="col s12 m3 l3">
+      <input type="checkbox" class="filled-in" id="enabled" formControlName="enabled" [(ngModel)]="enableds" (change)="search()"
+        checked="checked" />
+      <label for="enabled">{{ "enabled" | translate }}</label>
+    </div>
+    <div class="col s12 m6 l6" style="margin-top: -35px;">
+      <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
+
+        <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
+        <mz-select-container style="width: 50px;">
+          <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
+            <option value="15" selected>15</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </mz-select-container>
+
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
+        <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
+        <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
+        <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
+
+      </ul>
+    </div>
+  </div>
+</form>
+
+<div class="col s12 " style="margin-top: -20px;">
   <div class="progress {{isHidden}}">
     <div class="indeterminate"></div>
   </div>
-  <table class="bordered responsive-table highlight">
+  <table class=" card bordered responsive-table highlight" *ngIf="isHidden=='hide'">
     <thead>
       <tr>
         <th>{{ "fullname" | translate }}</th>
@@ -32,36 +55,60 @@
         <th>{{ "email" | translate }}</th>
         <th>{{ "phone" | translate }}</th>
         <th>{{ "updatedon" | translate }}</th>
-        <th>{{ "actions" | translate }}</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of users | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
-        <td>{{ user.person.others_names}} {{user.person.surname}}</td>
+      <tr *ngFor="let user of users">
+        <td>{{ user.person.othersNames }} {{ user.person.surname }}</td>
         <td>{{ user.username }}</td>
         <td>{{ user.person.email }}</td>
-        <td>{{ user.person.phone_number }}</td>
-        <td>{{ user.date_updated | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ user.person.phoneNumber }}</td>
+        <td>{{ user.dateUpdated | date: 'dd/MM/yyyy' }}</td>
         <td>
-          <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setUser(user.uuid)"
-            (click)="basicModal2.open()" [routerLink]="">
-            <i class="material-icons icon-green">info</i>
-          </a>
-          &nbsp;
-          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/user', user.uuid]">
-            <i class="material-icons icon-orange">mode_edit</i>
-          </a>
-          &nbsp;
-          <a mz-tooltip [tooltip]="'Excluir'" [position]="'top'" [html]="false" [delay]="100" (click)="setUser(user.uuid)"
-            (click)="basicModal.open()" routerLink="/users">
-            <i class="material-icons icon-red">delete</i>
-          </a>
+
+          <a mz-tooltip tooltip="{{'details' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setUser(user.uid)"
+          (click)="basicModal2.openModal()" [routerLink]="">
+          <i class="material-icons icon-green">info</i>
+        </a>
+        &nbsp;
+        <a mz-tooltip tooltip="{{'edit' | translate}}" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/users', user.uid]">
+          <i class="material-icons icon-orange">mode_edit</i>
+        </a>
+        &nbsp;
+        <a mz-tooltip tooltip="{{'delete' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setUser(user.uid)"
+          (click)="basicModal.openModal()" routerLink="/users">
+          <i class="material-icons icon-red">delete</i>
+        </a>
+
         </td>
       </tr>
     </tbody>
   </table>
 </div>
-<pagination-controls autoHide="false" previousLabel="" nextLabel="" (pageChange)="getPage($event)" id="server" class="right-align"></pagination-controls>
+<ul class="pagination valign-center" *ngIf="isHidden=='hide'">
+
+  <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
+  <mz-select-container style="width: 50px;">
+    <select mz-select id="pageSize" [(ngModel)]="pageSize" (change)="searchSize()">
+      <option value="15" selected>15</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+  </mz-select-container>
+
+
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
+  <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
+  <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
+  <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
+
+</ul>
+
+<ul class="pagination" *ngIf="isHidden==''">
+  {{ "loading" | translate }}
+</ul>
 
 <mz-modal #basicModal>
   <mz-modal-header>
@@ -82,11 +129,11 @@
     <h4>{{ "userdetails" | translate }}</h4>
   </mz-modal-header>
   <mz-modal-content>
-      <div class="row" style="margin-top: -11px;">
-          <div class="col s12">
-            <h5 class="light">{{user.person.others_names}} {{user.person.surname}}</h5>
-          </div>
-        </div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12">
+        <h5 class="light">{{user.person.othersNames}} {{user.person.surname}}</h5>
+      </div>
+    </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "gender" | translate }}:</div>
       <div class="col s12 l10 m10">{{user.person.gender=='M'?'Masculino':'Feminino'}}</div>
@@ -95,16 +142,16 @@
       <div class="col s12 l2 m2">{{ "email" | translate }}:</div>
       <div class="col s12 l10 m10">{{user.person.email}}</div>
     </div>
-    <div class="row" *ngIf="user.person.phone_number!=null" style="margin-top: -11px;">
+    <div class="row" *ngIf="user.person.phoneNumber!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "phone" | translate }}:</div>
-      <div class="col s12 l10 m10">{{user.person.phone_number}}</div>
+      <div class="col s12 l10 m10">{{user.person.phoneNumber}}</div>
     </div>
-    <div class="row" *ngIf="user.last_login!=null" style="margin-top: -11px;">
+    <div class="row" *ngIf="user.lastLogin!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "last_login" | translate }}:</div>
-      <div class="col s12 l10 m10">{{user.last_login | date: 'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{user.lastLogin | date: 'dd/MM/yyyy HH:mm'}}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l2 m2">{{ "function" | translate }}(s)</div>
       <div class="col s12 l10 m10">
         <table class="bordered responsive-table highlight">
           <thead>
@@ -121,37 +168,27 @@
       </div>
     </div>
     <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
+      <div class="col s12 l2 m2">{{"district" | translate }}(s) ({{user.districts.length}}):</div>
       <div class="col s12 l10 m10">
-        <table class="bordered responsive-table highlight">
-          <thead>
-            <tr>
-              <th>{{"district" | translate }} (s)</th>
-              <th>{{"districtsironkeys" | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let district of user.districts">
-              <td><a (click)="basicModal2.close()" [routerLink]="['/district', district.uuid]" class="waves-effect waves-teal">
-                <span class="orange-text text-darken-3">{{ district.province }} / {{ district.namef }}</span></a></td>
-              <td>{{ district.ironkeysnumber }}</td>
-            </tr>
-          </tbody>
-        </table>
+         <ul style="margin: 0px;">
+                <li *ngFor="let district of user.districts">
+                    <a (click)="basicModal2.closeModal()" [routerLink]="['/districts', district.uid]"><span class="orange-text text-darken-3">{{district.fullName}}</span></a>
+                </li>
+          </ul>
       </div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{user.creatorname}} - {{user.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{user.creatorName}} - {{ user.dateCreated | date:'dd/MM/yyyy HH:mm' }}</div>
     </div>
-    <div class="row" *ngIf="user.updaterid!=null" style="margin-top: -11px;">
+    <div class="row" *ngIf="user.updaterName!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{user.updatername}} - {{user.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{user.updaterName}} - {{ user.dateUpdated | date:'dd/MM/yyyy HH:mm' }}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">
-        <span style="color:lightgrey;">{{user.uuid}}</span>
+        <span style="color:lightgrey;">{{user.uid}}</span>
       </div>
     </div>
   </mz-modal-content>
@@ -161,13 +198,15 @@
 </mz-modal>
 
 <div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
-  <a 
-  mz-tooltip
-  [tooltip]="'Adicionar Utilizador'"
-  [position]="'left'"
-  [html]="false"
-  [delay]="100"
-  class="btn-floating  btn-large waves-effect waves-light green" routerLink="/user/new">
-    <i class="material-icons">add</i>
+  <a class="btn-floating  btn-large green">
+    <i class="material-icons">menu</i>
   </a>
+  <ul>
+    <li>
+      <a mz-tooltip tooltip="{{'add' | translate}}" [position]="'left'" [html]="false" [delay]="100" routerLink="/users/new"
+        class="btn-floating  waves-effect waves-light  blue">
+        <i class="material-icons">add</i>
+      </a>
+    </li>
+  </ul>
 </div>

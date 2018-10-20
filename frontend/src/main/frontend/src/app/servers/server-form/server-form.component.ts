@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Server } from '../shared/server';
 import { ServersService } from '../shared/servers.service';
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 import { District } from '../../districts/shared/district';
 import { DistrictsService } from '../../districts/shared/districts.service';
@@ -19,7 +19,7 @@ import { DistrictsService } from '../../districts/shared/districts.service';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class ServerFormComponent implements OnInit {
   public options: Pickadate.DateOptions = {
@@ -35,7 +35,7 @@ export class ServerFormComponent implements OnInit {
   public server: Server = new Server();
   public servers: Server[] = [];
   public serial = null;
-  public user: Object[] = [];
+  public user: any;
   public disabled1: boolean;
 
   public types = [
@@ -65,7 +65,7 @@ export class ServerFormComponent implements OnInit {
       ]],
       observation: [],
       canceled: [],
-      canceled_reason: []
+      canceledReason: []
     });
   }
   ngOnInit() {
@@ -73,24 +73,24 @@ export class ServerFormComponent implements OnInit {
     this.isDisabled = false;
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
     this.route.params.subscribe(params => {
-      var uuid = params['uuid'];
+      var uuid = params['uid'];
       this.title = uuid ? 'Editar Server' : 'Novo Server';
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
         
-        this.districtsService.findDistricts("","","",false)
+        this.districtsService.findDistricts("","","",false,"parent.districtId,districtId,name,uid")
         .subscribe(data => {
-          this.alldistricts = data.content.filter(item => item.parentdistrict==null);;
+          this.alldistricts = data.content.filter(item => item.parent==null);;
         
         },error=>{},
       ()=>{this.disabled1 = false;});
 
       }
       else {
-        this.serversService.findOneServerByUuid(uuid)
+        this.serversService.findOneServerByUuid(uuid,"canceled,canceledReason,observation,district.name,district.districtId,district.uid,name,type,dateCreated,createdBy.uid,createdBy.userId,uid,serverId")
           .subscribe(
-            server => {
-              this.server = server;
+            data => {
+              this.server = data;
              
             },
             error => {
@@ -100,10 +100,10 @@ export class ServerFormComponent implements OnInit {
             }, () => {
 
 
-              this.districtsService.findDistricts("","","",false)
+              this.districtsService.findDistricts("","","",false,"parent.districtId,districtId,name,uid")
               .subscribe(data => {
-                this.alldistricts = data.content.filter(item => item.parentdistrict==null);;
-                this.alldistricts = this.alldistricts.filter(item => item.district_id !== this.server.district.district_id);
+                this.alldistricts = data.content.filter(item => item.parent==null);;
+                this.alldistricts = this.alldistricts.filter(item => item.districtId !== this.server.district.districtId);
                 this.alldistricts.push(this.server.district);
                 this.alldistricts =  this.alldistricts.sort(function (a, b) {
                   var nameA = a.name.toUpperCase(); // ignore upper and lowercase
@@ -130,18 +130,21 @@ export class ServerFormComponent implements OnInit {
   save() {
     this.isDisabled = true;
     var result, userValue = this.form.value;
-    if (this.server.uuid) {
-      if (userValue.canceled == true && userValue.canceled_reason == null) {
+    if (this.server.uid) {
+      if (userValue.canceled == true && userValue.canceledReason == null) {
         this.showMsgErr2();
         this.isDisabled = false;
       } else {
 
-      userValue.server_id = this.server.server_id;
-      userValue.date_created = this.server.date_created;
-      userValue.uuid = this.server.uuid;
-      userValue.created_by = this.server.created_by;
-      userValue.updated_by = this.user;
-     
+      userValue.serverId = this.server.serverId;
+      userValue.dateCreated = this.server.dateCreated;
+      userValue.uid = this.server.uid;
+      userValue.createdBy = this.server.createdBy;
+      userValue.updatedBy = {
+        uid: this.user.uid,
+        userId: this.user.userId
+      };
+
         result = this.serversService.updateServer(userValue);
         result.subscribe(data => {
           if (data.text() == "Success") {
@@ -157,7 +160,10 @@ export class ServerFormComponent implements OnInit {
           });
         }  
     } else {
-      userValue.created_by = this.user;
+      userValue.createdBy = {
+        uid: this.user.uid,
+        userId: this.user.userId
+      };
       result = this.serversService.createServer(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {

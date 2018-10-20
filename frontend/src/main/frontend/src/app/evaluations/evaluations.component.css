@@ -3,11 +3,30 @@
  * All rights reserved.
  * @author Damasceno Lopes
  */
-
-i.icon-red {
+ 
+ i.icon-red {
     color: red;
 }
 
 i.icon-orange {
     color: orange;
+}
+
+i.icon-grey {
+    color:#CCC;
+}
+
+.valign-center {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.page-size{
+    color:gray;
+    font-size: 13px;
+}
+
+.btn:hover{
+    background-color: #F2F2F2 !important;
 }

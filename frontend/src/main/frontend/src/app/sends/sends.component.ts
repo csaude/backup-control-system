@@ -20,7 +20,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class SendsComponent implements OnInit {
   public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD;isHidden; isHidden2m: string;
@@ -32,13 +32,23 @@ export class SendsComponent implements OnInit {
   public form: FormGroup;
   public received; canceled;
   public user: Object[] = []; 
+  public pageSize: number;
 
   public options: Pickadate.DateOptions = {
     format: 'dd/mm/yyyy',
     formatSubmit: 'yyyymmdd',
-    onClose: () => this.search()
+    today: 'Hoje',
+    close: 'Fechar',
+    clear:'Limpar',
+    max: new Date(),
+    onClose: () => {
+        this.search();
+    }
   };
   public total; totali; number = 0;
+
+  public next;previous: number=0;
+  public first; last; range: string;
 
 
   constructor(public datepipe: DatePipe, public sendsService: SendsService, public receivesService: ReceivesService,
@@ -54,6 +64,7 @@ export class SendsComponent implements OnInit {
     this.isHidden = "";
     this.received = false;
     this.canceled = false;
+    this.pageSize=15;
     this.from="";
     this.until="";
     this.district_id="";
@@ -70,8 +81,8 @@ export class SendsComponent implements OnInit {
     this.alldistricts = user.districts;
 
     this.alldistricts.sort(function (a, b) {
-      var nameA = a.namef.toUpperCase(); // ignore upper and lowercase
-      var nameB = b.namef.toUpperCase(); // ignore upper and lowercase
+      var nameA = a.fullName.toUpperCase(); // ignore upper and lowercase
+      var nameB = b.fullName.toUpperCase(); // ignore upper and lowercase
       if (nameA < nameB) {
         return -1;
       }
@@ -80,16 +91,37 @@ export class SendsComponent implements OnInit {
       }
       return 0;
     });
+    this.pageSize=15;
     this.getPage(1);
   }
 
   getPage(page: number) {
+    this.first = "";
+    this.last = "";
     this.isHidden = "";
-    this.sendsService.findSends(page, 10, this.received, this.canceled, this.from, this.until, this.district_id)
+    this.sendsService.findSends(page, this.pageSize, this.received, this.canceled, this.from, this.until, this.district_id,"observation,transporter.phoneNumber,transporter.name,district.fullName,received,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,uid,backupDate,updateFinished,validationFinished,syncFinished,crossDhis2Finished,crossIdartFinished,uid,ikReceived,dateIkReceived,idartBackup,idartBackupDate")
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
         this.sends = data.content;
+        this.next = page + 1;
+        this.previous = page - 1;
+        if (data.first == true && data.last == true) {
+          this.first = "disabled";
+          this.last = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+        }
+        else if (data.first == true && data.last == false) {
+          this.first = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + (page * this.pageSize);
+        }
+        else if (data.first == false && data.last == true) {
+          this.last = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+        }
+        else if (data.first == false && data.last == false) {
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + + (page * this.pageSize);
+        }
       },
         error => {
           this.isHidden = "hide";
@@ -120,7 +152,6 @@ export class SendsComponent implements OnInit {
   printSend() {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     var doc = new jsPDF();
-    var send = this.send;
     doc.setFontSize(10);
     doc.setTextColor(100);
     doc.text('Impresso em: ' + this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm'), 200, 5, null, null, 'right');
@@ -134,21 +165,21 @@ export class SendsComponent implements OnInit {
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
 
-    doc.text(send.district.province + " / " + send.district.name, 40, 55);
+    doc.text(this.send.district.fullName, 40, 55);
     doc.setDrawColor(0);
     doc.setFillColor(243, 243, 243);
     doc.rect(40, 60, 65, 8, 'F')
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     doc.text('Data do Backup:', 49, 65);
-    doc.text(this.datepipe.transform(send.backup_date, 'dd/MM/yyyy'), 110, 65);
+    doc.text(this.datepipe.transform(this.send.backupDate, 'dd/MM/yyyy'), 110, 65);
     doc.setDrawColor(0);
     doc.setFillColor(243, 243, 243);
     doc.rect(40, 70, 65, 8, 'F')
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     doc.text('Actualização Terminada?', 49, 75);
-    if (send.update_finished == true) {
+    if (this.send.updateFinished == true) {
       doc.text('Sim', 110, 75);
     } else {
       doc.text('Não', 110, 75);
@@ -159,7 +190,7 @@ export class SendsComponent implements OnInit {
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     doc.text('Sincronização Terminada?', 49, 85);
-    if (send.sync_finished == true) {
+    if (this.send.syncFinished == true) {
       doc.text('Sim', 110, 85);
     } else {
       doc.text('Não', 110, 85);
@@ -170,7 +201,7 @@ export class SendsComponent implements OnInit {
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     doc.text('Cruzamento com DHIS2?', 49, 95);
-    if (send.cross_dhis2_finished == true) {
+    if (this.send.crossDhis2Finished == true) {
       doc.text('Sim', 110, 95);
     } else {
       doc.text('Não', 110, 95);
@@ -181,7 +212,7 @@ export class SendsComponent implements OnInit {
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     doc.text('Cruzamento com iDART?', 49, 105);
-    if (send.cross_idart_finished == true) {
+    if (this.send.crossIdartFinished == true) {
       doc.text('Sim', 110, 105);
     } else {
       doc.text('Não', 110, 105);
@@ -192,7 +223,7 @@ export class SendsComponent implements OnInit {
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     doc.text('Validação Terminada?', 49, 115);
-    if (send.validation_finished == true) {
+    if (this.send.validationFinished == true) {
       doc.text('Sim', 110, 115);
     } else {
       doc.text('Não', 110, 115);
@@ -204,15 +235,15 @@ export class SendsComponent implements OnInit {
     doc.setTextColor(0, 0, 0);
     doc.text('Observação Distrital:', 49, 125);
     doc.setFontSize(12);
-    var splitTitle = doc.splitTextToSize(send.observation, 72);
+    var splitTitle = doc.splitTextToSize(this.send.observation, 72);
     doc.text(splitTitle, 110, 125);
     doc.text('_______________________________', 30, 180);
     doc.setFontSize(11);
-    doc.text(user.person.others_names + ' ' + user.person.surname + "\n(" + user.person.phone_number + ")", 30, 185);
+    doc.text(user.person.othersNames+" "+user.person.surname, 30, 185);
     doc.setFontSize(12);
     doc.text('_______________________________', 30, 200);
     doc.setFontSize(11);
-    doc.text(send.transporter.role + ": " + send.transporter.name + "\n(" + send.transporter.phone_number + ")", 30, 205);
+    doc.text(this.send.transporter.name, 30, 205);
     doc.setFontSize(12);
     doc.text('_______________________________', 30, 220);
     doc.text('Oficial de SIS', 30, 225);
@@ -230,30 +261,30 @@ export class SendsComponent implements OnInit {
     doc.textWithLink('Mantido por: his@fgh.org.mz', 77, 261, { url: 'mailto:his@fgh.org.mz' });
     doc.setFontSize(8);
     doc.setTextColor(100);
-    doc.save('SCB_Protocolo_Envio_' + send.district.name + '_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
+    doc.save('SCB_Protocolo_Envio_' + this.send.district.name + '_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
   }
 
 
   setSend(uuid) {
-    this.send = this.sends.find(item => item.uuid == uuid);
+    this.send = this.sends.find(item => item.uid == uuid);
     this.isHidden2m="hide";
     if (this.send.received == true) {
       this.isHidden2m="";
-      this.receivesService.findOneReceiveBySendUuid(uuid)
+      this.receivesService.findOneReceiveBySendUuid(uuid,"createdBy.uid,createdBy.userId,send.sendId,transporter.transporterId,transporter.uid,transporter.name,transporter.phoneNumber,receiveId,receiveDate,ikReturned,dateIkReturned,dateCreated,dateUpdated,createdBy.personName,uid,dateRestored,canceledReason,restoredBy.personName,ikReturnedBy.personName,restored")
         .subscribe(data => {
           this.receive = data;
           if (this.receive != null) {
-            this.send.receivername = this.receive.created_by.person.others_names + " " + this.receive.created_by.person.surname;
-            this.send.receivedate = this.receive.receive_date;
+            this.send.receivername = this.receive.createdBy.personName;
+            this.send.receivedate = this.receive.receiveDate;
             this.send.restored = this.receive.restored;
-            if (this.receive.restored_by != null) {
-              this.send.restorername = this.receive.restored_by.person.others_names + " " + this.receive.restored_by.person.surname;
+            if (this.receive.restoredBy != null) {
+              this.send.restorername = this.receive.restoredBy.personName;
             }
-            this.send.date_restored = this.receive.date_restored;
+            this.send.date_restored = this.receive.dateRestored;
             this.send.sis_observation = this.receive.observation;
-            this.send.ik_returned = this.receive.ik_returned;
+            this.send.ik_returned = this.receive.ikReturned;
             if (this.send.ik_returned) {
-              this.send.ik_returneddate = this.receive.date_ik_returned;
+              this.send.ik_returneddate = this.receive.dateIkReturned;
               this.send.ik_returnedto = this.receive.transporter.name;
             }
           }
@@ -263,6 +294,7 @@ export class SendsComponent implements OnInit {
             this.isHidden2m="hide";
           });
     } else {
+      this.isHidden2m="hide";
     }
   }
 
@@ -295,6 +327,10 @@ export class SendsComponent implements OnInit {
 
     this.getPage(1);
    
+  }
+
+  searchSize(){
+    this.getPage(1);
   }
 
 }

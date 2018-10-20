@@ -10,11 +10,11 @@ import { AuthManagerEvaluationsEdit } from './authmanageredit';
 
 const evaluationsRoutes: Routes = [
   { path: 'evaluations', component: EvaluationsComponent, pathMatch: 'full', canActivate: [AuthManagerEvaluationsRead] },
-  { path: 'evaluation/new', component: EvaluationFormComponent, canActivate: [AuthManagerEvaluationsEdit] },
-  { path: 'evaluation/:uuid', component: EvaluationFormComponent, canActivate: [AuthManagerEvaluationsEdit] }
+  { path: 'evaluations/new', component: EvaluationFormComponent, canActivate: [AuthManagerEvaluationsEdit] },
+  { path: 'evaluations/:uid', component: EvaluationFormComponent, canActivate: [AuthManagerEvaluationsEdit] }
 ];
 
 /**
- * @author Damasceno Lopes <damascenolopess@gmail.com>
+ * @author Damasceno Lopes
  */
 export const evaluationsRouting = RouterModule.forChild(evaluationsRoutes);

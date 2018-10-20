@@ -6,11 +6,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IronkeysService } from "./shared/ironkeys.service";
 import { Ironkey } from "./shared/ironkey";
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
-declare var jsPDF: any; // Important
+declare var jsPDF: any;
 import { DatePipe } from '@angular/common';
 import * as myGlobals from '../../globals';
+import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/debounceTime';
 
 @Component({
   selector: 'app-ironkeys',
@@ -19,19 +22,24 @@ import * as myGlobals from '../../globals';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class IronkeysComponent implements OnInit {
   public ironkeys; ironkeysreport: Ironkey[] = [];
   public p: number = 1;
-  public total: number = 0;
+  public total; next; previous: number = 0;
   public form: FormGroup;
   public ironkey: Ironkey = new Ironkey();
   public isHidden; isDisabledt: string;
-  public serial: string;
+  public serial; first; last; range: string;
   public version: string;
   public status: string;
   public size: string;
+  public pageSize: number;
+
+  public serialValueControl = new FormControl();
+  public versionValueControl = new FormControl();
+  public formCtrlSub: Subscription;
 
   public statuslist = [
     { name: "Activado" },
@@ -52,11 +60,11 @@ export class IronkeysComponent implements OnInit {
     { id: 256, name: '256 GB' },
     { id: 500, name: '500 GB' },
     { id: 1000, name: '1 TB' },
-    { id: 0, name: 'Outro' }
+    { id: 0, name: 'Outra' }
   ];
   public user;
 
-   
+
   constructor(
     public datepipe: DatePipe,
     public ironkeysService: IronkeysService,
@@ -64,8 +72,6 @@ export class IronkeysComponent implements OnInit {
     public translate: TranslateService,
     public formBuilder: FormBuilder) {
     this.form = formBuilder.group({
-      serial: [],
-      version: [],
       status: [],
       size: []
     });
@@ -75,19 +81,54 @@ export class IronkeysComponent implements OnInit {
     this.version = "";
     this.status = "";
     this.size = "";
+    this.pageSize=15;
     this.getPage(1);
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
+
+    this.formCtrlSub = this.serialValueControl.valueChanges
+      .debounceTime(600)
+      .subscribe(newValue => {
+        this.serial = this.serialValueControl.value;
+        this.search();
+      });
+
+    this.formCtrlSub = this.versionValueControl.valueChanges
+      .debounceTime(600)
+      .subscribe(newValue => {
+        this.version = this.versionValueControl.value;
+        this.search();
+      });
+
   }
 
-  
   getPage(page: number) {
+    this.first = "";
+    this.last = "";
     this.isHidden = "";
     this.isDisabledt = "disabled";
-    this.ironkeysService.findIronkeys(page, 10, this.serial, this.version, this.status, this.size)
+    this.ironkeysService.findIronkeys(page, this.pageSize, this.serial, this.version, this.status, this.size, "size,serial,version,districts.fullName,districts.uid,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,datePurchased,status,uid,observation")
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
         this.ironkeys = data.content;
+        this.next = page + 1;
+        this.previous = page - 1;
+        if (data.first == true && data.last == true) {
+          this.first = "disabled";
+          this.last = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+        }
+        else if (data.first == true && data.last == false) {
+          this.first = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + (page * this.pageSize);
+        }
+        else if (data.first == false && data.last == true) {
+          this.last = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+        }
+        else if (data.first == false && data.last == false) {
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + + (page * this.pageSize);
+        }
       },
         error => {
           this.isHidden = "hide";
@@ -103,11 +144,9 @@ export class IronkeysComponent implements OnInit {
       );
   }
 
-  
   search() {
     var userValue = this.form.value;
-    if (userValue.serial) {
-      this.serial = userValue.serial;
+    if (this.serial) {
       this.serial = this.serial.split(" ").join("SPACE");
     }
     else {
@@ -131,8 +170,7 @@ export class IronkeysComponent implements OnInit {
     } else {
       this.size = "";
     }
-    if (userValue.version) {
-      this.version = userValue.version;
+    if (this.version) {
       this.version = this.version.split(" ").join("SPACE");
     }
     else {
@@ -141,10 +179,15 @@ export class IronkeysComponent implements OnInit {
     this.getPage(1);
   }
 
+  searchSize(){
+    this.getPage(1);
+  }
+
+
   printList() {
     this.isHidden = "";
     this.isDisabledt = "disabled";
-    this.ironkeysService.findIronkeys("", "", this.serial, this.version, this.status, this.size)
+    this.ironkeysService.findIronkeys("", "", this.serial, this.version, this.status, this.size, "size,serial,version,districts.fullName,status")
       .subscribe(data => {
         this.ironkeysreport = data.content;
       },
@@ -158,15 +201,14 @@ export class IronkeysComponent implements OnInit {
           this.isDisabledt = "";
 
           var user = JSON.parse(window.sessionStorage.getItem('user'));
-          var doc = new jsPDF('landscape');
+          var doc = new jsPDF('portrait');
           var totalPagesExp = "{total_pages_count_string}";
           var columns = [
             { title: "Nº de Serie", dataKey: "serial" },
             { title: "Versão", dataKey: "version" },
-            { title: "Capacidade", dataKey: "sized" },
+            { title: "Tamanho (GB)", dataKey: "size" },
             { title: "Estado", dataKey: "status" },
-            { title: "Última\nactualização", dataKey: "lastupdate" },
-            { title: "Distritos", dataKey: "districtsnamesreport" }
+            { title: "Distrito (s)", dataKey: "districts" }
           ];
           var listSize = this.ironkeysreport.length;
           var datenow = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
@@ -179,7 +221,7 @@ export class IronkeysComponent implements OnInit {
           doc.setFontSize(11);
           doc.setTextColor(100);
           var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-          var text = doc.splitTextToSize('Os Ironkeys são utilizados para o transporte de backup de base dados.', pageWidth - 25, {});
+          var text = doc.splitTextToSize('Os Ironkeys são utilizados para o transporte de backup de base dados dos Sistemas OpenMRS e iDART.', pageWidth - 25, {});
           doc.text(text, 14, 32);
 
           var pageContent = function (data) {
@@ -199,17 +241,41 @@ export class IronkeysComponent implements OnInit {
             bodyStyles: { valign: 'top' },
             columnStyles: {
               serial: { columnWidth: 60, fontSize: 10 },
-              districtsnamesreport: { columnWidth: 60, fontSize: 10 }
+              districts: { columnWidth: 50, fontSize: 10 }
             },
             theme: 'grid',
             headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
-            addPageContent: pageContent
+            addPageContent: pageContent,
+            createdCell: function (cell, data) {
+              if (data.column.dataKey === 'districts') {
+                if (cell.raw == null) {
+                  cell.text = "";
+                } else {
+                  if (cell.raw.length < 2) {
+                    for (let i of cell.raw) {
+                      cell.text = i.fullName;
+                    }
+                  } else {
+                    var n=1;
+                    for (let i of cell.raw) {
+                      if (n==1){
+                      cell.text = i.fullName;
+                      n=n+1;}
+                      else{
+                      cell.text = cell.text+"\n"+i.fullName;
+                      }
+                    }
+                    
+                  }
+                } }
+            }
+
           });
           doc.setFontSize(11);
           doc.setTextColor(100);
           doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
           doc.setTextColor(0, 0, 200);
-          doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
+          doc.textWithLink('© Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
 
           if (typeof doc.putTotalPages === 'function') {
             doc.putTotalPages(totalPagesExp);
@@ -225,13 +291,13 @@ export class IronkeysComponent implements OnInit {
 
   }
 
-  setIronkey(uuid) {
-    this.ironkey = this.ironkeys.find(item => item.uuid == uuid);
+  setIronkey(uid) {
+    this.ironkey = this.ironkeys.find(item => item.uid == uid);
   }
   deleteIronkey() {
     this.isHidden = "";
     this.isDisabledt = "disabled";
-    this.ironkeysService.deleteIronkey(this.ironkey.uuid)
+    this.ironkeysService.deleteIronkey(this.ironkey.uid)
       .subscribe(data => {
         if (data.text() == "Success") {
           this.getPage(this.p);
@@ -253,6 +319,7 @@ export class IronkeysComponent implements OnInit {
         }
       );
   }
+
   showMsg(ironkey) {
     this.toastService.show('Ironkey: ' + ironkey + ', excluido com sucesso!', 2000, 'green', null);
   }

@@ -12,7 +12,7 @@ import { District } from './../../districts/shared/district';
 import { Person } from './../../persons/shared/person';
 import { AuthoritiesService } from './../../authorities/shared/authorities.service';
 import { Authority } from './../../authorities/shared/authority';
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 import * as CryptoJS from 'crypto-js';
 
@@ -23,7 +23,7 @@ import * as CryptoJS from 'crypto-js';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class UserDetailsFormComponent implements OnInit {
   public form: FormGroup;
@@ -109,24 +109,24 @@ export class UserDetailsFormComponent implements OnInit {
         return;
       } else {
         this.isHidden2 = 'hide';
-        this.usersService.findOneUserByUuid(uuid).subscribe(
+        this.usersService.findOneUserByUuid(uuid,"creatorName,updaterName,locale,userId,person.gender,person.othersNames,person.surname,person.email,person.phoneNumber,enabled,dateCreated,dateUpdated,creatorId,updaterId,uid,districts.fullName,districts.uid,authorities.description,lastLogin,username,person.personId,person.uid,districts.districtId,creatorId,authorities.authorityId").subscribe(
           user2 => {
             this.user = user2;
             var userdistrict = this.user.districts;
             var userauthority = this.user.authorities;
-            this.districtsService.findDistricts("","","",false)
+            this.districtsService.findDistricts("","","",false,"fullName,uid,districtId")
               .subscribe(data => {
                   this.alldistricts = data.content;
                 var filtereddistricts = this.alldistricts;
                 for (let i of userdistrict) {
-                  filtereddistricts = filtereddistricts.filter(item => item.district_id !== i.district_id);
+                  filtereddistricts = filtereddistricts.filter(item => item.districtId !== i.districtId);
                 }
                 for (let i of userdistrict) {
                   filtereddistricts.push(i);
                 }
                 this.alldistricts = filtereddistricts.sort(function (a, b) {
-                  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-                  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                  var nameA = a.fullName.toUpperCase(); // ignore upper and lowercase
+                  var nameB = b.fullName.toUpperCase(); // ignore upper and lowercase
                   if (nameA < nameB) {
                     return -1;
                   }
@@ -141,7 +141,7 @@ export class UserDetailsFormComponent implements OnInit {
                   this.allauthorities = data;
                 var filteredauthorities = this.allauthorities;
                 for (let i of userauthority) {
-                  filteredauthorities = filteredauthorities.filter(item => item.authority_id !== i.authority_id);
+                  filteredauthorities = filteredauthorities.filter(item => item.authorityId !== i.authorityId);
                 }
                 for (let i of userauthority) {
                   filteredauthorities.push(i);
@@ -160,6 +160,9 @@ export class UserDetailsFormComponent implements OnInit {
               });
           },
           error => {
+            if (error.status == 404) {
+              this.router.navigate(['NotFound']);
+            }
           },
           () => {
             this.isHidden = "hide";
@@ -173,15 +176,27 @@ export class UserDetailsFormComponent implements OnInit {
     this.isHidden = "";
     var result, userValue = this.form.value;
     var user = JSON.parse(window.sessionStorage.getItem('user'));
-    if (userValue.user_id) {
+    if (this.user.userId) {
         if (userValue.password_new != null) {
           userValue.password = userValue.password_new;
         }
-        userValue.date_created=this.user.date_created;
-        userValue.uuid=this.user.uuid;
-        userValue.last_login=this.user.last_login;
 
-        result = this.usersService.updateUser(userValue, this.user.creatorid, user.user_id);
+        userValue.userId = this.user.userId;
+        userValue.dateCreated = this.user.dateCreated;
+        userValue.uid = this.user.uid;
+        userValue.lastLogin = this.user.lastLogin;
+        userValue.enabled=true;
+        userValue.person = {
+          personId: this.user.person.personId,
+          uid: this.user.person.uid,
+          othersNames: userValue.others_names,
+          surname: userValue.surname,
+          gender: userValue.gender,
+          phoneNumber: userValue.phone_number,
+          email: userValue.email
+        }
+
+        result = this.usersService.updateUser(userValue, this.user.creatorId, user.userId);
         result.subscribe(data => {
         },
           error => {
@@ -191,9 +206,8 @@ export class UserDetailsFormComponent implements OnInit {
             window.sessionStorage.removeItem("user");
 
             if (userValue.password_new != null) {
-              userValue.password = userValue.password_new;
               window.sessionStorage.removeItem("password");
-              var wordArray = CryptoJS.enc.Utf8.parse(userValue.password);
+              var wordArray = CryptoJS.enc.Utf8.parse(userValue.password_new);
               var base64 = CryptoJS.enc.Base64.stringify(wordArray);
               window.sessionStorage.setItem('password', base64);
             }

@@ -1,13 +1,13 @@
 <!--
  Copyright (C) 2014-2018, Friends in Global Health, LLC
  All rights reserved.
- @author Damasceno Lopes <damascenolopess@gmail.com>
+ @author Damasceno Lopes
 -->
 
 <br>
 <h5 class="light" style="display: inline-flex;">{{ "dashboard" | translate }}
   &nbsp;
- <a mz-tooltip [tooltip]="'Ajuda'" [position]="'top'" [html]="false" [delay]="100" style="color:black;" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM/edit?usp=sharing" target="_blank"><i class="material-icons waves-effect" >help_outline</i></a>
+ <a mz-tooltip [tooltip]="'Ajuda'" [position]="'top'" [html]="false" [delay]="100" style="color:black;" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM/edit#heading=h.kwqgn3wjeizw" target="_blank"><i class="material-icons waves-effect" >help_outline</i></a>
 </h5>
 
 <mz-tab [responsiveThreshold]="'true'">
@@ -44,21 +44,11 @@
   <mz-tab-item [label]="'Sync'">
   
      <form materialize [formGroup]="form">
-          <div class="input-field col s10" *ngIf="translate.currentLang=='pt'&&(ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA)">
+          <div class="input-field col s10" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
             <mz-select-container>
-              <select mz-select mz-validation required id="district" [label]="'Distrito'"  (change)="search()" formControlName="district"
+              <select mz-select mz-validation required id="district" label="{{'district'| translate}}"  (change)="search()" formControlName="district"
                 >
                 <option value="all" selected>Todos Distritos</option>
-                <option *ngFor="let district of alldistricts" [value]="district.name">{{ district.name }}</option>
-              </select>
-            </mz-select-container>
-          </div>
-          <div class="input-field col s10" *ngIf="translate.currentLang=='en'&&(ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA)">
-            <mz-select-container>
-      
-              <select mz-select mz-validation required id="district" [label]="'District'"  (change)="search()" formControlName="district"
-               >
-                <option value="all" selected>All Districts</option>
                 <option *ngFor="let district of alldistricts" [value]="district.name">{{ district.name }}</option>
               </select>
             </mz-select-container>

@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Evaluation } from '../shared/evaluation';
 import { EvaluationsService } from '../shared/evaluations.service';
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 @Component({
   selector: 'app-evaluation-form',
@@ -16,7 +16,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
- * @author Damasceno Lopes <damascenolopess@gmail.com>
+ * @author Damasceno Lopes
  */
 export class EvaluationFormComponent implements OnInit {
   public form: FormGroup;
@@ -24,7 +24,7 @@ export class EvaluationFormComponent implements OnInit {
   public isHidden: string;
   public isDisabled: boolean;
   public evaluation: Evaluation = new Evaluation();
-  public user: Object[] = [];
+  public user: any;
 
    
   constructor(
@@ -39,11 +39,9 @@ export class EvaluationFormComponent implements OnInit {
       name: ['', [
         Validators.required
       ]],
-      openmrs_sql_dataset_uuid: ['', [
+      openmrsSqlUuid: ['', [
         Validators.required
       ]],
-      created_by: [],
-      updated_by: [],
       description: []
     });
   }
@@ -52,13 +50,13 @@ export class EvaluationFormComponent implements OnInit {
     this.isDisabled = false;
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
     this.route.params.subscribe(params => {
-      var uuid = params['uuid'];
-      this.title = uuid ? 'Editar Avaliação' : 'Nova Avaliação';
-      this.isHidden = uuid ? '' : 'hide';
-      if (!uuid) {
+      var uid = params['uid'];
+      this.title = uid ? 'Editar Avaliação' : 'Nova Avaliação';
+      this.isHidden = uid ? '' : 'hide';
+      if (!uid) {
         return;
       } else {
-        this.evaluationsService.findOneEvaluationByUuid(uuid)
+        this.evaluationsService.findOneEvaluationByUuid(uid,"evaluationId,name,openmrsSqlUuid,uid,dateCreated,createdBy.userId,createdBy.uid,description")
           .subscribe(
             evaluation => {
               this.evaluation = evaluation;
@@ -76,12 +74,15 @@ export class EvaluationFormComponent implements OnInit {
   save() {
     this.isDisabled = true;
     var result, userValue = this.form.value;
-    if (this.evaluation.uuid) {
-      userValue.evaluation_id = this.evaluation.evaluation_id;
-      userValue.date_created = this.evaluation.date_created;
-      userValue.uuid = this.evaluation.uuid;
-      userValue.created_by = this.evaluation.created_by;
-      userValue.updated_by = this.user;
+    if (this.evaluation.uid) {
+      userValue.evaluationId = this.evaluation.evaluationId;
+      userValue.dateCreated = this.evaluation.dateCreated;
+      userValue.uid = this.evaluation.uid;
+      userValue.createdBy = this.evaluation.createdBy;
+      userValue.updatedBy = {
+        uid: this.user.uid,
+        userId: this.user.userId
+      };
       result = this.evaluationsService.updateEvaluation(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {
@@ -93,7 +94,10 @@ export class EvaluationFormComponent implements OnInit {
         }
       });
     } else {
-      userValue.created_by = this.user;
+      userValue.createdBy = {
+        uid: this.user.uid,
+        userId: this.user.userId
+      };
       result = this.evaluationsService.createEvaluation(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {

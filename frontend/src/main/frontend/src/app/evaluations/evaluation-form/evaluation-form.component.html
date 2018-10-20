@@ -1,7 +1,7 @@
 <!--
  Copyright (C) 2014-2018, Friends in Global Health, LLC
  All rights reserved.
- @author Damasceno Lopes <damascenolopess@gmail.com>
+ @author Damasceno Lopes
 -->
 
 <br>
@@ -29,9 +29,9 @@
       <div class="row">
         <div class="input-field col s12">
           <i class="material-icons prefix">label_outline</i>
-          <input id="openmrs_sql_dataset_uuid" type="text" class="validate" [(ngModel)]="evaluation.openmrs_sql_dataset_uuid" formControlName="openmrs_sql_dataset_uuid"
-            [class.invalid]="form.controls['openmrs_sql_dataset_uuid'].touched && !form.controls['openmrs_sql_dataset_uuid'].valid">
-          <label for="openmrs_sql_dataset_uuid" [class.active]="evaluation.openmrs_sql_dataset_uuid" data-error="OpenMRS SQL Dataset UUID deve ser preenchido.">
+          <input id="openmrsSqlUuid" type="text" class="validate" [(ngModel)]="evaluation.openmrsSqlUuid" formControlName="openmrsSqlUuid"
+            [class.invalid]="form.controls['openmrsSqlUuid'].touched && !form.controls['openmrsSqlUuid'].valid">
+          <label for="openmrsSqlUuid" [class.active]="evaluation.openmrsSqlUuid" data-error="OpenMRS SQL Dataset UUID deve ser preenchido.">
             {{ "openmrs_sql_dataset_uuid" | translate }} *
           </label>
         </div>

@@ -11,12 +11,12 @@ import { AuthManagerUsersEdit } from './authmanageredit';
 
 const usersRoutes: Routes = [
   { path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [AuthManagerUsersRead] },
-  { path: 'user/new', component: UserFormComponent, canActivate: [AuthManagerUsersEdit] },
-  { path: 'user/:uuid', component: UserFormComponent, canActivate: [AuthManagerUsersEdit] },
-  { path: 'user/profile/:uuid', component: UserDetailsFormComponent }
+  { path: 'users/new', component: UserFormComponent, canActivate: [AuthManagerUsersEdit] },
+  { path: 'users/:uuid', component: UserFormComponent, canActivate: [AuthManagerUsersEdit] },
+  { path: 'users/profile/:uuid', component: UserDetailsFormComponent }
 ];
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export const usersRouting = RouterModule.forChild(usersRoutes);

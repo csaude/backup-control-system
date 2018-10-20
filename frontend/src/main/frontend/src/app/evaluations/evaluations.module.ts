@@ -10,8 +10,7 @@ import { HttpModule } from '@angular/http';
 import { EvaluationsComponent } from './evaluations.component';
 import { EvaluationsService } from './shared/evaluations.service';
 import { EvaluationFormComponent } from './evaluation-form/evaluation-form.component';
-import { MzTooltipModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule } from 'ng2-materialize';
-import { NgxPaginationModule } from 'ngx-pagination';
+import { MzTooltipModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzSelectModule,MzDropdownModule } from 'ngx-materialize';
 import { TranslateModule } from "ng2-translate";
 
 @NgModule({
@@ -26,10 +25,11 @@ import { TranslateModule } from "ng2-translate";
     MzIconModule,
     MzModalModule,
     MzToastModule,
-    NgxPaginationModule,
+    MzSelectModule,
     MzButtonModule,
     MzInputModule,
-    TranslateModule
+    TranslateModule,
+    MzDropdownModule
   ],
   declarations: [
     EvaluationsComponent,
@@ -44,6 +44,6 @@ import { TranslateModule } from "ng2-translate";
 })
 
 /**
- * @author Damasceno Lopes <damascenolopess@gmail.com>
+ * @author Damasceno Lopes
  */
 export class EvaluationsModule { }

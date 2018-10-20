@@ -1,6 +1,7 @@
 <!--
-@author damasceno.lopes
-@email damasceno.lopes@fgh.org.mz
+ Copyright (C) 2014-2018, Friends in Global Health, LLC
+ All rights reserved.
+ @author Damasceno Lopes
 -->
 
 <br>
@@ -18,27 +19,17 @@
     <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
 
         <div class="row">
-            <div class="{{disabled1==true?'input-field col s10 l11 m11':'input-field cols12 l12 m12'}}" *ngIf="translate.currentLang=='pt'">
+            <div class="{{disabled1==true?' col s10 l11 m11':'col s12 l12 m12'}}">
               <mz-select-container>
                 <i mz-icon mz-input-prefix [icon]="'location_on'">
                 </i>
-                <select mz-select mz-validation required id="district" [label]="'Distrito *'" [placeholder]="'Seleccione o Distrito'" [(ngModel)]="server.district"
+                <select mz-select mz-validation required id="district" label="{{ 'district' | translate }} *'" placeholder="{{ 'select' | translate }}" [(ngModel)]="server.district"
                   formControlName="district" [disabled]="disabled1">
-                  <option *ngFor="let district of alldistricts" [ngValue]="district" >{{ district.namef }}</option>
+                  <option *ngFor="let district of alldistricts" [ngValue]="district" >{{ district.name }}</option>
                 </select>
               </mz-select-container>
             </div>
-            <div class="{{disabled1==true?'input-field col s10 l11 m11':'input-field cols12 l12 m12'}}" *ngIf="translate.currentLang=='en'">
-              <mz-select-container>
-                <i mz-icon mz-input-prefix [icon]="'location_on'">
-                </i>
-                <select mz-select mz-validation required id="district" [label]="'District *'" [placeholder]="'Select the District'" [(ngModel)]="server.district"
-                  formControlName="district" [disabled]="disabled1">
-                  <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.namef }}</option>
-                </select>
-              </mz-select-container>
-            </div>
-
+            
             <div class="col s1 l1 m1" *ngIf="disabled1==true">
                 <br>
                 <br>
@@ -67,28 +58,17 @@
             {{ "servername" | translate }} *
           </label>
         </div>
-      
-
-     
-          <div class="input-field col s12 l6 m6" *ngIf="translate.currentLang=='pt'" style="margin-top: 1px;">
+    
+          <div class="col s12 l6 m6"  style="margin-top: 1px;">
             <mz-select-container>
-              <i mz-icon mz-input-prefix [icon]="'perm_identity'">
+              <i mz-icon mz-input-prefix [icon]="'computer'">
               </i>
-              <select mz-select id="type" [label]="'Tipo de Servidor *'" [placeholder]="'Seleccione'" [(ngModel)]="server.type" formControlName="type">
+              <select mz-select id="type" label="{{ 'type' | translate }} *" placeholder="{{ 'select' | translate }}" [(ngModel)]="server.type" formControlName="type">
                 <option *ngFor="let type of types" [value]="type.name" [selected]="type.name == server.type">{{ type.name }}</option>
               </select>
             </mz-select-container>
           </div>
      
-          <div class="input-field col s12 l6 m6" *ngIf="translate.currentLang=='en'">
-            <mz-select-container>
-              <i mz-icon mz-input-prefix [icon]="'perm_identity'">
-              </i>
-              <select mz-select id="type" [label]="'Tipo de Servidor *'" [placeholder]="'Seleccione'" [(ngModel)]="server.type" formControlName="type">
-                  <option *ngFor="let type of types" [value]="type.name" [selected]="type.name == server.type">{{ type.name }}</option>
-                </select>
-            </mz-select-container>
-          </div>
         </div>
        
       <div class="row">
@@ -107,14 +87,14 @@
           </div>
           <div class="input-field col s12 l8 m8" *ngIf="server.canceled">
             <i class="material-icons prefix">label_outline</i>
-            <input id="canceled_reason" type="text" class="validate" [(ngModel)]="server.canceled_reason" formControlName="canceled_reason">
+            <input id="canceled_reason" type="text" class="validate" [(ngModel)]="server.canceledReason" formControlName="canceledReason">
             <label for="canceled_reason" [class.active]="server.canceled_reason">
               {{ "cancelitreason" | translate }}
             </label>
           </div>
         </div>
 
-      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled||disabled1||server.district.name==null">
+      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled||disabled1||server.district.districtId==null">
         {{ "save" | translate }}
         <i class="material-icons right">send</i>
       </button>

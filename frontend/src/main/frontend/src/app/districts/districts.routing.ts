@@ -10,11 +10,11 @@ import { DistrictFormComponent } from "./district-form/district-form.component";
 
 const districtsRoutes: Routes = [
   { path: 'districts', component: DistrictsComponent, pathMatch: 'full', canActivate: [AuthManagerDistrictsRead] },
-  { path: 'district/new', component: DistrictFormComponent, canActivate: [AuthManagerDistrictsEdit] },
-  { path: 'district/:uuid', component: DistrictFormComponent, canActivate: [AuthManagerDistrictsEdit] }
+  { path: 'districts/new', component: DistrictFormComponent, canActivate: [AuthManagerDistrictsEdit] },
+  { path: 'districts/:uuid', component: DistrictFormComponent, canActivate: [AuthManagerDistrictsEdit] }
 ];
 
 /** 
- * @author Damasceno Lopes <damascenolopess@gmail.com>
+ * @author Damasceno Lopes
  */
 export const districtsRouting = RouterModule.forChild(districtsRoutes);

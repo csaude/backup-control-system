@@ -13,10 +13,9 @@
 	<artifactId>mz.org.fgh.scb.backend</artifactId>
 	<packaging>war</packaging>
 	<name>SCB Project Module - Backend</name>
-	<description>This is the main module of the project. It contains Application.java class, that contains main method, necessary to run Spring Boot application. It contains all necessary application configuration properties.  It the aplication services throught REST!.</description>
+	<description>This is the main module of the project. It contains Application.java class, that contains main method, necessary to run Spring Boot application. It contains all necessary application configuration properties.</description>
 
 	<dependencies>
-
 		<!-- Data -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -26,27 +25,20 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-rest</artifactId>
 		</dependency>
-		
+
 		<!-- Unit testing -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
-		<!-- Rest API Health check -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-		
 		<!-- DBMS -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 
-		<!-- Embed AppServer -->
+		<!-- Embed Server -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
@@ -56,12 +48,6 @@
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-el</artifactId>
 			<scope>provided</scope>
-		</dependency>
-		
-		<!-- Security -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
 		<!-- Email -->
@@ -87,14 +73,23 @@
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
 			<version>2.8.0</version>
-			<scope>compile</scope>
 		</dependency>
-		<!--  
+		<!-- Devtools -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
-		</dependency>-->
+		</dependency>
+		<!-- Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.bohnman</groupId>
+			<artifactId>squiggly-filter-jackson</artifactId>
+			<version>1.3.14</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -108,13 +103,12 @@
 				<configuration>
 					<webResources>
 						<resource>
-							<directory>../frontend/target/frontend</directory>
+							<directory>${session.executionRootDirectory}/frontend/target/frontend</directory>
 						</resource>
 					</webResources>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
 
 </project>

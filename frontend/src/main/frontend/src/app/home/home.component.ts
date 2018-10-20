@@ -16,7 +16,7 @@ import { District } from '../districts/shared/district';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class HomeComponent implements OnInit {
 
@@ -426,9 +426,9 @@ export class HomeComponent implements OnInit {
     if (this.ROLE_SIS || this.ROLE_IT || this.ROLE_OA || this.ROLE_GMA) {
 
 
-      this.districtsService.findDistricts("","","",false)
+      this.districtsService.findDistricts("","","",false,"name,parent.name")
         .subscribe(data => {
-          var filteredd = data.content.filter(item => item.parentdistrict == null);
+          var filteredd = data.content.filter(item => item.parent == null);
           this.alldistricts = filteredd;
         });
 
@@ -643,12 +643,12 @@ export class HomeComponent implements OnInit {
           var districts=this.user.districts;
          
           var resulti = alasql("SELECT [0] AS name, [1] AS exist FROM ?", [data]);
-          var result = alasql("SELECT * FROM ?resulti JOIN ?districts ON resulti.name=districts.namef", [resulti, districts]);
+          var result = alasql("SELECT * FROM ?resulti JOIN ?districts ON resulti.name=districts.fullName", [resulti, districts]);
       
           var label: string[] = [];
           var value: number[] = [];
           for (let l of result) {
-            label.push(l.namef);
+            label.push(l.fullName);
             value.push(l.exist);
           }
           this.barChartLabels = label;
@@ -666,11 +666,11 @@ export class HomeComponent implements OnInit {
           var districts=this.user.districts;
          
           var resulti = alasql("SELECT [0] AS name, [1] AS exist FROM ?", [data]);
-          var result = alasql("SELECT * FROM ?resulti JOIN ?districts ON resulti.name=districts.namef", [resulti, districts]);
+          var result = alasql("SELECT * FROM ?resulti JOIN ?districts ON resulti.name=districts.fullName", [resulti, districts]);
           var label: string[] = [];
           var value: number[] = [];
           for (let l of result) {
-            label.push(l.namef);
+            label.push(l.fullName);
             value.push(l.exist);
           }
           this.barChartLabels2 = label;
@@ -685,7 +685,7 @@ export class HomeComponent implements OnInit {
 
       this.resourcesService.findSyncsPW()
         .subscribe(data => {
-          var districts=this.user.districts.filter(item => item.parentdistrict == null);
+          var districts=this.user.districts.filter(item => item.parentDistrictId == null);
 
           var resulti = alasql("SELECT [0] AS server,[1] AS name, [3] AS exist,[4] AS error FROM ?data ", [data, districts]);
           var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
@@ -717,7 +717,7 @@ export class HomeComponent implements OnInit {
 
       this.resourcesService.findSyncsTW()
         .subscribe(data => {
-         var districts=this.user.districts.filter(item => item.parentdistrict == null);
+         var districts=this.user.districts.filter(item => item.parentDistrictId == null);
           var resulti = alasql("SELECT [0] AS server,[1] AS name, [3] AS exist,[4] AS error FROM ?data ", [data, districts]);
           var result = alasql("SELECT * FROM ?resulti JOIN ?districts USING name", [resulti, districts]);
           var label: string[] = [];

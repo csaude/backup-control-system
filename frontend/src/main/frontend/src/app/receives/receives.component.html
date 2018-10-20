@@ -1,64 +1,63 @@
 <!--
  Copyright (C) 2014-2018, Friends in Global Health, LLC
  All rights reserved.
- @author Damasceno Lopes <damascenolopess@gmail.com>
+ @author Damasceno Lopes
 -->
 
 <br>
-<h5 class="light" *ngIf="received==false"><span style="color:red;">{{ total }}</span> {{ "to_receive" | translate }}</h5>
-<h5 class="light" *ngIf="received==true">{{ total }} {{ "receivesfound" | translate }}</h5>
+<h5 class="light"><span style="color:red;"></span> {{ "receivesfound" | translate }}</h5>
 
 <form materialize [formGroup]="form">
   <div class="row">
-    <div class="input-field col s12 l4 m4" *ngIf="translate.currentLang=='pt'">
+    <div class="col s12 l2 m2">
       <mz-select-container>
-        <select mz-select mz-validation required id="district" [label]="'Distrito'" formControlName="district" (change)="search()">
+        <select mz-select mz-validation required id="district" label="{{ 'district' | translate }}" formControlName="district" (change)="search()">
           <option value="all" selected>Todos Distritos</option>
-          <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.namef }}</option>
-        </select>
-      </mz-select-container>
-    </div>
-    <div class="input-field col s12 l4 m4" *ngIf="translate.currentLang=='en'">
-      <mz-select-container>
-
-        <select mz-select mz-validation required id="district" [label]="'District'" formControlName="district" (change)="search()">
-          <option value="all" selected>All Districts</option>
-          <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.namef }}</option>
+          <option *ngFor="let district of alldistricts" [value]="district.districtId">{{ district.fullName }}</option>
         </select>
       </mz-select-container>
     </div>
 
    
-    <div class="col s12 l2 m2" style="margin-top: 45px;">
+    <div class="col s12 l2 m2" style="margin-top: 25px;">
       <input type="checkbox" class="filled-in" id="receiveds" formControlName="received" (change)="search()" />
       <label for="receiveds">{{ "hisreceived" | translate }}</label>
     </div>
 
-  <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='pt'" >
-      <mz-datepicker-container>
-        <input mz-datepicker [label]="'Backup de:'" [options]="options" formControlName="backup_from" type="date" (change)="search()"
-        />
-      </mz-datepicker-container>
-    </div>
-    <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='en'">
-      <mz-datepicker-container>
-        <input mz-datepicker [label]="'Backup from:'" [options]="options" formControlName="backup_from" type="date" (change)="search()"
-        />
-      </mz-datepicker-container>
-    </div>
-    <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='pt'">
-      <mz-datepicker-container>
-        <input mz-datepicker [label]="'até:'" [options]="options" formControlName="backup_until" type="date" (change)="search()"
-        />
-      </mz-datepicker-container>
-    </div>
-    <div class="input-field col s6 l3 m3" *ngIf="translate.currentLang=='en'">
-      <mz-datepicker-container>
-        <input mz-datepicker [label]="'Until:'" [options]="options" formControlName="backup_until" type="date" (change)="search()"
-        />
-      </mz-datepicker-container>
-    </div>
-
+    <div class="col s6 l2 m2">
+        <mz-datepicker-container>
+          <input mz-datepicker label="{{ 'backup_from' | translate }}" [options]="options" formControlName="backup_from" type="date" (change)="search()"
+          />
+        </mz-datepicker-container>
+      </div>
+     
+      <div class="col s6 l2 m2">
+        <mz-datepicker-container>
+          <input mz-datepicker label="{{ 'backup_until' | translate }}" [options]="options" formControlName="backup_until" type="date" (change)="search()"
+          />
+        </mz-datepicker-container>
+      </div>
+      <div class="col s12 m4 l4" style="margin-top: -15px;">
+          <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
+  
+            <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
+            <mz-select-container style="width: 50px;">
+              <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
+                <option value="15" selected>15</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </mz-select-container>
+  
+  
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
+            <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
+            <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
+            <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
+  
+          </ul>
+        </div>
   </div>
 
 </form>
@@ -67,7 +66,7 @@
   <div class="progress {{isHidden}}">
     <div class="indeterminate"></div>
   </div>
-  <table class="bordered responsive-table highlight">
+  <table class="bordered responsive-table highlight" *ngIf="isHidden=='hide'">
     <thead>
       <tr>
         <th>{{ "district" | translate }}</th>
@@ -76,13 +75,13 @@
         <th *ngIf="received==true">{{ "restored" | translate }}</th>
         <th *ngIf="received==true">{{ "ik_received" | translate }}</th>
         <th>{{ "updatedon" | translate }}</th>
-        <th>{{ "actions" | translate }}</th>
+        <th></th>
       </tr>
     </thead>
     <tbody *ngIf="received==false">
-      <tr *ngFor="let send of sends | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
-        <td>{{ send.district.namef }}</td>
-        <td>{{ send.backup_date | date: 'dd/MM/yyyy'}}</td>
+      <tr *ngFor="let send of sends">
+        <td>{{ send.district.fullName }}</td>
+        <td>{{ send.backupDate | date: 'dd/MM/yyyy'}}</td>
         <td *ngIf="send.received">
           {{ "yes" | translate }}
         </td>
@@ -96,37 +95,40 @@
         <td *ngIf="received==true&&!receive.restored" >
           <span style="color:red;">{{ "no" | translate }}</span>
         </td>
-        <td *ngIf="received==true&&receive.send.ik_received">
+        <td *ngIf="received==true&&receive.send.ikReceived">
           {{ "yes" | translate }}
         </td>
-        <td *ngIf="received==true&&!receive.send.ik_received">
+        <td *ngIf="received==true&&!receive.send.ikReceived">
           <span style="color:red;">{{ "no" | translate }}</span>
         </td>
         
-        <td>{{ send.date_updated | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ send.dateUpdated | date: 'dd/MM/yyyy' }}</td>
         <td>
 
-            <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.uuid)" (click)="basicModal2.open()"
-            [routerLink]="">
+            <a mz-tooltip tooltip="{{'details' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.uid)"
+            (click)="basicModal2.openModal()" [routerLink]="">
             <i class="material-icons icon-green">info</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Receber'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receive/send', send.uuid]" *ngIf="ROLE_SIS">
+          <a *ngIf="ROLE_SIS" mz-tooltip tooltip="{{'receivenow' | translate}}" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receives/send', send.uid]">
             <i class="material-icons icon-orange">mode_edit</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Imprimir Protocolo'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.uuid)" (click)="printSend()" [routerLink]="" *ngIf="ROLE_SIS">
-            <i class="material-icons icon-green">print</i>
+          <a *ngIf="ROLE_SIS" mz-tooltip tooltip="{{'print' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setSend(send.uid)"
+            (click)="printSend()" routerLink="/sends">
+            <i class="material-icons">print</i>
           </a>
+
+           
          
         </td>
       </tr>
     </tbody>
 
     <tbody *ngIf="received==true">
-      <tr *ngFor="let receive of receives | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
-        <td>{{ receive.send.district.namef }}</td>
-        <td>{{ receive.send.backup_date | date: 'dd/MM/yyyy'}}</td>
+      <tr *ngFor="let receive of receives">
+        <td>{{ receive.send.district.fullName }}</td>
+        <td>{{ receive.send.backupDate | date: 'dd/MM/yyyy'}}</td>
         <td *ngIf="receive.send.received">
           {{ "yes" | translate }}
         </td>
@@ -139,29 +141,29 @@
         <td *ngIf="!receive.restored" >
           <span style="color:red;">{{ "no" | translate }}</span>
         </td>
-        <td *ngIf="receive.send.ik_received">
+        <td *ngIf="receive.send.ikReceived">
           {{ "yes" | translate }}
         </td>
-        <td *ngIf="!receive.send.ik_received">
+        <td *ngIf="!receive.send.ikReceived">
           <span style="color:red;">{{ "no" | translate }}</span>
         </td>
-        <td>{{ receive.send.date_updated | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ receive.dateUpdated | date: 'dd/MM/yyyy' }}</td>
         <td>
 
-            <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setReceive(receive.receive_id)" (click)="basicModal2r.open()"
-            [routerLink]="">
+            <a mz-tooltip tooltip="{{'details' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setReceive(receive.uid)"
+            (click)="basicModal2r.openModal()" [routerLink]="">
             <i class="material-icons icon-green">info</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receive', receive.uuid]" *ngIf="ROLE_SIS">
+          <a *ngIf="ROLE_SIS" mz-tooltip tooltip="{{'edit' | translate}}" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/receives', receive.uid]">
             <i class="material-icons icon-orange">mode_edit</i>
           </a>
-          
           &nbsp;
-          <a mz-tooltip [tooltip]="'Imprimir Protocolo'" [position]="'top'" [html]="false" [delay]="100" (click)="setSend2(receive.uuid)" [routerLink]="" *ngIf="ROLE_SIS">
-            <i class="material-icons icon-green">print</i>
+          <a *ngIf="ROLE_SIS" mz-tooltip tooltip="{{'print' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setSend2(receive.uid)"
+            (click)="printSend()" routerLink="/receives">
+            <i class="material-icons">print</i>
           </a>
-       
+
         </td>
       </tr>
     </tbody>
@@ -169,9 +171,53 @@
 
   </table>
 </div>
-<pagination-controls *ngIf="received==false" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageSend($event)" id="server" class="right-align"></pagination-controls>
-<pagination-controls *ngIf="received==true" autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPageReceive($event)" id="server" class="right-align"></pagination-controls>
 
+    <ul class="pagination valign-center" *ngIf="isHidden=='hide'&&received==false">
+
+      <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
+      <mz-select-container style="width: 50px;">
+        <select mz-select id="pageSize" [(ngModel)]="pageSize" (change)="searchSize()">
+          <option value="15" selected>15</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </mz-select-container>
+    
+    
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
+      <li *ngIf="first==''" class="waves-effect"><a (click)="getPageSend(previous)"><i class="material-icons">chevron_left</i></a></li>
+      <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
+      <li *ngIf="last==''" class="waves-effect"><a (click)="getPageSend(next)"><i class="material-icons">chevron_right</i></a></li>
+    
+    </ul>
+
+    <ul class="pagination valign-center" *ngIf="isHidden=='hide'&&received==true">
+
+      <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
+      <mz-select-container style="width: 50px;">
+        <select mz-select id="pageSize" [(ngModel)]="pageSize" (change)="searchSize2()">
+          <option value="10" selected>10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </mz-select-container>
+    
+    
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
+      <li *ngIf="first==''" class="waves-effect"><a (click)="getPageReceive(previous)"><i class="material-icons">chevron_left</i></a></li>
+      <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
+      <li *ngIf="last==''" class="waves-effect"><a (click)="getPageReceive(next)"><i class="material-icons">chevron_right</i></a></li>
+    
+    </ul>
+
+
+  
+  <ul class="pagination" *ngIf="isHidden==''">
+      {{ "loading" | translate }}
+  </ul>
 
 <mz-modal #basicModal2 [fixedFooter]="true">
     <mz-modal-header>
@@ -181,22 +227,22 @@
       
         <div class="row" style="margin-top: -11px;">
             <div class="col s12">
-              <h5 class="light">{{send.district.province}} / {{send.district.namef}}</h5>
+              <h5 class="light">{{send.district.fullName}}</h5>
             </div>
           </div>
   
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2">{{ "backup_date" | translate }}:</div>
-        <div class="col s12 l10 m10">{{send.backup_date | date: 'dd/MM/yyyy'}}</div>
+        <div class="col s12 l10 m10">{{send.backupDate | date: 'dd/MM/yyyy'}}</div>
       </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2">{{ "transporter" | translate }}:</div>
-        <div class="col s12 l10 m10">{{send.transporter.name}} - {{send.transporter.phone_number}}</div>
+        <div class="col s12 l10 m10">{{send.transporter.name}} - {{send.transporter.phoneNumber}}</div>
       </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <input type="checkbox" id="update_finished" checked="{{send.update_finished==true?'checked':''}}" onclick="return false;"
+          <input type="checkbox" id="update_finished" checked="{{send.updateFinished==true?'checked':''}}" onclick="return false;"
           />
           <label for="update_finished">{{ "at" | translate }}</label>
         </div>
@@ -204,14 +250,14 @@
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <input type="checkbox" id="sync_finished" checked="{{send.sync_finished==true?'checked':''}}" onclick="return false;" />
+          <input type="checkbox" id="sync_finished" checked="{{send.syncFinished==true?'checked':''}}" onclick="return false;" />
           <label for="sync_finished">{{ "st" | translate }}</label>
         </div>
       </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <input type="checkbox" id="cross_dhis2_finished" checked="{{send.cross_dhis2_finished==true?'checked':''}}" onclick="return false;"
+          <input type="checkbox" id="cross_dhis2_finished" checked="{{send.crossDhis2Finished==true?'checked':''}}" onclick="return false;"
           />
           <label for="cross_dhis2_finished">{{ "dhis2" | translate }}</label>
         </div>
@@ -219,7 +265,7 @@
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <input type="checkbox" id="cross_idart_finished" checked="{{send.cross_idart_finished==true?'checked':''}}" onclick="return false;"
+          <input type="checkbox" id="cross_idart_finished" checked="{{send.crossIdartFinished==true?'checked':''}}" onclick="return false;"
           />
           <label for="cross_idart_finished">{{ "idart" | translate }}</label>
         </div>
@@ -227,7 +273,7 @@
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <input type="checkbox" id="validation_finished" checked="{{send.validation_finished==true?'checked':''}}" onclick="return false;"
+          <input type="checkbox" id="validation_finished" checked="{{send.validationFinished==true?'checked':''}}" onclick="return false;"
           />
           <label for="validation_finished">{{ "vt" | translate }}</label>
         </div>
@@ -235,10 +281,10 @@
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l3 m3">
-          <input type="checkbox" id="idart_backup" checked="{{send.idart_backup==true?'checked':''}}" onclick="return false;" />
+          <input type="checkbox" id="idart_backup" checked="{{send.idartBackup==true?'checked':''}}" onclick="return false;" />
           <label for="idart_backup">{{ "include_idart_backup" | translate }}</label>
         </div>
-        <div class="col s12 l7 m7" *ngIf="send.idart_backup">{{send.idart_backup_date | date: 'dd/MM/yyyy'}}</div>
+        <div class="col s12 l7 m7" *ngIf="send.idartBackup">{{send.idartBackupDate | date: 'dd/MM/yyyy'}}</div>
       </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2">{{ "obs_district" | translate }}:</div>
@@ -260,7 +306,7 @@
         </div>
         <div class="col s12 l3 m3" *ngIf="send.ik_returned">{{send.ik_returnedto}} - {{send.ik_returneddate | date: 'dd/MM/yyyy'}}</div>
         <div class="col s12 l3 m3">
-          <input type="checkbox" id="ik_receivedd" checked="{{send.ik_received==true?'checked':''}}" onclick="return false;" />
+          <input type="checkbox" id="ik_receivedd" checked="{{send.ikReceived==true?'checked':''}}" onclick="return false;" />
           <label for="ik_receivedd">{{ "ik_received" | translate }}</label>
         </div>
       </div>
@@ -276,19 +322,18 @@
         <div class="col s12 l2 m2">{{ "obs_his" | translate }}:</div>
         <div class="col s12 l10 m10">{{send.sis_observation}}</div>
       </div>
-     <div class="row" style="margin-top: -11px;">
+      <div class="row" style="margin-top: -11px;">
           <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-          <div class="col s12 l10 m10">{{send.created_by.person.others_names}} {{send.created_by.person.surname}} - {{send.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
+          <div class="col s12 l10 m10">{{send.createdBy.personName}} - {{ send.dateCreated | date:'dd/MM/yyyy HH:mm' }}</div>
         </div>
-      
-        <div class="row" *ngIf="send.updated_by!=null" style="margin-top: -11px;">
+        <div class="row" *ngIf="send.updatedBy!=null" style="margin-top: -11px;">
           <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-          <div class="col s12 l10 m10">{{send.updated_by.person.others_names}} {{send.updated_by.person.surname}} - {{send.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
+          <div class="col s12 l10 m10">{{send.updatedBy.personName}} - {{ send.dateUpdated | date:'dd/MM/yyyy HH:mm' }}</div>
         </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <span style="color:lightgrey;">{{send.uuid}}</span>
+          <span style="color:lightgrey;">{{send.uid}}</span>
         </div>
       </div>
     </mz-modal-content>
@@ -305,22 +350,22 @@
       
         <div class="row" style="margin-top: -11px;">
             <div class="col s12">
-              <h5 class="light">{{receive.send.district.province}} / {{receive.send.district.namef}}</h5>
+              <h5 class="light">{{receive.send.district.fullName}}</h5>
             </div>
           </div>
   
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2">{{ "backup_date" | translate }}:</div>
-        <div class="col s12 l10 m10">{{receive.send.backup_date | date: 'dd/MM/yyyy'}}</div>
+        <div class="col s12 l10 m10">{{receive.send.backupDate | date: 'dd/MM/yyyy'}}</div>
       </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2">{{ "transporter" | translate }}:</div>
-        <div class="col s12 l10 m10">{{receive.send.transporter.name}} - {{receive.send.transporter.phone_number}}</div>
+        <div class="col s12 l10 m10">{{receive.send.transporter.name}} - {{receive.send.transporter.phoneNumber}}</div>
       </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <input type="checkbox" id="update_finished" checked="{{receive.send.update_finished==true?'checked':''}}" onclick="return false;"
+          <input type="checkbox" id="update_finished" checked="{{receive.send.updateFinished==true?'checked':''}}" onclick="return false;"
           />
           <label for="update_finished">{{ "at" | translate }}</label>
         </div>
@@ -328,14 +373,14 @@
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <input type="checkbox" id="sync_finished" checked="{{receive.send.sync_finished==true?'checked':''}}" onclick="return false;" />
+          <input type="checkbox" id="sync_finished" checked="{{receive.send.syncFinished==true?'checked':''}}" onclick="return false;" />
           <label for="sync_finished">{{ "st" | translate }}</label>
         </div>
       </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <input type="checkbox" id="cross_dhis2_finished" checked="{{receive.send.cross_dhis2_finished==true?'checked':''}}" onclick="return false;"
+          <input type="checkbox" id="cross_dhis2_finished" checked="{{receive.send.crossDhis2Finished==true?'checked':''}}" onclick="return false;"
           />
           <label for="cross_dhis2_finished">{{ "dhis2" | translate }}</label>
         </div>
@@ -343,7 +388,7 @@
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <input type="checkbox" id="cross_idart_finished" checked="{{receive.send.cross_idart_finished==true?'checked':''}}" onclick="return false;"
+          <input type="checkbox" id="cross_idart_finished" checked="{{receive.send.crossIdartFinished==true?'checked':''}}" onclick="return false;"
           />
           <label for="cross_idart_finished">{{ "idart" | translate }}</label>
         </div>
@@ -351,7 +396,7 @@
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <input type="checkbox" id="validation_finished" checked="{{receive.send.validation_finished==true?'checked':''}}" onclick="return false;"
+          <input type="checkbox" id="validation_finished" checked="{{receive.send.validationFinished==true?'checked':''}}" onclick="return false;"
           />
           <label for="validation_finished">{{ "vt" | translate }}</label>
         </div>
@@ -359,10 +404,10 @@
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l3 m3">
-          <input type="checkbox" id="idart_backup" checked="{{receive.send.idart_backup==true?'checked':''}}" onclick="return false;" />
+          <input type="checkbox" id="idart_backup" checked="{{receive.send.idartBackup==true?'checked':''}}" onclick="return false;" />
           <label for="idart_backup">{{ "include_idart_backup" | translate }}</label>
         </div>
-        <div class="col s12 l7 m7" *ngIf="receive.send.idart_backup">{{receive.send.idart_backup_date | date: 'dd/MM/yyyy'}}</div>
+        <div class="col s12 l7 m7" *ngIf="receive.send.idartBackup">{{receive.send.idartBackupDate | date: 'dd/MM/yyyy'}}</div>
       </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2">{{ "obs_district" | translate }}:</div>
@@ -374,17 +419,17 @@
           <input type="checkbox" id="received" checked="true" onclick="return false;" />
           <label for="received">{{ "hisreceived" | translate }}</label>
         </div>
-        <div class="col s12 l7 m7">{{receive.created_by.person.others_names}} {{receive.created_by.person.surname}} - {{receive.date_created | date: 'dd/MM/yyyy'}}</div>
+        <div class="col s12 l7 m7">{{receive.createdBy.personName}} - {{receive.dateCreated | date: 'dd/MM/yyyy'}}</div>
       </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l3 m3">
-          <input type="checkbox" id="ik_returned" checked="{{receive.ik_returned==true?'checked':''}}" onclick="return false;" />
+          <input type="checkbox" id="ik_returned" checked="{{receive.ikReturned==true?'checked':''}}" onclick="return false;" />
           <label for="ik_returned">{{ "ikreturned" | translate }}</label>
         </div>
-        <div class="col s12 l3 m3" *ngIf="receive.ik_returned">{{receive.transporter.name}} - {{receive.date_ik_returned | date: 'dd/MM/yyyy'}}</div>
+        <div class="col s12 l3 m3" *ngIf="receive.ikReturned">{{receive.transporter.name}} - {{receive.dateIkReturned | date: 'dd/MM/yyyy'}}</div>
         <div class="col s12 l3 m3">
-          <input type="checkbox" id="ik_receivedd" checked="{{receive.send.ik_received==true?'checked':''}}" onclick="return false;" />
+          <input type="checkbox" id="ik_receivedd" checked="{{receive.send.ikReceived==true?'checked':''}}" onclick="return false;" />
           <label for="ik_receivedd">{{ "ik_received" | translate }}</label>
         </div>
       </div>
@@ -394,7 +439,7 @@
           <input type="checkbox" id="restored" checked="{{receive.restored==true?'checked':''}}" onclick="return false;" />
           <label for="restored">{{ "backuprestored" | translate }}</label>
         </div>
-        <div class="col s12 l7 m7" *ngIf="receive.restored" >{{receive.restored_by.person.others_names}} {{receive.restored_by.person.surname}} - {{receive.date_created | date: 'dd/MM/yyyy'}}</div>
+        <div class="col s12 l7 m7" *ngIf="receive.restored" >{{receive.restoredBy.personName}} - {{receive.dateRestored | date: 'dd/MM/yyyy'}}</div>
       </div>
       <div class="row" style="margin-top: -11px;" *ngIf="receive.observation!=null">
         <div class="col s12 l2 m2">{{ "obs_his" | translate }}:</div>
@@ -402,19 +447,17 @@
       </div>
       <div class="row" style="margin-top: -11px;">
           <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-          <div class="col s12 l10 m10">{{receive.send.created_by.person.others_names}} {{receive.send.created_by.person.surname}} - {{receive.send.date_created
-            | date: 'dd/MM/yyyy HH:mm'}}</div>
+          <div class="col s12 l10 m10">{{receive.send.createdBy.personName}} - {{receive.send.dateCreated | date: 'dd/MM/yyyy'}}</div>
         </div>
     
-        <div class="row" *ngIf="receive.send.updated_by!=null" style="margin-top: -11px;">
+        <div class="row" *ngIf="receive.send.updatedBy!=null" style="margin-top: -11px;">
           <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-          <div class="col s12 l10 m10">{{receive.send.updated_by.person.others_names}} {{receive.send.updated_by.person.surname}} - {{receive.send.date_updated
-            | date: 'dd/MM/yyyy HH:mm'}}</div>
+          <div class="col s12 l10 m10">{{receive.send.updatedBy.personName}} - {{receive.send.dateUpdated | date: 'dd/MM/yyyy'}}</div>
         </div>
       <div class="row" style="margin-top: -11px;">
         <div class="col s12 l2 m2"></div>
         <div class="col s12 l10 m10">
-          <span style="color:lightgrey;">{{receive.send.uuid}}</span>
+          <span style="color:lightgrey;">{{receive.send.uid}}</span>
         </div>
       </div>
     </mz-modal-content>
@@ -423,16 +466,16 @@
     </mz-modal-footer>
   </mz-modal>
 
-  <div class="fixed-action-btn" style="bottom: 20px; right: 20px;" *ngIf="received==true">
-      <a class="btn-floating btn-large orange">
-        <i class="large material-icons">insert_chart</i>
-      </a>
-      <ul>
-        <li>
-          <a mz-tooltip [tooltip]="'Baixar Lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
-            class="btn-floating blue {{isDisabledt}}">
-            <i class="material-icons">file_download</i>
-          </a>
-        </li>
-      </ul>
-    </div>
+    <div class="fixed-action-btn" style="bottom: 20px; right: 20px;" *ngIf="received==true">
+        <a class="btn-floating  btn-large green">
+          <i class="material-icons">menu</i>
+        </a>
+        <ul>
+          <li>
+            <a mz-tooltip [tooltip]="'Baixar lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
+              class="btn-floating waves-effect waves-light orange {{isDisabledt}}">
+              <i class="material-icons">file_download</i>
+            </a>
+          </li>
+        </ul>
+      </div>

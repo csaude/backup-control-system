@@ -1,96 +1,74 @@
 <!--
-@author damasceno.lopes
-@email damasceno.lopes@fgh.org.mz
+ Copyright (C) 2014-2018, Friends in Global Health, LLC
+ All rights reserved.
+ @author Damasceno Lopes
 -->
 
 <br>
-<h5 class="light">{{ total }} {{ "syncsfound" | translate }}.</h5>
+<h5 class="light">{{ "syncsfound" | translate }}
+</h5>
 
 <form materialize [formGroup]="form">
   <div class="row">
-    <div class="input-field col s12 l4 m4" *ngIf="translate.currentLang=='pt'">
+    <div class="col s12 l2 m2">
       <mz-select-container>
-        <select mz-select mz-validation required id="district" [label]="'Distrito'" formControlName="district" (change)="search()"
-          [disabled]="disabled2==true">
+        <select mz-select mz-validation required id="district" label="{{ 'district' | translate }}" formControlName="district"
+          (change)="search()" [disabled]="disabled2==true">
           <option value="all" selected>Todos Distritos</option>
-          <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.name }}</option>
+          <option *ngFor="let district of alldistricts" [value]="district.districtId">{{ district.fullName }}</option>
         </select>
       </mz-select-container>
     </div>
-    <div class="input-field col s12 l4 m4" *ngIf="translate.currentLang=='en'">
-      <mz-select-container>
 
-        <select mz-select mz-validation required id="district" [label]="'District'" formControlName="district" (change)="search()"
-          [disabled]="disabled2==true">
-          <option value="all" selected>All Districts</option>
-          <option *ngFor="let district of alldistricts" [value]="district.district_id">{{ district.name }}</option>
-        </select>
-      </mz-select-container>
-    </div>
-    <div class="{{disabled1==true?'input-field col s11 l3 m3':'input-field col s12 l4 m4'}}" *ngIf="translate.currentLang=='pt'">
+    <div class="col s12 l2 m2">
       <mz-select-container>
-        <select mz-select mz-validation required id="server" [label]="'Servidor'" formControlName="server" (change)="search()" [disabled]="disabled1==true">
+        <select mz-select mz-validation required id="server" label="{{ 'servername' | translate }}" formControlName="server"
+          (change)="search()" [disabled]="disabled1==true">
           <option value="all" selected>Todos Servidores</option>
 
           <optgroup *ngFor="let d of allservers" [label]="d.district">
-            <option *ngFor="let server of d.servers" [value]="server.server_id">{{ server.name }}</option>
+            <option *ngFor="let server of d.servers" [value]="server.serverId">{{ server.name }}</option>
           </optgroup>
         </select>
       </mz-select-container>
     </div>
-    <div class="{{disabled1==true?'input-field col s11 l3 m3':'input-field col s12 l4 m4'}}" *ngIf="translate.currentLang=='en'">
-      <mz-select-container>
 
-        <select mz-select mz-validation required id="server" [label]="'Server'" formControlName="server" (change)="search()" [disabled]="disabled1==true">
-          <option value="all" selected>All Servers</option>
-          <optgroup *ngFor="let d of allservers" [label]="d.district">
-            <option *ngFor="let server of d.servers" [value]="server.server_id">{{ server.name }}</option>
-          </optgroup>
-        </select>
-      </mz-select-container>
-    </div>
-    <div class="col s1 l1 m1" *ngIf="disabled1==true">
-      <br>
-      <br>
-      <div class="preloader-wrapper small active">
-        <div class="spinner-layer spinner-red-only">
-          <div class="circle-clipper left">
-            <div class="circle"></div>
-          </div>
-          <div class="gap-patch">
-            <div class="circle"></div>
-          </div>
-          <div class="circle-clipper right">
-            <div class="circle"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+  
 
-    <div class="input-field col s6 l2 m2" *ngIf="translate.currentLang=='pt'">
+    <div class="col s6 l2 m2">
       <mz-datepicker-container>
-        <input mz-datepicker [label]="'Sync de:'" [options]="options" formControlName="start_from" type="date" (change)="search()"
-        />
-      </mz-datepicker-container>
-    </div>
-    <div class="input-field col s6 l2 m2" *ngIf="translate.currentLang=='en'">
-      <mz-datepicker-container>
-        <input mz-datepicker [label]="'Sync from:'" [options]="options" formControlName="start_from" type="date" (change)="search()"
-        />
-      </mz-datepicker-container>
-    </div>
-    <div class="input-field col s6 l2 m2" *ngIf="translate.currentLang=='pt'">
-      <mz-datepicker-container>
-        <input mz-datepicker [label]="'até:'" [options]="options" formControlName="start_until" type="date" (change)="search()" />
-      </mz-datepicker-container>
-    </div>
-    <div class="input-field col s6 l2 m2" *ngIf="translate.currentLang=='en'">
-      <mz-datepicker-container>
-        <input mz-datepicker [label]="'Until:'" [options]="options" formControlName="start_until" type="date" (change)="search()"
-        />
+        <input mz-datepicker label="{{ 'sync_from' | translate }}" [options]="options" formControlName="start_from"
+          type="date" (change)="search()" />
       </mz-datepicker-container>
     </div>
 
+    <div class="col s6 l2 m2">
+      <mz-datepicker-container>
+        <input mz-datepicker label="{{ 'sync_until' | translate }}" [options]="options" formControlName="start_until"
+          type="date" (change)="search()" />
+      </mz-datepicker-container>
+    </div>
+    <div class="col s12 m4 l4" style="margin-top: -15px;">
+      <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
+
+        <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
+        <mz-select-container style="width: 50px;">
+          <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
+            <option value="15" selected>15</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </mz-select-container>
+
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
+        <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
+        <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
+        <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
+
+      </ul>
+    </div>
   </div>
 </form>
 
@@ -98,7 +76,7 @@
   <div class="progress {{isHidden}}">
     <div class="indeterminate"></div>
   </div>
-  <table class="bordered responsive-table highlight">
+  <table class="bordered responsive-table highlight" *ngIf="isHidden=='hide'">
     <thead>
       <tr>
         <th>{{ "servername" | translate }}</th>
@@ -106,59 +84,57 @@
         <th>{{ "duration" | translate }}</th>
         <th>{{ "final_state" | translate }}</th>
         <th>{{ "updatedon" | translate }}</th>
-        <th>{{ "actions" | translate }}</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
-      <tr style="line-height: 15px;" *ngFor="let sync of syncs | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
+      <tr style="line-height: 15px;" *ngFor="let sync of syncs">
         <td>{{ sync.server.name }}
           <br>
-          <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.server.district.name }}</span>
+          <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.district.name }}</span>
         </td>
-        <td *ngIf="sync.state=='Progress'">{{ sync.start_time | date: 'dd/MM/yyyy HH:mm' }}</td>
-        <td *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.start_time | date: 'dd/MM/yyyy HH:mm' }} - {{ sync.end_time | date: 'HH:mm' }}</td>
-        <td *ngIf="sync.state=='Progress' && sync.editable==true">
-            <span style="float: left;text-align: center; margin-left: 0px;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span>
+       <td>
+          {{getSyncTimeline(sync.startTime,sync.endTime)}}
         </td>
-        <td *ngIf="sync.state=='Progress' && sync.editable==false">
-            <span style="float: left;text-align: center; margin-left: 0px;" class='new badge red' data-badge-caption="NÃO CONCLUIDA"></span>
-        </td>
-        <td *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.duration }}</td>
-       
-        <td *ngIf="sync.state=='Complete'">
-          <span style="float: left;text-align: center;margin-left: 0px;" class='new badge green' data-badge-caption="SYNCHRONIZED"></span>
-        </td>
-        <td *ngIf="sync.state=='Progress' &&sync.editable==true">
-            <div class="progress">
-                <div class="indeterminate"></div>
-              </div>
-          </td>
-          <td *ngIf="sync.state=='Progress' && sync.editable==false">
-              <!--<span style="float: left;text-align: center;margin-left: 0px;" class='new badge red' data-badge-caption="NÃO CONCLUIDA"></span>-->
-              -
-          </td>
-        <td *ngIf="sync.state=='Incomplete'">
 
-          <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.end_items_to_send }} {{"items_to_s" | translate}} </span>
-          <br>
-          <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.end_items_to_receive }} {{"items_to_r" | translate}}</span>
-
+        <td>
+          {{getSyncDuration(sync.startTime,sync.endTime)}}
         </td>
-        <td>{{ sync.date_updated | date: 'dd/MM/yyyy' }}</td>
+        <td *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='complete'">
+          <span *ngIf="sync.endItemsToSend==0&&sync.endItemsToReceive==0" class='green-text text-darken-3"'>{{'synced' | translate}}</span>
+          <span *ngIf="sync.endItemsToSend>0||sync.endItemsToReceive>0">
+            <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.endItemsToSend }} {{"items_to_s" |translate
+              }} </span>
+            <br>
+            <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.endItemsToReceive }} {{"items_to_r"
+              |translate}}</span>
+          </span>
+        </td>
+        <td *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='progress'&&getSyncExpires(sync.startTime)==false">
+          <span style="float: left;text-align: center; margin-left: 0px;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span>
+          <div class="progress" style="width: 99px; margin-top: -7px;">
+            <div class="indeterminate"></div>
+          </div>
+        </td>
+        <td *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='progress'&&getSyncExpires(sync.startTime)==true">
+          <span *ngIf="sync.endItemsToSend==0&&sync.endItemsToReceive==0" class='red-text text-darken-3"'>{{'not_concluded' | translate}}</span>
+        </td>
+        <td>{{ sync.dateUpdated | date: 'dd/MM/yyyy' }}</td>
         <td>
 
-          <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setSync(sync.uuid)" (click)="basicModal2.open()"
-            [routerLink]="">
+          <a mz-tooltip tooltip="{{'details' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setSync(sync.uid)"
+            (click)="basicModal2.openModal()" [routerLink]="">
             <i class="material-icons icon-green">info</i>
           </a>
           &nbsp;
-          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/sync', sync.uuid]" *ngIf="(ROLE_SIS||ROLE_ODMA)&&sync.editable">
+          <a *ngIf="(ROLE_SIS||ROLE_ODMA)&&getSyncExpires(sync.startTime)==false" mz-tooltip tooltip="{{'edit' | translate}}"
+            [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/syncs', sync.uid]">
             <i class="material-icons icon-orange">mode_edit</i>
           </a>
-          <a mz-tooltip [tooltip]="'Não pode editar registos do passado'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="" *ngIf="(ROLE_SIS||ROLE_ODMA)&&!sync.editable">
-            <i class="material-icons" style="color:#CCC;">mode_edit</i>
+          <a *ngIf="(ROLE_SIS||ROLE_ODMA)&&getSyncExpires(sync.startTime)==true" mz-tooltip tooltip="{{'cant_edit_sync' | translate}}"
+            [position]="'top'" [html]="false" [delay]="100">
+            <i class="material-icons icon-orange " style="color:lightgrey;">mode_edit</i>
           </a>
-
 
         </td>
       </tr>
@@ -166,8 +142,29 @@
 
   </table>
 </div>
-<pagination-controls 
-  autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPage($event)" id="server" class="right-align"></pagination-controls>
+<ul class="pagination valign-center" *ngIf="isHidden=='hide'">
+
+  <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
+  <mz-select-container style="width: 50px;">
+    <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
+      <option value="15" selected>15</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+  </mz-select-container>
+
+
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
+  <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
+  <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
+  <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
+
+</ul>
+
+<ul class="pagination" *ngIf="isHidden==''">
+  {{ "loading" | translate }}
+</ul>
 
 <mz-modal #basicModal2 [fixedFooter]="true">
   <mz-modal-header>
@@ -183,37 +180,36 @@
 
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "district" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.server.district.name}}</div>
+      <div class="col s12 l10 m10">{{sync.district.name}}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "sync_time" | translate }}:</div>
-      <div class="col s12 l10 m10" *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.start_time | date: 'dd/MM/yyyy HH:mm' }} - {{ sync.end_time | date: 'HH:mm' }}</div>
-      <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'">{{ sync.start_time | date: 'dd/MM/yyyy HH:mm' }}</div>
+      <div class="col s12 l10 m10">{{getSyncTimeline(sync.startTime,sync.endTime)}}</div>
     </div>
 
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "duration" | translate }}:</div>
-      <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==true"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span></div>
-      <div class="col s12 l10 m10" *ngIf="sync.state=='Progress'&&sync.editable==false"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge red' data-badge-caption="NÃO CONCLUIDA"></span></div>
-      <div class="col s12 l10 m10" *ngIf="sync.state=='Complete'||sync.state=='Incomplete'">{{ sync.duration }}</div>
+      <div class="col s12 l10 m10" *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='progress'&&getSyncExpires(sync.startTime)==false"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span></div>
+      <div class="col s12 l10 m10" *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='progress'&&getSyncExpires(sync.startTime)==true"><span *ngIf="sync.endItemsToSend==0&&sync.endItemsToReceive==0" class='red-text text-darken-3"'>{{'not_concluded' | translate}}</span></div>
+      <div class="col s12 l10 m10" *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='complete'">{{getSyncDuration(sync.startTime,sync.endTime)}}</div>
     </div>
 
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "items_onstart" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ sync.start_items_to_send }} {{ "items_send" | translate }}
-        <br>{{ sync.start_items_to_receive }} {{ "items_receive" | translate }}</div>
+      <div class="col s12 l10 m10">{{ sync.startItemsToSend }} {{ "items_send" | translate }}
+        <br>{{ sync.startItemsToReceive }} {{ "items_receive" | translate }}</div>
     </div>
 
-    <div class="row" style="margin-top: -11px;" *ngIf="sync.end_time!=null">
+    <div class="row" style="margin-top: -11px;" *ngIf="sync.endTime!=null">
       <div class="col s12 l2 m2">{{ "items_onend" | translate }}:</div>
-      <div class="col s12 l10 m10" >{{ sync.end_items_to_send }} {{ "items_send" | translate }}
-        <br>{{ sync.end_items_to_receive }} {{ "items_receive" | translate }}</div>
+      <div class="col s12 l10 m10">{{ sync.endItemsToSend }} {{ "items_send" | translate }}
+        <br>{{ sync.endItemsToReceive }} {{ "items_receive" | translate }}</div>
     </div>
 
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">
-        <input type="checkbox" id="update_finished" checked="{{sync.sync_error==true?'checked':''}}" onclick="return false;" />
+        <input type="checkbox" id="update_finished" checked="{{sync.syncError==true?'checked':''}}" onclick="return false;" />
         <label for="update_finished">{{ "sync_error_desc" | translate }}</label>
       </div>
     </div>
@@ -221,7 +217,7 @@
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">
-        <input type="checkbox" id="serverfault" checked="{{sync.serverfault==true?'checked':''}}" onclick="return false;" />
+        <input type="checkbox" id="serverfault" checked="{{sync.serverFault==true?'checked':''}}" onclick="return false;" />
         <label for="serverfault">{{ "serverfault" | translate }}</label>
       </div>
     </div>
@@ -229,7 +225,7 @@
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">
-        <input type="checkbox" id="laptopfault" checked="{{sync.laptopfault==true?'checked':''}}" onclick="return false;" />
+        <input type="checkbox" id="laptopfault" checked="{{sync.laptopFault==true?'checked':''}}" onclick="return false;" />
         <label for="laptopfault">{{ "laptopfault" | translate }}</label>
       </div>
     </div>
@@ -237,46 +233,33 @@
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">
-        <input type="checkbox" id="powercut" checked="{{sync.powercut==true?'checked':''}}" onclick="return false;" />
+        <input type="checkbox" id="powercut" checked="{{sync.powerCut==true?'checked':''}}" onclick="return false;" />
         <label for="powercut">{{ "powercut" | translate }}</label>
       </div>
     </div>
 
-    <div class="row" *ngIf="sync.state=='Complete'">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <span style="float: left;text-align: center;" class='new badge green' data-badge-caption="SYNCHRONIZED"></span>
-      </div>
-    </div>
-
-    <div class="row" *ngIf="sync.state=='Incomplete'">
-        <div class="col s12 l2 m2"></div>
-        <div class="col s12 l10 m10">
-          <span style="float: left;text-align: center;" class='new badge red' data-badge-caption="NOT SYNCHRONIZED"></span>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top: -11px;" *ngIf="sync.observation!=null">
+    <div class="row" style="margin-top: -11px;" *ngIf="sync.observation!=null">
       <div class="col s12 l2 m2">{{ "obs_district" | translate }}:</div>
       <div class="col s12 l10 m10">{{sync.observation}}</div>
     </div>
-    <div class="row" style="margin-top: -11px;" *ngIf="sync.observation_his!=null">
+    <div class="row" style="margin-top: -11px;" *ngIf="sync.observationHis!=null">
       <div class="col s12 l2 m2">{{ "obs_his" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.observation_his}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.created_by.person.others_names}} {{sync.created_by.person.surname}} - {{sync.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{sync.observationHis}}</div>
     </div>
 
-    <div class="row" *ngIf="sync.updated_by!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.updated_by.person.others_names}} {{sync.updated_by.person.surname}} - {{sync.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
+    <div class="row" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{sync.createdBy.personName}} - {{ sync.dateCreated | date:'dd/MM/yyyy HH:mm' }}</div>
     </div>
+    <div class="row" *ngIf="sync.updatedBy!=null" style="margin-top: -11px;">
+      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
+      <div class="col s12 l10 m10">{{sync.updatedBy.personName}} - {{ sync.dateUpdated | date:'dd/MM/yyyy HH:mm' }}</div>
+    </div>
+
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">
-        <span style="color:lightgrey;">{{sync.uuid}}</span>
+        <span style="color:lightgrey;">{{sync.uid}}</span>
       </div>
     </div>
   </mz-modal-content>
@@ -286,22 +269,22 @@
 </mz-modal>
 
 
-<div class="fixed-action-btn" style="bottom: 20px; right: 89px;">
-  <a class="btn-floating btn-large orange">
-    <i class="large material-icons">insert_chart</i>
+<div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
+  <a class="btn-floating  btn-large green">
+    <i class="material-icons">menu</i>
   </a>
   <ul>
     <li>
-      <a mz-tooltip [tooltip]="'Baixar Lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()" class="btn-floating blue">
+      <a mz-tooltip [tooltip]="'Baixar lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
+        class="btn-floating  waves-effect waves-light  orange">
         <i class="material-icons">file_download</i>
       </a>
     </li>
+    <li *ngIf="ROLE_SIS||ROLE_ODMA">
+      <a mz-tooltip [tooltip]="'Registar nova Sincronização'" [position]="'left'" [html]="false" [delay]="100"
+        routerLink="/syncs/new" class="btn-floating  waves-effect waves-light  blue">
+        <i class="material-icons">add</i>
+      </a>
+    </li>
   </ul>
-</div>
-
-<div class="fixed-action-btn" style="bottom: 20px; right: 20px;" *ngIf="ROLE_SIS||ROLE_ODMA">
-  <a mz-tooltip [tooltip]="'Registar Sincronização'" [position]="'top'" [html]="false" [delay]="100" class="btn-floating btn-large waves-effect waves-light green"
-    routerLink="/sync/new">
-    <i class="material-icons">add</i>
-  </a>
 </div>

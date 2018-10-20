@@ -11,7 +11,7 @@ import { DistrictsService } from './../../districts/shared/districts.service';
 import { District } from './../../districts/shared/district';
 import { TransportersService } from './../../transporters/shared/transporters.service';;
 import { Transporter } from './../../transporters/shared/transporter';
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 
 @Component({
@@ -21,7 +21,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class SendFormComponent implements OnInit {
   public form: FormGroup;
@@ -37,6 +37,10 @@ export class SendFormComponent implements OnInit {
   public options: Pickadate.DateOptions = {
     format: 'dd/mm/yyyy',
     formatSubmit: 'yyyy-mm-dd',
+    today: 'Hoje',
+    close: 'Fechar',
+    clear:'Limpar',
+    max: new Date()
   };
 
    
@@ -51,30 +55,29 @@ export class SendFormComponent implements OnInit {
     public translate: TranslateService
   ) {
     this.form = formBuilder.group({
-      send_id: [],
       district: ['', [
         Validators.required]],
       transporter: ['', [
         Validators.required
       ]],
-      backup_date: ['', [
+      backupDate: ['', [
         Validators.required
       ]],
-      update_finished: [],
-      validation_finished: [],
-      sync_finished: [],
-      cross_dhis2_finished: [],
-      cross_idart_finished: [],
+      updateFinished: [],
+      validationFinished: [],
+      syncFinished: [],
+      crossDhis2Finished: [],
+      crossIdartFinished: [],
       observation: ['', [
         Validators.required
       ]],
       canceled: [],
-      canceled_reason: [],
+      canceledReason: [],
       received: [],
-      ik_received: [],
-      date_ik_received: [],
-      idart_backup:[],
-      idart_backup_date:[]
+      ikReceived: [],
+      dateIkReceived: [],
+      idartBackup:[],
+      idartBackupDate:[]
     });
   }
   ngOnInit() {
@@ -96,8 +99,8 @@ export class SendFormComponent implements OnInit {
         this.alldistricts = user.districts;
 
         this.alldistricts.sort(function (a, b) {
-          var nameA = a.namef.toUpperCase(); // ignore upper and lowercase
-          var nameB = b.namef.toUpperCase(); // ignore upper and lowercase
+          var nameA = a.fullName.toUpperCase(); // ignore upper and lowercase
+          var nameB = b.fullName.toUpperCase(); // ignore upper and lowercase
           if (nameA < nameB) {
             return -1;
           }
@@ -106,7 +109,7 @@ export class SendFormComponent implements OnInit {
           }
           return 0;
         });
-        this.transportersService.findTransporters("", "", "", "", false)
+        this.transportersService.findTransporters("", "", "", "", false,"name,phoneNumber,transporterId,uid,role")
           .subscribe(data => { this.alltransporters = data.content; }
             , errot => { },
             () => {
@@ -115,23 +118,22 @@ export class SendFormComponent implements OnInit {
           );
 
       } else {
-        this.sendsService.findOneSendByUuid(uuid)
+        this.sendsService.findOneSendByUuid(uuid,"district.name,district.parent.name,transporter.transporterId,sendId,transporter.uid,district.uid,observation,transporter.phoneNumber,transporter.name,district.districtId,district.fullName,received,dateCreated,createdBy.uid,createdBy.userId,uid,backupDate,updateFinished,validationFinished,syncFinished,crossDhis2Finished,crossIdartFinished,uid,ikReceived,dateIkReceived,idartBackup,idartBackupDate")
           .subscribe(
             send => {
               this.send = send;
               this.alldistricts = user.districts;
               var filtereddistricts = this.alldistricts;
-              filtereddistricts = filtereddistricts.filter(item => item.district_id !== this.send.district.district_id);
+              filtereddistricts = filtereddistricts.filter(item => item.districtId !== this.send.district.districtId);
 
-
-              if (!this.ROLE_SIS && user.districts.find(item => item.parentdistrict != null)) {
-                filtereddistricts = filtereddistricts.filter(item => item.parentdistrict != null);
+              if (!this.ROLE_SIS && user.districts.find(item => item.parent != null)) {
+                filtereddistricts = filtereddistricts.filter(item => item.parent != null);
               }
 
               filtereddistricts.push(this.send.district);
               this.alldistricts = filtereddistricts.sort(function (a, b) {
-                var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-                var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                var nameA = a.fullName.toUpperCase(); // ignore upper and lowercase
+                var nameB = b.fullName.toUpperCase(); // ignore upper and lowercase
                 if (nameA < nameB) {
                   return -1;
                 }
@@ -140,11 +142,11 @@ export class SendFormComponent implements OnInit {
                 }
                 return 0;
               });
-              this.transportersService.findTransporters("", "", "", "", false)
+              this.transportersService.findTransporters("", "", "", "", false,"name,phoneNumber,transporterId,uid,role")
                 .subscribe(data => {
                   this.alltransporters = data.content;
                   var filteredtransporters = this.alltransporters;
-                  filteredtransporters = filteredtransporters.filter(item => item.transporter_id !== this.send.transporter.transporter_id);
+                  filteredtransporters = filteredtransporters.filter(item => item.transporterId !== this.send.transporter.transporterId);
                   filteredtransporters.push(this.send.transporter);
                   this.alltransporters = filteredtransporters.sort(function (a, b) {
                     var nameA = a.name.toUpperCase(); // ignore upper and lowercase
@@ -173,50 +175,73 @@ export class SendFormComponent implements OnInit {
   save() {
     this.isDisabled = true;
     var result, userValue = this.form.value;
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
-    if (this.send.uuid) {
-      if (new Date(userValue.backup_date) > new Date()) {
+    var userLogged = JSON.parse(window.sessionStorage.getItem('user'));
+    if (this.send.uid) {
+      if (new Date(userValue.backupDate) > new Date()) {
         this.showMsgErr();
         this.isDisabled = false;
       }
       else {
-        if (userValue.canceled == true && userValue.canceled_reason == null) {
+        if (userValue.canceled == true && userValue.canceledReason == null) {
           this.showMsgErr3();
           this.isDisabled = false;
         }
-        else if (userValue.ik_received == true && (userValue.date_ik_received == null)) {
+        else if (userValue.ikReceived == true && (userValue.dateIkReceived == null)) {
           this.showMsgErr4();
           this.isDisabled = false;
-        }else if (userValue.idart_backup == true && (userValue.idart_backup_date == null||(new Date(userValue.idart_backup_date)>new Date()))) {
+        }else if (userValue.idartBackup == true && (userValue.idartBackupDate == null||(new Date(userValue.idartBackupDate)>new Date()))) {
           this.showMsgErr5();
           this.isDisabled = false;
         }
         else {
-          userValue.send_id = this.send.send_id;
-          userValue.date_created = this.send.date_created;
-          userValue.uuid = this.send.uuid;
-          userValue.created_by = this.send.created_by;
-          userValue.updated_by = user;
+          userValue.sendId = this.send.sendId;
+          userValue.dateCreated = this.send.dateCreated;
+          userValue.uid = this.send.uid;
+          userValue.received=this.send.received;
+          userValue.createdBy = this.send.createdBy;
+          userValue.updatedBy = {
+            uid: userLogged.uid,
+            userId: userLogged.userId
+          };
           result = this.sendsService.updateSend(userValue);
           result.subscribe(data => this.router.navigate(['sends']));
           this.showMsg();
         }
       }
     } else {
-      if (new Date(userValue.backup_date) > new Date()) {
+      if (new Date(userValue.backupDate) > new Date()) {
         this.showMsgErr();
         this.isDisabled = false;
-      }else if (userValue.idart_backup == true && (userValue.idart_backup_date == null||(new Date(userValue.idart_backup_date)>new Date()))) {
+      }else if (userValue.idartBackup == true && (userValue.idartBackupDate == null||(new Date(userValue.idartBackupDate)>new Date()))) {
         this.showMsgErr5();
         this.isDisabled = false;
       }
       else {
-        userValue.created_by = user;
+        userValue.createdBy = {
+          person: {
+            othersNames: userLogged.person.othersNames,
+            surname: userLogged.person.surname,
+            phoneNumber: userLogged.person.phoneNumber
+          },
+          uid: userLogged.uid,
+          userId: userLogged.userId
+        };
         result = this.sendsService.createSend(userValue);
         result.subscribe(data => this.router.navigate(['sends']));
         this.showMsg();
       }
     }
+  }
+
+  refreshTransporter(){
+    this.disabled1 = true;
+    this.transportersService.findTransporters("", "", "", "", false,"name,phoneNumber,transporterId,uid,role")
+          .subscribe(data => { this.alltransporters = data.content; }
+            , errot => { },
+            () => {
+              this.disabled1 = false;
+            }
+          );
   }
 
   showMsg() {

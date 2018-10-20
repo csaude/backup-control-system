@@ -13,6 +13,6 @@ const appRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export const routing: ModuleWithProviders = RouterModule.forRoot(appRoutes);

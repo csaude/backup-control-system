@@ -10,9 +10,8 @@ import { HttpModule } from '@angular/http';
 import { SendsComponent } from './sends.component';
 import { SendsService } from './shared/sends.service';
 import { SendFormComponent } from './send-form/send-form.component';
-import { MzTooltipModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzSelectModule,MzDatepickerModule } from 'ng2-materialize';
+import { MzTooltipModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzSelectModule,MzDatepickerModule,MzDropdownModule } from 'ngx-materialize';
 import { DatePipe } from '@angular/common';
-import { NgxPaginationModule } from 'ngx-pagination';
 import { TranslateModule } from "ng2-translate";
 
 @NgModule({
@@ -26,8 +25,8 @@ import { TranslateModule } from "ng2-translate";
     MzIconMdiModule,
     MzIconModule,
     MzModalModule,
-    MzToastModule,
-    NgxPaginationModule,
+    MzToastModule,MzDropdownModule,
+    
     MzButtonModule,
     MzInputModule,
     TranslateModule,
@@ -48,6 +47,6 @@ import { TranslateModule } from "ng2-translate";
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class SendsModule { }

@@ -7,25 +7,33 @@ import { Transporter } from './../../transporters/shared/transporter';
 import { User } from './../../users/shared/user';
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class Send {
-  
-  send_id: number;
-  backup_date: Date;
-  update_finished: boolean;
-  validation_finished: boolean;
-  sync_finished: boolean;
+  sendId: number;
   received: boolean;
-  observation: string;
-  cross_dhis2_finished: boolean;
-  cross_idart_finished: boolean;
-  canceled: boolean;
-  canceled_reason: string;
+  backupDate: Date;
+  updateFinished: boolean;
+  validationFinished: boolean;
+  syncFinished: boolean;
+  crossDhis2Finished: boolean;
+  crossIdartFinished: boolean;
+  dateCreated: Date;
+  dateUpdated: Date;
+  createdBy: User = new User();
+  updatedBy: User = new User();
+  uid: string;
+  ikReceived: boolean;
+  dateIkReceived: Date;
+  idartBackup: boolean;
+  idartBackupDate: Date;
   district: District = new District();
   transporter: Transporter = new Transporter();
-  created_by: User = new User();
-  updated_by: User = new User();
+  observation: string;
+  canceled: boolean;
+  canceledReason: string;
+
+  //Receive
   receivername: string;
   receivedate: Date;
   restored: boolean;
@@ -35,10 +43,4 @@ export class Send {
   ik_returned: boolean;
   ik_returneddate: Date;
   ik_returnedto: String;
-  date_created: Date;
-  uuid: string;
-  ik_received: boolean;
-  date_ik_received: Date;
-  idart_backup: boolean;
-  idart_backup_date: Date;
 }

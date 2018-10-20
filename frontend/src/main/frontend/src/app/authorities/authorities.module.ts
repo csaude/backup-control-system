@@ -15,6 +15,6 @@ import { AuthoritiesService } from './shared/authorities.service';
 })
 
 /** 
- * @author Damasceno Lopes <damascenolopess@gmail.com>
+ * @author Damasceno Lopes
  */
 export class AuthoritiesModule { }

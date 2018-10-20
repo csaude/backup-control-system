@@ -10,9 +10,8 @@ import { HttpModule } from '@angular/http';
 import { SyncsComponent } from './syncs.component';
 import { SyncsService } from './shared/syncs.service';
 import { SyncFormComponent } from './sync-form/sync-form.component';
-import { MzTooltipModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzSelectModule,MzDatepickerModule,MzTimepickerModule  } from 'ng2-materialize';
+import { MzTooltipModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzSelectModule,MzDatepickerModule,MzTimepickerModule,MzDropdownModule  } from 'ngx-materialize';
 import { DatePipe } from '@angular/common';
-import { NgxPaginationModule } from 'ngx-pagination';
 import { TranslateModule } from "ng2-translate";
 
 @NgModule({
@@ -27,8 +26,8 @@ import { TranslateModule } from "ng2-translate";
     MzIconMdiModule,
     MzIconModule,
     MzModalModule,
-    MzToastModule,
-    NgxPaginationModule,
+    MzToastModule,MzDropdownModule,
+    
     MzButtonModule,
     MzInputModule,
     TranslateModule,
@@ -50,6 +49,6 @@ import { TranslateModule } from "ng2-translate";
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class SyncsModule { }

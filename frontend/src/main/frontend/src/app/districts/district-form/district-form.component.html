@@ -1,7 +1,7 @@
 <!--
  Copyright (C) 2014-2018, Friends in Global Health, LLC
  All rights reserved.
- @author Damasceno Lopes <damascenolopess@gmail.com>
+ @author Damasceno Lopes
 -->
 
 <br>
@@ -18,162 +18,110 @@
 <div class="card-panel">
   <div class="row">
     <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
-      <div class="row hide">
-        <div class="input-field col s12">
-          <input id="district_id" type="text" [ngModel]="district.district_id" formControlName="district_id">
-        </div>
-      </div>
-      <div class="row" *ngIf="translate.currentLang=='pt'">
-        <div class="input-field col s12">
+      <div class="row">
+        <div class="col s12">
           <mz-select-container>
             <i mz-icon mz-input-prefix [icon]="'location_on'">
             </i>
-            <select mz-select id="province" [label]="'Província *'" [placeholder]="'Seleccione a Província'" [(ngModel)]="district.province"
-              formControlName="province">
-              <option *ngFor="let province of provinces" [value]="province.name" [selected]="province.name == district.province">{{ province.name }}</option>
+            <select mz-select id="province" label="{{'province' | translate }} *" placeholder="{{'select' | translate }}"
+              [(ngModel)]="district.province" formControlName="province">
+              <option *ngFor="let province of provinces" [value]="province.name" [selected]="province.name == district.province">{{
+                province.name }}</option>
             </select>
           </mz-select-container>
         </div>
       </div>
-      <div class="row" *ngIf="translate.currentLang=='en'">
-        <div class="input-field col s12">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'location_on'">
-            </i>
-            <select mz-select id="province" [label]="'Province *'" [placeholder]="'Select the Province'" [(ngModel)]="district.province"
-              formControlName="province">
-              <option *ngFor="let province of provinces" [value]="province.name" [selected]="province.name == district.province">{{ province.name }}</option>
-            </select>
-          </mz-select-container>
-        </div>
-      </div>
+
       <div class="row">
         <div class="input-field col s12">
           <i class="material-icons prefix">location_on</i>
-          <input id="name" type="text" class="validate" [(ngModel)]="district.name" formControlName="name" [class.invalid]="form.controls['name'].touched && !form.controls['name'].valid">
+          <input id="name" type="text" class="validate" [(ngModel)]="district.name" formControlName="name"
+            [class.invalid]="form.controls['name'].touched && !form.controls['name'].valid">
           <label for="name" [class.active]="district.name" data-error="O Distrito deve ser preenchido.">
             {{ "district" | translate }} *
           </label>
         </div>
       </div>
-      <div class="row" *ngIf="translate.currentLang=='pt'">
-        <div class="input-field col s11 l11 m11">
+      <div class="row">
+        <div class="col s11 l11 m11">
           <mz-select-container>
             <i mz-icon mz-input-prefix [icon]="'insert_drive_file'">
             </i>
-            <select multiple mz-select id="ironkeys" [label]="'Ironkey(s)'" [placeholder]="'Seleccione o(s) Ironkey(s)'" [(ngModel)]="district.ironkeysDistrict"
-              formControlName="ironkeys" [disabled]="disabled1">
+            <select multiple mz-select id="ironkeys" label="{{'districtsironkeys' | translate }}" placeholder="{{'select' | translate }}"
+              [(ngModel)]="district.ironkeys" formControlName="ironkeys" [disabled]="disabled1">
               <option *ngFor="let ironkey of allironkeys" [ngValue]="ironkey">{{ ironkey.serial }}</option>
             </select>
           </mz-select-container>
         </div>
 
         <div class="col s1 l1 m1" *ngIf="disabled1==true">
-            <br>
-            <br>
-            <div class="preloader-wrapper small active">
-              <div class="spinner-layer spinner-red-only">
-                <div class="circle-clipper left">
-                  <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                  <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                  <div class="circle"></div>
-                </div>
+          <br>
+          <br>
+          <div class="preloader-wrapper small active">
+            <div class="spinner-layer spinner-red-only">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div>
+              <div class="gap-patch">
+                <div class="circle"></div>
+              </div>
+              <div class="circle-clipper right">
+                <div class="circle"></div>
               </div>
             </div>
           </div>
-
-      </div>
-      <div class="row" *ngIf="translate.currentLang=='en'">
-        <div class="input-field col s11 l11 m11">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'insert_drive_file'">
-            </i>
-            <select multiple mz-select id="ironkeys" [label]="'Ironkey(s)'" [placeholder]="'Select the Ironkey(s)'" [(ngModel)]="district.ironkeysDistrict"
-              formControlName="ironkeys" [disabled]="disabled1">
-              <option *ngFor="let ironkey of allironkeys" [ngValue]="ironkey">{{ ironkey.serial }}</option>
-            </select>
-          </mz-select-container>
         </div>
 
-        <div class="col s1 l1 m1" *ngIf="disabled1==true">
-            <br>
-            <br>
-            <div class="preloader-wrapper small active">
-              <div class="spinner-layer spinner-red-only">
-                <div class="circle-clipper left">
-                  <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                  <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                  <div class="circle"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
       </div>
+
       <div class="row">
         <div class="input-field col s12 l6 m6">
           <i class="material-icons prefix">wifi</i>
-          <input id="instance_url" type="text" class="validate" [(ngModel)]="district.instance_url" formControlName="instance_url">
-          <label for="instance_url" [class.active]="district.instance_url">
+          <input id="instance_url" type="text" class="validate" [(ngModel)]="district.instanceUrl" formControlName="instanceUrl">
+          <label for="instance_url" [class.active]="district.instanceUrl">
             {{ "instance_url" | translate }}
           </label>
         </div>
         <div class="input-field col s6 l3 m3">
           <i class="material-icons prefix">perm_identity</i>
-          <input id="instance_username" type="text" class="validate" [(ngModel)]="district.instance_username" formControlName="instance_username">
-          <label for="instance_username" [class.active]="district.instance_username">
+          <input id="instance_username" type="text" class="validate" [(ngModel)]="district.instanceUsername"
+            formControlName="instanceUsername">
+          <label for="instance_username" [class.active]="district.instanceUsername">
             {{ "username" | translate }}
           </label>
         </div>
         <div class="input-field col s6 l3 m3">
           <i class="material-icons prefix">vpn_key</i>
-          <input id="instance_password" type="password" class="validate" [(ngModel)]="district.instance_password" formControlName="instance_password"
-            autocomplete="new-password">
-          <label for="instance_password" [class.active]="district.instance_password">
+          <input id="instance_password" type="password" class="validate" [(ngModel)]="district.instancePassword"
+            formControlName="instancePassword" autocomplete="new-password">
+          <label for="instance_password" [class.active]="district.instancePassword">
             {{ "password" | translate }}
           </label>
         </div>
       </div>
 
       <div class="row">
-        <div class="input-field col s12" *ngIf="translate.currentLang=='pt'">
+        <div class="col s12">
           <mz-select-container>
             <i mz-icon mz-input-prefix [icon]="'location_on'">
             </i>
-            <select mz-select  id="district" [label]="'Parente *'" [placeholder]="'Seleccione o Distrito'" [(ngModel)]="district.parentdistrict"
-              formControlName="parent">
-              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.namef }}</option>
-            </select>
-          </mz-select-container>
-        </div>
-        <div class="input-field col s12" *ngIf="translate.currentLang=='en'">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'location_on'">
-            </i>
-            <select mz-select  id="district" [label]="'Parent *'" [placeholder]="'Select the District'" [(ngModel)]="district.parentdistrict"
-              formControlName="parent">
-              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.namef }}</option>
+            <select mz-select id="district" label="{{'parent' | translate }}" [placeholder]="'Seleccione o Distrito'"
+              [(ngModel)]="district.parent" formControlName="parent">
+              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.fullName }}</option>
             </select>
           </mz-select-container>
         </div>
       </div>
 
-      <div class="row" class="row"*ngIf="district.district_id!=null">
+      <div class="row" class="row" *ngIf="district.districtId!=null">
         <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 25px;">
           <input type="checkbox" class="filled-in" id="canceled" [(ngModel)]="district.canceled" formControlName="canceled" />
           <label for="canceled">{{ "cancelit" | translate }}</label>
         </div>
         <div class="input-field col s12 l8 m8" *ngIf="district.canceled">
-          <input id="canceled_reason" type="text" class="validate" [(ngModel)]="district.canceled_reason" formControlName="canceled_reason">
-          <label for="canceled_reason" [class.active]="district.canceled_reason">
+          <input id="canceled_reason" type="text" class="validate" [(ngModel)]="district.canceledReason"
+            formControlName="canceledReason">
+          <label for="canceled_reason" [class.active]="district.canceledReason">
             {{ "cancelitreason" | translate }}
           </label>
         </div>

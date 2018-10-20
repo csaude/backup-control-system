@@ -10,15 +10,14 @@ import { HttpModule } from '@angular/http';
 import { IronkeysComponent } from './ironkeys.component';
 import { IronkeysService } from './shared/ironkeys.service';
 import { IronkeyFormComponent } from './ironkey-form/ironkey-form.component';
-import { MzTooltipModule, MzSelectModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzDatepickerModule } from 'ng2-materialize';
-import { NgxPaginationModule } from 'ngx-pagination';
+import { MzTooltipModule, MzSelectModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzDatepickerModule,MzDropdownModule } from 'ngx-materialize';
 import { TranslateModule } from "ng2-translate";
 
 @NgModule({
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
+    CommonModule, 
     RouterModule,
     HttpModule,
     MzTooltipModule,
@@ -27,7 +26,7 @@ import { TranslateModule } from "ng2-translate";
     MzIconModule,
     MzModalModule,
     MzToastModule,
-    NgxPaginationModule,
+    MzDropdownModule,
     MzButtonModule,
     MzInputModule,
     TranslateModule,
@@ -46,6 +45,6 @@ import { TranslateModule } from "ng2-translate";
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class IronkeysModule { }

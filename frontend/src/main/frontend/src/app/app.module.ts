@@ -2,6 +2,7 @@
  * Copyright (C) 2014-2018, Friends in Global Health, LLC
  * All rights reserved.
  */
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -52,7 +53,6 @@ import { AuthManagerReceivesRead } from './receives/authmanagerread';
 import { AuthManagerReceivesEdit } from './receives/authmanageredit';
 import { AuthManagerEvaluationsRead } from './evaluations/authmanagerread';
 import { AuthManagerEvaluationsEdit } from './evaluations/authmanageredit';
-import { NavbarService } from "././nav-bar/nav-bar.service";
 import { AuthManagerServersRead } from './servers/authmanagerread';
 import { AuthManagerServersEdit } from './servers/authmanageredit';
 import { AuthManagerSyncsRead } from './syncs/authmanagerread';
@@ -60,6 +60,8 @@ import { AuthManagerSyncsEdit } from './syncs/authmanageredit';
 /** Fix 404 error on page refresh */
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { TranslateModule } from "ng2-translate";
+/** Services*/
+import { NavbarService } from "././nav-bar/nav-bar.service";
 
 @NgModule({
   declarations: [
@@ -71,6 +73,7 @@ import { TranslateModule } from "ng2-translate";
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
+    BrowserAnimationsModule,
     DistrictsModule,
     TransportersModule,
     IronkeysModule,
@@ -126,6 +129,6 @@ import { TranslateModule } from "ng2-translate";
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class AppModule { }

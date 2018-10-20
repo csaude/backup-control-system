@@ -9,7 +9,7 @@ import { District } from '../shared/district';
 import { DistrictsService } from '../shared/districts.service';
 import { IronkeysService } from './../../ironkeys/shared/ironkeys.service';;
 import { Ironkey } from './../../ironkeys/shared/ironkey';
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 
 @Component({
@@ -19,7 +19,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
- * @author Damasceno Lopes <damascenolopess@gmail.com>
+ * @author Damasceno Lopes
  */
 export class DistrictFormComponent implements OnInit {
   public provinces = [
@@ -42,7 +42,7 @@ export class DistrictFormComponent implements OnInit {
   public district: District = new District();
   public alldistricts: District[] = [];
   public allironkeys: Ironkey[] = [];
-  public user: Object[] = [];
+  public user: any;
 
    
   constructor(
@@ -55,19 +55,18 @@ export class DistrictFormComponent implements OnInit {
     public translate: TranslateService
   ) {
     this.form = formBuilder.group({
-      district_id: [],
       province: ['', [
         Validators.required
       ]],
       name: ['', [
         Validators.required
       ]],
-      instance_url: [],
-      instance_username: [],
-      instance_password: [],
+      instanceUrl: [],
+      instanceUsername: [],
+      instancePassword: [],
       ironkeys: [],
       canceled: [],
-      canceled_reason: [],
+      canceledReason: [],
       parent: []
     });
   }
@@ -81,27 +80,27 @@ export class DistrictFormComponent implements OnInit {
       this.title = uuid ? 'Editar Distrito' : 'Novo Distrito';
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
-        this.districtsService.findDistricts("","","",false)
+        this.districtsService.findDistricts("","","",false,"fullName,uid,districtId")
           .subscribe(data => {
             this.alldistricts = data.content;
           });
-        this.ironkeysService.findIronkeys("","","","","","")
+        this.ironkeysService.findIronkeys("","","","","","","serial,ironkeyId,uid")
           .subscribe(data => { this.allironkeys = data.content }, error => { },
             () => {
               this.disabled1 = false;
             });
         return;
       } else {
-        this.districtsService.findOneDistrictByUuid(uuid).subscribe(
+        this.districtsService.findOneDistrictByUuid(uuid,"instanceUrl,instanceUsername,instancePassword,districtId,name,province,uid,dateCreated,createdBy.userId,createdBy.uid,ironkeys.serial,ironkeys.ironkeyId,ironkeys.uid,parent.districtId,parent.uid,parent.fullName,canceled,canceledReason").subscribe(
           district => {
             this.district = district;
-            var districtik = district.ironkeysDistrict;
-            this.ironkeysService.findIronkeys("","","","","","")
+            var districtik = district.ironkeys;
+            this.ironkeysService.findIronkeys("","","","","","","serial,ironkeyId,uid")
               .subscribe(data => {
                 this.allironkeys = data.content;
                 var filteredironkeys = this.allironkeys;
                 for (let i of districtik) {
-                  filteredironkeys = filteredironkeys.filter(item => item.ironkey_id !== i.ironkey_id);
+                  filteredironkeys = filteredironkeys.filter(item => item.ironkeyId !== i.ironkeyId);
                 }
                 for (let i of districtik) {
                   filteredironkeys.push(i);
@@ -119,16 +118,16 @@ export class DistrictFormComponent implements OnInit {
                 });
               }, error => { },
                 () => {
-                  this.districtsService.findDistricts(1,100000,"",false)
+                  this.districtsService.findDistricts("","","",false,"fullName,uid,districtId")
                     .subscribe(data => {
                       this.alldistricts = data.content;
-                      if (this.district.parentdistrict != null) {
-                        this.alldistricts = this.alldistricts.filter(item => item.district_id !== this.district.parentdistrict.district_id);
-                        this.alldistricts.push(this.district.parentdistrict);
+                      if (this.district.parent != null) {
+                        this.alldistricts = this.alldistricts.filter(item => item.districtId != this.district.parent.districtId);
+                        this.alldistricts.push(this.district.parent);
                       }
                       this.alldistricts = this.alldistricts.sort(function (a, b) {
-                        var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-                        var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                        var nameA = a.fullName.toUpperCase(); // ignore upper and lowercase
+                        var nameB = b.fullName.toUpperCase(); // ignore upper and lowercase
                         if (nameA < nameB) {
                           return -1;
                         }
@@ -156,13 +155,15 @@ export class DistrictFormComponent implements OnInit {
     this.isDisabled = true;
     var result, userValue = this.form.value;
     var user = JSON.parse(window.sessionStorage.getItem('user'));
-    userValue.districts = userValue.districtsIronkeys;
-    if (userValue.district_id) {
-      userValue.district_id = this.district.district_id;
-      userValue.date_created = this.district.date_created;
-      userValue.uuid = this.district.uuid;
-      userValue.created_by = this.district.created_by;
-      userValue.updated_by = this.user;
+    if (this.district.uid) {
+      userValue.districtId = this.district.districtId;
+      userValue.dateCreated = this.district.dateCreated;
+      userValue.uid = this.district.uid;
+      userValue.createdBy = this.district.createdBy;
+      userValue.updatedBy = {
+        uid: this.user.uid,
+        userId: this.user.userId
+      };
       result = this.districtsService.updateDistrict(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {
@@ -174,7 +175,10 @@ export class DistrictFormComponent implements OnInit {
         }
       });
     } else {
-      userValue.created_by = user;
+      userValue.createdBy = {
+        uid: this.user.uid,
+        userId: this.user.userId
+      };
       result = this.districtsService.createDistrict(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {

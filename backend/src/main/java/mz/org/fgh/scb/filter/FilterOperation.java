@@ -1,9 +1,7 @@
 package mz.org.fgh.scb.filter;
 
 /**
- * Possible filter operations with synonims of url @Query Params
- * 
- * @author Damasceno Lopes <damascenolopess@gmail.com>
+ * @author Damasceno Lopes
  *
  */
 public enum FilterOperation {
@@ -11,61 +9,61 @@ public enum FilterOperation {
 	EQUAL {
 		@Override
 		public String toString() {
-			return "=eq:";
+			return ":eq:";
 		}
 	},
 	NOT_EQUAL {
 		@Override
 		public String toString() {
-			return "=neq:";
+			return ":neq:";
 		}
 	},
 	GREATER_THAN {
 		@Override
 		public String toString() {
-			return "=gt:";
+			return ":gt:";
 		}
 	},
 	GREATER_THAN_OR_EQUAL_TO {
 		@Override
 		public String toString() {
-			return "=gte:";
+			return ":gte:";
 		}
 	},
 	LESS_THAN {
 		@Override
 		public String toString() {
-			return "=lt:";
+			return ":lt:";
 		}
 	},
 	LESS_THAN_OR_EQUAL_TO {
 		@Override
 		public String toString() {
-			return "=lte:";
+			return ":lte:";
 		}
 	},
 	IN {
 		@Override
 		public String toString() {
-			return "=in:";
+			return ":in:";
 		}
 	},
 	NOT_IN {
 		@Override
 		public String toString() {
-			return "=nin:";
+			return ":nin:";
 		}
 	},
 	BETWEEN {
 		@Override
 		public String toString() {
-			return "=btn:";
+			return ":btn:";
 		}
 	},
 	CONTAINS {
 		@Override
 		public String toString() {
-			return "=like:";
+			return ":like:";
 		}
 	}
 

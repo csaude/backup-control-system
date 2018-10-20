@@ -1,7 +1,7 @@
 <!--
  Copyright (C) 2014-2018, Friends in Global Health, LLC
  All rights reserved.
- @author Damasceno Lopes <damascenolopess@gmail.com>
+ @author Damasceno Lopes
 -->
 <header>
   <div class="navbar-fixed" *ngIf="isAuth">
@@ -58,15 +58,19 @@
       [dropdownButtonId]="'btn-dropdown-demo3'" [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300"
       [stopPropagation]="true">
       <mz-dropdown-item>
-        <a (click)="setUser()" [routerLink]="['/user/profile', user.uuid]">{{ "profile" | translate }}</a>
+        <a (click)="setUser()" [routerLink]="['/users/profile', user.uid]">{{ "profile" | translate }}</a>
       </mz-dropdown-item>
       <mz-dropdown-divider></mz-dropdown-divider>
       <mz-dropdown-item *ngIf="ROLE_SIS">
         <a target="_blank" href="http://196.28.230.195:8080/scb/swagger-ui.html">Rest Docs</a>
       </mz-dropdown-item>
       <mz-dropdown-divider></mz-dropdown-divider>
+      <mz-dropdown-item >
+        <a target="_blank" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM/edit?usp=sharing">{{"help" | translate}}</a>
+      </mz-dropdown-item>
+      <mz-dropdown-divider></mz-dropdown-divider>
       <mz-dropdown-item>
-        <a (click)="logout()">{{ "exit" | translate }}</a>
+        <a (click)="logout()"> {{ "exit" | translate }}</a>
       </mz-dropdown-item>
     </mz-dropdown>
 
@@ -98,7 +102,7 @@
           <li class="{{activeSync}}" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
             <a id="btn-dropdown-demo4">
 
-              <a class="btn-floating pulseb orange btn-small" *ngIf="(ROLE_SIS||ROLE_ODMA)&&total2>0"><i class="material-icons" mz-tooltip [tooltip]="total2+' sincronização(s) em progresso'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
+              <a class="btn-floating pulseb orange btn-small" *ngIf="(ROLE_SIS||ROLE_ODMA)&&total2>0"><i class="material-icons" mz-tooltip [tooltip]="total2+' sincronização(ões) em progresso'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
               </a>
             <i class="material-icons left" *ngIf="(ROLE_SIS||ROLE_ODMA)&&(total2==0||total2==null)" mz-tooltip [tooltip]="'Nenhuma sincronização em progresso'" [position]="'bottom'" [html]="false" [delay]="100">notifications_none</i>
 
@@ -114,8 +118,7 @@
           </li>
           <li class="{{activeUser}}" *ngIf="isAuth">
             <a id="btn-dropdown-demo3">
-              <i class="material-icons left">person</i>{{user.person.others_names| slice:0:1}}{{user.person.surname|
-              slice:0:1}}
+              <i class="material-icons left">person</i>{{user.person.othersNames| slice:0:1}}{{user.person.surname|slice:0:1}}
               <i class="material-icons right">arrow_drop_down</i>
             </a>
           </li>
@@ -188,11 +191,11 @@
 
   <mz-sidenav-collapsible>
     <mz-sidenav-collapsible-header *ngIf="isAuth">
-      <i mz-icon [icon]="'person'" class="caret"></i>{{user.person.others_names}} {{user.person.surname}}
+      <i mz-icon [icon]="'person'" class="caret"></i>{{user.person.othersNames}} {{user.person.surname}}
     </mz-sidenav-collapsible-header>
     <mz-sidenav-collapsible-content>
       <mz-sidenav-link>
-        <a (click)="setUser()" *ngIf="isAuth" [routerLink]="['/users/details', user.uuid]">Perfil</a>
+        <a (click)="setUser()" *ngIf="isAuth" [routerLink]="['/user/profile', user.uid]">Perfil</a>
       </mz-sidenav-link>
       <mz-sidenav-link>
         <a (click)="logout()">Sair</a>

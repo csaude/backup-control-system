@@ -4,11 +4,11 @@
  */
 package mz.org.fgh.scb.filter;
 
-import mz.org.fgh.scb.model.entity.IronkeyStatus;
-import mz.org.fgh.scb.model.entity.ServerType;
+import mz.org.fgh.scb.ironkey.IronkeyStatus;
+import mz.org.fgh.scb.server.ServerType;
 
 /**
- * @author Damasceno Lopes <damascenolopess@gmail.com>
+ * @author Damasceno Lopes
  *
  */
 public class SearchCriteria {
@@ -25,7 +25,7 @@ public class SearchCriteria {
         super();
         this.key = key;
         this.operation = operation;
-        this.value=value;	
+        this.value=value;
         
         //--------------------------------------------
         //Override @QueryParams data Types 
@@ -48,12 +48,12 @@ public class SearchCriteria {
         	this.value = IronkeyStatus.Outro;
         }
         
-        if(key.equals("backupdate")){	
+        if(key.equals("backupDate")){	
         	String str = new StringBuilder(this.value.toString()).insert(this.value.toString().length()-4, "-").toString();
         	this.value= new StringBuilder(str).insert(str.length()-2, "-").toString();
         }
         
-        if(key.equals("starttime")){	
+        if(key.equals("startTime")){	
         	String str = new StringBuilder(this.value.toString()).insert(this.value.toString().length()-4, "-").toString();
         	this.value= new StringBuilder(str).insert(str.length()-2, "-").toString();
         }

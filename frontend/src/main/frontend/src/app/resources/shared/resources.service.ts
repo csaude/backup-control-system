@@ -8,7 +8,7 @@ import * as CryptoJS from 'crypto-js';
 import * as myGlobals from 'globals';
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 @Injectable()
 export class ResourcesService {
@@ -18,45 +18,61 @@ export class ResourcesService {
   constructor(public http: Http) {
   }
 
+  //-------------------------------------------------
+  //DISTRICT INFO
+  //-------------------------------------------------
+  /**
+   * Returns date of last backup received by District
+   */
+  findDistrictsInfo() {
+    var headers: any = new Headers();
+    var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
+    var user = JSON.parse(window.sessionStorage.getItem('user'));
+    headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
+    headers.append('Content-Type', 'application/json');
+    return this.http.get(this.url + '/v1/districtsInformation', { headers: headers })
+      .map(res => res.json());
+  }
+
  //-------------------------------------------------
   //DATA FOR DASHBOARD
   //-------------------------------------------------
   /**
    * Returns date of last backup received by District
    */
-  findOneDistrictByUuidsReceiveInfo() {
+  findDistrictsReceiveInfo() {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + '/districtsreceiveinfo', { headers: headers })
+    return this.http.get(this.url + '/v1/districtsreceiveinfo', { headers: headers })
       .map(res => res.json());
   }
 
   /**
    * Returns date of last backup restored by District
    */
-  findOneDistrictByUuidsRestoreInfo() {
+  findDistrictsRestoreInfo() {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + '/districtsrestoreinfo', { headers: headers })
+    return this.http.get(this.url + '/v1/districtsrestoreinfo', { headers: headers })
       .map(res => res.json());
   }
 
   /**
    * Returns the last sync by District
    */
-  findOneDistrictByUuidsSyncInfo() {
+  findDistrictsSyncInfo() {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + '/districtssyncinfo', { headers: headers })
+    return this.http.get(this.url + '/v1/districtssyncinfo', { headers: headers })
       .map(res => res.json());
   }
 
@@ -69,7 +85,7 @@ export class ResourcesService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + '/districtsreceivedpreviousmonth', { headers: headers })
+    return this.http.get(this.url + '/v1/districtsreceivedpreviousmonth', { headers: headers })
       .map(res => res.json());
   }
 
@@ -82,7 +98,7 @@ export class ResourcesService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + '/districtsreceivedthismonth', { headers: headers })
+    return this.http.get(this.url + '/v1/districtsreceivedthismonth', { headers: headers })
       .map(res => res.json());
   }
 
@@ -95,20 +111,20 @@ export class ResourcesService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + '/districtsreceivedlastmonths', { headers: headers })
+    return this.http.get(this.url + '/v1/districtsreceivedlastmonths', { headers: headers })
       .map(res => res.json());
   }
 
   /**
    * Returns the number of Backups Sends not received
    */
-  findOneSendByUuidsNotReceivedNum() {
+  findSendsNotReceivedNum() {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/sendsnotreceived", { headers: headers })
+    return this.http.get(this.url + "/v1/sendsnotreceived", { headers: headers })
       .map(res => res.json());
   }
 
@@ -121,7 +137,7 @@ export class ResourcesService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/syncsinprogress", { headers: headers })
+    return this.http.get(this.url + "/v1/syncsinprogress", { headers: headers })
       .map(res => res.json());
   }
 
@@ -134,7 +150,7 @@ export class ResourcesService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/syncsinprogressuser", { headers: headers })
+    return this.http.get(this.url + "/v1/syncsinprogressuser", { headers: headers })
       .map(res => res.json());
   }
 
@@ -142,13 +158,13 @@ export class ResourcesService {
    /*
   *Return last sync by Server
   */
- findOneServerByUuidsSyncInfo() {
+ findServersInfo() {
   var headers: any = new Headers();
   var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
   var user = JSON.parse(window.sessionStorage.getItem('user'));
   headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
   headers.append('Content-Type', 'application/json');
-  return this.http.get(this.url + '/serverssyncinfo', { headers: headers })
+  return this.http.get(this.url + '/v1/serversInformation', { headers: headers })
     .map(res => res.json());
 }
 
@@ -161,7 +177,7 @@ export class ResourcesService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + '/serverssyncspreviousweek', { headers: headers })
+    return this.http.get(this.url + '/v1/serverssyncspreviousweek', { headers: headers })
       .map(res => res.json());
   }
 
@@ -174,7 +190,7 @@ export class ResourcesService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + '/serverssyncsthisweek', { headers: headers })
+    return this.http.get(this.url + '/v1/serverssyncsthisweek', { headers: headers })
       .map(res => res.json());
   }
 
@@ -187,7 +203,7 @@ export class ResourcesService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + '/serverssyncsitemspreviousweek', { headers: headers })
+    return this.http.get(this.url + '/v1/serverssyncsitemspreviousweek', { headers: headers })
       .map(res => res.json());
   }
 
@@ -200,7 +216,7 @@ export class ResourcesService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + '/serverssyncsitemsthisweek', { headers: headers })
+    return this.http.get(this.url + '/v1/serverssyncsitemsthisweek', { headers: headers })
       .map(res => res.json());
   }
 

@@ -1,7 +1,36 @@
+/**
+ * Copyright (C) 2014-2018, Friends in Global Health, LLC
+ * All rights reserved.
+ * @author Damasceno Lopes
+ */
+ 
 i.icon-red {
     color: red;
 }
 
 i.icon-orange {
     color: orange;
+}
+
+i.icon-grey {
+    color:#CCC;
+}
+
+i.icon-blue {
+    color:#0288D1;
+}
+
+.valign-center {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.page-size{
+    color:gray;
+    font-size: 13px;
+}
+
+.btn:hover{
+    background-color: #F2F2F2 !important;
 }

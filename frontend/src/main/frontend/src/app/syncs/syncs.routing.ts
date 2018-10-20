@@ -10,11 +10,11 @@ import { AuthManagerSyncsEdit } from './authmanageredit';
 
 const syncsRoutes: Routes = [
   { path: 'syncs', component: SyncsComponent, pathMatch: 'full', canActivate: [AuthManagerSyncsRead] },
-  { path: 'sync/new', component: SyncFormComponent, canActivate: [AuthManagerSyncsEdit] },
-  { path: 'sync/:uuid', component: SyncFormComponent, canActivate: [AuthManagerSyncsEdit] }
+  { path: 'syncs/new', component: SyncFormComponent, canActivate: [AuthManagerSyncsEdit] },
+  { path: 'syncs/:uuid', component: SyncFormComponent, canActivate: [AuthManagerSyncsEdit] }
 ];
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export const syncsRouting = RouterModule.forChild(syncsRoutes);

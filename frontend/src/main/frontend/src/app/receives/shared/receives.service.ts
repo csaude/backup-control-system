@@ -8,7 +8,7 @@ import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 @Injectable()
 export class ReceivesService {
@@ -18,96 +18,60 @@ export class ReceivesService {
   constructor(public http: Http) {
   }
 
-  /**
-     * Returns all Sends 
-     * 
-     * @param page the page number
-     * @param size the size of page
-     * @param restored the restored status
-     * @param canceled the canceled status
-     * @param from the Backup date from
-     * @param until the Backup date until
-     * @param district the Send District id
-     */
-    findAllReceives(page, size, canceled, from, until, district) {
+    findAllReceives(page, size, canceled, from, until, district, fields) {
       var headers: any = new Headers();
       var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
       var user = JSON.parse(window.sessionStorage.getItem('user'));
       headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
       headers.append('Content-Type', 'application/json');
-      return this.http.get(this.url + "/receives?filterCriteria=canceled=eq:" + canceled + ",backupdate=gte:" + from + ",backupdate=lte:" + until + ",district=eq:" + district + "&pageNumber=" + page + "&pageSize=" + size+"&sortingCriteria=-send.backupdate", { headers: headers })
+      return this.http.get(this.url + "/v1/receives?fields=" + fields + "&filter=canceled=:eq:" + canceled + ",backupDate:gte:" + from + ",backupDate:lte:" + until + ",district:eq:" + district + "&page=" + page + "&pageSize=" + size+"&order=-send.backupDate", { headers: headers })
         .map(res => res.json());
     }
 
-  /**
-   * Return Receive with the given Receive uuid
-   * 
-   * @param uuid the Receive uuid
-   */
-  findOneReceiveByUuid(uuid) {
+  findOneReceiveByUuid(uuid, fields) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/receive/"+uuid, { headers: headers })
+    return this.http.get(this.url + "/v1/receives/"+uuid+ "?fields=" + fields, { headers: headers })
       .map(res => res.json());
   }
-  /**
-   * Return Receive by Send uuid
-   * 
-   * @param uuid the Send uuid
-   */
-  findOneReceiveBySendUuid(uuid) {
+  findOneReceiveBySendUuid(uuid, fields) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/receive/send/"+uuid, { headers: headers })
+    return this.http.get(this.url + "/v1/receives/send/"+uuid+ "?fields=" + fields, { headers: headers })
       .map(res => res.json());
   }
 
-  /**
-   * Add new Receive
-   * 
-   * @param receive the Receive 
-   */
   createReceive(receive) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.post(this.url + "/receive", JSON.stringify(receive), { headers: headers });
+    return this.http.post(this.url + "/v1/receives", JSON.stringify(receive), { headers: headers });
   }
 
-  /**
-   * Update the Receive
-   * 
-   * @param receive the Receive
-   */
   updateReceive(receive) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.put(this.url + "/receive", JSON.stringify(receive), { headers: headers });
+    return this.http.put(this.url + "/v1/receives", JSON.stringify(receive), { headers: headers });
   }
 
-  /**
-   * Deletes the Receive with the given uuid
-   * 
-   * @param uuid 
-   */
   deleteReceive(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.delete(this.url + "/receive/"+uuid, { headers: headers });
+    return this.http.delete(this.url + "/v1/receives/"+uuid, { headers: headers });
   }
   
 }

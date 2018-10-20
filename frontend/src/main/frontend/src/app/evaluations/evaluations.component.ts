@@ -3,11 +3,14 @@
  * All rights reserved.
  */
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { EvaluationsService } from "./shared/evaluations.service";
 import { Evaluation } from "./shared/evaluation";
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
+import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/debounceTime';
+
 @Component({
   selector: 'app-evaluations',
   templateUrl: './evaluations.component.html',
@@ -15,41 +18,78 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /**
- * @author Damasceno Lopes <damascenolopess@gmail.com>
+ * @author Damasceno Lopes
  */
 export class EvaluationsComponent implements OnInit {
   public evaluations: Evaluation[] = [];
   public evaluation: Evaluation = new Evaluation();
-  public isHidden;name;openmrs_sql_dataset_uuid: string;
+  public isHidden;name;openmrs_sql_dataset_uid: string;
   public p: number = 1;
   public total: number = 0;
-  public form: FormGroup;
 
+
+  public next;previous: number=0;
+  public first; last; range: string;
+
+  public nameValueControl = new FormControl();
+  public openmrsValueControl = new FormControl();
+  public formCtrlSub: Subscription;
+  public pageSize: number;
    
   constructor(
     public evaluationsService: EvaluationsService,
     public toastService: MzToastService,
-    public translate: TranslateService,
-    public formBuilder: FormBuilder) {
-    this.form = formBuilder.group({
-      name: [],
-      openmrs_sql_dataset_uuid: []
-    });
+    public translate: TranslateService) {
   }
 
   ngOnInit() {
     this.name = "";
-    this.openmrs_sql_dataset_uuid = "";
+    this.openmrs_sql_dataset_uid = "";
+    this.pageSize=15;
     this.getPage(1);
+
+    this.formCtrlSub = this.nameValueControl.valueChanges
+    .debounceTime(600)
+    .subscribe(newValue => {
+      this.name = this.nameValueControl.value;
+      this.search();
+    });
+
+    this.formCtrlSub = this.openmrsValueControl.valueChanges
+    .debounceTime(600)
+    .subscribe(newValue => {
+      this.openmrs_sql_dataset_uid = this.openmrsValueControl.value;
+      this.search();
+    });
   }
 
   getPage(page: number) {
+    this.first = "";
+    this.last = "";
     this.isHidden = "";
-    this.evaluationsService.findEvaluations(page, 10, this.name, this.openmrs_sql_dataset_uuid)
+    this.evaluationsService.findEvaluations(page, this.pageSize, this.name, this.openmrs_sql_dataset_uid,"description,name,openmrsSqlUuid,uid,dateCreated,dateUpdated,createdBy.personName,updatedBy.personName")
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
         this.evaluations = data.content;
+        this.next = page + 1;
+        this.previous = page - 1;
+        if (data.first == true && data.last == true) {
+          this.first = "disabled";
+          this.last = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+        }
+        else if (data.first == true && data.last == false) {
+          this.first = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + (page * this.pageSize);
+        }
+        else if (data.first == false && data.last == true) {
+          this.last = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+        }
+        else if (data.first == false && data.last == false) {
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + + (page * this.pageSize);
+        }
       },
         error => {
           this.isHidden = "hide";
@@ -64,26 +104,28 @@ export class EvaluationsComponent implements OnInit {
   }
 
   search() {
-    var userValue = this.form.value;
-    if (userValue.name) {
-      this.name = userValue.name;
+  
+    if (this.name) {
       this.name = this.name.split(" ").join("SPACE");
     }
     else {
       this.name = "";
     }
-    if (userValue.openmrs_sql_dataset_uuid) {
-      this.openmrs_sql_dataset_uuid = userValue.openmrs_sql_dataset_uuid;
-      this.openmrs_sql_dataset_uuid = this.openmrs_sql_dataset_uuid.split("-").join("SPACEIFEN");
+    if (this.openmrs_sql_dataset_uid) {
+      this.openmrs_sql_dataset_uid = this.openmrs_sql_dataset_uid.split("-").join("SPACEIFEN");
     } else {
-      this.openmrs_sql_dataset_uuid = "";
+      this.openmrs_sql_dataset_uid = "";
     }
+    this.getPage(1);
+  }
+
+  searchSize(){
     this.getPage(1);
   }
 
   deleteEvaluation() {
     this.isHidden = "";
-    this.evaluationsService.deleteEvaluation(this.evaluation.uuid)
+    this.evaluationsService.deleteEvaluation(this.evaluation.uid)
       .subscribe(data => {
         if (data.text() == "Success") {
           this.search();
@@ -97,8 +139,8 @@ export class EvaluationsComponent implements OnInit {
       );
   }
 
-  setEvaluation(uuid) {
-    this.evaluation = this.evaluations.find(item => item.uuid == uuid);
+  setEvaluation(uid) {
+    this.evaluation = this.evaluations.find(item => item.uid == uid);
   }
 
 

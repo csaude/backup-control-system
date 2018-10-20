@@ -12,7 +12,7 @@
 	<artifactId>mz.org.fgh.scb.frontend</artifactId>
  
 	<name>SCB Project Module - Angular JS Frontend</name>
-	<description>Module that contains the Frontend App that consumes the Application API.</description>
+	<description>Module that contains the Frontend App that consumes the Backend API.</description>
 
  
    <build>

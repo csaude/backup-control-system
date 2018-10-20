@@ -10,7 +10,7 @@ import { Component } from '@angular/core';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class AppComponent {
   title = 'app works!';

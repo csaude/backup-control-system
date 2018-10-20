@@ -8,91 +8,63 @@ import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 @Injectable()
 export class SyncsService {
+  
   public url: string = myGlobals.API;
+
   constructor(public http: Http) {
   }
 
-  /**
-   * Return Sync with the given uuid
-   * 
-   * @param uuid the Sync uuid
-   */
-  findOneSyncByUuid(uuid) {
+  findOneSyncByUuid(uuid,fields) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/sync/" + uuid, { headers: headers })
+    return this.http.get(this.url + "/v1/syncs/" + uuid+ "?fields=" + fields, { headers: headers })
       .map(res => res.json());
   }
 
-  /**
-   * Returns Syncs paginated with the given District and Sync date range
-   * 
-   * @param page the page number
-   * @param size the size of page
-   * @param district_id the District id
-   * @param server_id the Server id
-   * @param from the Sync date from
-   * @param until the Sync Date until
-   */
-  findSyncs(page, size, district_id, server_id, from, until) {
+  findSyncs(page, size, district_id, server_id, from, until,fields) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/syncs?filterCriteria=district=eq:" + district_id + ",server=eq:" + server_id + ",starttime=gte:" + from + ",starttime=lte:" + until + ",user!user&pageNumber=" + page + "&pageSize=" + size+"&sortingCriteria=-starttime", { headers: headers })
+    return this.http.get(this.url + "/v1/syncs?fields=" + fields + "&filter=district:eq:" + district_id + ",server:eq:" + server_id + ",startTime:gte:" + from + ",startTime:lte:" + until + ",user!user&page=" + page + "&pageSize=" + size+"&order=-startTime", { headers: headers })
       .map(res => res.json());
   }
 
   
 
-  /**
-   * Add new Sync
-   * 
-   * @param sync the Sync
-   */
   createSync(sync) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.post(this.url + "/sync", JSON.stringify(sync), { headers: headers });
+    return this.http.post(this.url + "/v1/syncs", JSON.stringify(sync), { headers: headers });
   }
 
-  /**
-   * Update Sync
-   * 
-   * @param sync the Sync
-   */
   updateSync(sync) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.put(this.url + "/sync", JSON.stringify(sync), { headers: headers });
+    return this.http.put(this.url + "/v1/syncs", JSON.stringify(sync), { headers: headers });
   }
 
-  /**
-   * Deletes the Sync with the given uuid
-   * 
-   * @param uuid the Sync uuid
-   */
   deleteSync(uuid) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.delete(this.url + "/sync/" + uuid, { headers: headers });
+    return this.http.delete(this.url + "/v1/syncs/" + uuid, { headers: headers });
   }
 
 }

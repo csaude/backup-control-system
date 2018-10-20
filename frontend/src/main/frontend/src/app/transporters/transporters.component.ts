@@ -6,8 +6,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TransportersService } from "./shared/transporters.service";
 import { Transporter } from "./shared/transporter";
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
+import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/debounceTime';
+
 @Component({
   selector: 'app-transporters',
   templateUrl: './transporters.component.html',
@@ -15,7 +19,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class TransportersComponent implements OnInit {
   public transporter: Transporter = new Transporter();
@@ -37,7 +41,13 @@ export class TransportersComponent implements OnInit {
   public name: string;
   public canceled: boolean;
   public role: string;
-  
+  public next;previous: number=0;
+  public first; last; range: string;
+
+  public nameValueControl = new FormControl();
+  public formCtrlSub: Subscription;
+
+  public pageSize: number;
      
   constructor(
     public transportersService: TransportersService,
@@ -45,7 +55,6 @@ export class TransportersComponent implements OnInit {
     public translate: TranslateService,
     public formBuilder: FormBuilder) {
     this.form = formBuilder.group({
-      name: [],
       role: [],
       canceled: []
     });
@@ -53,16 +62,46 @@ export class TransportersComponent implements OnInit {
   ngOnInit() {
     this.name = "";
     this.role = "";
+    this.pageSize=15;
     this.canceled = false;
     this.getPage(1);
+
+    this.formCtrlSub = this.nameValueControl.valueChanges
+      .debounceTime(600)
+      .subscribe(newValue => {
+        this.name = this.nameValueControl.value;
+        this.search();
+      });
+
   }
+
   getPage(page: number) {
+    this.first = "";
+    this.last = "";
     this.isHidden = "";
-    this.transportersService.findTransporters(page, 10, this.name, this.role, this.canceled)
+    this.transportersService.findTransporters(page, this.pageSize, this.name, this.role, this.canceled,"name,role,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,uid,canceled,canceledBy.personName,canceledReason,phoneNumber,dateCanceled")
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
         this.transporters = data.content;
+        this.next = page + 1;
+        this.previous = page - 1;
+        if (data.first == true && data.last == true) {
+          this.first = "disabled";
+          this.last = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+        }
+        else if (data.first == true && data.last == false) {
+          this.first = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + (page * this.pageSize);
+        }
+        else if (data.first == false && data.last == true) {
+          this.last = "disabled";
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+        }
+        else if (data.first == false && data.last == false) {
+          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + + (page * this.pageSize);
+        }
       },
         error => {
           this.isHidden = "hide";
@@ -77,8 +116,7 @@ export class TransportersComponent implements OnInit {
   }
   search() {
     var userValue = this.form.value;
-    if (userValue.name) {
-      this.name = userValue.name;
+    if (this.name) {
       this.name = this.name.split(" ").join("SPACE");
     }
     else {
@@ -100,9 +138,14 @@ export class TransportersComponent implements OnInit {
     }
     this.getPage(1);
   }
+
+  searchSize(){
+    this.getPage(1);
+  }
+
   deleteTransporter() {
     this.isHidden = "";
-    this.transportersService.deleteTransporter(this.transporter.uuid)
+    this.transportersService.deleteTransporter(this.transporter.uid)
       .subscribe(data => {
         if (data.text() == "Success") {
           this.search();
@@ -116,8 +159,8 @@ export class TransportersComponent implements OnInit {
         }
       );
   }
-  setTransporter(uuid) {
-    this.transporter = this.transporters.find(item => item.uuid == uuid);
+  setTransporter(uid) {
+    this.transporter = this.transporters.find(item => item.uid == uid);
   }
   showMsg(transporter) {
     this.toastService.show('Transportador: ' + transporter + ', excluido com sucesso!', 2000, 'green', null);

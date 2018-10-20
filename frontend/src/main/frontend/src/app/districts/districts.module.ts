@@ -10,11 +10,10 @@ import { HttpModule } from '@angular/http';
 import { DistrictsComponent } from './districts.component';
 import { DistrictsService } from './shared/districts.service';
 import { DistrictFormComponent } from './district-form/district-form.component';
-import { CsvService } from "angular2-json2csv";
 import { DatePipe } from '@angular/common';
-import { MzTooltipModule, MzSelectModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule, MzDatepickerModule } from 'ng2-materialize';
-import { NgxPaginationModule } from 'ngx-pagination';
+import { MzTooltipModule, MzSelectModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule, MzDatepickerModule,MzDropdownModule } from 'ngx-materialize';
 import { TranslateModule } from "ng2-translate";
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   imports: [
@@ -28,12 +27,13 @@ import { TranslateModule } from "ng2-translate";
     MzIconModule,
     MzModalModule,
     MzToastModule,
-    NgxPaginationModule,
     MzButtonModule,
     MzInputModule,
     TranslateModule,
     MzSelectModule,
-    MzDatepickerModule
+    MzDatepickerModule,
+    NgxPaginationModule,
+    MzDropdownModule
   ],
   declarations: [
     DistrictsComponent,
@@ -44,12 +44,11 @@ import { TranslateModule } from "ng2-translate";
   ],
   providers: [
     DistrictsService,
-    CsvService,
     DatePipe
   ]
 })
 
 /** 
- * @author Damasceno Lopes <damascenolopess@gmail.com>
+ * @author Damasceno Lopes
  */
 export class DistrictsModule { }

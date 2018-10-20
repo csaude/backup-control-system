@@ -3,37 +3,36 @@
  * All rights reserved.
  */
 import { Server } from './../../servers/shared/server';
+import { District } from './../../districts/shared/district';
 import { User } from './../../users/shared/user';
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class Sync {
-  sync_id: number;
-  server: Server=new Server();
-  start_time: Date;
-  start_items_to_send: number;
-  start_items_to_receive: number;
-  end_time: Date;
-  end_items_to_send: number;
-  end_items_to_receive: number;
+  syncId: number;
+  startTime: any;
+  startItemsToSend: number;
+  startItemsToReceive: number;
+  endTime: any;
+  endItemsToSend: number;
+  endItemsToReceive: number;
+  observationHis: string;
   observation: string;
-  observation_his: string;
-  sync_error: boolean;
-  date_created: Date;
-  date_updated: Date;
-  created_by: User = new User();
-  updated_by: User = new User();
-  uuid: string;
+  observations: string;
+  dateCreated: Date;
+  dateUpdated: Date;
+  syncError: boolean;
+  createdBy: User = new User();
+  updatedBy: User = new User();
+  uid: string;
+  serverFault: boolean;
+  laptopFault: boolean;
+  powerCut: boolean;
+  canceledReason: string;
   canceled: boolean;
-  canceled_reason: string;
-  state: string;
-  duration:string;
-  editable: boolean;
-  serverfault: boolean;
-  laptopfault: boolean;
-  powercut: boolean;
-  serverreport: String;
-  observations: String;
+  server: Server = new Server();
+  district: District = new District();
+  serverreport: any;
 
 }

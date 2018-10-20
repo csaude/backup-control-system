@@ -11,8 +11,7 @@ import { UsersComponent } from './users.component';
 import { UsersService } from './shared/users.service';
 import { UserFormComponent } from './user-form/user-form.component';
 import { UserDetailsFormComponent } from './user-form/user-details-form.component';
-import { MzTooltipModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzSelectModule,MzTabModule } from 'ng2-materialize';
-import { NgxPaginationModule } from 'ngx-pagination';
+import { MzTooltipModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzSelectModule,MzTabModule,MzDropdownModule } from 'ngx-materialize';
 import { TranslateModule } from "ng2-translate";
 
 @NgModule({
@@ -27,7 +26,7 @@ import { TranslateModule } from "ng2-translate";
     MzIconModule,
     MzModalModule,
     MzToastModule,
-    NgxPaginationModule,
+    MzDropdownModule,
     MzButtonModule,
     MzInputModule,
     TranslateModule,
@@ -48,6 +47,6 @@ import { TranslateModule } from "ng2-translate";
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class UsersModule { }

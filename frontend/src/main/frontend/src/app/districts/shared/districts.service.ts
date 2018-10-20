@@ -8,7 +8,7 @@ import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 @Injectable()
 export class DistrictsService {
@@ -18,106 +18,72 @@ export class DistrictsService {
   constructor(public http: Http) {
   }
 
-  /**
-   * Returns District with the given uuid
-   * 
-   * @param uuid the District uuid
-   */
-  findOneDistrictByUuid(uuid) {
+  findOneDistrictByUuid(uid, fields) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url+"/district/"+uuid, { headers: headers })
+    return this.http.get(this.url + "/v1/districts/" + uid + "?fields=" + fields, { headers: headers })
       .map(res => res.json());
   }
 
-  /**
-   * Returns all Districts with the given name and lifecycle status
-   * 
-   * @param page the page number
-   * @param size the size of page
-   * @param name the district name
-   * @param canceled the canceled status
-   */
-  findDistricts(page, size, name, canceled) {
-    var headers: any = new Headers();
+  findDistricts(page, size, name, canceled, fields) {
+    var headers = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/districts?filterCriteria=name=like:"+name+",canceled=eq:" + canceled+",user!user&pageNumber=" + page + "&pageSize=" + size+"&sortingCriteria=+parent.name,+name", { headers: headers })
+    return this.http.get(this.url + "/v1/districts?fields=" + fields + "&filter=name:like:" + name + ",canceled:eq:" + canceled + ",user!user&page=" + page + "&pageSize=" + size + "&order=+parent.name,+name", { headers: headers })
       .map(res => res.json());
   }
 
-  /**
-   * Add new District
-   * 
-   * @param district the District
-   */
   createDistrict(district) {
-    var headers: any = new Headers();
+    var headers = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.post(this.url+"/district", JSON.stringify(district), { headers: headers });
+    return this.http.post(this.url + "/v1/districts", JSON.stringify(district), { headers: headers });
   }
 
-  /**
-   * Update the District
-   * 
-   * @param district the District
-   */
   updateDistrict(district) {
-    var headers: any = new Headers();
+    var headers = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.put(this.url+"/district", JSON.stringify(district), { headers: headers });
+    return this.http.put(this.url + "/v1/districts", JSON.stringify(district), { headers: headers });
   }
-  /**
-   * Delete the District with the given uuid
-   * 
-   * @param uuid the District uuid
-   */
-  deleteDistrict(uuid) {
-    var headers: any = new Headers();
+  deleteDistrict(uid) {
+    var headers = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.delete(this.url+"/district/"+uuid, { headers: headers });
+    return this.http.delete(this.url + "/v1/districts/" + uid, { headers: headers });
   }
 
-  /**
-   * Performs the database evaluation
-   * 
-   * @param url the OpenMRS instance url
-   * @param datasetuuid the OpenMRS SQL dataset uuid
-   */
-  evaluateDistrict(url, datasetuuid) {
-    var headers: any = new Headers();
+  evaluateDistrict(url, datasetuid) {
+    var headers = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url+"/district/"+url+"/"+ datasetuuid, { headers: headers })
+    return this.http.get(this.url + "/v1/districts/" + url + "/" + datasetuid, { headers: headers })
       .map(res => res.json());
   }
 
-  checkConnection(uuid) {
-    var headers: any = new Headers();
+  checkConnection(uid) {
+    var headers = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url+"/district/openmrs/"+uuid, { headers: headers })
+    return this.http.get(this.url + "/v1/districts/openmrs/" + uid, { headers: headers })
       .map(res => res.json());
   }
 
-  
+
 
 }

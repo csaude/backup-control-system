@@ -7,24 +7,25 @@ import { Person } from './../../persons/shared/person';
 import { Authority } from './../../authorities/shared/authority';
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class User {
-  user_id: number;
   username: string;
+  userId: number;
+  uid: string;
+  personName: string;
+  enabled: boolean;
+  creatorName: string;
+  updaterName: string;
   person: Person = new Person();
   authorities: Authority[] = [];
-  roles: string;
-  enabled: boolean;
-  creatorid: number;
-  updaterid: number;
-  created_by: User;
-  password: String;
   districts: District[] = [];
-  locale: String;
-  notification: boolean;
-  creatorname: String;
-  date_created: Date;
-  last_login: Date;
-  uuid: string;
+  creatorId: number;
+  updaterId: number;
+  dateCreated: Date;
+  dateUpdated: Date;
+  lastLogin: Date;
+  password: String;
+  locale: string;
+
 }

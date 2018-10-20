@@ -6,8 +6,11 @@ import { Component, OnInit } from '@angular/core';
 import { UsersService } from "./shared/users.service";
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { User } from "./shared/user";
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
+import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/debounceTime';
 
 @Component({
   selector: 'app-users',
@@ -16,7 +19,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class UsersComponent implements OnInit {
   public users: User[] = [];
@@ -30,28 +33,63 @@ export class UsersComponent implements OnInit {
   public enabled: boolean;
   public enableds: boolean=true;
   
+  public next;previous: number=0;
+  public first; last; range: string;
+
+  public nameValueControl = new FormControl();
+  public formCtrlSub: Subscription;
+
+  public pageSize: number;
      
   constructor(public usersService: UsersService, public toastService: MzToastService,
     public translate: TranslateService,
     public formBuilder: FormBuilder) {
       this.form = formBuilder.group({
-        username: [],
         enabled: []
       });
      }
   ngOnInit() {
     this.username = "";
     this.enabled=true;
+    this.pageSize=15;
     this.getPage(1);
+
+    this.formCtrlSub = this.nameValueControl.valueChanges
+    .debounceTime(600)
+    .subscribe(newValue => {
+      this.username = this.nameValueControl.value;
+      this.search();
+    });
+
   }
   getPage(page: number) {
+    this.first = "";
+    this.last = "";
     this.isHidden = "";
-    this.usersService.findUsers(page, 10, this.username, this.enabled)
+    this.usersService.findUsers(page, this.pageSize, this.username, this.enabled,"person.gender,person.othersNames,person.surname,person.email,person.phoneNumber,enabled,dateCreated,dateUpdated,creatorName,updaterName,creatorId,updaterId,uid,districts.fullName,districts.uid,authorities.description,lastLogin,username")
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
         var user = JSON.parse(window.sessionStorage.getItem('user'));
-        this.users  = data.content.filter(item => item.user_id != user.user_id);
+        this.users  = data.content.filter(item => item.username != user.username);
+        this.next = page + 1;
+              this.previous = page - 1;
+              if (data.first == true && data.last == true) {
+                this.first = "disabled";
+                this.last = "disabled";
+                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+              }
+              else if (data.first == true && data.last == false) {
+                this.first = "disabled";
+                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + (page * this.pageSize);
+              }
+              else if (data.first == false && data.last == true) {
+                this.last = "disabled";
+                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+              }
+              else if (data.first == false && data.last == false) {
+                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + + (page * this.pageSize);
+              }
       },
         error => {
           this.isHidden = "hide";
@@ -66,8 +104,7 @@ export class UsersComponent implements OnInit {
   }
   search() {
     var userValue = this.form.value;
-    if (userValue.username) {
-      this.username = userValue.username;
+    if (this.username) {
       this.username = this.username.split(" ").join("SPACE");
     }
     else {
@@ -80,16 +117,22 @@ export class UsersComponent implements OnInit {
     }
     this.getPage(1);
   }
+
+  searchSize(){
+    this.getPage(1);
+  }
+
   deleteUser() {
+    
     this.isHidden = "";
-    this.usersService.deleteUser(this.user.uuid)
+    this.usersService.deleteUser(this.user.uid)
       .subscribe(data=>{
         if (data.text()=="Success") {
           this.getPage(this.p);
-          this.showMsg(this.user.person.others_names + ' ' + this.user.person.surname);
+          this.showMsg(this.user.username);
           this.isHidden = "hide";
         }else{
-          this.showMsgErr(this.user.person.others_names + ' ' + this.user.person.surname);
+          this.showMsgErr(this.user.username);
           this.isHidden = "hide";
         }
       },
@@ -100,7 +143,7 @@ export class UsersComponent implements OnInit {
       );
   }
   setUser(uuid) {
-    this.user = this.users.find(item => item.uuid == uuid);
+    this.user = this.users.find(item => item.uid == uuid);
   }
   showMsg(user) {
     this.toastService.show('Utilizador: ' + user + ', excluido com sucesso!', 4000, 'green', null);

@@ -2,12 +2,15 @@ body{
   background-color:#f3f3f3;
 }
 
-/* Application loading */
 .preloader-container {
     position: absolute;
     top: 40%;
     width: 100%;
     text-align: center;
+  }
+
+  td, th {
+    padding: 5px !important;
   }
 
 

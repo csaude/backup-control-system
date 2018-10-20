@@ -9,6 +9,7 @@ import { RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { LoginsService } from './shared/logins.service';
+import {MatInputModule} from '@angular/material/input';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import { LoginsService } from './shared/logins.service';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    HttpModule
+    HttpModule,
+    MatInputModule
   ],
   declarations: [
     LoginFormComponent
@@ -29,6 +31,6 @@ import { LoginsService } from './shared/logins.service';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class LoginsModule { }

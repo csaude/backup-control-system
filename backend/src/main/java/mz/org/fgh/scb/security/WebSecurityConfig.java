@@ -19,7 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * @author damasceno.lopes
+ * @author Damasceno Lopes
  *
  */
 @Configuration
@@ -37,6 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 	    web.ignoring().antMatchers("/*")
 	    			  .antMatchers("/i18n/**")
+	    			  .antMatchers("/assets/**")
 	    			  .antMatchers("/swagger-resources/**")
 	    			  .antMatchers("/v2/api-docs/**")
 	    			  .antMatchers("/webjars/**");

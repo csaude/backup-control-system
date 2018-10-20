@@ -10,12 +10,12 @@ import { AuthManagerReceivesEdit } from './authmanageredit';
 
 const receivesRoutes: Routes = [
   { path: 'receives', component: ReceivesComponent, pathMatch: 'full', canActivate: [AuthManagerReceivesRead] },
-  { path: 'receive/new', component: ReceiveFormComponent, canActivate: [AuthManagerReceivesEdit] },
-  { path: 'receive/:uuidr', component: ReceiveFormComponent, canActivate: [AuthManagerReceivesEdit] },
-  { path: 'receive/send/:uuid', component: ReceiveFormComponent, canActivate: [AuthManagerReceivesEdit] }
+  { path: 'receives/new', component: ReceiveFormComponent, canActivate: [AuthManagerReceivesEdit] },
+  { path: 'receives/:uuidr', component: ReceiveFormComponent, canActivate: [AuthManagerReceivesEdit] },
+  { path: 'receives/send/:uuid', component: ReceiveFormComponent, canActivate: [AuthManagerReceivesEdit] }
 ];
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export const receivesRouting = RouterModule.forChild(receivesRoutes);

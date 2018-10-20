@@ -2,12 +2,12 @@
  * Copyright (C) 2014-2018, Friends in Global Health, LLC
  * All rights reserved.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit  } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Ironkey } from '../shared/ironkey';
 import { IronkeysService } from '../shared/ironkeys.service';
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 @Component({
   selector: 'app-ironkey-form',
@@ -16,12 +16,16 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class IronkeyFormComponent implements OnInit {
   public options: Pickadate.DateOptions = {
     format: 'dd/mm/yyyy',
     formatSubmit: 'yyyy-mm-dd',
+    today: 'Hoje',
+    close: 'Fechar',
+    clear:'Limpar',
+    max: new Date()
   };
   public sizes = [
     { id: 1, name: '1 GB' },
@@ -35,7 +39,7 @@ export class IronkeyFormComponent implements OnInit {
     { id: 256, name: '256 GB' },
     { id: 500, name: '500 GB' },
     { id: 1000, name: '1 TB' },
-    { id: 0, name: 'Outro' }
+    { id: 0, name: 'Outra' }
   ];
   public status = [
     { name: "Activado" },
@@ -51,8 +55,7 @@ export class IronkeyFormComponent implements OnInit {
   public ironkey: Ironkey = new Ironkey();
   public ironkeys: Ironkey[] = [];
   public serial = null;
-  public user: Object[] = [];
-  
+  public user: any;
    
   constructor(
     public formBuilder: FormBuilder,
@@ -76,23 +79,21 @@ export class IronkeyFormComponent implements OnInit {
         Validators.required
       ]],
       observation: [],
-      date_purchased: [],
-      selecteddistricts: [],
-      ironkeydistricts: []
+      datePurchased: []
     });
   }
   ngOnInit() {
     this.isDisabled = false;
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
     this.route.params.subscribe(params => {
-      var uuid = params['uuid'];
-      this.title = uuid ? 'Editar Ironkey' : 'Novo Ironkey';
-      this.isHidden = uuid ? '' : 'hide';
-      if (!uuid) {
+      var uid = params['uid'];
+      this.title = uid ? 'Editar Ironkey' : 'Novo Ironkey';
+      this.isHidden = uid ? '' : 'hide';
+      if (!uid) {
         return;
       }
       else {
-        this.ironkeysService.findOneIronkeyByUuid(uuid)
+        this.ironkeysService.findOneIronkeyByUuid(uid,"ironkeyId,size,serial,version,dateCreated,createdBy.userId,createdBy.uid,datePurchased,status,uid,observation")
           .subscribe(
             ironkey => {
               this.ironkey = ironkey;
@@ -111,23 +112,16 @@ export class IronkeyFormComponent implements OnInit {
   save() {
     this.isDisabled = true;
     var result, userValue = this.form.value;
-    if (this.ironkey.uuid) {
-      userValue.ironkey_id = this.ironkey.ironkey_id;
-      userValue.date_created = this.ironkey.date_created;
-      userValue.uuid = this.ironkey.uuid;
-      userValue.created_by = this.ironkey.created_by;
-      userValue.updated_by = this.user;
-      if (this.serial == userValue.serial) {
-        result = this.ironkeysService.updateIronkey(userValue);
-        result.subscribe(data => { this.router.navigate(['ironkeys']); }
-          , error => {
-          },
-          () => {
-            this.showMsg(userValue.serial);
-          }
-        );
-      }
-      else {
+    if (this.ironkey.uid) {
+      userValue.ironkeyId = this.ironkey.ironkeyId;
+      userValue.dateCreated = this.ironkey.dateCreated;
+      userValue.uid = this.ironkey.uid;
+      userValue.createdBy = this.ironkey.createdBy;
+      userValue.updatedBy = {
+        uid: this.user.uid,
+        userId: this.user.userId
+      };
+
         result = this.ironkeysService.updateIronkey(userValue);
         result.subscribe(data => {
           if (data.text() == "Success") {
@@ -141,9 +135,12 @@ export class IronkeyFormComponent implements OnInit {
         },
           () => {
           });
-      }
+      
     } else {
-      userValue.created_by = this.user;
+      userValue.createdBy = {
+        uid: this.user.uid,
+        userId: this.user.userId
+      };
       result = this.ironkeysService.createIronkey(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {

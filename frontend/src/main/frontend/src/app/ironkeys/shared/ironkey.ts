@@ -5,24 +5,22 @@
 import { User } from '../../users/shared/user';
 import { District } from '../../districts/shared/district';
 
-/** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
-*/
+/**
+ * @author Damasceno Lopes
+ */
 export class Ironkey {
-  ironkey_id: number;
+  ironkeyId: number;
   serial: string;
   size: number;
   version: string;
   status: string;
   observation: string;
-  date_purchased: Date;
-  created_by: User = new User();
-  updated_by: User = new User();
-  date_created: Date;
-  districtsnumber: number;
-  districtsnames: string;
-  districtsnamesreport: string;
-  uuid: string;
+  uid: string;
   districts: District[] = []
-
+  createdBy: User = new User();
+  updatedBy: User = new User();
+  dateCreated: Date;
+  dateUpdated: Date;
+  datePurchased: Date;
+  canceledBy: string;
 }

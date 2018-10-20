@@ -9,22 +9,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import mz.org.fgh.scb.model.entity.User;
-import mz.org.fgh.scb.service.impl.UserServiceImpl;
+import mz.org.fgh.scb.user.User;
+import mz.org.fgh.scb.user.UserRepository;
 
 /**
- * @author damasceno.lopes
+ * @author Damasceno Lopes
  *
  */
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
 	@Autowired
-	private UserServiceImpl userServiceImpl;
+	private UserRepository userRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) {
-		User user = userServiceImpl.findByUsername(username);
+		User user = userRepository.findOneByUsername(username);
 		return new MyUserPrincipal(user);
 	}
 }

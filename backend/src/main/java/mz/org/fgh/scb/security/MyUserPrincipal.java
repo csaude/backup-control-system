@@ -12,11 +12,11 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import mz.org.fgh.scb.model.entity.Authority;
-import mz.org.fgh.scb.model.entity.User;
+import mz.org.fgh.scb.authority.Authority;
+import mz.org.fgh.scb.user.User;
 
 /**
- * @author damasceno.lopes
+ * @author Damasceno Lopes
  *
  */
 public class MyUserPrincipal implements UserDetails {

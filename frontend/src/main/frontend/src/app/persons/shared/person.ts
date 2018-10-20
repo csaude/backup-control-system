@@ -4,16 +4,15 @@
  */
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class Person {
-  person_id: number;
-  others_names: string;
+  personId: number;
+  othersNames: string;
   surname: string;
-  date_created: Date;
-  date_updated: Date;
-  uuid: string;
-  phone_number: number;
+  phoneNumber: number;
   email: string;
   gender: string;
+  uid: string;
+
 }

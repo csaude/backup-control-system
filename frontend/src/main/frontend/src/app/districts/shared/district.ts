@@ -6,24 +6,27 @@ import { Ironkey } from './../../ironkeys/shared/ironkey';
 import { User } from './../../users/shared/user';
 
 /**
- * @author Damasceno Lopes <damascenolopess@gmail.com>
+ * @author Damasceno Lopes
  */
 export class District {
-  district_id: number;
+  districtId: number;
+  parent: District;
   province: string;
-  name: string;
-  namef: string;
-  instance_url: string;
-  instance_username: string;
-  instance_password: string;
-  ironkeys: Ironkey[] = [];
-  created_by: User = new User();
-  ironkeysnumber: number;
-  updated_by: User = new User();
-  date_created: Date;
-  uuid: string;
+  uid: string;
+  createdBy: User = new User();
+  updatedBy: User = new User();
+  dateCreated: Date;
+  dateUpdated: Date;
   canceled: boolean;
-  canceled_reason: string;
-  parentdistrict: District;
-  last_backup_restored: String
+  canceledReason: string;
+  ironkeys: Ironkey[] = [];
+  name: string;
+  fullName: string;
+  instanceUrl: string;
+  instanceUsername: string;
+  instancePassword: string;
+
+  server: string;
+  last_backup_restored: String;
+  last_backup_received: String;
 }

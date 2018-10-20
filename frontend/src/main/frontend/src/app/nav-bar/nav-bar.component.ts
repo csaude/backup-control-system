@@ -15,7 +15,7 @@ import { ResourcesService } from "./../resources/shared/resources.service";
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class NavBarComponent implements OnInit {
   public user;
@@ -24,8 +24,7 @@ export class NavBarComponent implements OnInit {
   public activeDashboard; activeBackup; activeMetadata; activeUser; activeSync;
   public showNavBar: boolean = false;
   public total; total2;
-  public nIntervId; nIntervId2; nIntervId3;
-
+  public nIntervId;
    
   constructor(
     public router: Router,
@@ -44,14 +43,11 @@ export class NavBarComponent implements OnInit {
     });
   }
 
-  /**
-   * Call this function on this interval
-   */
+ 
   callFuntionAtIntervals() {
-    clearInterval(this.nIntervId2);
-    clearInterval(this.nIntervId3);
+    clearInterval(this.nIntervId);
     if (this.ROLE_SIS) {
-      this.resourcesService.findOneSendByUuidsNotReceivedNum()
+      this.resourcesService.findSendsNotReceivedNum()
         .subscribe(data => {
           this.total = data;
         },
@@ -59,10 +55,10 @@ export class NavBarComponent implements OnInit {
             this.total = 0;
           },
           () => {
-            if (this.total > 0 && this.nIntervId2 == null) {
-              this.nIntervId2 = setInterval(() => {
+            if (this.total > 0) {
+            
                 this.notifyMe();
-              }, 300000);
+             
             }
           }
         );
@@ -75,10 +71,10 @@ export class NavBarComponent implements OnInit {
             this.total2 = 0;
           },
           () => {
-            if (this.total2 > 0 && this.nIntervId3 == null) {
-              this.nIntervId3 = setInterval(() => {
+            if (this.total2 > 0) {
+              
                 this.notifyMe2();
-              }, 300000);
+             
             }
           }
         );
@@ -93,10 +89,10 @@ export class NavBarComponent implements OnInit {
             this.total2 = 0;
           },
           () => {
-            if (this.total2 > 0 && this.nIntervId3 == null) {
-              this.nIntervId3 = setInterval(() => {
+            if (this.total2 > 0) {
+             
                 this.notifyMe2();
-              }, 300000);
+            
             }
           }
         );
@@ -141,9 +137,10 @@ export class NavBarComponent implements OnInit {
     if (this.ROLE_SIS || this.ROLE_ODMA) {
 
       this.callFuntionAtIntervals();
-      this.nIntervId = setInterval(() => {
-        this.callFuntionAtIntervals();
-      }, 180000);
+        this.nIntervId = setInterval(() => {
+          this.callFuntionAtIntervals();
+        }, 180000);
+      
     }
   }
 
@@ -174,28 +171,29 @@ export class NavBarComponent implements OnInit {
     if (window.sessionStorage.getItem('authenticated')) {
       this.isAuth = true;
       this.translate.use(this.user.locale);
-      if (this.ROLE_SIS|| this.ROLE_ODMA) {
+      if (this.ROLE_SIS || this.ROLE_ODMA) {
+
         this.callFuntionAtIntervals();
         this.nIntervId = setInterval(() => {
           this.callFuntionAtIntervals();
         }, 180000);
+      
+
       }
     } else {
-      if (this.ROLE_SIS || this.ROLE_ODMA) {
-        clearInterval(this.nIntervId);
-        clearInterval(this.nIntervId2);
-        clearInterval(this.nIntervId3);
-      }
+      clearInterval(this.nIntervId);
       this.router.navigate(['login']);
     }
     this.showNavBar = true;
   }
 
+  ngOnDestroy() {
+    clearInterval(this.nIntervId);
+ }
+
   logout() {
     if (this.ROLE_SIS || this.ROLE_ODMA) {
       clearInterval(this.nIntervId);
-      clearInterval(this.nIntervId2);
-      clearInterval(this.nIntervId3);
     }
     window.sessionStorage.clear();
     this.isAuth = false;
@@ -261,13 +259,11 @@ export class NavBarComponent implements OnInit {
           backup = " backups ";
         }
         let options = {
-          body: this.user.person.others_names + " " + this.user.person.surname + ", " + exist + this.total + backup + "por receber!",
-          icon: "../assets/images/bell-icon.png"
+          body: this.user.person.othersNames + " " + this.user.person.surname + ", " + exist + this.total + backup + "por receber!",
+          icon: "assets/images/bell-icon.png"
         };
-        var notification = new Notification("SCB", options);
+       new Notification("SCB", options);
       }
-      clearInterval(this.nIntervId2);
-      this.nIntervId2 = null;
     }
 
     // Otherwise, we need to ask the user for permission
@@ -285,8 +281,8 @@ export class NavBarComponent implements OnInit {
               backup = " backups ";
             }
             let options = {
-              body: this.user.person.others_names + " " + this.user.person.surname + ", " + exist + this.total + backup + "por receber!",
-              icon: "../assets/images/bell-icon.png"
+              body: this.user.person.othersNames + " " + this.user.person.surname + ", " + exist + this.total + backup + "por receber!",
+              icon: "assets/images/bell-icon.png"
             };
             var notification = new Notification("SCB", options);
             clearInterval(this.nIntervId2);
@@ -308,7 +304,7 @@ export class NavBarComponent implements OnInit {
       // If it's okay let's create a notification   
       if (this.ROLE_SIS || this.ROLE_ODMA) {
         var exist, backup;
-        if (this.total == 1) {
+        if (this.total2 == 1) {
           exist = "existe ";
           backup = " sincronização ";
         } else {
@@ -316,13 +312,12 @@ export class NavBarComponent implements OnInit {
           backup = " sincronizações ";
         }
         let options = {
-          body: this.user.person.others_names + " " + this.user.person.surname + ", " + exist + this.total + backup + "em processo!",
-          icon: "../assets/images/bell-icon.png"
+          body: this.user.person.othersNames + " " + this.user.person.surname + ", " + exist + this.total2 + backup + "em progresso!",
+          icon: "assets/images/bell-icon.png"
         };
-        var notification = new Notification("SCB", options);
+       new Notification("SCB", options);
       }
-      clearInterval(this.nIntervId3);
-      this.nIntervId3 = null;
+     
     }
 
     // Otherwise, we need to ask the user for permission
@@ -332,7 +327,7 @@ export class NavBarComponent implements OnInit {
         if (permission === "granted") {
           if (this.ROLE_SIS || this.ROLE_ODMA) {
             var exist, backup;
-            if (this.total == 1) {
+            if (this.total2 == 1) {
               exist = "existe ";
               backup = " sincronização ";
             } else {
@@ -340,20 +335,18 @@ export class NavBarComponent implements OnInit {
               backup = " sincronizações ";
             }
             let options = {
-              body: this.user.person.others_names + " " + this.user.person.surname + ", " + exist + this.total + backup + "em processo!",
-              icon: "../assets/images/bell-icon.png"
+              body: this.user.person.othersNames + " " + this.user.person.surname + ", " + exist + this.total2 + backup + "em progresso!",
+              icon: "assets/images/bell-icon.png"
             };
             var notification = new Notification("SCB", options);
+           
           }
-          clearInterval(this.nIntervId3);
-          this.nIntervId3 = null;
-
+         
+       
         }
       });
     }
 
-    // At last, if the user has denied notifications, and you 
-    // want to be respectful there is no need to bother them any more.
   }
 
 

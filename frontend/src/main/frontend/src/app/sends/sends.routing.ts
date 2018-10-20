@@ -10,11 +10,11 @@ import { AuthManagerSendsEdit } from './authmanageredit';
 
 const sendsRoutes: Routes = [
   { path: 'sends', component: SendsComponent, pathMatch: 'full', canActivate:[AuthManagerSendsRead] },
-  { path: 'send/new', component: SendFormComponent , canActivate:[AuthManagerSendsEdit]},
-  { path: 'send/:uuid', component: SendFormComponent , canActivate:[AuthManagerSendsEdit]}
+  { path: 'sends/new', component: SendFormComponent , canActivate:[AuthManagerSendsEdit]},
+  { path: 'sends/:uuid', component: SendFormComponent , canActivate:[AuthManagerSendsEdit]}
 ];
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export const sendsRouting = RouterModule.forChild(sendsRoutes);

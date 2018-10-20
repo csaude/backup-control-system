@@ -4,10 +4,11 @@
  */
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class Authority {
-  authority_id: number;
+  authorityId: number;
   name: string;
   description: string;
+
 }

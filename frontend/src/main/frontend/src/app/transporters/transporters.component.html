@@ -1,83 +1,123 @@
 <!--
-@author damasceno.lopes
-@email damasceno.lopes@fgh.org.mz
+ Copyright (C) 2014-2018, Friends in Global Health, LLC
+ All rights reserved.
+ @author Damasceno Lopes
 -->
 
-<br>
-<h5 class="light">{{ total }} {{ "transportersfound" | translate }}</h5>
+    <br>
+    <h5 class="light">{{ "transportersfound" | translate }}</h5>
 
-<form materialize [formGroup]="form">
-  <div class="row">
-    <div class="input-field col s12 m4 l4">
-      <input id="name" type="text" class="validate" formControlName="name" (keyup)="search()">
-      <label for="name">
-        {{ 'searchbyname' | translate }}
-      </label>
-    </div>
-    <div class="col s12 m4 l4" *ngIf="translate.currentLang=='pt'">
-      <mz-select-container>
-        <select mz-select mz-validation required id="district" [label]="'Posição'" formControlName="role" (change)="search()">
-          <option value="all" selected>Todas Posições</option>
-          <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
-        </select>
-      </mz-select-container>
-    </div>
-    <div class="col s12 m4 l4" *ngIf="translate.currentLang=='en'">
-      <mz-select-container>
-        <select mz-select mz-validation required id="district" [label]="'Position'" formControlName="role" (change)="search()">
-          <option value="all" selected>All Positions</option>
-          <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
-        </select>
-      </mz-select-container>
-    </div>
-    <br/>
-    <div class="col s12 m4 l4">
-      <input type="checkbox" class="filled-in" id="receiveds" formControlName="canceled" (change)="search()" />
-      <label for="receiveds">{{ "canceled" | translate }}</label>
-    </div>
-  </div>
-</form>
+    <form materialize [formGroup]="form">
+      <div class="row">
+        <div class="input-field col s12 m2 l2">
+          <input id="name" type="text" placeholder="{{ 'searchbyname' | translate }}" [formControl]="nameValueControl">
+          <label for="name">
+            {{ 'searchbyname' | translate }}
+          </label>
+        </div>
+        <div class="col s12 m2 l2">
+          <mz-select-container>
+            <select mz-select mz-validation required id="district" label="{{ 'function' | translate }}" formControlName="role"
+              (change)="search()">
+              <option value="all" selected>Todas Posições</option>
+              <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
+            </select>
+          </mz-select-container>
+        </div>
+        <br />
+        <div class="col s12 m2 l2">
+          <input type="checkbox" class="filled-in" id="receiveds" formControlName="canceled" (change)="search()" />
+          <label for="receiveds">{{ "canceled" | translate }}</label>
+        </div>
+        <div class="col s12 m6 l6" style="margin-top: -35px;">
+          <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
 
-<div class="col s12 card" style="margin-top: -20px;">
-  <div class="progress {{isHidden}}">
-    <div class="indeterminate"></div>
-  </div>
-  <table class="bordered responsive-table highlight">
-    <thead>
-      <tr>
-        <th>{{ "transportername" | translate }}</th>
-        <th>{{ "function" | translate }}</th>
-        <th>{{ "phone" | translate }}</th>
-        <th>{{ "updatedon" | translate }}</th>
-        <th>{{ "actions" | translate }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let transporter of transporters  | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: total }">
-        <td>{{ transporter.name }}</td>
-        <td>{{ transporter.role }}</td>
-        <td>{{ transporter.phone_number }}</td>
-        <td>{{ transporter.date_updated | date: 'dd/MM/yyyy' }}</td>
-        <td>
-          <a mz-tooltip [tooltip]="'Detalhes'" [position]="'top'" [html]="false" [delay]="100" (click)="setTransporter(transporter.uuid)"
-            (click)="basicModal2.open()" [routerLink]="">
-            <i class="material-icons icon-green">info</i>
-          </a>
-          &nbsp;
-          <a mz-tooltip [tooltip]="'Editar'" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/transporter', transporter.uuid]">
-            <i class="material-icons icon-orange">mode_edit</i>
-          </a>
-          &nbsp;
-          <a mz-tooltip [tooltip]="'Excluir'" [position]="'top'" [html]="false" [delay]="100" (click)="setTransporter(transporter.uuid)"
-            (click)="basicModal.open()" routerLink="/transporters">
-            <i class="material-icons icon-red">delete</i>
-          </a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-<pagination-controls autoHide="true" previousLabel="" nextLabel="" (pageChange)="getPage($event)" id="server" class="right-align"></pagination-controls>
+            <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
+            <mz-select-container style="width: 50px;">
+              <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
+                <option value="15" selected>15</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </mz-select-container>
+
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
+            <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
+            <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
+            <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
+
+          </ul>
+        </div>
+      </div>
+    </form>
+
+    <div class="col s12 " style="margin-top: -35px;">
+      <div class="progress {{isHidden}}">
+        <div class="indeterminate"></div>
+      </div>
+      <ul class="pagination" *ngIf="isHidden==''">
+        {{ "loading" | translate }}
+      </ul>
+      <table class="card bordered responsive-table highlight" *ngIf="isHidden=='hide'">
+        <thead>
+          <tr>
+            <th>{{ "transportername" | translate }}</th>
+            <th>{{ "function" | translate }}</th>
+            <th>{{ "phone" | translate }}</th>
+            <th>{{ "updatedon" | translate }}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transporter of transporters">
+            <td>{{ transporter.name }}</td>
+            <td>{{ transporter.role }}</td>
+            <td>{{ transporter.phoneNumber }}</td>
+            <td>{{ transporter.dateUpdated | date: 'dd/MM/yyyy' }}</td>
+            <td>
+              <a mz-tooltip tooltip="{{'details' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setTransporter(transporter.uid)"
+                (click)="basicModal2.openModal()" [routerLink]="">
+                <i class="material-icons icon-green">info</i>
+              </a>
+              &nbsp;
+              <a mz-tooltip tooltip="{{'edit' | translate}}" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/transporters', transporter.uid]">
+                <i class="material-icons icon-orange">mode_edit</i>
+              </a>
+              &nbsp;
+              <a mz-tooltip tooltip="{{'delete' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setTransporter(transporter.uid)"
+                (click)="basicModal.openModal()" routerLink="/transporters">
+                <i class="material-icons icon-red">delete</i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col s12">
+      <ul class="pagination valign-center" *ngIf="isHidden=='hide'" style="margin-top: -10px;">
+
+        <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
+        <mz-select-container style="width: 50px;">
+          <select mz-select id="pageSize" [(ngModel)]="pageSize" (change)="searchSize()">
+            <option value="15" selected>15</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </mz-select-container>
+
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
+        <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
+        <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
+        <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
+
+      </ul>
+    </div>
+
 
 <mz-modal #basicModal>
   <mz-modal-header>
@@ -108,30 +148,30 @@
       <div class="col s12 l2 m2">{{ "function" | translate }}:</div>
       <div class="col s12 l10 m10">{{transporter.role}}</div>
     </div>
-    <div class="row" style="margin-top: -11px;" *ngIf="transporter.phone_number!=null">
+    <div class="row" style="margin-top: -11px;" *ngIf="transporter.phoneNumber!=null">
       <div class="col s12 l2 m2">{{ "phone" | translate }}:</div>
-      <div class="col s12 l10 m10">{{transporter.phone_number}}</div>
+      <div class="col s12 l10 m10">{{transporter.phoneNumber}}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{transporter.created_by.person.others_names}} {{transporter.created_by.person.surname}} - {{transporter.date_created | date: 'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{transporter.createdBy.personName}} - {{ transporter.dateCreated | date:'dd/MM/yyyy HH:mm' }}</div>
     </div>
-    <div class="row" *ngIf="transporter.updated_by!=null" style="margin-top: -11px;">
+    <div class="row" *ngIf="transporter.updatedBy!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{transporter.updated_by.person.others_names}} {{transporter.updated_by.person.surname}} - {{transporter.date_updated | date: 'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{transporter.updatedBy.personName}} - {{ transporter.dateUpdated | date:'dd/MM/yyyy HH:mm' }}</div>
     </div>
-    <div class="row" *ngIf="transporter.canceled_by!=null" style="margin-top: -11px;">
+    <div class="row" *ngIf="transporter.canceledBy!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "canceledby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{transporter.canceled_by.person.others_names}} {{transporter.canceled_by.person.surname}} - {{transporter.date_canceled | date: 'dd/MM/yyyy HH:mm'}}</div>
+      <div class="col s12 l10 m10">{{transporter.canceledBy.personName}} - {{ transporter.dateCanceled | date:'dd/MM/yyyy HH:mm' }}</div>
     </div>
-    <div class="row" *ngIf="transporter.canceled_by!=null" style="margin-top: -11px;">
+    <div class="row" *ngIf="transporter.canceledBy!=null" style="margin-top: -11px;">
       <div class="col s12 l2 m2">{{ "cancelitreason" | translate }}:</div>
-      <div class="col s12 l10 m10">{{transporter.canceled_reason}}</div>
+      <div class="col s12 l10 m10">{{transporter.canceledReason}}</div>
     </div>
     <div class="row" style="margin-top: -11px;">
       <div class="col s12 l2 m2"></div>
       <div class="col s12 l10 m10">
-        <span style="color:lightgrey;">{{transporter.uuid}}</span>
+        <span style="color:lightgrey;">{{transporter.uid}}</span>
       </div>
     </div>
   </mz-modal-content>
@@ -140,9 +180,18 @@
   </mz-modal-footer>
 </mz-modal>
 
-<div class="fixed-action-btn" style="bottom: 20; right: 20px;">
-  <a mz-tooltip [tooltip]="'Adicionar Tramsportador'" [position]="'left'" [html]="false" [delay]="100" class="btn-floating  btn-large waves-effect waves-light green"
-    routerLink="/transporter/new">
-    <i class="material-icons">add</i>
+
+<div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
+  <a class="btn-floating waves-effect waves-light btn-large green">
+    <i class="material-icons">menu</i>
   </a>
+    <ul>
+    <li>
+      <a mz-tooltip tooltip="{{'add' | translate}}" [position]="'left'" [html]="false" [delay]="100" routerLink="/transporters/new"
+        class="btn-floating  waves-effect waves-light  blue">
+        <i class="material-icons">add</i>
+      </a>
+    </li>
+  </ul>
+ 
 </div>

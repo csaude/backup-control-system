@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ServersService } from "./shared/servers.service";
 import { Server } from "./shared/server";
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 declare var jsPDF: any; // Important
 import { DatePipe } from '@angular/common';
@@ -17,6 +17,9 @@ import * as myGlobals from '../../globals';
 import * as alasql from 'alasql';
 import { SyncsService } from "./../syncs/shared/syncs.service";
 import { Sync } from "./../syncs/shared/sync";
+import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/debounceTime';
 
 @Component({
   selector: 'app-servers',
@@ -25,7 +28,7 @@ import { Sync } from "./../syncs/shared/sync";
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class ServersComponent implements OnInit {
   public servers; serversreport: Server[] = [];
@@ -49,6 +52,8 @@ export class ServersComponent implements OnInit {
   public syncs: Sync[] = [];
   public sync: Sync = new Sync();
 
+  public pageSize: number;
+
   public types = [
     { name: 'CHILD' },
     { name: 'PARENT' }
@@ -56,6 +61,11 @@ export class ServersComponent implements OnInit {
 
   public user;
   
+  public next;previous: number=0;
+  public first; last; range: string;
+
+  public nameValueControl = new FormControl();
+  public formCtrlSub: Subscription;
      
   constructor(
     public datepipe: DatePipe,
@@ -67,7 +77,6 @@ export class ServersComponent implements OnInit {
     public syncsService: SyncsService,
     public districtsService: DistrictsService) {
     this.form = formBuilder.group({
-      name: [],
       district: [],
       canceled: [],
       type: []
@@ -79,6 +88,7 @@ export class ServersComponent implements OnInit {
     this.size = "";
     this.type = "";
     this.canceled = false;
+    this.pageSize=15;
     this.getPage(1);
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
     this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
@@ -88,29 +98,55 @@ export class ServersComponent implements OnInit {
     this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
     this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
     this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
-    this.districtsService.findDistricts("","","",false)
+    this.districtsService.findDistricts("","","","","parent.name,name,districtId")
       .subscribe(data => {
-        this.alldistricts = data.content.filter(item => item.parentdistrict == null);;
+        this.alldistricts = data.content.filter(item => item.parent == null);;
+      });
+      this.formCtrlSub = this.nameValueControl.valueChanges
+      .debounceTime(600)
+      .subscribe(newValue => {
+        this.name = this.nameValueControl.value;
+        this.search();
       });
   }
   getPage(page: number) {
+    this.first = "";
+    this.last = "";
     this.isHidden = "";
     this.isDisabledt = "disabled";
 
-    this.resourcesService.findOneServerByUuidsSyncInfo()
+    this.resourcesService.findServersInfo()
       .subscribe(data => {
         this.serverssyncinfo = data;
       },
         error => { },
         () => {
 
-          this.serversService.findServers(page, 10, this.district, this.name, this.canceled, this.type)
+          this.serversService.findServers(page, this.pageSize, this.district, this.name, this.canceled, this.type,"canceledBy.personName,canceled,dateCanceled,canceledReason,observation,district.name,name,type,dateCreated,dateUpdated,createdBy.personName,updatedBy.personName,uid,serverId")
             .subscribe(data => {
               this.total = data.totalElements;
               this.p = page;
               var result = data.content;
-              var synced = alasql("SELECT [0] AS sync_uuid,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
-              this.servers = alasql("SELECT * FROM ?result LEFT JOIN ?synced USING server_id ", [result, synced]);
+              var synced = alasql("SELECT [0] AS sync_uuid,[1] AS serverId,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
+              this.servers = alasql("SELECT * FROM ?result LEFT JOIN ?synced USING serverId ", [result, synced]);
+              this.next = page + 1;
+              this.previous = page - 1;
+              if (data.first == true && data.last == true) {
+                this.first = "disabled";
+                this.last = "disabled";
+                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+              }
+              else if (data.first == true && data.last == false) {
+                this.first = "disabled";
+                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + (page * this.pageSize);
+              }
+              else if (data.first == false && data.last == true) {
+                this.last = "disabled";
+                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
+              }
+              else if (data.first == false && data.last == false) {
+                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + + (page * this.pageSize);
+              }
 
             },
               error => {
@@ -130,8 +166,7 @@ export class ServersComponent implements OnInit {
   }
   search() {
     var userValue = this.form.value;
-    if (userValue.name) {
-      this.name = userValue.name;
+    if (this.name) {
       this.name = this.name.split(" ").join("SPACE");
     }
     else {
@@ -171,13 +206,17 @@ export class ServersComponent implements OnInit {
     this.getPage(1);
   }
 
+  searchSize(){
+    this.getPage(1);
+  }
+
   setServer(uuid) {
-    this.server = this.servers.find(item => item.uuid == uuid);
+    this.server = this.servers.find(item => item.uid == uuid);
   }
   deleteServer() {
     this.isHidden = "";
     this.isDisabledt = "disabled";
-    this.serversService.deleteServer(this.server.uuid)
+    this.serversService.deleteServer(this.server.uid)
       .subscribe(data => {
         if (data.text() == "Success") {
           this.search();
@@ -207,19 +246,18 @@ export class ServersComponent implements OnInit {
     this.isDisabledt = "disabled";
 
 
-    this.resourcesService.findOneServerByUuidsSyncInfo()
+    this.resourcesService.findServersInfo()
       .subscribe(data => {
         this.serverssyncinfo = data;
       },
         error => { },
         () => {
 
-
-          this.serversService.findServers("", "", this.district, this.name, this.canceled, this.type)
+          this.serversService.findServers("", "", this.district, this.name, this.canceled, this.type,"serverId,name,district.name,type")
             .subscribe(data => {
               var result = data.content;
-              var synced = alasql("SELECT [0] AS sync_uuid,[1] AS server_id,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
-              this.serversreport = alasql("SELECT * FROM ?result LEFT JOIN ?synced USING server_id ", [result, synced]);
+              var synced = alasql("SELECT [0] AS sync_uuid,[1] AS serverId,IFNULL([2],'') AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
+              this.serversreport = alasql("SELECT * FROM ?result LEFT JOIN ?synced USING serverId ", [result, synced]);
             },
               error => {
                 this.isHidden = "hide";
@@ -231,10 +269,10 @@ export class ServersComponent implements OnInit {
                 this.isDisabledt = "";
 
                 var user = JSON.parse(window.sessionStorage.getItem('user'));
-                var doc = new jsPDF('landscape');
+                var doc = new jsPDF('portrait');
                 var totalPagesExp = "{total_pages_count_string}";
                 var columns = [
-                  { title: "Distrito/US", dataKey: "districtname" },
+                  { title: "Distrito", dataKey: "district" },
                   { title: "Nome do Servidor", dataKey: "name" },
                   { title: "Tipo de Servidor", dataKey: "type" },
                   { title: "Última Sincronização", dataKey: "server_report" }
@@ -270,13 +308,18 @@ export class ServersComponent implements OnInit {
                   bodyStyles: { valign: 'top' },
                   theme: 'grid',
                   headerStyles: { fillColor: [41, 128, 185], lineWidth: 0 },
-                  addPageContent: pageContent
+                  addPageContent: pageContent,
+                  createdCell: function(cell, data) {
+                    if (data.column.dataKey === 'district') {
+                        cell.text = cell.raw.name;
+                    }
+                }
                 });
                 doc.setFontSize(11);
                 doc.setTextColor(100);
                 doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
                 doc.setTextColor(0, 0, 200);
-                doc.textWithLink('Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
+                doc.textWithLink('© Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
 
                 if (typeof doc.putTotalPages === 'function') {
                   doc.putTotalPages(totalPagesExp);
@@ -297,11 +340,74 @@ export class ServersComponent implements OnInit {
 
   setSync(uuid) {
     this.isHidden2m = "";
-    this.syncsService.findOneSyncByUuid(uuid)
+    this.syncsService.findOneSyncByUuid(uuid,"observation,syncId,startTime,startItemsToSend,startItemsToReceive,endTime,endItemsToSend,endItemsToReceive,observationHis,dateCreated,dateUpdated,syncError,createdBy.personName,updatedBy.personName,uid,serverFault,laptopFault,powerCut,canceled,district.name,server.name,server.type")
       .subscribe(
         sync => {
           this.sync = sync;
         }, error => { }, () => { this.isHidden2m = "hide"; });
+  }
+
+  getSyncTimeline(start, end) {
+    var time;
+    if (start && end) {
+      let timeStart = new Date(start);
+      let timeEnd = new Date(end);
+      time = ("0" + timeStart.getDate()).slice(-2) + "/" + ("0" + (timeStart.getMonth() + 1)).slice(-2) + "/" + timeStart.getFullYear() + " " + ("0" + timeStart.getHours()).slice(-2) + ":" + ("0" + timeStart.getMinutes()).slice(-2) + "-" + ("0" + timeEnd.getHours()).slice(-2) + ":" + ("0" + timeEnd.getMinutes()).slice(-2);
+    }
+    else {
+      let timeStart = new Date(start);
+      time = ("0" + timeStart.getDate()).slice(-2) + "/" + ("0" + (timeStart.getMonth() + 1)).slice(-2) + "/" + timeStart.getFullYear() + " " + ("0" + timeStart.getHours()).slice(-2) + ":" + ("0" + timeStart.getMinutes()).slice(-2);
+    }
+    return time;
+  }
+
+  getSyncDuration(start, end) {
+    var time;
+    if (start && end) {
+      let timeStart = new Date(start);
+      let timeEnd = new Date(end);
+      var duration = timeEnd.getTime() - timeStart.getTime();
+      let hours: any = Math.floor(duration / (1000 * 60 * 60) % 60);
+      let minutes: any = Math.floor(duration / (1000 * 60) % 60);
+      let seconds: any = Math.floor(duration / 1000 % 60);
+      hours = hours < 10 ? '0' + hours : hours;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      seconds = seconds < 10 ? '0' + seconds : seconds;
+      return hours + 'h ' + minutes +'min';
+    }
+
+    else {
+      time = "-";
+    }
+    return time;
+  }
+
+  getSyncStatus(start, end) {
+    if (start && end) {
+      return "complete";
+    }
+    else {
+      return "progress"
+    }
+  }
+
+  getSyncExpires(start) {
+    var date =new Date();
+    date.setDate(date.getDate()+1);
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(0);
+    var date2 =new Date();
+    date2.setDate(date2.getDate());
+    date2.setHours(0);
+    date2.setMinutes(0);
+    date2.setSeconds(0);
+    if (new Date(start)>date2&&new Date(start)<date) {
+      return false;
+    }
+    else {
+      return true;
+    }
   }
 
   showMsg(server) {

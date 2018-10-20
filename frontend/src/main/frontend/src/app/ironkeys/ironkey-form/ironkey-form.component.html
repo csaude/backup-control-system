@@ -1,7 +1,7 @@
 <!--
  Copyright (C) 2014-2018, Friends in Global Health, LLC
  All rights reserved.
- @author Damasceno Lopes <damascenolopess@gmail.com>
+ @author Damasceno Lopes
 -->
 
 <br>
@@ -26,6 +26,7 @@
           </label>
         </div>
       </div>
+
       <div class="row">
         <div class="input-field col s12">
           <i class="material-icons prefix">label_outline</i>
@@ -35,69 +36,42 @@
           </label>
         </div>
       </div>
-      <div class="row" *ngIf="translate.currentLang=='pt'">
-        <div class="input-field col s12">
+
+      <div class="row">
+        <div class="col s12">
           <mz-select-container>
             <i mz-icon mz-input-prefix [icon]="'label_outline'">
             </i>
-            <select mz-select id="status" [label]="'Estado *'" [placeholder]="'Seleccione o estado do Ironkey'" [(ngModel)]="ironkey.status"
+            <select mz-select id="status" label="{{ 'state' | translate }} *" placeholder="{{ 'select' | translate }}" [(ngModel)]="ironkey.status"
               formControlName="status">
               <option *ngFor="let status of status" [value]="status.name" [selected]="status.name == ironkey.status">{{ status.name }}</option>
             </select>
           </mz-select-container>
         </div>
       </div>
-      <div class="row" *ngIf="translate.currentLang=='en'">
-        <div class="input-field col s12">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'label_outline'">
-            </i>
-            <select mz-select id="status" [label]="'Status *'" [placeholder]="'Select the Ironkey status'" [(ngModel)]="ironkey.status"
-              formControlName="status">
-              <option *ngFor="let status of status" [value]="status.name" [selected]="status.name == ironkey.status">{{ status.name }}</option>
-            </select>
-          </mz-select-container>
-        </div>
-      </div>
-      <div class="row" *ngIf="translate.currentLang=='pt'">
-        <div class="input-field col s12 l6 m6">
+
+      <div class="row">
+        <div class="col s12 l6 m6">
           <mz-select-container>
             <i mz-icon mz-input-prefix [icon]="'insert_drive_file'">
             </i>
-            <select mz-select id="size" [label]="'Capacidade *'" [placeholder]="'Seleccione a capacidade'" [(ngModel)]="ironkey.size"
+            <select mz-select id="size" label="{{ 'capacity' | translate }} *" placeholder="{{ 'select' | translate }}" [(ngModel)]="ironkey.size"
               formControlName="size">
               <option *ngFor="let size of sizes" [value]="size.id" [selected]="size.name == ironkey.size">{{ size.name }}</option>
             </select>
           </mz-select-container>
         </div>
-        <div class="input-field col s12 l6 m6">
+        <div class="col s12 l6 m6">
           <mz-datepicker-container>
             <i mz-icon mz-input-prefix [icon]="'date_range'">
             </i>
-            <input mz-datepicker [label]="'Data de aquisição'" [options]="options" [(ngModel)]="ironkey.date_purchased" formControlName="date_purchased"
+            <input mz-datepicker label="{{ 'date_purchased' | translate }}" [options]="options" [(ngModel)]="ironkey.datePurchased" formControlName="datePurchased"
               type="date" />
           </mz-datepicker-container>
         </div>
       </div>
-      <div class="row" *ngIf="translate.currentLang=='en'">
-        <div class="input-field col s12 l6 m6">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'insert_drive_file'">
-            </i>
-            <select mz-select id="size" [label]="'Capacity *'" [placeholder]="'Select storage capacity'" [(ngModel)]="ironkey.size" formControlName="size">
-              <option *ngFor="let size of sizes" [value]="size.id" [selected]="size.name == ironkey.size">{{ size.name }}</option>
-            </select>
-          </mz-select-container>
-        </div>
-        <div class="input-field col s12 l6 m6">
-          <mz-datepicker-container>
-            <i mz-icon mz-input-prefix [icon]="'date_range'">
-            </i>
-            <input mz-datepicker [label]="'Date of acquisition'" [options]="options" [(ngModel)]="ironkey.date_purchased" formControlName="date_purchased"
-              type="date" />
-          </mz-datepicker-container>
-        </div>
-      </div>
+           
+      
       <div class="row">
         <div class="input-field col s12">
           <i class="material-icons prefix">description</i>

@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Transporter } from '../shared/transporter';
 import { TransportersService } from '../shared/transporters.service';
-import { MzToastService } from 'ng2-materialize';
+import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 
 @Component({
@@ -17,7 +17,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
-* @author Damasceno Lopes <damascenolopess@gmail.com>
+* @author Damasceno Lopes
 */
 export class TransporterFormComponent implements OnInit {
   public roles = [
@@ -35,7 +35,7 @@ export class TransporterFormComponent implements OnInit {
   public isHidden: string;
   public isDisabled: boolean;
   public transporter: Transporter = new Transporter();
-  public user: Object[] = [];
+  public user: any;
   
      
   constructor(
@@ -53,22 +53,23 @@ export class TransporterFormComponent implements OnInit {
       name: ['', [
         Validators.required
       ]],
-      phone_number: [],
+      phoneNumber: [],
       canceled: [],
-      canceled_reason: []
+      canceledReason: []
     });
   }
+
   ngOnInit() {
     this.isDisabled = false;
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
     this.route.params.subscribe(params => {
-      var uuid = params['uuid'];
-      this.title = uuid ? 'Editar Transportador' : 'Novo Transportador';
-      this.isHidden = uuid ? '' : 'hide';
-      if (!uuid) {
+      var uid = params['uid'];
+      this.title = uid ? 'Editar Transportador' : 'Novo Transportador';
+      this.isHidden = uid ? '' : 'hide';
+      if (!uid) {
         return;
       } else {
-        this.transportersService.findOneTransporterByUuid(uuid)
+        this.transportersService.findOneTransporterByUid(uid,"transporterId,name,role,uid,dateCreated,created_by.userId,created_by.uid,canceled,canceledReason,phoneNumber")
           .subscribe(
             transporter => this.transporter = transporter,
             response => {
@@ -79,19 +80,24 @@ export class TransporterFormComponent implements OnInit {
       }
     });
   }
+
   save() {
     this.isDisabled = true;
     var result, userValue = this.form.value;
-    if (this.transporter.uuid) {
-      if (userValue.canceled == true && userValue.canceled_reason == null) {
+    if (this.transporter.uid) {
+      if (userValue.canceled == true && userValue.canceledReason == null) {
         this.showMsgErr2();
         this.isDisabled = false;
       } else {
-        userValue.transporter_id = this.transporter.transporter_id;
-        userValue.date_created = this.transporter.date_created;
-        userValue.uuid = this.transporter.uuid;
-        userValue.created_by = this.transporter.created_by;
-        userValue.updated_by = this.user;
+        userValue.transporterId = this.transporter.transporterId;
+        userValue.dateCreated = this.transporter.dateCreated;
+        userValue.uid = this.transporter.uid;
+        userValue.createdBy = this.transporter.createdBy;
+        userValue.updatedBy = {
+          uid: this.user.uid,
+          userId: this.user.userId
+        };
+
         result = this.transportersService.updateTransporter(userValue);
         result.subscribe(data => {
           if (data.text() == "Success") {
@@ -104,7 +110,11 @@ export class TransporterFormComponent implements OnInit {
         });
       }
     } else {
-      userValue.created_by = this.user;
+      userValue.createdBy = {
+        uid: this.user.uid,
+        userId: this.user.userId
+
+      };
       result = this.transportersService.createTransporter(userValue);
       result.subscribe(data => {
         if (data.text() == "Success") {
@@ -118,13 +128,17 @@ export class TransporterFormComponent implements OnInit {
       );
     }
   }
+
   showMsg(transporter) {
     this.toastService.show('Transportador: ' + transporter + ', salvo com sucesso!', 2000, 'green', null);
   }
+
   showMsgErr() {
     this.toastService.show('Este Transportador ja existe!', 2000, 'red', null);
   }
+
   showMsgErr2() {
     this.toastService.show('Escreva a razão para anular!', 2000, 'red', null);
   }
+  
 }
