@@ -43,8 +43,9 @@
             <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
             <mz-select-container style="width: 50px;">
               <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
-                <option value="15" selected>15</option>
-                <option value="50">50</option>
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+<option value="50">50</option>
                 <option value="100">100</option>
               </select>
             </mz-select-container>
@@ -177,8 +178,9 @@
       <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
       <mz-select-container style="width: 50px;">
         <select mz-select id="pageSize" [(ngModel)]="pageSize" (change)="searchSize()">
-          <option value="15" selected>15</option>
-          <option value="50">50</option>
+          <option value="10" selected>10</option>
+          <option value="25">25</option>
+<option value="50">50</option>
           <option value="100">100</option>
         </select>
       </mz-select-container>
@@ -199,7 +201,8 @@
         <select mz-select id="pageSize" [(ngModel)]="pageSize" (change)="searchSize2()">
           <option value="10" selected>10</option>
           <option value="25">25</option>
-          <option value="50">50</option>
+          <option value="25">25</option>
+<option value="50">50</option>
           <option value="100">100</option>
         </select>
       </mz-select-container>

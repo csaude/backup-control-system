@@ -45,7 +45,7 @@ export class EvaluationsComponent implements OnInit {
   ngOnInit() {
     this.name = "";
     this.openmrs_sql_dataset_uid = "";
-    this.pageSize=15;
+    this.pageSize=10
     this.getPage(1);
 
     this.formCtrlSub = this.nameValueControl.valueChanges

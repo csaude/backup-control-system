@@ -85,7 +85,7 @@ export class SyncsComponent implements OnInit {
   }
   ngOnInit() {
     this.total = 0;
-    this.pageSize = 15;
+    this.pageSize=10
     this.isHidden = "";
     this.server_id = "";
     this.from = "";
@@ -407,7 +407,7 @@ export class SyncsComponent implements OnInit {
               enditems: { columnWidth: 33, fontSize: 10 },
               syncerror: { columnWidth: 29, fontSize: 8 },
               syncer: { columnWidth: 28, fontSize: 10 },
-              observations: { columnWidth: 50, fontSize: 10 }
+              observations: { columnWidth: 80, fontSize: 10 }
 
             },
             theme: 'grid',

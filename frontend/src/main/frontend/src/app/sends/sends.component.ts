@@ -64,7 +64,7 @@ export class SendsComponent implements OnInit {
     this.isHidden = "";
     this.received = false;
     this.canceled = false;
-    this.pageSize=15;
+    this.pageSize=10
     this.from="";
     this.until="";
     this.district_id="";
@@ -91,7 +91,7 @@ export class SendsComponent implements OnInit {
       }
       return 0;
     });
-    this.pageSize=15;
+    this.pageSize=10
     this.getPage(1);
   }
 

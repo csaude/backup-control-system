@@ -81,7 +81,7 @@ export class IronkeysComponent implements OnInit {
     this.version = "";
     this.status = "";
     this.size = "";
-    this.pageSize=15;
+    this.pageSize=10
     this.getPage(1);
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
 

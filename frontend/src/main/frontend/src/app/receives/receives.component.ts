@@ -81,7 +81,7 @@ export class ReceivesComponent implements OnInit {
       .subscribe(data => {
         this.alldistricts = data.content;
       });
-    this.pageSize = 15;
+    this.pageSize=10
     this.getPageSend(1);
   }
 

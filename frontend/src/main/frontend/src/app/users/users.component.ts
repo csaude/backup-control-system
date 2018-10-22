@@ -51,7 +51,7 @@ export class UsersComponent implements OnInit {
   ngOnInit() {
     this.username = "";
     this.enabled=true;
-    this.pageSize=15;
+    this.pageSize=10
     this.getPage(1);
 
     this.formCtrlSub = this.nameValueControl.valueChanges

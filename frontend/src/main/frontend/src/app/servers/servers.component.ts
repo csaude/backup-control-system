@@ -88,7 +88,7 @@ export class ServersComponent implements OnInit {
     this.size = "";
     this.type = "";
     this.canceled = false;
-    this.pageSize=15;
+    this.pageSize=10
     this.getPage(1);
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
     this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');

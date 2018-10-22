@@ -99,7 +99,7 @@ export class DistrictsComponent implements OnInit {
     this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
     this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
     this.total = 0;
-    this.pageSize = 15;
+    this.pageSize=10
     this.getPage(1);
 
     this.formCtrlSub = this.nameValueControl.valueChanges

@@ -62,7 +62,7 @@ export class TransportersComponent implements OnInit {
   ngOnInit() {
     this.name = "";
     this.role = "";
-    this.pageSize=15;
+    this.pageSize=10
     this.canceled = false;
     this.getPage(1);
 
