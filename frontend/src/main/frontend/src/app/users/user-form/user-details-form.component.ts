@@ -109,7 +109,7 @@ export class UserDetailsFormComponent implements OnInit {
         return;
       } else {
         this.isHidden2 = 'hide';
-        this.usersService.findOneUserByUuid(uuid,"creatorName,updaterName,locale,userId,person.gender,person.othersNames,person.surname,person.email,person.phoneNumber,enabled,dateCreated,dateUpdated,creatorId,updaterId,uid,districts.fullName,districts.uid,authorities.description,lastLogin,username,person.personId,person.uid,districts.districtId,creatorId,authorities.authorityId").subscribe(
+        this.usersService.findOneUserByUuid(uuid,"creatorName,updaterName,locale,userId,person.gender,person.othersNames,person.surname,person.email,person.phoneNumber,enabled,dateCreated,dateUpdated,creatorId,updaterId,uid,districts.fullName,districts.uid,authorities.description,lastLogin,username,person.personId,person.uid,districts.districtId,creatorId,authorities.authorityId,notification").subscribe(
           user2 => {
             this.user = user2;
             var userdistrict = this.user.districts;

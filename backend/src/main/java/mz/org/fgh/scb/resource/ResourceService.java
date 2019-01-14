@@ -92,6 +92,14 @@ public interface ResourceService {
 	 * @return all emails of District Officers of the given District
 	 */
 	List<String> findUsersForSyncNotification(Long district_id);
+	
+	/**
+	 * Returns all emails of the given District and Regional Coordinators Officers of the given District and all HIS Members
+	 * 
+	 * @param district_id the District id
+	 * @return all emails of District Officers of the given District
+	 */
+	List<String> findUsersForSyncErrorNotification(Long district_id);
 
 	/**
 	 * Returns the number of Syncs in progress

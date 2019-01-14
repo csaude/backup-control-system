@@ -16,6 +16,7 @@ import { Server } from '../servers/shared/server';
 import { TranslateService } from 'ng2-translate';
 import * as alasql from 'alasql';
 import * as myGlobals from '../../globals';
+import {ExcelService} from '../resources/shared/excel.service';
 
 @Component({
   selector: 'app-syncs',
@@ -53,6 +54,8 @@ export class SyncsComponent implements OnInit {
   public user: Object[] = [];
   public nIntervId;
 
+  public calledBeforeOccurence;calledBeforeDuration:boolean=false;
+
   public pageSize: number;
 
   public options: Pickadate.DateOptions = {
@@ -69,6 +72,7 @@ export class SyncsComponent implements OnInit {
   public first; last; range: string;
 
   constructor(
+    private excelService:ExcelService,
     public datepipe: DatePipe,
     public syncsService: SyncsService,
     public translate: TranslateService,
@@ -211,6 +215,15 @@ export class SyncsComponent implements OnInit {
         );
     }
   }
+  
+  getOccurence(uid){
+    var sync = this.syncs.find(item => item.uid == uid);
+    if(sync.syncError==true||sync.serverFault==true||sync.laptopFault==true){
+      return 'Occurence';
+    }else{
+      return "";
+    }
+  }
 
   getSyncTimeline(start, end) {
     var time;
@@ -278,6 +291,7 @@ export class SyncsComponent implements OnInit {
   search() {
 
     var userValue = this.form.value;
+    
     if (userValue.district == "all" || userValue.district == null) {
       this.district_id = "";
     } else {
@@ -379,7 +393,7 @@ export class SyncsComponent implements OnInit {
           doc.setFontSize(18);
           doc.text('Lista de Sincronizações Registadas', 14, 22);
           doc.setFontSize(14);
-          doc.text(listSize + ' sincronizações, registadas de ' + this.from + ' até ' + this.until + '.', 14, 45);
+          doc.text(listSize + ' sincronizações, registadas de ' + this.getDate(this.from) + ' até ' + this.getDate(this.until) + '.', 14, 45);
           doc.setFontSize(11);
           doc.setTextColor(100);
           var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
@@ -416,18 +430,56 @@ export class SyncsComponent implements OnInit {
           });
           doc.setFontSize(11);
           doc.setTextColor(100);
-          doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
+          doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.othersNames + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
           doc.setTextColor(0, 0, 200);
           doc.textWithLink('© Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
 
           if (typeof doc.putTotalPages === 'function') {
             doc.putTotalPages(totalPagesExp);
           }
-          doc.save('SCB_Sincronizações efectuadas_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
+          doc.save('SCB_Lista de Sincronizações efectuadas_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
 
         }
       );
 
+  }
+
+  printListExcel() {
+    this.isHidden = "";
+
+    alasql.fn.datetime = function (dateStr) {
+      var date = new Date(dateStr);
+      return ("0" + date.getDate()).slice(-2)+"-"+("0" + (date.getMonth()+1)).slice(-2)+"-"+date.getFullYear();
+      ;
+    };
+
+    alasql.fn.time = function (dateStr) {
+      if(dateStr){
+      var date = new Date(dateStr);
+      return ("0" + date.getHours()).slice(-2)+":"+("0" + date.getMinutes()).slice(-2)
+      ;
+      }else{
+        return "";
+      }
+    };
+    
+    this.syncsService.findSyncs(1, 1000, this.district_id, this.server_id, this.from, this.until, "observation,syncId,startTime,startItemsToSend,startItemsToReceive,endTime,endItemsToSend,endItemsToReceive,observationHis,dateCreated,dateUpdated,syncError,createdBy.personName,updatedBy.personName,uid,serverFault,laptopFault,powerCut,canceled,district.name,server.name,server.type")
+      .subscribe(data => {
+        this.syncsreport = data.content;
+        this.syncsreport = alasql("SELECT district->name AS Distrito, server->name AS Servidor ,datetime(startTime) AS 'Data de Sincronização',time(startTime) AS 'Hora inicial', startItemsToSend AS 'Nº de itens por enviar na hora inicial', startItemsToReceive AS 'Nº de itens por receber na hora inicial',time(endTime) AS 'Hora final',endItemsToSend AS 'Nº de itens por enviar na hora final', endItemsToReceive AS 'Nº de itens por receber na hora final', CASE WHEN syncError=true THEN 'Sim' ELSE '' END AS 'Erro de Sincronização?', CASE WHEN serverFault=true THEN 'Sim' ELSE '' END AS 'Servidor avariou?', CASE WHEN laptopFault=true THEN 'Sim' ELSE '' END AS 'Laptop avariou?', CASE WHEN powerCut=true THEN 'Sim' ELSE '' END AS 'Corte de energia?' ,createdBy->personName AS 'Iniciada por',observation AS 'Observação M&A',observationHis AS 'Observação SIS', uid FROM ?syncsreport ORDER BY district->name ASC,startTime DESC ", [this.syncsreport]);
+        
+
+      },error=>{
+        this.isHidden = "hide";
+      },
+      ()=>{
+        this.isHidden = "hide";
+        this.excelService.exportAsExcelFile(this.syncsreport, 'SCB_Sincronizações efectuadas_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm'));
+      });
+  }
+
+  getDate(str: any){
+    return str.charAt(6)+""+str.charAt(7)+"/"+str.charAt(4)+""+str.charAt(5)+"/"+str.charAt(0)+""+str.charAt(1)+str.charAt(2)+""+str.charAt(3);
   }
 
 }

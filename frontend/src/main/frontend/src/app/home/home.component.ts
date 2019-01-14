@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Nº de backups efectuados no mês anterior recebidos',
+      text: 'Nº de backups efectuados no mês anterior recebidos no SIS',
       display: true
     },
     scales: {
@@ -98,7 +98,7 @@ export class HomeComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     title: {
-      text: 'Nº de backups efectuados neste mês recebidos',
+      text: 'Nº de backups efectuados neste mês recebidos no SIS',
       display: true
     },
     scales: {

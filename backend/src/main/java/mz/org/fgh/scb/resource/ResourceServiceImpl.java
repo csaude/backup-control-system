@@ -108,5 +108,11 @@ public class ResourceServiceImpl implements ResourceService {
 	public List<Object[]> findDistrictsInfo() {
 		return resourceRepository.findDistrictsInfo();
 	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<String> findUsersForSyncErrorNotification(Long district_id) {
+		return resourceRepository.findUsersForSyncErrorNotification(district_id);
+	}
 	
 }

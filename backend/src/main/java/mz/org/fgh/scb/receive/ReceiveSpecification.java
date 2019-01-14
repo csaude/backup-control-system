@@ -45,7 +45,7 @@ public class ReceiveSpecification implements Specification<Receive> {
 			if (criteria.getKey().equals("backupDate")) {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				try {
-					return builder.greaterThanOrEqualTo(root.<Date>get("send").get("backupdate"), dateFormat.parse(criteria.getValue().toString()));
+					return builder.greaterThanOrEqualTo(root.<Date>get("send").get("backupDate"), dateFormat.parse(criteria.getValue().toString()));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -56,7 +56,7 @@ public class ReceiveSpecification implements Specification<Receive> {
 			if (criteria.getKey().equals("backupDate")) {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				try {
-					return builder.lessThanOrEqualTo(root.<Date>get("send").get("backupdate"), dateFormat.parse(criteria.getValue().toString()));
+					return builder.lessThanOrEqualTo(root.<Date>get("send").get("backupDate"), dateFormat.parse(criteria.getValue().toString()));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}

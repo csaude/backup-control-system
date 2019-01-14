@@ -44,11 +44,11 @@
   </div>
 </form>
 
-<div class="col s12 " style="margin-top: -20px;">
-  <div class="progress {{isHidden}}">
+<div class="card col s12" style="margin-top: -20px;">
+  <div class="progress {{isHidden}}"  style="margin-top: 35px; margin-bottom: 0;">
     <div class="indeterminate"></div>
   </div>
-  <table class=" card bordered responsive-table highlight" *ngIf="isHidden=='hide'">
+  <table class="bordered responsive-table highlight">
     <thead>
       <tr>
         <th>{{ "fullname" | translate }}</th>
@@ -59,7 +59,7 @@
         <th></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody *ngIf="isHidden=='hide'">
       <tr *ngFor="let user of users">
         <td>{{ user.person.othersNames }} {{ user.person.surname }}</td>
         <td>{{ user.username }}</td>
@@ -108,10 +108,11 @@
 
 </ul>
 
+<!--
 <ul class="pagination" *ngIf="isHidden==''">
   {{ "loading" | translate }}
 </ul>
-
+-->
 <mz-modal #basicModal>
   <mz-modal-header>
     <i mz-icon [align]="'left'" [icon]="'warning'" [size]="'small'">
@@ -201,7 +202,7 @@
 
 <div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
   <a class="btn-floating  btn-large green">
-    <i class="material-icons">menu</i>
+    <i class="material-icons">more_vert</i>
   </a>
   <ul>
     <li>

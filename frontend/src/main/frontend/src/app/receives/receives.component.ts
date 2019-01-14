@@ -345,10 +345,10 @@ export class ReceivesComponent implements OnInit {
     };
 
 
-    this.receivesService.findAllReceives(1, 1000, this.canceled, this.from, this.until, this.district_id, "createdBy.personName,send.observation,send.district.fullName,send.createdBy.personName,send.backupDate,send.updateFinished,send.validationFinished,send.syncFinished,send.crossDhis2Finished,send.crossIdartFinished,send.dateCreated,dateCreated")
+    this.receivesService.findAllReceives(1, 1000, this.canceled, this.from, this.until, this.district_id, "createdBy.personName,send.observation,send.district.fullName,send.createdBy.personName,send.backupDate,send.updateFinished,send.validationFinished,send.syncFinished,send.crossDhis2Finished,send.crossIdartFinished,send.dateCreated,dateCreated,send.idartBackupDate")
       .subscribe(data => {
         this.receivesreport = data.content;
-        this.receivesreport = alasql("SELECT CONCAT(createdBy->personName,'\n',datetime(dateCreated)) AS receiver ,send->observation AS obsd,send->district->fullName AS districtname,CONCAT(send->createdBy->personName,'\n',datetime(send->dateCreated)) AS sender,datetime(send->backupDate) AS backup_date_f,CASE WHEN send->updateFinished==true THEN 'Sim' ELSE 'Não' END AS at ,CASE WHEN send->validationFinished==true THEN 'Sim' ELSE 'Não' END AS vt, CASE WHEN send->syncFinished==true THEN 'Sim' ELSE 'Não' END AS st, CASE WHEN send->crossDhis2Finished==true THEN 'Sim' ELSE 'Não' END AS dhis2,CASE WHEN send->crossIdartFinished==true THEN 'Sim' ELSE 'Não' END AS idart FROM ?receivesreport", [this.receivesreport])
+        this.receivesreport = alasql("SELECT CONCAT(createdBy->personName,'\n',datetime(dateCreated)) AS receiver ,send->observation AS obsd,send->district->fullName AS districtname,CONCAT(send->createdBy->personName,'\n',datetime(send->dateCreated)) AS sender,CONCAT(datetime(send->backupDate),'\n',CASE WHEN send->idartBackupDate IS NOT NULL THEN CONCAT('iDART: ',datetime(send->idartBackupDate)) ELSE '' END) AS backup_date_f,CASE WHEN send->updateFinished==true THEN 'Sim' ELSE 'Não' END AS at ,CASE WHEN send->validationFinished==true THEN 'Sim' ELSE 'Não' END AS vt, CASE WHEN send->syncFinished==true THEN 'Sim' ELSE 'Não' END AS st, CASE WHEN send->crossDhis2Finished==true THEN 'Sim' ELSE 'Não' END AS dhis2,CASE WHEN send->crossIdartFinished==true THEN 'Sim' ELSE 'Não' END AS idart FROM ?receivesreport", [this.receivesreport])
         total = data.content.length;
 
         if (this.district_id == '') {
@@ -392,7 +392,7 @@ export class ReceivesComponent implements OnInit {
           doc.setFontSize(18);
           doc.text('Lista de Backups Recebidos', 14, 22);
           doc.setFontSize(14);
-          doc.text(listSize + ' backups, efectuados de ' + this.from + ' até ' + this.until + '.', 14, 45);
+          doc.text(listSize + ' backups, efectuados de ' + this.getDate(this.from) + ' até ' + this.getDate(this.until) + '.', 14, 45);
           doc.setFontSize(11);
           doc.setTextColor(100);
           var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
@@ -434,16 +434,21 @@ export class ReceivesComponent implements OnInit {
           });
           doc.setFontSize(11);
           doc.setTextColor(100);
-          doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
+          doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.othersNames + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
           doc.setTextColor(0, 0, 200);
           doc.textWithLink('© Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
 
           if (typeof doc.putTotalPages === 'function') {
             doc.putTotalPages(totalPagesExp);
           }
-          doc.save('SCB_Backups recebidos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
+          doc.save('SCB_Lista de Backups recebidos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
 
         }
       );
   }
+
+  getDate(str: any){
+    return str.charAt(6)+""+str.charAt(7)+"/"+str.charAt(4)+""+str.charAt(5)+"/"+str.charAt(0)+""+str.charAt(1)+str.charAt(2)+""+str.charAt(3);
+  }
+
 }

@@ -24,10 +24,6 @@
           <div class="col s12 l2 m2">{{ "gender" | translate }}:</div>
           <div class="col s12 l10 m10">{{user.person.gender=='M'?'Masculino':'Feminino'}}</div>
         </div>
-        <div class="row"  style="margin-top: -11px;">
-          <div class="col s12 l2 m2">{{ "lastlogin" | translate }}:</div>
-          <div class="col s12 l10 m10">{{user.person.lastLogin}}</div>
-        </div>
         <div class="row" *ngIf="user.person.email!=null" style="margin-top: -11px;">
           <div class="col s12 l2 m2">{{ "email" | translate }}:</div>
           <div class="col s12 l10 m10">{{user.person.email}}</div>

@@ -143,9 +143,29 @@ export class SyncFormComponent implements OnInit {
           .subscribe(
             sync => {
               this.sync = sync;
-              this.sync.startTime = ("0" + new Date(this.sync.startTime).getHours()).slice(-2) + ":" + ("0" + new Date(this.sync.startTime).getMinutes()).slice(-2)
-              if(this.sync.endTime!=null){
-                this.sync.endTime = ("0" + new Date(this.sync.endTime).getHours()).slice(-2) + ":" + ("0" + new Date(this.sync.endTime).getMinutes()).slice(-2)  
+
+              var date = new Date();
+              date.setDate(date.getDate() + 1);
+              date.setHours(0);
+              date.setMinutes(0);
+              date.setSeconds(0);
+              var date2 = new Date();
+              date2.setDate(date2.getDate());
+              date2.setHours(0);
+              date2.setMinutes(0);
+              date2.setSeconds(0);
+              if (new Date(this.sync.startTime) > date2 && new Date(this.sync.startTime) < date) {
+                
+              }
+              else {
+                this.router.navigate(['not-found']);
+              }
+
+              if (new Date(this.sync.startTime))
+
+                this.sync.startTime = ("0" + new Date(this.sync.startTime).getHours()).slice(-2) + ":" + ("0" + new Date(this.sync.startTime).getMinutes()).slice(-2)
+              if (this.sync.endTime != null) {
+                this.sync.endTime = ("0" + new Date(this.sync.endTime).getHours()).slice(-2) + ":" + ("0" + new Date(this.sync.endTime).getMinutes()).slice(-2)
               }
               if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
                 this.serversService.findServers("", "", "", "", false, "", "uid,name,serverId,district.name,district.districtId,district.uid")
@@ -196,185 +216,193 @@ export class SyncFormComponent implements OnInit {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     if (this.sync.uid) {
 
-      if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date() || new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000")> new Date()) {
+      if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date() || new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000") > new Date()) {
         this.showMsgErr6();
         this.isDisabled = false;
       } else
-      if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000")) {
-        this.showMsgErr4();
-        this.isDisabled = false;
-      } else
-        if (userValue.canceled == true && userValue.canceledReason == null) {
-          this.showMsgErr3();
+        if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000")) {
+          this.showMsgErr4();
           this.isDisabled = false;
-        }
-        else if (userValue.endItemsToSend > userValue.startItemsToSend || userValue.endItemsToReceive > userValue.startItemsToReceive) {
-          this.showMsgErr5();
-          this.isDisabled = false;
-        } 
-        else if ((userValue.endTime!=null&&userValue.endTime!="") &&( userValue.endItemsToSend==null || userValue.endItemsToReceive==null)) {
-          this.showMsgErr7();
-          this.isDisabled = false;
-        }
-        else {
+        } else
+          if (userValue.canceled == true && userValue.canceledReason == null) {
+            this.showMsgErr3();
+            this.isDisabled = false;
+          }
+          else if (userValue.endItemsToSend > userValue.startItemsToSend || userValue.endItemsToReceive > userValue.startItemsToReceive) {
+            this.showMsgErr5();
+            this.isDisabled = false;
+          }
+          else if (userValue.endItemsToSend < 0 || userValue.endItemsToReceive < 0 ||  userValue.startItemsToReceive < 0 || userValue.startItemsToSend < 0) {
+            this.showMsgErr5n();
+            this.isDisabled = false;
+          }
+          else if ((userValue.endTime != null && userValue.endTime != "") && (userValue.endItemsToSend == null || userValue.endItemsToReceive == null)) {
+            this.showMsgErr7();
+            this.isDisabled = false;
+          }
+          else {
 
-          if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
+            if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
 
 
-            userValue.syncId = this.sync.syncId;
-            userValue.dateCreated = this.sync.dateCreated;
-            userValue.uuid = this.sync.uid;
-            userValue.createdBy = this.sync.createdBy;
-            userValue.updatedBy = {
-              person: {
-                othersNames: user.person.othersNames,
-                surname: user.person.surname,
-                phoneNumber: user.person.phoneNumber
-              },
-              uid: user.uid,
-              userId: user.userId
-            };
-            userValue.observation = this.sync.observation;
-            userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
+              userValue.syncId = this.sync.syncId;
+              userValue.dateCreated = this.sync.dateCreated;
+              userValue.uuid = this.sync.uid;
+              userValue.createdBy = this.sync.createdBy;
+              userValue.updatedBy = {
+                person: {
+                  othersNames: user.person.othersNames,
+                  surname: user.person.surname,
+                  phoneNumber: user.person.phoneNumber
+                },
+                uid: user.uid,
+                userId: user.userId
+              };
+              userValue.observation = this.sync.observation;
+              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
 
-            if (userValue.endTime != null && userValue.endTime != "") {
-              userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
+              if (userValue.endTime != null && userValue.endTime != "") {
+                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
+              }
+              else {
+                userValue.endItemsToSend = null;
+                userValue.endItemsToSend = null;
+                userValue.endTime = null;
+              }
+
+              result = this.syncsService.updateSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
+              this.showMsg();
+              this.nav.callMethodOfSecondComponent();
+
+
+
+
+            } else if (this.ROLE_SIS) {
+
+              userValue.syncId = this.sync.syncId;
+              userValue.dateCreated = this.sync.dateCreated;
+              userValue.uuid = this.sync.uid;
+              userValue.createdBy = this.sync.createdBy;
+              userValue.updatedBy = {
+                person: {
+                  othersNames: user.person.othersNames,
+                  surname: user.person.surname,
+                  phoneNumber: user.person.phoneNumber
+                },
+                uid: user.uid,
+                userId: user.userId
+              };
+              userValue.observationHis = this.sync.observationHis;
+
+              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
+
+              if (userValue.endTime != null && userValue.endTime != "") {
+                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
+              }
+              else {
+                userValue.endItemsToSend = null;
+                userValue.endItemsToSend = null;
+                userValue.endTime = null;
+              }
+
+
+
+              result = this.syncsService.updateSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
+              this.showMsg();
+              this.nav.callMethodOfSecondComponent();
+
             }
-            else {
-              userValue.endItemsToSend = null;
-              userValue.endItemsToSend = null;
-              userValue.endTime = null;
-            }
-
-            result = this.syncsService.updateSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
-            this.showMsg();
-            this.nav.callMethodOfSecondComponent();
-
-
-
-
-          } else if (this.ROLE_SIS) {
-
-            userValue.syncId = this.sync.syncId;
-            userValue.dateCreated = this.sync.dateCreated;
-            userValue.uuid = this.sync.uid;
-            userValue.createdBy = this.sync.createdBy;
-            userValue.updatedBy = {
-              person: {
-                othersNames: user.person.othersNames,
-                surname: user.person.surname,
-                phoneNumber: user.person.phoneNumber
-              },
-              uid: user.uid,
-              userId: user.userId
-            };
-            userValue.observationHis = this.sync.observationHis;
-
-            userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
-
-            if (userValue.endTime != null && userValue.endTime != "") {
-              userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
-            }
-            else {
-              userValue.endItemsToSend = null;
-              userValue.endItemsToSend = null;
-              userValue.endTime = null;
-            }
-
-
-
-            result = this.syncsService.updateSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
-            this.showMsg();
-            this.nav.callMethodOfSecondComponent();
 
           }
-
-        }
 
 
     } else {
 
 
-      if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date() || new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000")> new Date()) {
+      if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date() || new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000") > new Date()) {
         this.showMsgErr6();
         this.isDisabled = false;
       } else
-      if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000")) {
-        this.showMsgErr4();
-        this.isDisabled = false;
-      } else
-        if (userValue.canceled == true && userValue.canceledReason == null) {
-          this.showMsgErr3();
+        if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000")) {
+          this.showMsgErr4();
           this.isDisabled = false;
-        }
-        else if (userValue.endItemsToSend > userValue.startItemsToSend || userValue.endItemsToReceive > userValue.startItemsToReceive) {
-          this.showMsgErr5();
-          this.isDisabled = false;
-        } 
-        else if ((userValue.endTime!=null&&userValue.endTime!="") &&( userValue.endItemsToSend==null || userValue.endItemsToReceive==null)) {
-          this.showMsgErr7();
-          this.isDisabled = false;
-        }
-        else {
+        } else
+          if (userValue.canceled == true && userValue.canceledReason == null) {
+            this.showMsgErr3();
+            this.isDisabled = false;
+          }
+          else if (userValue.endItemsToSend > userValue.startItemsToSend || userValue.endItemsToReceive > userValue.startItemsToReceive) {
+            this.showMsgErr5();
+            this.isDisabled = false;
+          }
+          else if (userValue.endItemsToSend < 0 || userValue.endItemsToReceive < 0 ||  userValue.startItemsToReceive < 0 || userValue.startItemsToSend < 0) {
+            this.showMsgErr5n();
+            this.isDisabled = false;
+          }
+          else if ((userValue.endTime != null && userValue.endTime != "") && (userValue.endItemsToSend == null || userValue.endItemsToReceive == null)) {
+            this.showMsgErr7();
+            this.isDisabled = false;
+          }
+          else {
 
-          if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
+            if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
 
-            userValue.createdBy = {
-              person: {
-                othersNames: user.person.othersNames,
-                surname: user.person.surname,
-                phoneNumber: user.person.phoneNumber
-              },
-              uid: user.uid,
-              userId: user.userId
-            };
+              userValue.createdBy = {
+                person: {
+                  othersNames: user.person.othersNames,
+                  surname: user.person.surname,
+                  phoneNumber: user.person.phoneNumber
+                },
+                uid: user.uid,
+                userId: user.userId
+              };
 
-            userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
+              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
 
-            if (userValue.endTime != null && userValue.endTime != "") {
-              userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
+              if (userValue.endTime != null && userValue.endTime != "") {
+                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
+              }
+              else {
+                userValue.endItemsToSend = null;
+                userValue.endItemsToSend = null;
+                userValue.endTime = null;
+              }
+
+
+              result = this.syncsService.createSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
+              this.showMsg();
+              this.nav.callMethodOfSecondComponent();
+
+            } else if (this.ROLE_SIS) {
+
+              userValue.createdBy = {
+                person: {
+                  othersNames: user.person.othersNames,
+                  surname: user.person.surname,
+                  phoneNumber: user.person.phoneNumber
+                },
+                uid: user.uid,
+                userId: user.userId
+              };
+
+              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
+
+              if (userValue.endTime != null && userValue.endTime != "") {
+                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
+              }
+              else {
+                userValue.endItemsToSend = null;
+                userValue.endItemsToSend = null;
+                userValue.endTime = null;
+              }
+
+              result = this.syncsService.createSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
+              this.showMsg();
+
             }
-            else {
-              userValue.endItemsToSend = null;
-              userValue.endItemsToSend = null;
-              userValue.endTime = null;
-            }
-
-
-            result = this.syncsService.createSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
-            this.showMsg();
-            this.nav.callMethodOfSecondComponent();
-
-          } else if (this.ROLE_SIS) {
-
-            userValue.createdBy = {
-                    person: {
-                      othersNames: user.person.othersNames,
-                      surname: user.person.surname,
-                      phoneNumber: user.person.phoneNumber
-                    },
-                    uid: user.uid,
-                    userId: user.userId
-                  };
-
-                  userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
-      
-                  if (userValue.endTime != null && userValue.endTime != "") {
-                    userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
-                  }
-                  else {
-                    userValue.endItemsToSend = null;
-                    userValue.endItemsToSend = null;
-                    userValue.endTime = null;
-                  }
-
-            result = this.syncsService.createSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
-            this.showMsg();
 
           }
-
-        }
-      }
+    }
 
   }
 
@@ -399,6 +427,10 @@ export class SyncFormComponent implements OnInit {
 
   showMsgErr5() {
     this.toastService.show('Nº de itens no fim da sincronização não deve ser maior que no inicio.', 2000, 'red', null);
+  }
+
+  showMsgErr5n() {
+    this.toastService.show('Nº de itens não deve ser inferior a 0.', 2000, 'red', null);
   }
 
 }

@@ -297,9 +297,9 @@
                 <label for="canceled">{{ "cancelit" | translate }}</label>
               </div>
               <div class="input-field col s12 l8 m8" *ngIf="receive.canceled">
-                <input id="canceled_reason" type="text" class="validate" [(ngModel)]="receive.canceled_reason"
-                  formControlName="canceled_reason">
-                <label for="canceled_reason" [class.active]="send.canceled_reason">
+                <input id="canceledReason" type="text" class="validate" [(ngModel)]="receive.canceledReason"
+                  formControlName="canceledReason">
+                <label for="canceledReason" [class.active]="receive.canceledReason">
                   {{ "cancelitreason" | translate }}
                 </label>
               </div>

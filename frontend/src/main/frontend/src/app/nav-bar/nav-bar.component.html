@@ -81,16 +81,17 @@
           <i class="material-icons">menu</i>
         </a>
         <ul class="right hide-on-med-and-down">
+
           <li class="{{activeDashboard}}">
-            <a routerLink="/home" (click)="setDashboard()">{{ "dashboard" | translate }}</a>
+            <a routerLink="/home" (click)="setDashboard()"><i class="material-icons left">dashboard</i>{{ "dashboard" | translate }}</a>
           </li>
 
           <li class="{{activeBackup}}" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
             <a id="btn-dropdown-demo1">
 
-              <a class="btn-floating pulseb btn-small" *ngIf="ROLE_SIS&&total>0"><i class="material-icons" mz-tooltip
+              <i  *ngIf="ROLE_SIS&&total>0" class="material-icons left" mz-tooltip
                   [tooltip]="total+' backup(s) por receber'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
-              </a>
+             
               <i class="material-icons left" *ngIf="ROLE_SIS&&(total==0||total==null)" mz-tooltip [tooltip]="'Nenhum backup por receber'"
                 [position]="'bottom'" [html]="false" [delay]="100">notifications_none</i>
 
@@ -102,8 +103,8 @@
           <li class="{{activeSync}}" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
             <a id="btn-dropdown-demo4">
 
-              <a class="btn-floating pulseb orange btn-small" *ngIf="(ROLE_SIS||ROLE_ODMA)&&total2>0"><i class="material-icons" mz-tooltip [tooltip]="total2+' sincronização(ões) em progresso'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
-              </a>
+            <i *ngIf="(ROLE_SIS||ROLE_ODMA)&&total2>0" class="material-icons left" mz-tooltip [tooltip]="total2+' sincronização(ões) em progresso'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
+             
             <i class="material-icons left" *ngIf="(ROLE_SIS||ROLE_ODMA)&&(total2==0||total2==null)" mz-tooltip [tooltip]="'Nenhuma sincronização em progresso'" [position]="'bottom'" [html]="false" [delay]="100">notifications_none</i>
 
               {{ "sync" | translate }}
@@ -195,7 +196,7 @@
     </mz-sidenav-collapsible-header>
     <mz-sidenav-collapsible-content>
       <mz-sidenav-link>
-        <a (click)="setUser()" *ngIf="isAuth" [routerLink]="['/user/profile', user.uid]">Perfil</a>
+        <a (click)="setUser()" *ngIf="isAuth" [routerLink]="['/users/profile', user.uid]">Perfil</a>
       </mz-sidenav-link>
       <mz-sidenav-link>
         <a (click)="logout()">Sair</a>

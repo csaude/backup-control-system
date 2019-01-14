@@ -33,10 +33,35 @@
         </div>
       </div>
       <div class="card-action right-align">
+
+          <div class="col s8 right-align">
+
+          <div class="preloader-wrapper small active" *ngIf="isDisabled">
+              <div class="spinner-layer spinner-green-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                  <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="col s4 right-align">
+
         <button class="btn waves-effect waves-light" type="submit" [disabled]="isDisabled">
           Entrar
         </button>
       </div>
+      
+      <div class="section"></div>
+      </div>
     </form>
   </div>
+ 
 </div>

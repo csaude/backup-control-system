@@ -46,14 +46,14 @@
   </div>
 </form>
 
-<div class="col s12 " style="margin-top: -35px;">
-  <div class="progress {{isHidden}}">
+<div class="card col s12 " style="margin-top: -20px;">
+  <div class="progress {{isHidden}}"  style="margin-top: 35px; margin-bottom: 0;">
     <div class="indeterminate"></div>
   </div>
-  <div class="progress {{isHiddenConnection}}">
+  <div class="progress {{isHiddenConnection}}"  style="margin-top: 35px; margin-bottom: 0;">
     <div class="indeterminate"></div>
   </div>
-  <table class="card bordered responsive-table highlight" *ngIf="isHidden=='hide'">
+  <table class="bordered responsive-table highlight" >
     <thead>
       <tr>
         <th>{{ "district" | translate }}</th>
@@ -66,7 +66,7 @@
         <th></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody *ngIf="isHidden=='hide'">
       <tr style="line-height: 15px;" *ngFor="let district of districts">
         <td>{{ district.fullName }}</td>
         <td>
@@ -157,11 +157,11 @@
   <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
 
 </ul>
-
+<!--
 <ul class="pagination" *ngIf="isHidden==''">
   {{ "loading" | translate }}
 </ul>
-
+-->
 <span class="pagination valign-center">{{counter}}</span>
 
 <mz-modal #basicModal>
@@ -572,31 +572,31 @@
 </mz-modal>
 
 <div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
-  <a class="btn-floating  btn-large green">
-    <i class="material-icons">menu</i>
+  <a class="btn-floating btn-large green">
+    <i class="material-icons">more_vert</i>
   </a>
   <ul>
     <li *ngIf="ROLE_SIS">
         <a mz-tooltip [tooltip]="'Baixar completude das bases de dados'" [position]="'left'" [html]="false" [delay]="100" (click)="dataCompleteness()"
-          class="btn-floating  waves-effect waves-light  orange {{isDisabledt}}">
+          class="btn-floating  waves-effect orange {{isDisabledt}}">
           <i class="material-icons">file_download</i>
         </a>
       </li>
       <li>
           <a mz-tooltip [tooltip]="'&Uacute;ltima verificação de conexão com OpenMRS: <span class=\'yellow-text\'>'+getLastCheck()+'</span>'"
-            [position]="'left'" [html]="true" [delay]="100" (click)="checkConnection()" class="btn-floating  waves-effect waves-light  blue {{isDisabledt}}">
+            [position]="'left'" [html]="true" [delay]="100" (click)="checkConnection()" class="btn-floating  waves-effect  blue {{isDisabledt}}">
             <i class="material-icons">sync</i>
           </a>
         </li>
     <li>
       <a mz-tooltip tooltip="{{ 'downloadlist' | translate}}" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
-        class="btn-floating  waves-effect waves-light  orange {{isDisabledt}}">
+        class="btn-floating  waves-effect orange {{isDisabledt}}">
         <i class="material-icons">file_download</i>
       </a>
     </li>
     <li *ngIf="ROLE_SIS">
       <a mz-tooltip tooltip="{{ 'add' | translate}}" [position]="'left'" [html]="false" [delay]="100" routerLink="/districts/new"
-        class="btn-floating  waves-effect waves-light  blue">
+        class="btn-floating  waves-effect blue">
         <i class="material-icons">add</i>
       </a>
     </li>

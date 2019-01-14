@@ -15,14 +15,14 @@
         {{ 'searchbyname' | translate }}
       </label>
     </div>
-    <div class="input-field col s12 m2 l2">
+    <div class="input-field col s12 m3 l3">
       <input id="name" type="text" placeholder="{{ 'searchbyopenmrsuuid' | translate }}" class="validate" [formControl]="openmrsValueControl">
       <label for="name">
         {{ 'searchbyopenmrsuuid' | translate }}
       </label>
     </div>
 
-    <div class="col s12 m8 l8" style="margin-top: -15px;">
+    <div class="col s12 m7 l7" style="margin-top: -15px;">
         <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
 
           <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
@@ -49,10 +49,10 @@
 
 
 <div class="col s12 card" style="margin-top: -20px;">
-  <div class="progress {{isHidden}}">
+  <div class="progress {{isHidden}}" style="margin-top: 35px; margin-bottom: 0;">
     <div class="indeterminate"></div>
   </div>
-  <table class="bordered responsive-table highlight" *ngIf="isHidden=='hide'" >
+  <table class="bordered responsive-table highlight" >
     <thead>
       <tr>
         <th>{{ "evaluationname" | translate }}</th>
@@ -61,7 +61,7 @@
         <th></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody *ngIf="isHidden=='hide'">
       <tr *ngFor="let evaluation of evaluations">
         <td>{{ evaluation.name }}</td>
         <td>{{ evaluation.openmrsSqlUuid }}</td>
@@ -107,11 +107,11 @@
     <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
   
   </ul>
-  
+  <!--
   <ul class="pagination" *ngIf="isHidden==''">
     {{ "loading" | translate }}
   </ul>
-
+-->
 <mz-modal #basicModal>
   <mz-modal-header>
     <i mz-icon [align]="'left'" [icon]="'warning'" [size]="'small'">
@@ -167,12 +167,12 @@
 
 <div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
     <a class="btn-floating  btn-large green">
-      <i class="material-icons">menu</i>
+      <i class="material-icons">more_vert</i>
     </a>
     <ul>
       <li>
         <a mz-tooltip tooltip="{{'add' | translate}}" [position]="'left'" [html]="false" [delay]="100" routerLink="/evaluations/new"
-          class="btn-floating  waves-effect waves-light  blue">
+          class="btn-floating  waves-effect  blue">
           <i class="material-icons">add</i>
         </a>
       </li>

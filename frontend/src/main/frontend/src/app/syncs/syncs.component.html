@@ -74,13 +74,13 @@
 </form>
 
 <div class="col s12 card" style="margin-top: -20px;">
-  <div class="progress {{isHidden}}">
+  <div class="progress {{isHidden}}" style="margin-top: 35px; margin-bottom: 0;">
     <div class="indeterminate"></div>
   </div>
-  <table class="bordered responsive-table highlight" *ngIf="isHidden=='hide'">
+  <table class="bordered responsive-table highlight">
     <thead>
       <tr>
-        <th>{{ "servername" | translate }}</th>
+        <th>{{ "district" | translate }} / {{ "servername" | translate }}</th>
         <th>{{ "sync_time" | translate }}</th>
         <th>{{ "duration" | translate }}</th>
         <th>{{ "final_state" | translate }}</th>
@@ -88,12 +88,9 @@
         <th></th>
       </tr>
     </thead>
-    <tbody>
-      <tr style="line-height: 15px;" *ngFor="let sync of syncs">
-        <td>{{ sync.server.name }}
-          <br>
-          <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.district.name }}</span>
-        </td>
+    <tbody  *ngIf="isHidden=='hide'">
+      <tr  style="line-height: 15px;" *ngFor="let sync of syncs">
+        <td>{{ sync.district.name }} / {{ sync.server.name }}</td>
        <td>
           {{getSyncTimeline(sync.startTime,sync.endTime)}}
         </td>
@@ -112,7 +109,7 @@
           </span>
         </td>
         <td *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='progress'&&getSyncExpires(sync.startTime)==false">
-          <span style="float: left;text-align: center; margin-left: 0px;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span>
+          <span style="float: left;text-align: center; margin-left: 0px; height: 15;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span>
           <div class="progress" style="width: 99px; margin-top: -7px;">
             <div class="indeterminate"></div>
           </div>
@@ -125,7 +122,8 @@
 
           <a mz-tooltip tooltip="{{'details' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setSync(sync.uid)"
             (click)="basicModal2.openModal()" [routerLink]="">
-            <i class="material-icons icon-green">info</i>
+            <i *ngIf="getOccurence(sync.uid)==''" class="material-icons icon-green">info</i>
+            <i *ngIf="getOccurence(sync.uid)!=''" class="material-icons icon-red">info</i>
           </a>
           &nbsp;
           <a *ngIf="(ROLE_SIS||ROLE_ODMA)&&getSyncExpires(sync.startTime)==false" mz-tooltip tooltip="{{'edit' | translate}}"
@@ -163,11 +161,11 @@
   <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
 
 </ul>
-
+<!--
 <ul class="pagination" *ngIf="isHidden==''">
   {{ "loading" | translate }}
 </ul>
-
+-->
 <mz-modal #basicModal2 [fixedFooter]="true">
   <mz-modal-header>
     <h4>{{ "syncdetails" | translate }}</h4>
@@ -273,11 +271,17 @@
 
 <div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
   <a class="btn-floating  btn-large green">
-    <i class="material-icons">menu</i>
+    <i class="material-icons">more_vert</i>
   </a>
   <ul>
+      <li>
+          <a mz-tooltip tooltip="{{'downloadlist' | translate}} Excel" [position]="'left'" [html]="false" [delay]="100" (click)="printListExcel()"
+            class="btn-floating  waves-effect waves-light  orange">
+            <i class="material-icons">file_download</i>
+          </a>
+        </li>
     <li>
-      <a mz-tooltip [tooltip]="'Baixar lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
+      <a mz-tooltip tooltip="{{'downloadlist' | translate}} PDF" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
         class="btn-floating  waves-effect waves-light  orange">
         <i class="material-icons">file_download</i>
       </a>

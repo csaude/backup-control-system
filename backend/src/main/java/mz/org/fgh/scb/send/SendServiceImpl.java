@@ -7,6 +7,7 @@ package mz.org.fgh.scb.send;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.mail.DefaultAuthenticator;
@@ -119,18 +120,18 @@ public class SendServiceImpl implements SendService {
 							email.addBcc(temp[i] + "");
 							i++;
 						}
-						email.setFrom("scb.fgh@gmail.com", "SCB");
-						email.setSubject("[SCB-" + env.getProperty("org") + "] Envio de backup, " + district + "-" + data + " (No Reply)");
+						email.setFrom("scb.fgh@gmail.com", "SCB-"+ env.getProperty("org")+" Message [No Reply]");
+						email.setSubject("[SCB-" + env.getProperty("org") + "] Envio de backup: " + district + "-" + data);
 						email.setHtmlMsg("" + "<table border='1' style='border-color:#EEEEEE;' cellspacing='0' cellpadding='5' style='width:400px;'>"
-								+ "<thead><tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'>Novo registo de Envio de Backup</th></tr><thead>" + "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Distrito:</td><td>"
+								+ "<thead><tr><td colspan='2' style='text-align:center;background-color:#0288D1;color:white;'>Novo registo de Envio de Backup</td></tr><thead>" + "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Distrito:</td><td>"
 								+ district + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Data do Backup:</td><td>" + data + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Actualização Terminada?</td><td>" + at + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Sincronização Terminada?</td><td>" + st + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Cruzamento com DHIS2?</td><td>" + c_dhis + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Cruzamento com iDART?</td><td>" + c_idart + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Validação Terminada?</td><td>" + vt + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Incluiu backup de\niDART?</td><td>" + idart_backup + "</td></tr>" + "<tr><td bgcolor='#F3F3F3' aling='top'>Observação Distrital:</td><td>" + obs + "</td></tr>"
+								+ "<tr><td bgcolor='#F3F3F3'>Inclui backup de\niDART?</td><td>" + idart_backup + "</td></tr>" + "<tr><td bgcolor='#F3F3F3' aling='top'>Observação Distrital:</td><td>" + obs + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Enviado por:</td><td>" + send.getCreatedBy().getPersonName()+ "<br>("
 								+ send.getCreatedBy().getPerson().getPhoneNumber() + ")</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Transportado por:</td><td>"+ transporter_role + ":<br>"+ transporter_name + "<br>(" + transporter_phone
 								+ ")" + "</td></tr>"
-								+ "<tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>Sistema de Controle de Backup</span></a><br/>Mantido por: <a href='mailto:his@fgh.org.mz'><span style='color:#00FFFF;'>his@fgh.org.mz</span></a></th></tr>"
+								+ "<tr><td colspan='2' style='text-align:center;background-color:#0288D1;color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>SCB</span></a><br/>" +Calendar.getInstance().get(Calendar.YEAR)+" © <a href='mailto:sis@fgh.org.mz'><span style='color:#00FFFF;'>sis@fgh.org.mz</span></a></td></tr>"
 								+ "</tbody></table>");
 						email.setTextMsg("O seu cliente não aceita mensagens HTML. \nContacte o Administador para mais detalhes.");
 						email.setCharset("utf-8");

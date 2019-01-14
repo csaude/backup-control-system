@@ -257,6 +257,6 @@ export class SendFormComponent implements OnInit {
     this.toastService.show('A Data de Recepção deve ser preenchida!', 2000, 'red', null);
   }
   showMsgErr5() {
-    this.toastService.show('A data do backup de iDART deve ser preenchida e não deve estar no futuro!', 2000, 'red', null);
+    this.toastService.show('A data do backup de iDART deve ser preenchida', 2000, 'red', null);
   }
 }

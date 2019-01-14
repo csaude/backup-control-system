@@ -187,5 +187,21 @@
     "notfoundopt2":"an out-of-date link",
     "select":"Select",
     "syncdate":"Sync Date",
-    "language":"Language"
+    "language":"Language",
+
+    "itenspage":"Show",
+    "receivenow":"Receive",
+    
+    "all":"All",
+    "add":"New Record",
+    "parent":"Parent",
+    "update":"Update",
+    "backup_from":"Backup from",
+    "backup_until":"to",
+    "idart_backup_date":"iDART Backup Date",
+    "sync_from":"Sync from",
+    "sync_until":"to",
+    "synced":"Sinchronized",
+    "not_concluded":"Not concluded",
+    "cant_edit_sync":"Can't edit past records"
 }

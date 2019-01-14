@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.mail.DefaultAuthenticator;
@@ -40,7 +41,7 @@ public class SyncServiceImpl implements SyncService {
 	@Autowired
 	private Environment env;
 
-	private String  sync_time,duration, start_items_to_send, start_items_to_receive, end_items_to_send, end_items_to_receive, district, obs,error,server;
+	private String  sync_time,duration, start_items_to_send, start_items_to_receive, end_items_to_send, end_items_to_receive, district, obs,error,server,header_color,errorExist;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -79,18 +80,27 @@ public class SyncServiceImpl implements SyncService {
 			start_items_to_receive = sync.getStartItemsToReceive()+"";
 			
 			error="";
+			errorExist="";
+			header_color="#0288D1";
 			if (sync.isSyncError()) {
 				error= "Erro de Sync<br>";
+				header_color="#FF0000";
+				errorExist=" (Bug)";
 			} 
 			if (sync.isServerFault()) {
 				error= error+"Avaria do Servidor<br>";
+				header_color="#FF0000";
+				errorExist=" (Bug)";
 			} 
 			if (sync.isLaptopFault()) {
 				error= error+"Avaria do Laptop<br>";
+				header_color="#FF0000";
+				errorExist=" (Bug)";
 			} 
 			if (sync.isPowerCut()) {
 				error= error+"Corte de Energia";
 			} 
+			
 			obs="";
 			if (sync.getObservation() != null && sync.getObservationHis() == null) {
 				obs = sync.getObservation();
@@ -111,7 +121,13 @@ public class SyncServiceImpl implements SyncService {
 					email.setAuthenticator(new DefaultAuthenticator("scb.fgh@gmail.com", "Pepfar2014"));
 					email.setSSLOnConnect(true);
 					try {
-						String r1 = resourceRepository.findUsersForSyncNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");
+						String r1="";
+						if(error.equals("")) {
+						r1 = resourceRepository.findUsersForSyncNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");
+						}
+						else {
+							r1 = resourceRepository.findUsersForSyncErrorNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");	
+						}
 						String r2 = r1.replace("]", " ");
 						String[] temp;
 						String divisor = ", ";
@@ -122,13 +138,12 @@ public class SyncServiceImpl implements SyncService {
 							email.addBcc(temp[i] + "");
 							i++;
 						}
-						email.setFrom("scb.fgh@gmail.com", "SCB");
-						email.setSubject("[SCB-" + env.getProperty("org") + "] Registo de Sincronização, " + server + "-"+ sync_time + " (No Reply)");
+						email.setFrom("scb.fgh@gmail.com", "SCB-"+ env.getProperty("org")+" Message [No Reply]");
+						email.setSubject("[SCB-" + env.getProperty("org") + "]"+errorExist+" Sincronização: " +district+" / "+ server + "-"+ sync_time);
 						email.setHtmlMsg(""
 								+ "<table border='1' style='border-color:#EEEEEE;' cellspacing='0' cellpadding='5' style='width:400px;'>"
-								+ "<thead><tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'>Registo de Sincronização</th></tr><thead>"
-								+ "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Servidor:</td><td>" + server + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Distrito:</td><td>" + district + "</td></tr>"
+								+ "<thead><tr><td colspan='2' style='text-align:center;background-color:"+header_color+";color:white;'>Registo de Sincronização</td></tr><thead>"
+								+ "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Servidor:</td><td>" + district+" / "+server + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Horário de<br>Sincronização:</td><td>" + sync_time + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Duração:</td><td>" + duration + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Nº de itens na hora<br>inicial</td><td>" + start_items_to_send+" por enviar<br>"+start_items_to_receive + " por receber</td></tr>"
@@ -138,7 +153,7 @@ public class SyncServiceImpl implements SyncService {
 								+ "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Sincronização<br>iniciada por:</td><td>"
 								+ sync.getCreatedBy().getPersonName() + "<br>("
 								+ sync.getCreatedBy().getPerson().getPhoneNumber() + ")" + "</td></tr>"
-								+ "<tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>Sistema de Controle de Backup</span></a><br/>Mantido por: <a href='mailto:his@fgh.org.mz'><span style='color:#00FFFF;'>his@fgh.org.mz</span></a></th></tr>"
+								+ "<tr><td colspan='2' style='text-align:center;background-color:"+header_color+";color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>SCB</span></a><br/>" +Calendar.getInstance().get(Calendar.YEAR)+" © <a href='mailto:sis@fgh.org.mz'><span style='color:#00FFFF;'>sis@fgh.org.mz</span></a></td></tr>"
 								+ "</tbody></table>");
 						email.setTextMsg(
 								"O seu cliente não aceita mensagens HTML. \nContacte o Administador para mais detalhes.");
@@ -201,18 +216,27 @@ public class SyncServiceImpl implements SyncService {
 				
 			
 				error="";
+				errorExist="";
+				header_color="#0288D1";
 				if (sync.isSyncError()) {
 					error= "Erro de Sync<br>";
+					header_color="#FF0000";
+					errorExist=" (Bug)";
 				} 
 				if (sync.isServerFault()) {
 					error= error+"Avaria do Servidor<br>";
+					header_color="#FF0000";
+					errorExist=" (Bug)";
 				} 
 				if (sync.isLaptopFault()) {
 					error= error+"Avaria do Laptop<br>";
+					header_color="#FF0000";
+					errorExist=" (Bug)";
 				} 
 				if (sync.isPowerCut()) {
 					error= error+"Corte de Energia";
 				} 
+				
 				obs="";
 				if (sync.getObservation() != null && sync.getObservationHis() == null) {
 					obs = sync.getObservation();
@@ -233,7 +257,13 @@ public class SyncServiceImpl implements SyncService {
 						email.setAuthenticator(new DefaultAuthenticator("scb.fgh@gmail.com", "Pepfar2014"));
 						email.setSSLOnConnect(true);
 						try {
-							String r1 = resourceRepository.findUsersForSyncNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");
+							String r1="";
+							if(error.equals("")) {
+							r1 = resourceRepository.findUsersForSyncNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");
+							}
+							else {
+								r1 = resourceRepository.findUsersForSyncErrorNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");	
+							}
 							String r2 = r1.replace("]", " ");
 							String[] temp;
 							String divisor = ", ";
@@ -245,13 +275,12 @@ public class SyncServiceImpl implements SyncService {
 								email.addBcc(temp[i] + "");
 								i++;
 							}
-							email.setFrom("scb.fgh@gmail.com", "SCB");
-							email.setSubject("[SCB-" + env.getProperty("org") + "] Registo de Sincronização, " + server + "-"+ sync_time + " (No Reply)");
+							email.setFrom("scb.fgh@gmail.com", "SCB-"+ env.getProperty("org")+" Message [No Reply]");
+							email.setSubject("[SCB-" + env.getProperty("org") + "]"+errorExist+" Sincronização: " + district+" / "+server + "-"+ sync_time);
 							email.setHtmlMsg(""
 									+ "<table border='1' style='border-color:#EEEEEE;' cellspacing='0' cellpadding='5' style='width:400px;'>"
-									+ "<thead><tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'>Registo de Sincronização</th></tr><thead>"
-									+ "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Servidor:</td><td>" + server + "</td></tr>"
-									+ "<tr><td bgcolor='#F3F3F3'>Distrito:</td><td>" + district + "</td></tr>"
+									+ "<thead><tr><td colspan='2' style='text-align:center;background-color:"+header_color+";color:white;'>Registo de Sincronização</td></tr><thead>"
+									+ "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Servidor:</td><td>" + district+" / "+server + "</td></tr>"
 									+ "<tr><td bgcolor='#F3F3F3'>Horário de<br>Sincronização:</td><td>" + sync_time + "</td></tr>"
 									+ "<tr><td bgcolor='#F3F3F3'>Duração:</td><td>" + duration + "</td></tr>"
 									+ "<tr><td bgcolor='#F3F3F3'>Nº de itens na hora<br>inicial</td><td>" + start_items_to_send+" por enviar<br>"+start_items_to_receive + " por receber</td></tr>"
@@ -265,7 +294,7 @@ public class SyncServiceImpl implements SyncService {
 									+ "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Sincronização<br>actualizada por:</td><td>"
 									+ sync.getUpdatedBy().getPersonName() + "<br>("
 									+ sync.getUpdatedBy().getPerson().getPhoneNumber() + ")" + "</td></tr>"
-									+ "<tr><th colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>Sistema de Controle de Backup</span></a><br/>Mantido por: <a href='mailto:his@fgh.org.mz'><span style='color:#00FFFF;'>his@fgh.org.mz</span></a></th></tr>"
+									+ "<tr><td colspan='2' style='text-align:center;background-color:"+header_color+";color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>SCB</span></a><br/>" +Calendar.getInstance().get(Calendar.YEAR)+" © <a href='mailto:sis@fgh.org.mz'><span style='color:#00FFFF;'>sis@fgh.org.mz</span></a></td></tr>"
 									+ "</tbody></table>");
 							email.setTextMsg(
 									"O seu cliente não aceita mensagens HTML. \nContacte o Administador para mais detalhes.");
@@ -280,8 +309,6 @@ public class SyncServiceImpl implements SyncService {
 				logger.info(sync.getCreatedBy().getUid() + ", updated Sync: " + sync.toString());
 	
 			}
-			
-			
 		}
 		
 		return syncRepository.save(sync);

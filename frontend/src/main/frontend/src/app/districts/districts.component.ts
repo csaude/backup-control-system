@@ -399,7 +399,7 @@ export class DistrictsComponent implements OnInit {
                 if (typeof doc.putTotalPages === 'function') {
                   doc.putTotalPages(totalPagesExp);
                 }
-                doc.save('SCB_Distritos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HH:mm') + '.pdf');
+                doc.save('SCB_Lista de Distritos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HH:mm') + '.pdf');
               });
 
         });
@@ -455,7 +455,7 @@ export class DistrictsComponent implements OnInit {
     });
     doc.setFontSize(11);
     doc.setTextColor(100);
-    doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.others_names + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
+    doc.text('Lista impressa em: ' + datenow + ', por: ' + user.person.othersNames + ' ' + user.person.surname + '.', 14, doc.autoTable.previous.finalY + 10);
     doc.setTextColor(0, 0, 200);
     doc.textWithLink('© Sistema de Controle de Backup', 14, doc.autoTable.previous.finalY + 15, { url: myGlobals.Production_URL });
     if (typeof doc.putTotalPages === 'function') {
