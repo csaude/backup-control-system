@@ -9,7 +9,7 @@
 
 <form materialize [formGroup]="form">
   <div class="row">
-    <div class="col s12 l2 m2">
+    <div class="col s12 l4 m4">
       <mz-select-container>
         <select mz-select mz-validation required id="district" label="{{ 'district' | translate }}" formControlName="district" (change)="search()">
           <option value="all" selected>Todos Distritos</option>
@@ -19,10 +19,12 @@
     </div>
 
    
-    <div class="col s12 l2 m2" style="margin-top: 25px;">
+    <div class="col s12 l3 m3" style="margin-top: 25px;">
       <input type="checkbox" class="filled-in" id="receiveds" formControlName="received" (change)="search()" />
       <label for="receiveds">{{ "hisreceived" | translate }}</label>
     </div>
+  </div>
+    <div class="row" style="margin-top: -20px;">
 
     <div class="col s6 l2 m2">
         <mz-datepicker-container>
@@ -37,6 +39,12 @@
           />
         </mz-datepicker-container>
       </div>
+
+      <div class="col s12 l4 m4" style="margin-top: 25px;">
+          <input type="checkbox" class="filled-in" id="idart" formControlName="idart" (change)="search()" />
+          <label for="idart">{{ "include_idart_backup" | translate }}</label>
+        </div>
+
       <div class="col s12 m4 l4" style="margin-top: -15px;">
          <ul class="pagination valign-center" *ngIf="isHidden=='hide'&&received==false">
 
@@ -82,6 +90,7 @@
     </ul>
         </div>
   </div>
+
 
 </form>
 
@@ -498,15 +507,9 @@
   </mz-modal>
 
     <div class="fixed-action-btn" style="bottom: 20px; right: 20px;" *ngIf="received==true">
-        <a class="btn-floating  btn-large green">
-          <i class="material-icons">more_vert</i>
+        <a mz-tooltip [tooltip]="'Baixar lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
+        class="btn-floating waves-effect btn-large waves-light orange {{isDisabledt}}">
+          <i class="material-icons">file_download</i>
         </a>
-        <ul>
-          <li>
-            <a mz-tooltip [tooltip]="'Baixar lista'" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
-              class="btn-floating waves-effect waves-light orange {{isDisabledt}}">
-              <i class="material-icons">file_download</i>
-            </a>
-          </li>
-        </ul>
+        
       </div>

@@ -7,9 +7,10 @@
 <br>
 <h5 class="light">{{ "sendsfound" | translate }}</h5>
 
+
 <form materialize [formGroup]="form">
   <div class="row">
-    <div class="col s12 l2 m2">
+    <div class="col s12 l4 m4">
       <mz-select-container>
         <select mz-select mz-validation required id="district" label="{{ 'district' | translate }}" formControlName="district"
           (change)="search()">
@@ -18,46 +19,59 @@
         </select>
       </mz-select-container>
     </div>
-    <div class="col s12 l2 m2" style="margin-top: 25px;">
+    <div class="col s12 l3 m3" style="margin-top: 25px;">
       <input type="checkbox" class="filled-in" id="receiveds" formControlName="received" (change)="search()" />
       <label for="receiveds">{{ "hisreceived" | translate }}</label>
     </div>
-    <div class="col s6 l2 m2">
-      <mz-datepicker-container>
-        <input mz-datepicker label="{{ 'backup_from' | translate }}" [options]="options" formControlName="backup_from"
-          type="date" (change)="search()" />
-      </mz-datepicker-container>
-    </div>
-
-    <div class="col s6 l2 m2">
-      <mz-datepicker-container>
-        <input mz-datepicker label="{{ 'backup_until' | translate }}" [options]="options" formControlName="backup_until"
-          type="date" (change)="search()" />
-      </mz-datepicker-container>
-    </div>
-    <div class="col s12 m4 l4" style="margin-top: -15px;">
-      <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
-
-        <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
-        <mz-select-container style="width: 50px;">
-          <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
-            <option value="10" selected>10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </mz-select-container>
-
-
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
-        <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
-        <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
-        <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
-
-      </ul>
-    </div>
+    
   </div>
+
+  <div class="row" style="margin-top: -20px;">
+
+      <div class="col s6 l2 m2">
+          <mz-datepicker-container>
+            <input mz-datepicker label="{{ 'backup_from' | translate }}" [options]="options" formControlName="backup_from"
+              type="date" (change)="search()" />
+          </mz-datepicker-container>
+        </div>
+    
+        <div class="col s6 l2 m2">
+          <mz-datepicker-container>
+            <input mz-datepicker label="{{ 'backup_until' | translate }}" [options]="options" formControlName="backup_until"
+              type="date" (change)="search()" />
+          </mz-datepicker-container>
+        </div>
+
+      <div class="col s12 l4 m4" style="margin-top: 25px;">
+          <input type="checkbox" class="filled-in" id="idart" formControlName="idart" (change)="search()" />
+          <label for="idart">{{ "include_idart_backup" | translate }}</label>
+        </div>
+
+      <div class="col s12 m4 l4" style="margin-top: -15px;">
+          <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
+    
+            <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
+            <mz-select-container style="width: 50px;">
+              <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </mz-select-container>
+    
+    
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
+            <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
+            <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
+            <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
+    
+          </ul>
+        </div>
+
+  </div>
+
 </form>
 
 <div class="col s12 card" style="margin-top: -20px;">
@@ -269,15 +283,9 @@
 </mz-modal>
 
 <div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
-  <a class="btn-floating  btn-large green">
-    <i class="material-icons">more_vert</i>
+  <a mz-tooltip tooltip="{{'add' | translate}}" [position]="'left'" [html]="false" [delay]="100" routerLink="/sends/new"
+  class="btn-floating btn-large waves-effect  blue">
+    <i class="material-icons">add</i>
   </a>
-  <ul>
-    <li>
-      <a mz-tooltip tooltip="{{'add' | translate}}" [position]="'left'" [html]="false" [delay]="100" routerLink="/sends/new"
-        class="btn-floating  waves-effect  blue">
-        <i class="material-icons">add</i>
-      </a>
-    </li>
-  </ul>
+ 
 </div>

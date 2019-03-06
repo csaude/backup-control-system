@@ -28,23 +28,23 @@ export class SendsService {
       .map(res => res.json());
   }
 
-  findSends(page, size, received, canceled, from, until, district, fields) {
+  findSends(page, size, received, canceled, idart, from, until, district, fields) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/v1/sends?fields=" + fields + "&filter=received:eq:" + received + ",canceled:eq:" + canceled + ",backupDate:gte:" + from + ",backupDate:lte:" + until + ",district:eq:" + district + ",user!user&page=" + page + "&pageSize=" + size + "&order=-backupDate", { headers: headers })
+    return this.http.get(this.url + "/v1/sends?fields=" + fields + "&filter=received:eq:" + received + ",canceled:eq:" + canceled + ",idartBackup:eq:" + idart + ",backupDate:gte:" + from + ",backupDate:lte:" + until + ",district:eq:" + district + ",user!user&page=" + page + "&pageSize=" + size + "&order=-backupDate", { headers: headers })
       .map(res => res.json());
   }
 
-  findAllSends(page, size, received, canceled, from, until, district, fields) {
+  findAllSends(page, size, received, canceled,idart, from, until, district, fields) {
     var headers: any = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/v1/sends?fields=" + fields + "&filter=received:eq:" + received + ",canceled:eq:" + canceled + ",backupDate:gte:" + from + ",backupDate:lte:" + until + ",district:eq:" + district + "&page=" + page + "&pageSize=" + size + "&order=-backupDate", { headers: headers })
+    return this.http.get(this.url + "/v1/sends?fields=" + fields + "&filter=received:eq:" + received + ",canceled:eq:" + canceled + ",idartBackup:eq:" + idart + ",backupDate:gte:" + from + ",backupDate:lte:" + until + ",district:eq:" + district + "&page=" + page + "&pageSize=" + size + "&order=-backupDate", { headers: headers })
       .map(res => res.json());
   }
 

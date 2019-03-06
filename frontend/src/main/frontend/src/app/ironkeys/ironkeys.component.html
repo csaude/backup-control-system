@@ -26,6 +26,8 @@
         {{ 'searchbyversion' | translate }}
       </label>
     </div>
+  </div>
+  <div class="row" style="margin-top: -20px;">
     <div class="col s6 m2 l2">
       <mz-select-container>
         <select mz-select id="status" label="{{ 'capacity' | translate }}" placeholder="{{ 'select' | translate }}"
@@ -46,7 +48,7 @@
       </mz-select-container>
     </div>
 
-    <div class="col s12 m4 l4" style="margin-top: -15px;">
+    <div class="col s12 m8 l8" style="margin-top: -15px;">
       <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
 
         <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;

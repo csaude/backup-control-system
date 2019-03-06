@@ -23,7 +23,7 @@ export class NavBarComponent implements OnInit {
   public isAuth: boolean;
   public activeDashboard; activeBackup; activeMetadata; activeUser; activeSync;
   public showNavBar: boolean = false;
-  public total; total2;
+  public total=0; total2=0;
   public nIntervId;
    
   constructor(

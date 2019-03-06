@@ -13,13 +13,14 @@
         {{ 'searchbyusername' | translate }}
       </label>
     </div>
-    <br />
-    <div class="col s12 m3 l3">
+  </div>
+  <div class="row" style="margin-top: -20px;">
+    <div class="col s12 m3 l3" style="margin-top: 25px;">
       <input type="checkbox" class="filled-in" id="enabled" formControlName="enabled" [(ngModel)]="enableds" (change)="search()"
         checked="checked" />
       <label for="enabled">{{ "enabled" | translate }}</label>
     </div>
-    <div class="col s12 m6 l6" style="margin-top: -35px;">
+    <div class="col s12 m9 l9" style="margin-top: -15px;">
       <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
 
         <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
@@ -45,7 +46,7 @@
 </form>
 
 <div class="card col s12" style="margin-top: -20px;">
-  <div class="progress {{isHidden}}"  style="margin-top: 35px; margin-bottom: 0;">
+  <div class="progress {{isHidden}}"  style="margin-top: 65px; margin-bottom: 0;">
     <div class="indeterminate"></div>
   </div>
   <table class="bordered responsive-table highlight">

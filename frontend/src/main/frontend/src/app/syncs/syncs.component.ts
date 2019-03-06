@@ -64,7 +64,8 @@ export class SyncsComponent implements OnInit {
     today: 'Hoje',
     close: 'Fechar',
     clear:'Limpar',
-    onClose: () => this.search()
+    max: new Date(),
+    onClose: () => this.search2()
   };
   public total; totali; number = 0;
 
@@ -321,6 +322,31 @@ export class SyncsComponent implements OnInit {
 
   }
 
+  search2() {
+
+    var userValue = this.form.value;
+    
+    if ((userValue.start_from != "" && userValue.start_from != null) && (userValue.start_until != "" && userValue.start_until != null)) {
+      if (userValue.start_from <= userValue.start_until) {
+        this.from = userValue.start_from;
+        this.until = userValue.start_until;
+        this.getPage(1);
+      } else {
+        this.from = "";
+        this.until = "";
+      }
+    } else if ((userValue.start_from == "" || userValue.start_from == null) && (userValue.start_until == "" || userValue.start_until == null)) {
+      this.from = "";
+      this.until = "";
+      this.getPage(1);
+    }
+    else{
+      this.from = "";
+      this.until = "";
+    }
+
+  }
+
   searchSize() {
     this.getPage(1);
   }
@@ -397,7 +423,7 @@ export class SyncsComponent implements OnInit {
           doc.setFontSize(11);
           doc.setTextColor(100);
           var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-          var text = doc.splitTextToSize('Sincronizações regustadas num determinado periodo.', pageWidth - 25, {});
+          var text = doc.splitTextToSize('Sincronizações OpenMRS registadas num determinado periodo.', pageWidth - 25, {});
           doc.text(text, 14, 32);
 
           var pageContent = function (data) {

@@ -10,18 +10,20 @@
 
 <form materialize [formGroup]="form1">
   <div class="row">
-    <div class="input-field col s12 m2 l2">
+    <div class="input-field col s12 m3 l3">
       <input id="name" type="text" placeholder="{{ 'searchbyname' | translate }}" class="validate" [formControl]="nameValueControl">
       <label for="name">
         {{ 'searchbyname' | translate }}
       </label>
     </div>
-    <br />
-    <div class="col s12 m2 l2">
+  </div>
+    <div class="row" style="margin-top: -20px;">
+
+    <div class="col s12 m8 l8" style="margin-top: 25px;">
       <input type="checkbox" class="filled-in" id="canceled_d" formControlName="canceled" (change)="search()" />
       <label for="canceled_d">{{ "canceled" | translate }}</label>
     </div>
-    <div class="col s12 m8 l8" style="margin-top: -35px;">
+    <div class="col s12 m4 l4" style="margin-top: -15px;">
       <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
 
         <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
@@ -29,7 +31,7 @@
           <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
             <option value="10" selected>10</option>
             <option value="25">25</option>
-<option value="50">50</option>
+            <option value="50">50</option>
             <option value="100">100</option>
           </select>
         </mz-select-container>
@@ -43,14 +45,16 @@
 
       </ul>
     </div>
-  </div>
+ 
+    
+</div>
 </form>
 
 <div class="card col s12 " style="margin-top: -20px;">
-  <div class="progress {{isHidden}}"  style="margin-top: 35px; margin-bottom: 0;">
+  <div class="progress {{isHidden}}"  style="margin-top: 65px; margin-bottom: 0;">
     <div class="indeterminate"></div>
   </div>
-  <div class="progress {{isHiddenConnection}}"  style="margin-top: 35px; margin-bottom: 0;">
+  <div class="progress {{isHiddenConnection}}"  style="margin-top: 20px; margin-bottom: 0;">
     <div class="indeterminate"></div>
   </div>
   <table class="bordered responsive-table highlight" >

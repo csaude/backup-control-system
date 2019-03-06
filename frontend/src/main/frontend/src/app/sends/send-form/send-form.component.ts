@@ -13,6 +13,8 @@ import { TransportersService } from './../../transporters/shared/transporters.se
 import { Transporter } from './../../transporters/shared/transporter';
 import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
+import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-send-form',
@@ -27,7 +29,7 @@ export class SendFormComponent implements OnInit {
   public form: FormGroup;
   public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD: string;
   public title: string;
-  public isHidden: string;
+  public isHidden;name: string;
   public isDisabled: boolean;
   public send: Send = new Send();
   public alldistricts: District[] = [];
@@ -43,6 +45,8 @@ export class SendFormComponent implements OnInit {
     max: new Date()
   };
 
+  public nameValueControl = new FormControl();
+  public formCtrlSub: Subscription;
    
   constructor(
     public formBuilder: FormBuilder,
@@ -81,6 +85,16 @@ export class SendFormComponent implements OnInit {
     });
   }
   ngOnInit() {
+    
+    this.formCtrlSub = this.nameValueControl.valueChanges
+      .debounceTime(600)
+      .subscribe(newValue => {
+        this.name = this.nameValueControl.value;
+        if(this.name!=""){ this.refreshTransporter();}else{
+          this.alltransporters=[];
+        }
+      });
+
     this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
     this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
     this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
@@ -109,13 +123,10 @@ export class SendFormComponent implements OnInit {
           }
           return 0;
         });
-        this.transportersService.findTransporters("", "", "", "", false,"name,phoneNumber,transporterId,uid,role")
-          .subscribe(data => { this.alltransporters = data.content; }
-            , errot => { },
-            () => {
-              this.disabled1 = false;
-            }
-          );
+        
+
+          this.alltransporters =[];
+          this.disabled1 = false;
 
       } else {
         this.sendsService.findOneSendByUuid(uuid,"district.name,district.parent.name,transporter.transporterId,sendId,transporter.uid,district.uid,observation,transporter.phoneNumber,transporter.name,district.districtId,district.fullName,received,dateCreated,createdBy.uid,createdBy.userId,uid,backupDate,updateFinished,validationFinished,syncFinished,crossDhis2Finished,crossIdartFinished,uid,ikReceived,dateIkReceived,idartBackup,idartBackupDate")
@@ -142,27 +153,10 @@ export class SendFormComponent implements OnInit {
                 }
                 return 0;
               });
-              this.transportersService.findTransporters("", "", "", "", false,"name,phoneNumber,transporterId,uid,role")
-                .subscribe(data => {
-                  this.alltransporters = data.content;
-                  var filteredtransporters = this.alltransporters;
-                  filteredtransporters = filteredtransporters.filter(item => item.transporterId !== this.send.transporter.transporterId);
-                  filteredtransporters.push(this.send.transporter);
-                  this.alltransporters = filteredtransporters.sort(function (a, b) {
-                    var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-                    var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-                    if (nameA < nameB) {
-                      return -1;
-                    }
-                    if (nameA > nameB) {
-                      return 1;
-                    }
-                    return 0;
-                  });
-                }, errot => { },
-                  () => {
-                    this.disabled1 = false;
-                  });
+
+              this.alltransporters.push(this.send.transporter) ;
+              this.disabled1 = false;
+
             },
             response => {
               if (response.status == 404) {
@@ -171,6 +165,7 @@ export class SendFormComponent implements OnInit {
             });
       }
     });
+
   }
   save() {
     this.isDisabled = true;
@@ -235,14 +230,20 @@ export class SendFormComponent implements OnInit {
 
   refreshTransporter(){
     this.disabled1 = true;
-    this.transportersService.findTransporters("", "", "", "", false,"name,phoneNumber,transporterId,uid,role")
+    this.transportersService.findTransporters(1, 10, this.name, "", false,"name,phoneNumber,transporterId,uid,role")
           .subscribe(data => { this.alltransporters = data.content; }
-            , errot => { },
+            , errot => {
+              this.disabled1 = false;
+              this.alltransporters = []
+             },
             () => {
               this.disabled1 = false;
             }
           );
   }
+
+
+  
 
   showMsg() {
     this.toastService.show('Envio de Backup salvo com sucesso!', 2000, 'green', null);

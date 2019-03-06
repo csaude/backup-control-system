@@ -5,55 +5,7 @@
 -->
 <header>
   <div class="navbar-fixed" *ngIf="isAuth">
-    <mz-dropdown [id]="'dropdown-demo1'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true"
-      [dropdownButtonId]="'btn-dropdown-demo1'" [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300"
-      [stopPropagation]="true" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
-      <mz-dropdown-item *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
-        <a (click)="setBackup()" routerLink="/sends">{{ "send" | translate }}</a>
-      </mz-dropdown-item>
-      <mz-dropdown-divider></mz-dropdown-divider>
-      <mz-dropdown-item *ngIf="ROLE_SIS||ROLE_GMA||ROLE_OA">
-        <a (click)="setBackup()" routerLink="/receives">{{ "receive" | translate }} <span *ngIf="ROLE_SIS&&total>0"
-            class="new badge red" data-badge-caption="">{{total}}</span></a>
-      </mz-dropdown-item>
-    </mz-dropdown>
-
-    <mz-dropdown [id]="'dropdown-demo4'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true"
-      [dropdownButtonId]="'btn-dropdown-demo4'" [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300"
-      [stopPropagation]="true" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
-      <mz-dropdown-item *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
-        <a (click)="setSync()" routerLink="/syncs">{{ "records" | translate }} <span *ngIf="(ROLE_SIS||ROLE_ODMA)&&total2>0"
-            class="new badge red" data-badge-caption="">{{total2}}</span></a>
-      </mz-dropdown-item>
-    </mz-dropdown>
- 
-    <mz-dropdown [id]="'dropdown-demo2'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true"
-      [dropdownButtonId]="'btn-dropdown-demo2'" [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300"
-      [stopPropagation]="true">
-      <mz-dropdown-item *ngIf="ROLE_SIS||ROLE_IT">
-        <a (click)="setMetadata()" routerLink="/ironkeys">{{ "ironkeys" | translate }}</a>
-      </mz-dropdown-item>
-      <mz-dropdown-divider></mz-dropdown-divider>
-      <mz-dropdown-item>
-        <a (click)="setMetadata()" routerLink="/districts">{{ "districts" | translate }}</a>
-      </mz-dropdown-item>
-      <mz-dropdown-divider></mz-dropdown-divider>
-      <mz-dropdown-item>
-        <a (click)="setMetadata()" routerLink="/transporters">{{ "transporters" | translate }}</a>
-      </mz-dropdown-item>
-      <mz-dropdown-divider></mz-dropdown-divider>
-      <mz-dropdown-item *ngIf="ROLE_SIS">
-        <a (click)="setMetadata()" routerLink="/evaluations">{{ "evaluations" | translate }}</a>
-      </mz-dropdown-item>
-      <mz-dropdown-divider></mz-dropdown-divider>
-      <mz-dropdown-item *ngIf="ROLE_SIS||ROLE_GMA||ROLE_OA">
-        <a (click)="setMetadata()" routerLink="/servers">{{ "servers" | translate }}</a>
-      </mz-dropdown-item>
-      <mz-dropdown-divider></mz-dropdown-divider>
-      <mz-dropdown-item *ngIf="ROLE_SIS">
-        <a (click)="setMetadata()" routerLink="/users">{{ "users" | translate }}</a>
-      </mz-dropdown-item>
-    </mz-dropdown>
+   
     <mz-dropdown [id]="'dropdown-demo3'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true"
       [dropdownButtonId]="'btn-dropdown-demo3'" [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300"
       [stopPropagation]="true">
@@ -74,52 +26,61 @@
       </mz-dropdown-item>
     </mz-dropdown>
 
-    <nav>
-      <div class="nav-wrapper #0288d1 light-blue darken-2">
+
+    <mz-dropdown [id]="'dropdown-demo5'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="false" 
+    [dropdownButtonId]="'btn-dropdown-demo5'" [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300"
+    [stopPropagation]="true">
+    
+    <div style="color:black;  padding: 4px;">
+      <div class="row">
+        <div class="col s4 center-align"><a routerLink="/home" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-dashboard.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "dashboard" | translate }}</div></a></div>
+        <div class="col s4 center-align"><a routerLink="/districts" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-location.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "districts" | translate }}</div></a></div>
+        <div class="col s4 center-align"><a routerLink="/syncs" style="margin:5px;padding: 5px;"><small *ngIf="ROLE_SIS&&total2>0" class="notification-badge2">{{total2}}</small><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-openmrs.png" /></div><div class="row" style="margin-top: -35px; height: 15px; color: black; display:block; word-wrap: break-word;width: 100px; white-space: normal; line-height: 16px;">{{ "records" | translate }}</div></a></div>
+      </div>
+      <div class="row" style="margin-top: -20px;">
+       <div class="col s4 center-align"><a routerLink="/transporters" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-transporter.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "transporters" | translate }}</div></a></div>
+        <div class="col s4 center-align" *ngIf="ROLE_SIS||ROLE_IT"><a routerLink="/ironkeys" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-ironkey.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "ironkeys" | translate }}</div></a></div>
+        <div class="col s4 center-align" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS"><a routerLink="/sends" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-flash-drive.png" /></div><div class="row" style="margin-top: -35px; height: 15px; color: black; display:block; word-wrap: break-word;width: 100px; white-space: normal; line-height: 16px;">{{ "send" | translate }}</div></a></div>
+      </div>
+      <div *ngIf="ROLE_SIS" class="row" style="margin-top: -20px;">
+       <div class="col s4 center-align"><a routerLink="/receives" style="margin: 5px;padding: 5px;"><small *ngIf="ROLE_SIS&&total>0" class="notification-badge2s">{{total}}</small><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-flash-drive.png" /></div><div class="row" style="margin-top: -35px; height: 15px; color: black; display:block; word-wrap: break-word;width: 100px; white-space: normal; line-height: 16px;">{{ "receive" | translate }}</div></a></div>
+       <div class="col s4 center-align"><a routerLink="/evaluations" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-dqa.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "evaluations" | translate }}</div></a></div>
+       <div class="col s4 center-align"><a routerLink="/servers" style="margin:5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-openmrs.png" /></div><div class="row" style="margin-top: -35px; height: 15px; color: black; display:block; word-wrap: break-word;width: 100px; white-space: normal; line-height: 16px;">{{ "servers" | translate }}</div></a></div>
+      </div>
+      <div *ngIf="ROLE_SIS" class="row" style="margin-top: -20px;">
+          <div class="col s4 center-align"><a routerLink="/users" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-user.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "users" | translate }}</div></a></div>
+      </div>
+    </div>
+    
+    
+  </mz-dropdown>
+  
+
+    <nav class="z-depth-0">
+      <div class="nav-wrapper #0288d1 light-blue darken-2 z-depth-0">
         <a routerLink="/home" class="brand-logo">&nbsp;&nbsp;SCB</a>
         <a id="btn-sidenav-demo" class="button-collapse">
           <i class="material-icons">menu</i>
         </a>
         <ul class="right hide-on-med-and-down">
 
-          <li class="{{activeDashboard}}">
-            <a routerLink="/home" (click)="setDashboard()"><i class="material-icons left">dashboard</i>{{ "dashboard" | translate }}</a>
-          </li>
-
-          <li class="{{activeBackup}}" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
-            <a id="btn-dropdown-demo1">
-
-              <i  *ngIf="ROLE_SIS&&total>0" class="material-icons left" mz-tooltip
-                  [tooltip]="total+' backup(s) por receber'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
-             
-              <i class="material-icons left" *ngIf="ROLE_SIS&&(total==0||total==null)" mz-tooltip [tooltip]="'Nenhum backup por receber'"
-                [position]="'bottom'" [html]="false" [delay]="100">notifications_none</i>
-
-              {{ "backups" | translate }}
-              <i class="material-icons right">arrow_drop_down</i>
-            </a>
-          </li>
-          
-          <li class="{{activeSync}}" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
-            <a id="btn-dropdown-demo4">
-
-            <i *ngIf="(ROLE_SIS||ROLE_ODMA)&&total2>0" class="material-icons left" mz-tooltip [tooltip]="total2+' sincronização(ões) em progresso'" [position]="'bottom'" [html]="false" [delay]="100">notifications_active</i>
-             
-            <i class="material-icons left" *ngIf="(ROLE_SIS||ROLE_ODMA)&&(total2==0||total2==null)" mz-tooltip [tooltip]="'Nenhuma sincronização em progresso'" [position]="'bottom'" [html]="false" [delay]="100">notifications_none</i>
-
-              {{ "sync" | translate }}
-              <i class="material-icons right">arrow_drop_down</i>
-            </a>
-          </li>
         
-          <li class="{{activeMetadata}}">
-            <a id="btn-dropdown-demo2">{{ "metadata" | translate }}
+
+          <li>
+            <a id="btn-dropdown-demo5">
+              <small *ngIf="(ROLE_SIS||ROLE_ODMA)&&(total2>0||total>0)" class="notification-badge">{{total2+total}}</small>
+              Menu
+              <i class="material-icons left">apps</i>
               <i class="material-icons right">arrow_drop_down</i>
             </a>
           </li>
+
           <li class="{{activeUser}}" *ngIf="isAuth">
             <a id="btn-dropdown-demo3">
-              <i class="material-icons left">person</i>{{user.person.othersNames| slice:0:1}}{{user.person.surname|slice:0:1}}
+              <i class="material-icons left">person</i>
+              <span id="userNameInitials">{{user.person.othersNames| slice:0:1}}{{user.person.surname|slice:0:1}}</span>
+              &nbsp;&nbsp;<img style="align-items: center;vertical-align: middle" *ngIf="user.locale=='pt'" src="assets/images/scb-pt.png" /> 
+              <img style="align-items: center;vertical-align: middle" *ngIf="user.locale=='en'" src="assets/images/scb-en.png" /> 
               <i class="material-icons right">arrow_drop_down</i>
             </a>
           </li>
@@ -141,10 +102,10 @@
       <i mz-icon [icon]="'arrow_drop_down'" class="caret"></i>Backups
     </mz-sidenav-collapsible-header>
     <mz-sidenav-collapsible-content>
-      <mz-sidenav-link *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
+      <mz-sidenav-link >
         <a routerLink="/sends">Envios</a>
       </mz-sidenav-link>
-      <mz-sidenav-link *ngIf="ROLE_SIS">
+      <mz-sidenav-link >
         <a routerLink="/receives">Recepções</a>
       </mz-sidenav-link>
     </mz-sidenav-collapsible-content>

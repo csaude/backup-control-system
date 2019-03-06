@@ -1,8 +1,8 @@
 {
     "dashboard": "Dashboard",
     "backups": "Backups",
-    "send": "Sends",
-    "receive": "Receives",
+    "send": "Backup Sends",
+    "receive": "Backup Receives",
     "metadata": "Metadata",
     "ironkeys": "Ironkeys",
     "districts": "Districts",
@@ -148,7 +148,7 @@
     "type":"Type",
     "lastsync":"Last Sync",
     "sync":"Synchronization",
-    "records":"Records",
+    "records":"Synchronization Records",
     "syncsfound":"Manage OpenMRS Synchronization",
     "start_time":"Start time",
     "end_time":"End time",
@@ -203,5 +203,6 @@
     "sync_until":"to",
     "synced":"Sinchronized",
     "not_concluded":"Not concluded",
-    "cant_edit_sync":"Can't edit past records"
+    "cant_edit_sync":"Can't edit past records",
+    "initial_state": "Initial State"
 }

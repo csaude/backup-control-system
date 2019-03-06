@@ -30,7 +30,7 @@ export class SendsComponent implements OnInit {
   public from; until;district_id;p;
   public alldistricts: District[] = [];
   public form: FormGroup;
-  public received; canceled;
+  public received; canceled; idart;
   public user: Object[] = []; 
   public pageSize: number;
 
@@ -42,7 +42,7 @@ export class SendsComponent implements OnInit {
     clear:'Limpar',
     max: new Date(),
     onClose: () => {
-        this.search();
+        this.search2();
     }
   };
   public total; totali; number = 0;
@@ -57,13 +57,15 @@ export class SendsComponent implements OnInit {
       district: [],
       backup_from: [],
       backup_until: [],
-      received: []
+      received: [],
+      idart: []
     });
   }
   ngOnInit() {
     this.isHidden = "";
     this.received = false;
     this.canceled = false;
+    this.idart = false;
     this.pageSize=10
     this.from="";
     this.until="";
@@ -99,7 +101,7 @@ export class SendsComponent implements OnInit {
     this.first = "";
     this.last = "";
     this.isHidden = "";
-    this.sendsService.findSends(page, this.pageSize, this.received, this.canceled, this.from, this.until, this.district_id,"observation,transporter.phoneNumber,transporter.name,district.fullName,received,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,uid,backupDate,updateFinished,validationFinished,syncFinished,crossDhis2Finished,crossIdartFinished,uid,ikReceived,dateIkReceived,idartBackup,idartBackupDate")
+    this.sendsService.findSends(page, this.pageSize, this.received, this.canceled,this.idart, this.from, this.until, this.district_id,"observation,transporter.phoneNumber,transporter.name,district.fullName,received,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,uid,backupDate,updateFinished,validationFinished,syncFinished,crossDhis2Finished,crossIdartFinished,uid,ikReceived,dateIkReceived,idartBackup,idartBackupDate")
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
@@ -264,6 +266,30 @@ export class SendsComponent implements OnInit {
     doc.save('SCB_Protocolo de Envio de Backup_' + this.send.district.name + '_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
   }
 
+  search2() {
+
+    var userValue = this.form.value;
+    
+    if ((userValue.backup_from != "" && userValue.backup_from != null) && (userValue.backup_until != "" && userValue.backup_until != null)) {
+      if (userValue.backup_from <= userValue.backup_until) {
+        this.from = userValue.backup_from;
+        this.until = userValue.backup_until;
+        this.getPage(1);
+      } else {
+        this.from = "";
+        this.until = "";
+      }
+    } else if ((userValue.backup_from == "" || userValue.backup_from == null) && (userValue.backup_until == "" || userValue.backup_until == null)) {
+      this.from = "";
+      this.until = "";
+      this.getPage(1);
+    }
+    else{
+      this.from = "";
+      this.until = "";
+    }
+
+  }
 
   setSend(uuid) {
     this.send = this.sends.find(item => item.uid == uuid);
@@ -304,6 +330,12 @@ export class SendsComponent implements OnInit {
       this.received = false;
     } else {
       this.received = true;
+    }
+
+    if (userValue.idart == null || userValue.idart == false) {
+      this.idart = false;
+    } else {
+      this.idart = true;
     }
 
     if (userValue.district == "all" || userValue.district == null) {

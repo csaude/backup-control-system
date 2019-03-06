@@ -33,7 +33,9 @@
       </mz-select-container>
     </div>
 
-  
+  </div>
+
+  <div class="row" style="margin-top: -20px;">
 
     <div class="col s6 l2 m2">
       <mz-datepicker-container>
@@ -48,7 +50,7 @@
           type="date" (change)="search()" />
       </mz-datepicker-container>
     </div>
-    <div class="col s12 m4 l4" style="margin-top: -15px;">
+    <div class="col s12 m8 l8" style="margin-top: -15px;">
       <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
 
         <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
@@ -83,6 +85,7 @@
         <th>{{ "district" | translate }} / {{ "servername" | translate }}</th>
         <th>{{ "sync_time" | translate }}</th>
         <th>{{ "duration" | translate }}</th>
+        <th>{{ "initial_state" | translate }}</th>
         <th>{{ "final_state" | translate }}</th>
         <th>{{ "updatedon" | translate }}</th>
         <th></th>
@@ -97,6 +100,13 @@
 
         <td>
           {{getSyncDuration(sync.startTime,sync.endTime)}}
+        </td>
+        <td>
+          <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.startItemsToSend }} {{"items_to_s" |translate
+          }} </span>
+        <br>
+        <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.startItemsToReceive }} {{"items_to_r"
+          |translate}}</span>
         </td>
         <td *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='complete'">
           <span *ngIf="sync.endItemsToSend==0&&sync.endItemsToReceive==0" class='green-text text-darken-3"'>{{'synced' | translate}}</span>

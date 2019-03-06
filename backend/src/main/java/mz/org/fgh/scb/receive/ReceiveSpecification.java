@@ -64,10 +64,18 @@ public class ReceiveSpecification implements Specification<Receive> {
 				return builder.lessThanOrEqualTo(root.<String>get(criteria.getKey()), criteria.getValue().toString());
 			}
 		} else if (criteria.getOperation().equalsIgnoreCase(FilterOperation.EQUAL.toString())) {
-			if (criteria.getKey().equalsIgnoreCase("district"))
+			if (criteria.getKey().equalsIgnoreCase("district")) {
 				return builder.equal(root.get("send").get("district").get("districtId"), criteria.getValue().toString());
-			else
+			} else
+				if (criteria.getKey().equalsIgnoreCase("idartBackup")) {
+					return builder.equal(root.get("send").get("idartBackup"), criteria.getValue());}
+			
+			else {
 				return builder.equal(root.<String>get(criteria.getKey()), criteria.getValue());
+			}
+			
+			
+			
 		}
 
 		else if (criteria.getOperation().equalsIgnoreCase("!")) {

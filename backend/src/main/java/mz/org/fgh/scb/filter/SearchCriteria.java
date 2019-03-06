@@ -70,6 +70,12 @@ public class SearchCriteria {
         	this.value = false;
         }
         
+        if(key.equals("idartBackup")&&value.equals("true")){
+        	this.value = true;	
+        }else if(key.equals("idartBackup")&&value.equals("false")){
+        	this.value = false;
+        }
+        
         if(key.equals("enabled")&&value.equals("true")){
         	this.value = true;	
         }else if(key.equals("enabled")&&value.equals("false")){

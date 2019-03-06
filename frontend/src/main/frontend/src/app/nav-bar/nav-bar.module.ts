@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { NavBarComponent } from './nav-bar.component';
-import { MzIconMdiModule, MzIconModule,MzSidenavModule, MzDropdownModule,MzTooltipModule } from 'ngx-materialize';
+import { MzIconMdiModule, MzIconModule,MzSidenavModule, MzDropdownModule,MzTooltipModule, MzButtonModule } from 'ngx-materialize';
 import { TranslateModule } from "ng2-translate";
 
 @NgModule({
@@ -20,7 +20,8 @@ import { TranslateModule } from "ng2-translate";
     MzIconMdiModule, 
     MzIconModule,
     HttpModule,
-    MzTooltipModule
+    MzTooltipModule,
+    MzButtonModule
   ],
   declarations: [
     NavBarComponent

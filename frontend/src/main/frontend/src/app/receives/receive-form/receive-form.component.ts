@@ -14,6 +14,8 @@ import { Transporter } from './../../transporters/shared/transporter';
 import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 import { DatePipe } from '@angular/common';
+import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-receive-form',
@@ -26,13 +28,15 @@ import { DatePipe } from '@angular/common';
 */
 export class ReceiveFormComponent implements OnInit {
   public form: FormGroup;
-  public title: string;
+  public title;name: string;
   public isHidden: string;
   public isDisabled: boolean;
   public receive: Receive = new Receive();
   public send: Send = new Send();
   public openFunctionCallback; closeFunctionCallback;
   public alltransporters: Transporter[] = [];
+  public disabled1: boolean;
+
   public options: Pickadate.DateOptions = {
     format: 'dd/mm/yyyy',
     formatSubmit: 'yyyy-mm-dd',
@@ -41,6 +45,9 @@ export class ReceiveFormComponent implements OnInit {
     clear:'Limpar',
     max: new Date()
   };
+
+  public nameValueControl = new FormControl();
+  public formCtrlSub: Subscription;
 
    
   constructor(
@@ -71,6 +78,16 @@ export class ReceiveFormComponent implements OnInit {
   }
   
   ngOnInit() {
+
+    this.formCtrlSub = this.nameValueControl.valueChanges
+      .debounceTime(600)
+      .subscribe(newValue => {
+        this.name = this.nameValueControl.value;
+        if(this.name!=""){ this.refreshTransporter();}else{
+          this.alltransporters=[];
+        }
+      });
+    this.disabled1 = true;
     this.isDisabled = false;
     var uuid = this.route.params.subscribe(params => {
       var uuid = params['uuid'];
@@ -87,10 +104,8 @@ export class ReceiveFormComponent implements OnInit {
               }
             });
             
-        this.transportersService.findTransporters("", "", "", "", false,"name,phoneNumber,transporterId,uid")
-          .subscribe(data => {
-            this.alltransporters = data.content;
-          });
+        this.alltransporters =[];
+          this.disabled1 = false;
       } else {
         //Edit here
         var uuidr = params['uuidr'];
@@ -98,30 +113,12 @@ export class ReceiveFormComponent implements OnInit {
           .subscribe(receive => {
             this.receive = receive;
             if (this.receive.transporter != null) {
-              this.transportersService.findTransporters("", "", "", "", false,"name,phoneNumber,transporterId,uid")
-                .subscribe(data => {
-                  this.alltransporters = data.content;
-                  var filteredtransporters = this.alltransporters;
-                  filteredtransporters = filteredtransporters.filter(item => item.transporterId !== this.receive.transporter.transporterId);
-                  filteredtransporters.push(this.receive.transporter);
-                  this.alltransporters = filteredtransporters.sort(function (a, b) {
-                    var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-                    var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-                    if (nameA < nameB) {
-                      return -1;
-                    }
-                    if (nameA > nameB) {
-                      return 1;
-                    }
-                    return 0;
-                  });
-                });
+              this.alltransporters.push(this.receive.transporter) ;
+              this.disabled1 = false;
             }
             else {
-              this.transportersService.findTransporters("", "", "", "", false,"name,phoneNumber,transporterId,uid")
-                .subscribe(data => {
-                  this.alltransporters = data.content;
-                });
+              this.alltransporters =[];
+              this.disabled1 = false;
             }
           },
           response => {
@@ -223,6 +220,20 @@ export class ReceiveFormComponent implements OnInit {
 
               }
     }
+  }
+
+  refreshTransporter(){
+    this.disabled1 = true;
+    this.transportersService.findTransporters(1, 10, this.name, "", false,"name,phoneNumber,transporterId,uid,role")
+          .subscribe(data => { this.alltransporters = data.content; }
+            , errot => {
+              this.disabled1 = false;
+              this.alltransporters = []
+             },
+            () => {
+              this.disabled1 = false;
+            }
+          );
   }
 
   showMsgErr() {

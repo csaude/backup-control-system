@@ -32,7 +32,7 @@ export class ReceivesComponent implements OnInit {
   public from; until; district_id; p;
   public alldistricts: District[] = [];
   public form: FormGroup;
-  public received; canceled: boolean;
+  public received; canceled;idart: boolean;
   public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD; isHidden; isHidden2m: string;
   public user: Object[] = [];
 
@@ -48,7 +48,7 @@ export class ReceivesComponent implements OnInit {
     close: 'Fechar',
     clear:'Limpar',
     max: new Date(),
-    onClose: () => this.search()
+    onClose: () => this.search2()
   };
   public total; totali: number = 0;
 
@@ -58,7 +58,8 @@ export class ReceivesComponent implements OnInit {
       district: [],
       backup_from: [],
       backup_until: [],
-      received: []
+      received: [],
+      idart: []
     });
   }
 
@@ -69,6 +70,7 @@ export class ReceivesComponent implements OnInit {
     this.from = "";
     this.until = "";
     this.district_id = "";
+    this.idart = false;
     this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
     this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
     this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
@@ -89,7 +91,7 @@ export class ReceivesComponent implements OnInit {
     this.first = "";
     this.last = "";
     this.isHidden = "";
-    this.sendsService.findAllSends(page, this.pageSize, this.received, this.canceled, this.from, this.until, this.district_id, "observation,transporter.phoneNumber,transporter.name,district.fullName,received,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,uid,backupDate,updateFinished,validationFinished,syncFinished,crossDhis2Finished,crossIdartFinished,uid,ikReceived,dateIkReceived,idartBackup,idartBackupDate")
+    this.sendsService.findAllSends(page, this.pageSize, this.received, this.canceled,this.idart, this.from, this.until, this.district_id, "observation,transporter.phoneNumber,transporter.name,district.fullName,received,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,uid,backupDate,updateFinished,validationFinished,syncFinished,crossDhis2Finished,crossIdartFinished,uid,ikReceived,dateIkReceived,idartBackup,idartBackupDate")
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
@@ -129,7 +131,7 @@ export class ReceivesComponent implements OnInit {
     this.first = "";
     this.last = "";
     this.isHidden = "";
-    this.receivesService.findAllReceives(page, this.pageSize, this.canceled, this.from, this.until, this.district_id, "transporter.name,receiveId,receiveDate,ikReturned,dateIkReturned,dateCreated,dateUpdated,createdBy.personName,uid,dateRestored,canceledReason,restoredBy.personName,ikReturnedBy.personName,restored,canceled,send.observation,send.transporter.phoneNumber,send.transporter.name,send.district.fullName,send.received,send.dateUpdated,send.dateCreated,send.createdBy.personName,send.updatedBy.personName,send.uid,send.backupDate,send.updateFinished,send.validationFinished,send.syncFinished,send.crossDhis2Finished,send.crossIdartFinished,send.uid,send.ikReceived,send.dateIkReceived,send.idartBackup,send.idartBackupDate")
+    this.receivesService.findAllReceives(page, this.pageSize, this.canceled,this.idart, this.from, this.until, this.district_id, "transporter.name,receiveId,receiveDate,ikReturned,dateIkReturned,dateCreated,dateUpdated,createdBy.personName,uid,dateRestored,canceledReason,restoredBy.personName,ikReturnedBy.personName,restored,canceled,send.observation,send.transporter.phoneNumber,send.transporter.name,send.district.fullName,send.received,send.dateUpdated,send.dateCreated,send.createdBy.personName,send.updatedBy.personName,send.uid,send.backupDate,send.updateFinished,send.validationFinished,send.syncFinished,send.crossDhis2Finished,send.crossIdartFinished,send.uid,send.ikReceived,send.dateIkReceived,send.idartBackup,send.idartBackupDate")
       .subscribe(data => {
         this.total = data.totalElements;
         this.p = page;
@@ -304,6 +306,12 @@ export class ReceivesComponent implements OnInit {
       this.district_id = userValue.district;
     }
 
+    if (userValue.idart == null || userValue.idart == false) {
+      this.idart = false;
+    } else {
+      this.idart = true;
+    }
+
     if ((userValue.backup_from != "" && userValue.backup_from != null) && (userValue.backup_until != "" && userValue.backup_until != null)) {
       if (userValue.backup_from <= userValue.backup_until) {
         this.from = userValue.backup_from;
@@ -326,6 +334,41 @@ export class ReceivesComponent implements OnInit {
     }
   }
 
+
+  search2() {
+
+    var userValue = this.form.value;
+    
+    if ((userValue.backup_from != "" && userValue.backup_from != null) && (userValue.backup_until != "" && userValue.backup_until != null)) {
+      if (userValue.backup_from <= userValue.backup_until) {
+        this.from = userValue.backup_from;
+        this.until = userValue.backup_until;
+        if (userValue.received == null || userValue.received == false) {
+          this.getPageSend(1);
+        } else {
+          this.getPageReceive(1);
+        }
+      } else {
+        this.from = "";
+        this.until = "";
+      }
+    } else if ((userValue.backup_from == "" || userValue.backup_from == null) && (userValue.backup_until == "" || userValue.backup_until == null)) {
+      this.from = "";
+      this.until = "";
+      if (userValue.received == null || userValue.received == false) {
+        this.getPageSend(1);
+      } else {
+        this.getPageReceive(1);
+      }
+    }
+    else{
+      this.from = "";
+      this.until = "";
+    }
+
+  }
+
+
   searchSize() {
     this.getPageSend(1);
   }
@@ -345,7 +388,7 @@ export class ReceivesComponent implements OnInit {
     };
 
 
-    this.receivesService.findAllReceives(1, 1000, this.canceled, this.from, this.until, this.district_id, "createdBy.personName,send.observation,send.district.fullName,send.createdBy.personName,send.backupDate,send.updateFinished,send.validationFinished,send.syncFinished,send.crossDhis2Finished,send.crossIdartFinished,send.dateCreated,dateCreated,send.idartBackupDate")
+    this.receivesService.findAllReceives(1, 1000, this.canceled,this.idart, this.from, this.until, this.district_id, "createdBy.personName,send.observation,send.district.fullName,send.createdBy.personName,send.backupDate,send.updateFinished,send.validationFinished,send.syncFinished,send.crossDhis2Finished,send.crossIdartFinished,send.dateCreated,dateCreated,send.idartBackupDate")
       .subscribe(data => {
         this.receivesreport = data.content;
         this.receivesreport = alasql("SELECT CONCAT(createdBy->personName,'\n',datetime(dateCreated)) AS receiver ,send->observation AS obsd,send->district->fullName AS districtname,CONCAT(send->createdBy->personName,'\n',datetime(send->dateCreated)) AS sender,CONCAT(datetime(send->backupDate),'\n',CASE WHEN send->idartBackupDate IS NOT NULL THEN CONCAT('iDART: ',datetime(send->idartBackupDate)) ELSE '' END) AS backup_date_f,CASE WHEN send->updateFinished==true THEN 'Sim' ELSE 'Não' END AS at ,CASE WHEN send->validationFinished==true THEN 'Sim' ELSE 'Não' END AS vt, CASE WHEN send->syncFinished==true THEN 'Sim' ELSE 'Não' END AS st, CASE WHEN send->crossDhis2Finished==true THEN 'Sim' ELSE 'Não' END AS dhis2,CASE WHEN send->crossIdartFinished==true THEN 'Sim' ELSE 'Não' END AS idart FROM ?receivesreport", [this.receivesreport])

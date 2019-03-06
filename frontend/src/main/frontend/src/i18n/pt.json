@@ -1,8 +1,8 @@
 {
     "dashboard": "Dashboard",
     "backups": "Backups",
-    "send": "Envios",
-    "receive": "Recepções",
+    "send": "Envio de Backups",
+    "receive": "Recepção de Backups",
     "metadata": "Metadados",
     "ironkeys": "Ironkeys",
     "districts": "Distritos",
@@ -138,7 +138,7 @@
     "searchbyopenmrsuuid": "Pesquisar por OpenMRS SQL",
     "searchbyusername": "Pesquisar por username",
     "searchbydistrict":"Pesquisar por distrito",
-    "servers":"Sync Servers",
+    "servers":"Servidores de Sincronização",
     "servername":"Nome do Servidor",
     "serversfound":"Gestão de Servidores de Sincronização OpenMRS",
     "serverdetails":"Detalhes do Servidor de Sincronização",
@@ -148,7 +148,7 @@
     "type":"Tipo",
     "lastsync":"Última Sincronização",
     "sync":"Sincronização",
-    "records":"Registos",
+    "records":"Registos de Sincronização",
     "syncsfound":"Gestão de Sincronização OpenMRS",
     "start_time":"Hora Inicial",
     "end_time":"Hora Final",
@@ -202,5 +202,6 @@
     "sync_until":"até",
     "synced":"Sincronizado",
     "not_concluded":"Não concluido",
-    "cant_edit_sync":"Não é possivel editar registos do passado"
+    "cant_edit_sync":"Não é possivel editar registos do passado",
+    "initial_state": "Estado Inicial"
 }

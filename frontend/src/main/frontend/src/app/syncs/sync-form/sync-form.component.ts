@@ -84,14 +84,14 @@ export class SyncFormComponent implements OnInit {
         Validators.required
       ]],
       startItemsToSend: ['', [
-        Validators.required
+        Validators.required,Validators.min(0)
       ]],
       startItemsToReceive: ['', [
-        Validators.required
+        Validators.required,Validators.min(0)
       ]],
       endTime: [],
-      endItemsToSend: [],
-      endItemsToReceive: [],
+      endItemsToSend: ['',[,Validators.min(0)]],
+      endItemsToReceive: ['',[,Validators.min(0)]],
       observation: [],
       observationHis: [],
       canceled: [],

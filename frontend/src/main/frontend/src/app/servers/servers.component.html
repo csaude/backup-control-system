@@ -26,7 +26,8 @@
         {{ 'searchbyname' | translate }}
       </label>
     </div>
-
+  </div>
+  <div class="row" style="margin-top: -20px;">
     <div class="col s6 m2 l2">
       <mz-select-container>
         <select mz-select mz-validation required id="district" [label]="'Tipo de Servidor'" formControlName="type"
@@ -43,7 +44,7 @@
       <input type="checkbox" class="filled-in" id="receiveds" formControlName="canceled" (change)="search()" />
       <label for="receiveds">{{ "canceled" | translate }}</label>
     </div>
-    <div class="col s12 m4 l4" style="margin-top: -35px;">
+    <div class="col s12 m8 l8" style="margin-top: -35px;">
       <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
 
         <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;

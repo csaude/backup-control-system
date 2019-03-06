@@ -9,12 +9,16 @@
 
 
   <div class="row">
-    <div class="input-field col s12 m2 l2">
+    <div class="input-field col s12 m3 l3">
       <input id="name" type="text" placeholder="{{ 'searchbyname' | translate }}" class="validate" [formControl]="nameValueControl">
       <label for="name">
         {{ 'searchbyname' | translate }}
       </label>
     </div>
+
+  </div>
+  <div class="row" style="margin-top: -20px;">
+
     <div class="input-field col s12 m3 l3">
       <input id="name" type="text" placeholder="{{ 'searchbyopenmrsuuid' | translate }}" class="validate" [formControl]="openmrsValueControl">
       <label for="name">
@@ -22,7 +26,7 @@
       </label>
     </div>
 
-    <div class="col s12 m7 l7" style="margin-top: -15px;">
+    <div class="col s12 m9 l9" style="margin-top: -15px;">
         <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
 
           <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
