@@ -1,0 +1,38 @@
+<h1 mat-dialog-title>{{ "syncdetails" | translate }}</h1>
+<div mat-dialog-content>
+    <section class="mat-typography">
+        <h4 class="mat-h4">{{data.district.name}} / {{data.server.name}}</h4>
+     {{ "sync_time" | translate }}: {{getSyncTimeline(data.startTime,data.endTime)}}<br>
+     {{ "duration" | translate }}:
+     <span *ngIf="getSyncStatus(data.startTime,data.endTime)=='progress'&&getSyncExpires(data.startTime)==false"><mat-progress-bar mode="indeterminate"></mat-progress-bar></span>
+<span *ngIf="getSyncStatus(data.startTime,data.endTime)=='progress'&&getSyncExpires(data.startTime)==true"><span *ngIf="data.endItemsToSend==0&&data.endItemsToReceive==0" ><span style="color:red;">{{'not_concluded' | translate}}</span></span></span>
+<span *ngIf="getSyncStatus(data.startTime,data.endTime)=='complete'">{{getSyncDuration(data.startTime,data.endTime)}}</span> 
+
+<p>{{ "items_onstart" | translate }}: {{ data.startItemsToSend }} {{ "items_send" | translate }}, {{ data.startItemsToReceive }} {{ "items_receive" | translate }}<br>
+<span *ngIf="data.endTime!=null">{{ "items_onend" | translate }}: {{ data.endItemsToSend }} {{ "items_send" | translate }}, {{ data.endItemsToReceive }} {{ "items_receive" | translate }}</span>
+</p>
+
+<p>
+<mat-checkbox checked="{{data.syncError==true?'checked':''}}" onclick="return false;">{{ "sync_error_desc" | translate }}</mat-checkbox> &nbsp;&nbsp;
+<mat-checkbox checked="{{data.syncErrorResolved==true?'checked':''}}" onclick="return false;">{{ "sync_error_desc_resolved" | translate }}</mat-checkbox><br>
+<mat-checkbox checked="{{data.serverFault==true?'checked':''}}" onclick="return false;">{{ "serverfault" | translate }}</mat-checkbox> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<mat-checkbox checked="{{data.serverFaultResolved==true?'checked':''}}" onclick="return false;">{{ "serverfault_resolved" | translate }}</mat-checkbox><br>
+<mat-checkbox checked="{{data.laptopFault==true?'checked':''}}" onclick="return false;">{{ "laptopfault" | translate }}</mat-checkbox> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<mat-checkbox checked="{{data.laptopFaultResolved==true?'checked':''}}" onclick="return false;">{{ "laptopfault_resolved" | translate }}</mat-checkbox><br>
+<mat-checkbox checked="{{data.powerCut==true?'checked':''}}" onclick="return false;">{{ "powercut" | translate }}</mat-checkbox> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<mat-checkbox checked="{{data.powerCutResolved==true?'checked':''}}" onclick="return false;">{{ "powercut_resolved" | translate }}</mat-checkbox>
+</p>
+
+<p *ngIf="(data.observation!=null&&data.observation!='')||(data.observationHis!=null&&data.observationHis!='')">
+    <span *ngIf="data.observation!=null&&data.observation!=''"> {{ "obs_district" | translate }}: {{data.observation}}<br></span>
+    <span *ngIf="data.observationHis!=null&&data.observationHis!=''"> {{ "obs_his" | translate }}: {{data.observationHis}}</span>
+ </p>
+
+ {{ "createdby" | translate }}: {{data.createdBy.personName}} ({{data.createdBy.phoneNumber}}) - {{ data.dateCreated | date:'dd/MM/yyyy HH:mm' }}  <br>
+  <span *ngIf="data.updatedBy!=null">{{ "updatedby" | translate }}: {{data.updatedBy.personName}} ({{data.updatedBy.phoneNumber}}) - {{ data.dateUpdated | date:'dd/MM/yyyy HH:mm' }}<br></span>
+<span class="info-label">{{data.uid}}</span>
+</section>
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" [mat-dialog-close]="">OK</button>
+</div>

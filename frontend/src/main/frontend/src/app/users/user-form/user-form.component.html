@@ -1,187 +1,108 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
 
-<br>
+<div style="margin: 0 auto;width: 67%;margin-top: 100px;">
+    <h1 class="mat-h1"  *ngIf="title=='Novo Utilizador'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/users"><mat-icon>arrow_back</mat-icon></a> {{ "usernew" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+      <h1 class="mat-h1"  *ngIf="title=='Editar Utilizador'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/users"><mat-icon>arrow_back</mat-icon></a>{{ "useredit" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+  
+  <mat-card>
+      <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="save()">
 
-<h5 class="light" *ngIf="title=='Novo Utilizador'" style="display: inline-flex;vertical-align: middle;">
-  <a routerLink="/users" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-  </a> {{ "usernew" | translate }}</h5>
-<h5 class="light" *ngIf="title=='Editar Utilizador'" style="display: inline-flex;vertical-align: middle;">
-  <a routerLink="/users" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-  </a> {{ "useredit" | translate }}</h5>
 
-<div class="card-panel">
-  <div class="row">
-    <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
-      <div class="row">
-        <div class="input-field col s12 m6 l6">
-          <i class="material-icons prefix">label_outline</i>
-          <input id="others_names" type="text" class="validate" [(ngModel)]="user.person.othersNames" formControlName="others_names"
-            [class.invalid]="form.controls['others_names'].touched && !form.controls['others_names'].valid">
-          <label for="others_names" [class.active]="user.person.othersNames" data-error="Outros Nomes deve ser preenchido.">
-            {{ "others_names" | translate }} *
-          </label>
-        </div>
-        <div class="input-field col s12 m6 l6">
-          <i class="material-icons prefix">label_outline</i>
-          <input id="surname" type="text" class="validate" [(ngModel)]="user.person.surname" formControlName="surname"
-            [class.invalid]="form.controls['surname'].touched && !form.controls['surname'].valid">
-          <label for="surname" [class.active]="user.person.surname" data-error="O Apelido deve ser preenchido.">
-            {{ "surname" | translate }} *
-          </label>
-        </div>
+      <mat-form-field style="width: 47%;">
+          <mat-label>{{ 'others_names' | translate }} *</mat-label>
+          <input type="text" matInput placeholder="{{ 'others_names' | translate }}" [(ngModel)]="user.person.othersNames" formControlName="others_names">
+          <mat-icon matPrefix>person_outline</mat-icon>
+        </mat-form-field>
 
-      </div>
-      <div class="row">
-        <div class="col s12 m3 l3">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'people'">
-            </i>
-            <select mz-select id="gender2" label="{{ 'gender' | translate }} *" placeholder="{{ 'select' | translate }}" [(ngModel)]="user.person.gender"
-              formControlName="gender">
-              <option *ngFor="let gender of genders" [value]="gender.name" [selected]="gender.name == user.person.gender">{{
-                gender.description }}</option>
-            </select>
-          </mz-select-container>
-        </div>
-       
-        <div class="input-field col s12 m3 l3">
-          <i class="material-icons prefix">phone</i>
-          <input id="phone_number" type="number" class="validate" [(ngModel)]="user.person.phoneNumber" formControlName="phone_number"
-            [class.invalid]="form.controls['phone_number'].touched && !form.controls['phone_number'].valid">
-          <label for="phone_number" [class.active]="user.person.phoneNumber" data-error="O Distrito deve ser preenchido.">
-            {{ "phone" | translate }}
-          </label>
-        </div>
-        <div class="input-field col s12 m6 l6">
-          <i class="material-icons prefix">email</i>
-          <input id="email" type="email" class="validate" pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$" [(ngModel)]="user.person.email"
-            formControlName="email" [class.invalid]="form.controls['email'].touched && !form.controls['email'].valid">
-          <label for="email" [class.active]="user.person.email" data-error="Insira um email válido.">
-            {{ "email" | translate }}
-          </label>
-        </div>
-      </div>
-      <div class="row">
-        <div class="input-field col s12 m6 l6">
-          <i class="material-icons prefix">person</i>
-          <input (keydown.space)="$event.preventDefault()" onDrag="return false"
-            onDrop="return false" onPaste="return false" readonly="{{user.userId}}" id="username" type="text" class="validate"
-            autocomplete="new-password" [(ngModel)]="user.username" formControlName="username" [class.invalid]="form.controls['username'].touched && !form.controls['username'].valid">
-          <label for="username" [class.active]="user.username" data-error="O Username deve ser preenchido.">
-            {{ "username" | translate }} *
-          </label>
-        </div>
-        <div class="input-field col s12 m6 l6 {{ isHidden2 }}">
-          <i class="material-icons prefix">vpn_key</i>
-          <input id="password" name="password" type="password" class="validate" [(ngModel)]="user.password"
-            autocomplete="new-password" formControlName="password" [class.invalid]="form.controls['password'].touched && !form.controls['password'].valid">
-          <label for="password" [class.active]="user.password" data-error="O Password deve ser preenchido.">
-            {{ "password" | translate }} *
-          </label>
-        </div>
-        <div class="input-field col s12 m6 l6" *ngIf="user.userId">
-          <i class="material-icons prefix">vpn_key</i>
-          <input id="password_new" type="password" formControlName="password_new" autocomplete="new-password">
-          <label for="password_new">
-            {{ "password" | translate }} *
-          </label>
-        </div>
-      </div>
-      <div class="row">
-        <div class="{{disabled1==true?'col s10 l11 m11':'col s12 l12 m12'}}" >
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'person_outline'">
-            </i>
-            <select multiple mz-select id="authority" label="{{ 'function' | translate }} *" placeholder="{{ 'select' | translate }}"
-              [(ngModel)]="user.authorities" formControlName="authorities" [disabled]="disabled1">
-              <option *ngFor="let authority of allauthorities" [ngValue]="authority">{{ authority.description }}</option>
-            </select>
-          </mz-select-container>
-        </div>
+        <mat-form-field style="width: 47%;margin-left: 5%;">
+            <mat-label>{{ 'surname' | translate }} *</mat-label>
+            <input type="text" matInput placeholder="{{ 'surname' | translate }}" [(ngModel)]="user.person.surname" formControlName="surname">
+            <mat-icon matPrefix>person_outline</mat-icon>
+          </mat-form-field>
+        <br><br>
+  
+        <mat-form-field style="width: 21%;">
+            <mat-label>{{ 'gender' | translate }} *</mat-label>
+            <mat-select [(ngModel)]="user.person.gender" formControlName="gender">
+              <mat-option>{{ 'select' | translate }}</mat-option>
+              <mat-option *ngFor="let gender of genders" [value]="gender.name">{{gender.description }}</mat-option>
+            </mat-select>
+            <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+  
+        <mat-form-field style="width: 21%;margin-left: 5%;">
+            <mat-label>{{ 'phone' | translate }}</mat-label>
+            <input type="number" matInput placeholder="{{ 'phone' | translate }}" [(ngModel)]="user.person.phoneNumber" formControlName="phone_number">
+            <mat-icon matPrefix>phone</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field style="width: 47%;margin-left: 5%;">
+            <mat-label>{{ 'email' | translate }}</mat-label>
+            <input autocomplete="new-password" type="email" matInput placeholder="{{ 'email' | translate }}" pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$" [(ngModel)]="user.person.email" formControlName="email">
+            <mat-icon  matPrefix>email</mat-icon>
+        </mat-form-field>
+
+        <br><br>
+
+        <mat-form-field style="width: 47%;">
+            <mat-label>{{ 'username' | translate }} *</mat-label>
+            <input autocomplete="new-password" (keydown.space)="$event.preventDefault()" onDrag="return false" onDrop="return false" onPaste="return false" [readonly]="user.userId!=null" type="text" matInput placeholder="{{ 'username' | translate }}" [(ngModel)]="user.username" formControlName="username">
+            <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field style="width: 47%;margin-left: 5%;" *ngIf="!user.userId">
+            <mat-label>{{ 'password' | translate }} *</mat-label>
+            <input type="password" autocomplete="new-password" matInput placeholder="{{ 'password' | translate }}" [(ngModel)]="user.password" formControlName="password">
+            <mat-icon matPrefix>vpn_key</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field style="width: 47%;margin-left: 5%;" *ngIf="user.userId">
+              <mat-label>{{ 'password' | translate }} *</mat-label>
+              <input type="password" autocomplete="new-password" matInput placeholder="{{ 'password' | translate }}"  formControlName="password_new">
+              <mat-icon matPrefix>vpn_key</mat-icon>
+            </mat-form-field>
+            <br><br>
+
+            <mat-form-field style="width: 100%;">
+                <mat-label>{{'function' | translate }} *</mat-label>
+                <mat-select [(ngModel)]="user.authorities" formControlName="authorities" multiple>
+                  <mat-option *ngFor="let authority of allauthorities" [value]="authority">{{ authority.description }}</mat-option>
+                </mat-select>
+                <mat-icon matPrefix>person_outline</mat-icon>
+            </mat-form-field>
+            <br><br>
+
+            <mat-form-field style="width: 100%;">
+                <mat-label>{{'district' | translate }} *</mat-label>
+                <mat-select [(ngModel)]="user.districts" formControlName="districts" multiple>
+                  <mat-option *ngFor="let district of alldistricts" [value]="district">{{ district.fullName }}</mat-option>
+                </mat-select>
+                <mat-icon matPrefix>location_on</mat-icon>
+            </mat-form-field>
+            <br><br>
+
+            <mat-form-field style="width: 100%;">
+                <mat-label>{{ 'language' | translate }} *</mat-label>
+                <mat-select [(ngModel)]="user.locale" formControlName="locale">
+                  <mat-option>{{ 'select' | translate }}</mat-option>
+                  <mat-option *ngFor="let language of languages" [value]="language.name">{{language.description }}</mat-option>
+                </mat-select>
+                <mat-icon matPrefix>language</mat-icon>
+            </mat-form-field>
+
+            <br> <br>
+
+        <mat-checkbox *ngIf="user.userId" [(ngModel)]="user.enabled" formControlName="enabled">{{ "enabled" | translate }}</mat-checkbox>
+
         
-        <div class="col s1 l1 m1" *ngIf="disabled1==true">
-          <br>
-          <br>
-          <div class="preloader-wrapper small active">
-            <div class="spinner-layer spinner-red-only">
-              <div class="circle-clipper left">
-                <div class="circle"></div>
-              </div>
-              <div class="gap-patch">
-                <div class="circle"></div>
-              </div>
-              <div class="circle-clipper right">
-                <div class="circle"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="{{disabled2==true?'col s10 l11 m11':'col s12 l12 m12'}}">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'location_on'">
-            </i>
-            <select multiple mz-select id="districts" label="{{ 'district' | translate }}(s) *" placeholder="{{ 'select' | translate }}"
-              [(ngModel)]="user.districts" formControlName="districts" [disabled]="disabled2" style="font-size: 8px;">
-
-              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.fullName }}</option>
-            </select>
-          </mz-select-container>
-        </div>
-        
-        <div class="col s1 l1 m1" *ngIf="disabled2==true">
-          <br>
-          <br>
-          <div class="preloader-wrapper small active">
-            <div class="spinner-layer spinner-red-only">
-              <div class="circle-clipper left">
-                <div class="circle"></div>
-              </div>
-              <div class="gap-patch">
-                <div class="circle"></div>
-              </div>
-              <div class="circle-clipper right">
-                <div class="circle"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col s12">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'language'">
-            </i>
-            <select mz-select id="gender" label="{{ 'language' | translate }} *" placeholder="{{ 'select' | translate }}" [(ngModel)]="user.locale"
-              formControlName="locale">
-              <option *ngFor="let language of languages" [value]="language.name" [selected]="language.name == user.locale">{{
-                language.description }}</option>
-            </select>
-          </mz-select-container>
-        </div>
-       
-      </div>
-      <div class="row {{ isHidden }}">
-        <div class="col s2" style="margin-left: 45px;margin-top: 25px;">
-          <input type="checkbox" class="filled-in" id="enabled" [(ngModel)]="user.enabled" formControlName="enabled" />
-          <label for="enabled">{{ "enabled" | translate }}</label>
-        </div>
-      </div>
-      <br />
-      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled||disabled1||disabled2">
-        {{ "save" | translate }}
-        <i class="material-icons right">send</i>
-      </button>
-      <a *ngIf="!isDisabled" class="waves-effect waves-teal btn-flat" routerLink="/users">
-        <span class="orange-text text-darken-3">{{ "cancel" | translate }}</span>
-      </a>
-    </form>
+        <br> <br>
+        <mat-card-actions>
+            <button type="submit" mat-raised-button color="primary" [disabled]="!form.valid||isDisabled||disabled1==true" matTooltip="Salvar registo">{{ "save" | translate }}</button>
+            <button mat-raised-button routerLink="/users" [disabled]="isDisabled" matTooltip="Cancelar operação">{{ "cancel" | translate }}</button>
+          </mat-card-actions>
+  
+  </form>
+  
+  </mat-card-content>
+  </mat-card>
   </div>
-</div>

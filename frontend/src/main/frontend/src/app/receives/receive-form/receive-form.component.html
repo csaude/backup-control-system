@@ -1,355 +1,103 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
-<br>
 
-<h5 class="light" *ngIf="title=='Receber Backup'" style="display: inline-flex;vertical-align: middle;"><a routerLink="/receives"
-    mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-  </a> {{ "receivenew" | translate }}</h5>
-<h5 class="light" *ngIf="title=='Editar Recepção de Backup'" style="display: inline-flex;vertical-align: middle;"><a
-    routerLink="/receives" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-  </a> {{ "receiveedit" | translate }}</h5>
-<div class="card-panel">
-  <div class="row">
-    <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
+<div style="margin: 0 auto;width: 67%;margin-top: 100px;">
+    <h1 class="mat-h1"  *ngIf="title=='Receber Backup'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/receives"><mat-icon>arrow_back</mat-icon></a> {{ "receivenew" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+      <h1 class="mat-h1"  *ngIf="title=='Editar Recepcão de Backup'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/receives"><mat-icon>arrow_back</mat-icon></a>{{ "receiveedit" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+  
+  <mat-card>
 
-      <mz-collapsible [mode]="'expandable'" [onClose]="closeFunctionCallback" [onOpen]="openFunctionCallback" [popout]="false">
-        <mz-collapsible-item *ngIf="send.uid">
-          <mz-collapsible-item-header>
-            <i mz-icon mz-input-prefix [icon]="'details'"></i> {{ "showsenddetails" | translate }}
-            {{send.district.fullName}} - {{send.backupDate | date: 'dd/MM/yyyy'}}
-          </mz-collapsible-item-header>
-          <mz-collapsible-item-body>
-            <div class="row hide">
-              <div class="input-field col s12">
-                <input id="name" type="text" class="validate" [ngModel]="send" formControlName="send">
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s12">
-                <i class="material-icons prefix">location_on</i>
-                <input id="name" type="text" class="validate" value="{{send.district.fullName}}" readonly>
-                <label for="name" [class.active]="send.district.name">
-                  {{ "district" | translate }}
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s12 l6 m6">
-                <i class="material-icons prefix">account_circle</i>
-                <input id="name" type="text" class="validate" value="{{send.transporter.name}} - {{send.transporter.phoneNumber}}"
-                  readonly>
-                <label for="name" [class.active]="send.transporter.name">
-                  {{ "transporter" | translate }}
-                </label>
-              </div>
+        <mat-card-title *ngIf="!receive.receiveId">{{send.district.fullName}}</mat-card-title>
+        <mat-card-subtitle *ngIf="!receive.receiveId">{{send.backupDate | date: 'dd/MM/yyyy'}}</mat-card-subtitle>
 
-              <div class="input-field col s12 l6 m6">
-                <i class="material-icons prefix">date_range</i>
-                <input id="date_created" type="text" class="validate" value="{{send.backupDate | date: 'dd/MM/yyyy'}}"
-                  readonly>
-                <label for="date_created" [class.active]="send.backupDate">
-                  {{ "backup_date" | translate }}
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class=" col s12 l6 m6" style="margin-left: 45px;">
-                <input type="checkbox" class="filled-in" id="update_finished" checked="{{send.updateFinished==true?'checked':''}}"
-                  onclick="return false;" />
-                <label for="update_finished">{{ "at" | translate }}</label>
-              </div>
-              <div class=" col s12 l4 m4" style="margin-left: 45px;">
-                <input type="checkbox" class="filled-in" id="sync_finished" checked="{{send.syncFinished==true?'checked':''}}"
-                  onclick="return false;" />
-                <label for="sync_finished">{{ "st" | translate }}</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col s12 l6 m6" style="margin-left: 45px;">
-                <input type="checkbox" class="filled-in" id="cross_dhis2_finished" checked="{{send.crossDhis2Finished==true?'checked':''}}"
-                  onclick="return false;" />
-                <label for="cross_dhis2_finished">{{ "dhis2" | translate }}</label>
-              </div>
-              <div class=" col s12 l4 m4" style="margin-left: 45px;">
-                <input type="checkbox" class="filled-in" id="cross_idart_finished" checked="{{send.crossIdartFinished==true?'checked':''}}"
-                  onclick="return false;" />
-                <label for="cross_idart_finished">{{ "idart" | translate }}</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class=" col s12 l6 m6" style="margin-left: 45px;">
-                <input type="checkbox" class="filled-in" id="validation_finished" checked="{{send.validationFinished==true?'checked':''}}"
-                  onclick="return false;" />
-                <label for="validation_finished">{{ "vt" | translate }}</label>
-              </div>
-            </div>
-            <br>
-            <div class="row">
-              <div class="input-field col s12">
-                <i class="material-icons prefix">label</i>
-                <textarea id="textarea1" class="materialize-textarea" maxlength="255" value="{{send.observation}}"
-                  readonly></textarea>
-                <label for="textarea1" [class.active]="send.observation">{{ "obs_district" | translate }}</label>
-              </div>
-            </div>
+        <mat-card-title *ngIf="receive.receiveId">{{receive.send.district.fullName}}</mat-card-title>
+        <mat-card-subtitle *ngIf="receive.receiveId">{{receive.send.backupDate | date: 'dd/MM/yyyy'}}</mat-card-subtitle>
 
-            <div class="row">
-                <div class="switch col s12 l4 m4" style="margin-left: 45px;display: inline-flex;">
-                  {{ "include_idart_backup" | translate }}
-                  <label>
-                    <input type="checkbox" checked="{{send.idartBackup==true?'checked':''}}" onclick="return false;">
-                    <span class="lever"></span>
-                  </label>
-                </div>
-     
-                <div class="input-field col s12 l4 m4" *ngIf="send.idartBackup==true" style="margin-top: -10px;">
-                    <i class="material-icons prefix">date_range</i>
-                    <input id="idartBackupDate" type="text" class="validate" value="{{send.idartBackupDate | date: 'dd/MM/yyyy'}}"
-                      readonly>
-                    <label for="idartBackupDate" [class.active]="send.backupDate">
-                      {{ "backup_date" | translate }}
-                    </label>
-              </div>
-              </div>
-          </mz-collapsible-item-body>
-        </mz-collapsible-item>
+      <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="save()">
 
-        <!-- Edit-->
+            <mat-form-field style="width: 47%;">
+                    <mat-label>{{'receivedate' | translate }} *</mat-label>
+                    <input matInput autocomplete="off" onkeypress="return false;" [max]="maxDate" (click)="picker.open()" [matDatepicker]="picker" placeholder="{{ 'receivedate' | translate }}" [(ngModel)]="receive.receiveDate" formControlName="receiveDate"> 
+                    <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+            <br><br>
 
-        <mz-collapsible-item *ngIf="receive.send.uid">
-          <mz-collapsible-item-header>
-            <i mz-icon mz-input-prefix [icon]="'details'"></i> {{ "showsenddetails" | translate }}
-            {{receive.send.district.fullName}} - {{receive.send.backupDate | date: 'dd/MM/yyyy'}}
-          </mz-collapsible-item-header>
-          <mz-collapsible-item-body>
-            <div class="row hide">
-              <div class="input-field col s12">
-                <input id="name" type="text" class="validate" [ngModel]="receive.send" formControlName="send">
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s12">
-                <i class="material-icons prefix">location_on</i>
-                <input id="name" type="text" class="validate" value="{{receive.send.district.fullName}}" readonly>
-                <label for="name" [class.active]="receive.send.district.name">
-                  {{ "district" | translate }}
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s12 l6 m6">
-                <i class="material-icons prefix">account_circle</i>
-                <input id="name" type="text" class="validate" value="{{receive.send.transporter.name}} - {{receive.send.transporter.phoneNumber}}"
-                  readonly>
-                <label for="name" [class.active]="receive.send.transporter.name">
-                  {{ "transporter" | translate }}
-                </label>
-              </div>
+            <mat-checkbox   checked="{{receive.ikReturned==true?'checked':''}}" [(ngModel)]="receive.ikReturned" formControlName="ikReturned">{{ "ikreturned" | translate }} </mat-checkbox>
+            <br><br>
+            <mat-form-field *ngIf="receive.ikReturned" style="width: 47%;">
+                    <mat-label>{{'returndate' | translate }} *</mat-label>
+                    <input matInput autocomplete="off" onkeypress="return false;" [max]="maxDate" (click)="picker2.open()" [matDatepicker]="picker2" placeholder="{{ 'returndate' | translate }}" [(ngModel)]="receive.dateIkReturned" formControlName="dateIkReturned"> 
+                    <mat-datepicker-toggle matPrefix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                  </mat-form-field>
 
-              <div class="input-field col s12 l6 m6">
-                <i class="material-icons prefix">date_range</i>
-                <input id="date_created" type="text" class="validate" value="{{receive.send.backupDate | date: 'dd/MM/yyyy'}}"
-                  readonly>
-                <label for="date_created" [class.active]="receive.send.backupDate">
-                  {{ "backup_date" | translate }}
-                </label>
-              </div>
-            </div>
-            <div class="row">
-              <div class=" col s12 l6 m6" style="margin-left: 45px;">
-                <input type="checkbox" class="filled-in" id="update_finished" checked="{{receive.send.updateFinished==true?'checked':''}}"
-                  onclick="return false;" />
-                <label for="update_finished">{{ "at" | translate }}</label>
-              </div>
-              <div class=" col s12 l4 m4" style="margin-left: 45px;">
-                <input type="checkbox" class="filled-in" id="sync_finished" checked="{{receive.send.syncFinished==true?'checked':''}}"
-                  onclick="return false;" />
-                <label for="sync_finished">{{ "st" | translate }}</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col s12 l6 m6" style="margin-left: 45px;">
-                <input type="checkbox" class="filled-in" id="cross_dhis2_finished" checked="{{receive.send.crossDhis2_Finished==true?'checked':''}}"
-                  onclick="return false;" />
-                <label for="cross_dhis2_finished">{{ "dhis2" | translate }}</label>
-              </div>
-              <div class=" col s12 l4 m4" style="margin-left: 45px;">
-                <input type="checkbox" class="filled-in" id="cross_idart_finished" checked="{{receive.send.crossIdartFinished==true?'checked':''}}"
-                  onclick="return false;" />
-                <label for="cross_idart_finished">{{ "idart" | translate }}</label>
-              </div>
-            </div>
-            <div class="row">
-              <div class=" col s12 l6 m6" style="margin-left: 45px;">
-                <input type="checkbox" class="filled-in" id="validation_finished" checked="{{receive.send.validationFinished==true?'checked':''}}"
-                  onclick="return false;" />
-                <label for="validation_finished">{{ "vt" | translate }}</label>
-              </div>
-            </div>
-            <br>
-            <div class="row">
-              <div class="input-field col s12">
-                <i class="material-icons prefix">label</i>
-                <textarea id="textarea1" class="materialize-textarea" maxlength="255" value="{{receive.send.observation}}"
-                  readonly></textarea>
-                <label for="textarea1" [class.active]="receive.send.observation">{{ "obs_district" | translate }}</label>
-              </div>
-            </div>
+            <mat-form-field *ngIf="receive.ikReturned" style="width: 43%; margin-left: 5%;" >
+                    <mat-label>{{'transporter' | translate }} *</mat-label>
+                    <input type="text" placeholder="Seleccione um" aria-label="Number"  matInput (input)="search($event.target.value)" [matAutocomplete]="auto" [(ngModel)]="receive.transporter" formControlName="transporter">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" >
+                      <mat-option *ngFor="let transporter of alltransporters" [value]="transporter">{{transporter.name}} ({{transporter.phoneNumber}})</mat-option>
+                    </mat-autocomplete>
+                    <mat-icon matPrefix>search</mat-icon>
+            </mat-form-field>
 
-            <div class="row">
-                <div class="switch col s12 l4 m4" style="margin-left: 45px;display: inline-flex;">
-                  {{ "include_idart_backup" | translate }}
-                  <label>
-                    <input type="checkbox" checked="{{receive.send.idartBackup==true?'checked':''}}" onclick="return false;">
-                    <span class="lever"></span>
-                  </label>
-                </div>
-     
-                <div class="input-field col s12 l4 m4" *ngIf="receive.send.idartBackup==true" style="margin-top: -10px;">
-                    <i class="material-icons prefix">date_range</i>
-                    <input id="idartBackupDate" type="text" class="validate" value="{{receive.send.idartBackupDate | date: 'dd/MM/yyyy'}}"
-                      readonly>
-                    <label for="idartBackupDate" [class.active]="receive.send.backupDate">
-                      {{ "backup_date" | translate }}
-                    </label>
-              </div>
-              </div>
+            <a *ngIf="receive.ikReturned" target="_blank" routerLink="/transporters/new" mat-icon-button matTooltip="Adicionar novo Transportador">
+              <mat-icon>add</mat-icon>
+          </a>
 
-          </mz-collapsible-item-body>
-        </mz-collapsible-item>
+          <br><br>
 
-        <mz-collapsible-item [active]="true">
-          <mz-collapsible-item-header>
-            <i mz-icon mz-input-prefix [icon]="'details'"></i> {{ "receivenew" | translate }}
-          </mz-collapsible-item-header>
-          <mz-collapsible-item-body>
+
+          <br><br>
+
+          <mat-checkbox   checked="{{receive.restored==true?'checked':''}}" [(ngModel)]="receive.restored" formControlName="restored">{{ "backuprestored" | translate }} </mat-checkbox>
+          <br><br>
+          <mat-form-field *ngIf="receive.restored" style="width: 47%;">
+                  <mat-label>{{'restoreddate' | translate }} *</mat-label>
+                  <input matInput autocomplete="off" onkeypress="return false;" [max]="maxDate" (click)="picker3.open()" [matDatepicker]="picker3" placeholder="{{ 'restoreddate' | translate }}" [(ngModel)]="receive.dateRestored" formControlName="dateRestored"> 
+                  <mat-datepicker-toggle matPrefix [for]="picker3"></mat-datepicker-toggle>
+                  <mat-datepicker #picker3></mat-datepicker>
+                </mat-form-field>
+
+        <br><br>
+
+      
+
+        <mat-form-field style="width: 50%;">
+                <textarea rows="3"  placeholder="{{'obs_his' | translate }}" matInput maxlength="255" [(ngModel)]="receive.observation" formControlName="observation"></textarea>
+           </mat-form-field>
+           <br><br>
+
+
+    
+           <mat-checkbox *ngIf="receive.receiveId==null" [(ngModel)]="receive.send.canceled" formControlName="sendCanceled">{{ "cancelit" | translate }}</mat-checkbox>
+           <br><br>
+           <mat-form-field  style="width: 100%;" *ngIf="receive.send.canceled">
+             
+               <mat-label>{{ "cancelitreason" | translate }} *</mat-label>
+               <input type="text" matInput placeholder="" [(ngModel)]="receive.send.canceledReason" formControlName="sendCanceledReason">
+               <mat-icon matPrefix>label_outline</mat-icon>
+           </mat-form-field>
            
-            <div class="row">
-              <div class="col s12">
-                <mz-datepicker-container>
-                  <i mz-icon mz-input-prefix [icon]="'date_range'">
-                  </i>
-                  <input mz-datepicker label="{{ 'receivedate' | translate }} *" [options]="options" required
-                    [(ngModel)]="receive.receiveDate" formControlName="receiveDate" type="date" />
-                </mz-datepicker-container>
-              </div>
+           <br>
 
-            </div>
 
-            <div class="row">
-              <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 20px;">
-                <input type="checkbox" class="filled-in" id="ik_returned" [(ngModel)]="receive.ikReturned"
-                  formControlName="ikReturned" />
-                <label for="ik_returned">{{ "ikreturned" | translate }}</label>
-              </div>
-              <div class="col s12 l3 m3" *ngIf="receive.ikReturned">
-                <mz-datepicker-container>
-                  <i mz-icon mz-input-prefix [icon]="'date_range'">
-                  </i>
-                  <input mz-datepicker label="{{ 'returndate' | translate }}" [options]="options" [(ngModel)]="receive.dateIkReturned"
-                    formControlName="dateIkReturned" type="date" />
-                </mz-datepicker-container>
-              </div>
-
-              <div class="input-field col s11 l2 m2" *ngIf="receive.ikReturned">
-                  <i class="material-icons prefix">person</i>
-                  <input id="name" type="text" placeholder="{{ 'searchbyname' | translate }}" class="validate" [formControl]="nameValueControl">
-              </div>
-
-              <div class="col s12 l3 m3" *ngIf="receive.ikReturned">
-                <mz-select-container>
-                  
-                  <select mz-select label="{{ 'transporter' | translate }} *" placeholder="{{ 'select' | translate }}"
-                    [(ngModel)]="receive.transporter" formControlName="transporter" [disabled]="disabled1">
-                    <option *ngFor="let transporter of alltransporters" [ngValue]="transporter">{{ transporter.name }} ({{ transporter.phoneNumber }})</option>
-                  </select>
-                </mz-select-container>
-              </div>
-              <div class="col s2 l1 m1" *ngIf="disabled1==false&&receive.ikReturned" >
-                  <br>
-                  <a mz-tooltip routerLink="/transporters/new" target="_blank" tooltip="{{ 'add' | translate }}" [position]="'top'"
-                    [html]="false" [delay]="100">
-                    <i class="material-icons waves-effect left">add</i>
-                  </a>
-                 <!--
-                  <a mz-tooltip (click)="refreshTransporter()" tooltip="{{ 'update' | translate }}" [position]="'top'"
-                    [html]="false" [delay]="100">
-                    <i class="material-icons waves-effect left" style="color:orange;">refresh</i>
-                  </a>-->
-                </div>
-                <div class="col s1 l1 m1" *ngIf="disabled1==true">
-                  <br>
-                  <div class="preloader-wrapper small active">
-                    <div class="spinner-layer spinner-red-only">
-                      <div class="circle-clipper left">
-                        <div class="circle"></div>
-                      </div>
-                      <div class="gap-patch">
-                        <div class="circle"></div>
-                      </div>
-                      <div class="circle-clipper right">
-                        <div class="circle"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-            </div>
-            <div class="row">
-              <div class="col s12 l3 m3" style="margin-left: 45px;margin-top: 20px;">
-                <input type="checkbox" class="filled-in" id="restored" [(ngModel)]="receive.restored" formControlName="restored" />
-                <label for="restored">{{ "backuprestored" | translate }}</label>
-              </div>
-              <div class="col s12 l8 m8" *ngIf="receive.restored">
-                <mz-datepicker-container>
-                  <i mz-icon mz-input-prefix [icon]="'date_range'">
-                  </i>
-                  <input mz-datepicker label="{{ 'restoreddate' | translate }} *" [options]="options" [(ngModel)]="receive.dateRestored"
-                    formControlName="dateRestored" type="date" />
-                </mz-datepicker-container>
-              </div>
-
-            </div>
-            <div class="row">
-              <div class="input-field col s12">
-                <i class="material-icons prefix">description</i>
-                <textarea id="textarea1" class="materialize-textarea" maxlength="255" [(ngModel)]="receive.observation"
-                  formControlName="observation" [class.invalid]="form.controls['observation'].touched && !form.controls['observation'].valid"></textarea>
-                <label for="textarea1" [class.active]="receive.observation" data-error="A Observação deve ser preenchida.">{{
-                  "obs_his" | translate }}</label>
-              </div>
-            </div>
-            <div class="row" class="row {{ isHidden }}">
-              <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 25px;">
-                <input type="checkbox" class="filled-in" id="canceled" [(ngModel)]="receive.canceled" formControlName="canceled" />
-                <label for="canceled">{{ "cancelit" | translate }}</label>
-              </div>
-              <div class="input-field col s12 l8 m8" *ngIf="receive.canceled">
-                <input id="canceledReason" type="text" class="validate" [(ngModel)]="receive.canceledReason"
-                  formControlName="canceledReason">
-                <label for="canceledReason" [class.active]="receive.canceledReason">
-                  {{ "cancelitreason" | translate }}
-                </label>
-              </div>
-            </div>
-          </mz-collapsible-item-body>
-        </mz-collapsible-item>
-      </mz-collapsible>
-
-      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled||disabled1==true">
-        {{ "save" | translate }}
-        <i class="material-icons right">send</i>
-      </button>
-
-      <a *ngIf="!isDisabled" class="waves-effect waves-teal btn-flat" routerLink="/receives">
-        <span class="orange-text text-darken-3">{{ "cancel" | translate }}</span>
-      </a>
-
-    </form>
+        <mat-checkbox *ngIf="receive.receiveId!=null" [(ngModel)]="receive.canceled" formControlName="canceled">{{ "cancelit" | translate }}</mat-checkbox>
+        <br><br>
+        <mat-form-field  style="width: 100%;" *ngIf="receive.canceled">
+          
+            <mat-label>{{ "cancelitreason" | translate }} *</mat-label>
+            <input type="text" matInput placeholder="" [(ngModel)]="receive.canceledReason" formControlName="canceledReason">
+            <mat-icon matPrefix>label_outline</mat-icon>
+        </mat-form-field>
+        
+        <br>
+        <mat-card-actions>
+            <button type="submit" mat-raised-button color="primary" [disabled]="!form.valid||isDisabled||disabled1==true" matTooltip="Salvar registo">{{ "save" | translate }}</button>
+            <button mat-raised-button routerLink="/receives" [disabled]="isDisabled" matTooltip="Cancelar operação">{{ "cancel" | translate }}</button>
+          </mat-card-actions>
+  
+  </form>
+  
+  </mat-card-content>
+  </mat-card>
   </div>
-</div>

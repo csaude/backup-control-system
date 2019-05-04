@@ -9,6 +9,8 @@ import { LoginsService } from '../shared/logins.service';
 import { User } from '../../users/shared/user';
 import * as CryptoJS from 'crypto-js';
 import { NavbarService } from '../../nav-bar/nav-bar.service';
+import { MatSnackBar} from '@angular/material';
+
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
@@ -32,7 +34,8 @@ export class LoginFormComponent implements OnInit {
     public router: Router,
     public route: ActivatedRoute,
     public loginsService: LoginsService,
-    public nav: NavbarService
+    public nav: NavbarService,
+    public snackBar: MatSnackBar
   ) {
     this.form = formBuilder.group({
       username: ['', [
@@ -43,6 +46,13 @@ export class LoginFormComponent implements OnInit {
       ]]
     });
   }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
+  }
+
   ngOnInit() {
     this.isDisabled = false;
     var user = JSON.parse(window.sessionStorage.getItem('user'));
@@ -72,23 +82,22 @@ export class LoginFormComponent implements OnInit {
             this.router.navigate(['home']);
             this.nav.callMethodOfSecondComponent();
           } else {
+            this.openSnackBar("Acesso restrito, contacte o SIS!", "OK");
             this.loginAccess = "";
             this.loginFail = "hide";
             this.isDisabled = false;
           }
         } else {
+          this.openSnackBar("Credencias Inválidas!", "OK");
           this.loginAccess = "hide";
           this.loginFail = "";
           this.isDisabled = false;
-          this.localUser.password = "";
-          this.localUser.username = "";
         }
       }, error => {
+        this.openSnackBar("Credencias Inválidas!", "OK");
         this.loginFail = "";
         this.loginAccess = "hide";
         this.isDisabled = false;
-        this.localUser.password = "";
-        this.localUser.username = "";
       },
         () => {
         }

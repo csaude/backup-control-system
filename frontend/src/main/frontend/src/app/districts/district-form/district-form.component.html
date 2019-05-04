@@ -1,139 +1,63 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
 
-<br>
+<div style="margin: 0 auto;width: 67%;margin-top: 100px;">
+  <h1 class="mat-h1"  *ngIf="title=='Novo Distrito'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/districts"><mat-icon>arrow_back</mat-icon></a> {{ "districtnew" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+    <h1 class="mat-h1"  *ngIf="title=='Editar Distrito'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/districts"><mat-icon>arrow_back</mat-icon></a>{{ "districtedit" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
 
-<h5 class="light" *ngIf="title=='Novo Distrito'">
-  <a routerLink="/districts" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-  </a> {{ "districtnew" | translate }}</h5>
-<h5 class="light" *ngIf="title=='Editar Distrito'">
-  <a routerLink="/districts" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-  </a> {{ "districtedit" | translate }}</h5>
+<mat-card>
+    <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="save()">
+    <mat-form-field style="width: 100%;">
+        <mat-label>{{'province' | translate }} *</mat-label>
+        <mat-select [(ngModel)]="district.province" formControlName="province" >
+          <mat-option>Seleccione</mat-option>
+          <mat-option *ngFor="let province of provinces" [value]="province.name" >{{province.name }}</mat-option>
+        </mat-select>
+        <mat-icon matPrefix>location_on</mat-icon>
+    </mat-form-field>
+    <br><br>
 
-<div class="card-panel">
-  <div class="row">
-    <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
-      <div class="row">
-        <div class="col s12">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'location_on'">
-            </i>
-            <select mz-select id="province" label="{{'province' | translate }} *" placeholder="{{'select' | translate }}"
-              [(ngModel)]="district.province" formControlName="province">
-              <option *ngFor="let province of provinces" [value]="province.name" [selected]="province.name == district.province">{{
-                province.name }}</option>
-            </select>
-          </mz-select-container>
-        </div>
-      </div>
+    <mat-form-field style="width: 100%;">
+        <mat-label>{{ 'district' | translate }} *</mat-label>
+        <input  type="text" matInput placeholder="{{ 'district' | translate }}" [(ngModel)]="district.name" formControlName="name">
+        <mat-icon matPrefix>location_on</mat-icon>
+      </mat-form-field>
+      <br><br>
 
-      <div class="row">
-        <div class="input-field col s12">
-          <i class="material-icons prefix">location_on</i>
-          <input id="name" type="text" class="validate" [(ngModel)]="district.name" formControlName="name"
-            [class.invalid]="form.controls['name'].touched && !form.controls['name'].valid">
-          <label for="name" [class.active]="district.name" data-error="O Distrito deve ser preenchido.">
-            {{ "district" | translate }} *
-          </label>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col s11 l11 m11">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'insert_drive_file'">
-            </i>
-            <select multiple mz-select id="ironkeys" label="{{'districtsironkeys' | translate }}" placeholder="{{'select' | translate }}"
-              [(ngModel)]="district.ironkeys" formControlName="ironkeys" [disabled]="disabled1">
-              <option *ngFor="let ironkey of allironkeys" [ngValue]="ironkey">{{ ironkey.serial }}</option>
-            </select>
-          </mz-select-container>
-        </div>
+      <mat-form-field style="width: 100%;">
+          <mat-label>{{'districtsironkeys' | translate }}</mat-label>
+          <mat-select [(ngModel)]="district.ironkeys" formControlName="ironkeys" multiple>
+            <mat-option *ngFor="let ironkey of allironkeys" [value]="ironkey">{{ ironkey.serial }} ({{ ironkey.size }} GB)</mat-option>
+          </mat-select>
+          <mat-icon matPrefix>insert_drive_file</mat-icon>
+      </mat-form-field>
+      <br><br>
 
-        <div class="col s1 l1 m1" *ngIf="disabled1==true">
-          <br>
-          <br>
-          <div class="preloader-wrapper small active">
-            <div class="spinner-layer spinner-red-only">
-              <div class="circle-clipper left">
-                <div class="circle"></div>
-              </div>
-              <div class="gap-patch">
-                <div class="circle"></div>
-              </div>
-              <div class="circle-clipper right">
-                <div class="circle"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <mat-form-field style="width: 100%;">
+          <mat-label>{{'parent' | translate }}</mat-label>
+          <mat-select [(ngModel)]="district.parent" formControlName="parent" >
+            <mat-option>Seleccione</mat-option>
+            <mat-option *ngFor="let district of alldistricts" [value]="district">{{ district.fullName }}</mat-option>
+          </mat-select>
+          <mat-icon matPrefix>location_on</mat-icon>
+      </mat-form-field>
+    
+      <mat-checkbox *ngIf="district.districtId!=null" [(ngModel)]="district.canceled" formControlName="canceled">{{ "cancelit" | translate }}</mat-checkbox>
+      <br><br>
+      <mat-form-field  style="width: 100%;" *ngIf="district.canceled">
+        
+          <mat-label>{{ "cancelitreason" | translate }} *</mat-label>
+          <input type="text" matInput placeholder="" [(ngModel)]="district.canceledReason" formControlName="canceledReason">
+          <mat-icon matPrefix>label_outline</mat-icon>
+      </mat-form-field>
+      
+      <br>
+      <mat-card-actions>
+          <button type="submit" mat-raised-button color="primary" [disabled]="!form.valid||isDisabled||disabled1==true" matTooltip="Salvar registo">{{ "save" | translate }}</button>
+          <button mat-raised-button routerLink="/districts" [disabled]="isDisabled" matTooltip="Cancelar operação">{{ "cancel" | translate }}</button>
+        </mat-card-actions>
 
-      </div>
+</form>
 
-      <div class="row">
-        <div class="input-field col s12 l6 m6">
-          <i class="material-icons prefix">wifi</i>
-          <input id="instance_url" type="text" class="validate" [(ngModel)]="district.instanceUrl" formControlName="instanceUrl">
-          <label for="instance_url" [class.active]="district.instanceUrl">
-            {{ "instance_url" | translate }}
-          </label>
-        </div>
-        <div class="input-field col s6 l3 m3">
-          <i class="material-icons prefix">perm_identity</i>
-          <input id="instance_username" type="text" class="validate" [(ngModel)]="district.instanceUsername"
-            formControlName="instanceUsername">
-          <label for="instance_username" [class.active]="district.instanceUsername">
-            {{ "username" | translate }}
-          </label>
-        </div>
-        <div class="input-field col s6 l3 m3">
-          <i class="material-icons prefix">vpn_key</i>
-          <input id="instance_password" type="password" class="validate" [(ngModel)]="district.instancePassword"
-            formControlName="instancePassword" autocomplete="new-password">
-          <label for="instance_password" [class.active]="district.instancePassword">
-            {{ "password" | translate }}
-          </label>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col s12">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'location_on'">
-            </i>
-            <select mz-select id="district" label="{{'parent' | translate }}" [placeholder]="'Seleccione o Distrito'"
-              [(ngModel)]="district.parent" formControlName="parent">
-              <option *ngFor="let district of alldistricts" [ngValue]="district">{{ district.fullName }}</option>
-            </select>
-          </mz-select-container>
-        </div>
-      </div>
-
-      <div class="row" class="row" *ngIf="district.districtId!=null">
-        <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 25px;">
-          <input type="checkbox" class="filled-in" id="canceled" [(ngModel)]="district.canceled" formControlName="canceled" />
-          <label for="canceled">{{ "cancelit" | translate }}</label>
-        </div>
-        <div class="input-field col s12 l8 m8" *ngIf="district.canceled">
-          <input id="canceled_reason" type="text" class="validate" [(ngModel)]="district.canceledReason"
-            formControlName="canceledReason">
-          <label for="canceled_reason" [class.active]="district.canceledReason">
-            {{ "cancelitreason" | translate }}
-          </label>
-        </div>
-      </div>
-
-      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled||disabled1==true">
-        {{ "save" | translate }}
-        <i class="material-icons right">send</i>
-      </button>
-      <a *ngIf="!isDisabled" class="waves-effect waves-teal btn-flat" routerLink="/districts">
-        <span class="orange-text text-darken-3">{{ "cancel" | translate }}</span>
-      </a>
-    </form>
-  </div>
+</mat-card-content>
+</mat-card>
 </div>

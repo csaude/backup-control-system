@@ -223,6 +223,10 @@ public class User {
 	public String getPersonName() {
 		return person.getOthersNames() + " " + person.getSurname();
 	}
+	
+	public String getPhoneNumber() {
+		return person.getPhoneNumber();
+	}
 
 	public String getCreatorName() {
 		return this.getCreatedBy().getPerson().getOthersNames() + " " + this.getCreatedBy().getPerson().getSurname();

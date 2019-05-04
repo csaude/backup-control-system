@@ -1,0 +1,50 @@
+<h1 mat-dialog-title>{{ "districtdetails" | translate }}</h1>
+<div mat-dialog-content>
+  <section class="mat-typography">
+  <h4 class="mat-h4">{{data.province}} / {{data.fullName}}</h4>
+  <span *ngIf="data.last_backup_received!=null">{{ "lastbackupreceived" | translate }}: {{data.last_backup_received}}<br></span>
+  <span *ngIf="data.last_backup_idart!=null">{{ "lastbackuprestored" | translate }}: {{data.last_backup_idart}}<br></span>
+  <span *ngIf="data.start_time!=null">{{ "lastsync" | translate }}: {{data.start_time }}-{{ data.end_time }}<br></span>
+  <span *ngIf="data.ironkeys.length>0">{{ "districtsironkeys" | translate }} ({{data.ironkeys.length}})<br></span>
+</section>
+  <p *ngIf="data.ironkeys.length>0">
+    
+  <mat-table style="overflow-y: scroll;height: 163px;box-shadow: none !important;" mat-table [dataSource]="data.ironkeys" class="mat-elevation-z8">
+
+      <!--- Note that these columns can be defined in any order.
+      The actual rendered columns are set as a property on the row definition" -->
+
+      <!-- Serial -->
+      <ng-container matColumnDef="serial">
+        <mat-header-cell *matHeaderCellDef> {{ "serialn" | translate }} </mat-header-cell>
+        <mat-cell *matCellDef="let element"><button mat-button color="primary" [mat-dialog-close]="" [routerLink]="['/ironkeys', element.uid]">{{element.serial}}</button></mat-cell>
+      </ng-container>
+
+       <!-- Size -->
+       <ng-container matColumnDef="size">
+          <mat-header-cell *matHeaderCellDef style="text-align: center;"> {{ "capacity" | translate }} </mat-header-cell>
+          <mat-cell *matCellDef="let element" style="text-align: center;"> {{element.size}} GB</mat-cell>
+        </ng-container>
+
+         <!-- State -->
+       <ng-container matColumnDef="state">
+          <mat-header-cell *matHeaderCellDef style="text-align: center;"> {{ "state" | translate }} </mat-header-cell>
+          <mat-cell *matCellDef="let element" style="text-align: center;"> {{element.status}} </mat-cell>
+        </ng-container>
+
+     
+      <mat-header-row *matHeaderRowDef="displayedColumns" style="min-height: 35px;"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" style="min-height: 30px;"></mat-row>
+    </mat-table>
+</p>
+<section class="mat-typography">
+    {{ "createdby" | translate }}: {{data.createdBy.personName}} ({{data.createdBy.phoneNumber}}) - {{ data.dateCreated | date:'dd/MM/yyyy HH:mm' }}  <br>
+    <span *ngIf="data.updatedBy!=null">{{ "updatedby" | translate }}: {{data.updatedBy.personName}} ({{data.updatedBy.phoneNumber}}) - {{ data.dateUpdated | date:'dd/MM/yyyy HH:mm' }}<br></span>
+  <span class="info-label">{{data.uid}}</span>
+</section>
+
+
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" [mat-dialog-close]="">OK</button>
+</div>

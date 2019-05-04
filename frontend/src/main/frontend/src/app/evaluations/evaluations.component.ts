@@ -5,7 +5,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EvaluationsService } from "./shared/evaluations.service";
 import { Evaluation } from "./shared/evaluation";
-import { MzToastService } from 'ngx-materialize';
+//import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
@@ -13,7 +13,7 @@ import 'rxjs/add/operator/debounceTime';
 
 @Component({
   selector: 'app-evaluations',
-  templateUrl: './evaluations.component.html',
+  templateUrl: './evaluations2.component.html',
   styleUrls: ['./evaluations.component.css']
 })
 
@@ -38,7 +38,7 @@ export class EvaluationsComponent implements OnInit {
    
   constructor(
     public evaluationsService: EvaluationsService,
-    public toastService: MzToastService,
+    //public toastService: MzToastService,
     public translate: TranslateService) {
   }
 
@@ -145,7 +145,7 @@ export class EvaluationsComponent implements OnInit {
 
 
   showMsg(evaluation) {
-    this.toastService.show('Avaliação: ' + evaluation + ', excluida com sucesso!', 2000, 'green', null);
+   // this.toastService.show('Avaliação: ' + evaluation + ', excluida com sucesso!', 2000, 'green', null);
   }
 
 }

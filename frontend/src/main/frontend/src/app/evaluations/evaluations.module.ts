@@ -10,7 +10,7 @@ import { HttpModule } from '@angular/http';
 import { EvaluationsComponent } from './evaluations.component';
 import { EvaluationsService } from './shared/evaluations.service';
 import { EvaluationFormComponent } from './evaluation-form/evaluation-form.component';
-import { MzTooltipModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzSelectModule,MzDropdownModule } from 'ngx-materialize';
+//import { MzTooltipModule, MzIconMdiModule, MzIconModule, MzModalModule, MzToastModule, MzButtonModule, MzInputModule,MzSelectModule,MzDropdownModule } from 'ngx-materialize';
 import { TranslateModule } from "ng2-translate";
 
 @NgModule({
@@ -20,7 +20,7 @@ import { TranslateModule } from "ng2-translate";
     CommonModule,
     RouterModule,
     HttpModule,
-    MzTooltipModule,
+    /*MzTooltipModule,
     MzIconMdiModule,
     MzIconModule,
     MzModalModule,
@@ -29,7 +29,7 @@ import { TranslateModule } from "ng2-translate";
     MzButtonModule,
     MzInputModule,
     TranslateModule,
-    MzDropdownModule
+    MzDropdownModule*/
   ],
   declarations: [
     EvaluationsComponent,

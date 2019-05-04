@@ -61,70 +61,115 @@ public class ReceiveServiceImpl implements ReceiveService {
 	@Override
 	public Receive save(Receive receive) {
 		if (receive.getReceiveId() == null) {
-			receive.setDateCreated(new Date());
-			receive.setDateUpdated(new Date());
-			old_send = sendService.findOneByUuid(receive.getSend().getUid());
-			old_send.setReceived(true);
-			sendService.save(old_send);
-			if (receive.isIkReturned() == true) {
-				receive.setIkReturnedBy(receive.getCreatedBy());
-			} else {
-				receive.setTransporter(null);
-				receive.setDateIkReturned(null);
-				receive.setIkReturnedBy(null);
-			}
-			if (receive.isRestored() == true) {
-				receive.setRestoredBy(receive.getCreatedBy());
-			} else {
-				receive.setDateRestored(null);
-				receive.setRestoredBy(null);
-			}
+			
+			if(receive.getSend().isCanceled()) {
+				old_send = sendService.findOneByUuid(receive.getSend().getUid());
+				old_send.setCanceled(true);
+				old_send.setCanceledReason(receive.getSend().getCanceledReason());
+				old_send.setDateCanceled(new Date());
+				old_send.setCanceledBy(receive.getCreatedBy());
+				sendService.save(old_send);
+				logger.info(receive.getCreatedBy().getUid() + ", canceled Send: " + receive.getSend().toString());
+				return null;
+			}else {
+				
+				receive.setDateCreated(new Date());
+				receive.setDateUpdated(new Date());
+				old_send = sendService.findOneByUuid(receive.getSend().getUid());
+				old_send.setReceived(true);
+				sendService.save(old_send);
+				if (receive.isIkReturned() == true) {
+					receive.setIkReturnedBy(receive.getCreatedBy());
+				} else {
+					receive.setTransporter(null);
+					receive.setDateIkReturned(null);
+					receive.setIkReturnedBy(null);
+				}
+				if (receive.isRestored() == true) {
+					receive.setRestoredBy(receive.getCreatedBy());
+				} else {
+					receive.setDateRestored(null);
+					receive.setRestoredBy(null);
+				}
 
-			new Thread(new Runnable() {
-				public void run() {
-					HtmlEmail email = new HtmlEmail();
-					email.setHostName("smtp.gmail.com");
-					email.setSmtpPort(465);
-					email.setAuthenticator(new DefaultAuthenticator("scb.fgh@gmail.com", "Pepfar2014"));
-					email.setSSLOnConnect(true);
-					DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
-					data = dateFormat1.format(receive.getSend().getBackupDate());
-					data_recepcao = dateFormat1.format(receive.getReceiveDate());
-					district = receive.getSend().getDistrict().getFullName();
-					try {
-						String r1 = resourceRepository.findUsersForReceiveNotification(receive.getSend().getDistrict().getDistrictId()).toString().replace("[", "");
-						String r2 = r1.replace("]", " ");
-						String[] temp;
-						String divisor = ", ";
-						temp = r2.split(divisor);
-						int i = 0;
-						while (i < temp.length) {
-							email.addBcc(temp[i] + "");
-							i++;
+				new Thread(new Runnable() {
+					public void run() {
+						HtmlEmail email = new HtmlEmail();
+						email.setHostName("smtp.gmail.com");
+						email.setSmtpPort(465);
+						email.setAuthenticator(new DefaultAuthenticator("scb.fgh@gmail.com", "Pepfar2014"));
+						email.setSSLOnConnect(true);
+						DateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
+						data = dateFormat1.format(receive.getSend().getBackupDate());
+						data_recepcao = dateFormat1.format(receive.getReceiveDate());
+						district = receive.getSend().getDistrict().getFullName();
+						try {
+							String r1 = resourceRepository.findUsersForReceiveNotification(receive.getSend().getDistrict().getDistrictId()).toString().replace("[", "");
+							String r2 = r1.replace("]", " ");
+							String[] temp;
+							String divisor = ", ";
+							temp = r2.split(divisor);
+							int i = 0;
+							while (i < temp.length) {
+								email.addBcc(temp[i] + "");
+								i++;
+							}
+							email.setFrom("scb.fgh@gmail.com", "SCB-"+ env.getProperty("org")+" Message [No Reply]");
+							email.setSubject("[SCB-" + env.getProperty("org") + "] Recepção de backup: " + district + "-"+ data);
+							email.setHtmlMsg(""
+									+ "<table border='1' style='border-color:#FAFAFA;' cellspacing='0' cellpadding='5' style='width:400px;'>"
+									+ "<thead><tr><td colspan='2' style='text-align:center;background-color:#3f51b5;color:white;'>Registo de Recepção de Backup</td></tr><thead>"
+									+ "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Distrito:</td><td>" + district + "</td></tr>"
+									+ "<tr><td bgcolor='#F3F3F3'>Data do Backup:</td><td>" + data + "</td></tr>"
+									+ "<tr><td bgcolor='#F3F3F3'>Data de Recepção:</td><td>" + data_recepcao + "</td></tr>"
+									+ "<tr><td bgcolor='#F3F3F3'>Recebido por:</td><td>"
+									+ receive.getCreatedBy().getPersonName() + "<br>("
+									+ receive.getCreatedBy().getPerson().getPhoneNumber() + ")</td></tr>"
+									+ "<tr><td colspan='2' style='text-aign:center;background-color:#3f51b5;color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>SCB</span></a><br/>" +Calendar.getInstance().get(Calendar.YEAR)+" © <a href='mailto:sis@fgh.org.mz'><span style='color:#00FFFF;'>sis@fgh.org.mz</span></a></td></tr>"
+									+ "</tbody></table>");
+							email.setTextMsg(
+									"O seu cliente não aceita mensagens HTML. \nContacte o Administador para mais detalhes.");
+							email.setCharset("utf-8");
+							email.send();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
-						email.setFrom("scb.fgh@gmail.com", "SCB-"+ env.getProperty("org")+" Message [No Reply]");
-						email.setSubject("[SCB-" + env.getProperty("org") + "] Recepção de backup: " + district + "-"+ data);
-						email.setHtmlMsg(""
-								+ "<table border='1' style='border-color:#EEEEEE;' cellspacing='0' cellpadding='5' style='width:400px;'>"
-								+ "<thead><tr><td colspan='2' style='text-align:center;background-color:#0288D1;color:white;'>Novo registo de Recepção de Backup</td></tr><thead>"
-								+ "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Distrito:</td><td>" + district + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Data do Backup:</td><td>" + data + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Data de Recepção:</td><td>" + data_recepcao + "</td></tr>"
-								+ "<tr><td bgcolor='#F3F3F3'>Recebido por:</td><td>"
-								+ receive.getCreatedBy().getPersonName() + "<br>("
-								+ receive.getCreatedBy().getPerson().getPhoneNumber() + ")</td></tr>"
-								+ "<tr><td colspan='2' style='text-aign:center;background-color:#0288D1;color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>SCB</span></a><br/>" +Calendar.getInstance().get(Calendar.YEAR)+" © <a href='mailto:sis@fgh.org.mz'><span style='color:#00FFFF;'>sis@fgh.org.mz</span></a></td></tr>"
-								+ "</tbody></table>");
-						email.setTextMsg(
-								"O seu cliente não aceita mensagens HTML. \nContacte o Administador para mais detalhes.");
-						email.setCharset("utf-8");
-						email.send();
-					} catch (Exception e) {
+					}
+				}).start();
+				logger.info(receive.getCreatedBy().getUid() + ", created Receive: " + receive.toString());
+				
+				if (receive.getReceiveDate() != null) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					try {
+						receive.setReceiveDate(sdf.parse(sdf.format(receive.getReceiveDate())));
+					} catch (ParseException e) {
 						e.printStackTrace();
 					}
 				}
-			}).start();
-			logger.info(receive.getCreatedBy().getUid() + ", created Receive: " + receive.toString());
+
+				if (receive.getDateIkReturned() != null) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					try {
+						receive.setDateIkReturned(sdf.parse(sdf.format(receive.getDateIkReturned())));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+
+				if (receive.getDateRestored() != null) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					try {
+						receive.setDateRestored(sdf.parse(sdf.format(receive.getDateRestored())));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+				receive.setDateUpdated(new Date());
+				return receiveRepository.save(receive);
+				
+			}
+			
+			
 		} else {
 			Receive old_receive = this.findOneByUuid(receive.getUid());
 			if (receive.isCanceled() == true) {
@@ -155,36 +200,40 @@ public class ReceiveServiceImpl implements ReceiveService {
 				receive.setIkReturnedBy(null);
 			}
 			logger.info(receive.getUpdatedBy().getUid() + ", updated Receive: " + receive.toString());
+			
+			
+			if (receive.getReceiveDate() != null) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				try {
+					receive.setReceiveDate(sdf.parse(sdf.format(receive.getReceiveDate())));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (receive.getDateIkReturned() != null) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				try {
+					receive.setDateIkReturned(sdf.parse(sdf.format(receive.getDateIkReturned())));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (receive.getDateRestored() != null) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				try {
+					receive.setDateRestored(sdf.parse(sdf.format(receive.getDateRestored())));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+			receive.setDateUpdated(new Date());
+			return receiveRepository.save(receive);
+			
 		}
 
-		if (receive.getReceiveDate() != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			try {
-				receive.setReceiveDate(sdf.parse(sdf.format(receive.getReceiveDate())));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
-
-		if (receive.getDateIkReturned() != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			try {
-				receive.setDateIkReturned(sdf.parse(sdf.format(receive.getDateIkReturned())));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
-
-		if (receive.getDateRestored() != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			try {
-				receive.setDateRestored(sdf.parse(sdf.format(receive.getDateRestored())));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
-		receive.setDateUpdated(new Date());
-		return receiveRepository.save(receive);
+		
 	}
 
 	@Transactional(readOnly = false)

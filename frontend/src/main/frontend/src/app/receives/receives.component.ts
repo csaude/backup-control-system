@@ -2,8 +2,9 @@
  * Copyright (C) 2014-2018, Friends in Global Health, LLC
  * All rights reserved.
  */
+import { Component, OnInit,Inject, ViewChild,forwardRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef, MatSort, MatTableDataSource, MAT_DIALOG_DATA, PageEvent,MatSnackBar } from '@angular/material';
 import { SendsService } from "../sends/shared/sends.service";
 import { Send } from "../sends/shared/send";
 declare var jsPDF: any; // Important
@@ -14,6 +15,13 @@ import { DistrictsService } from './../districts/shared/districts.service';
 import { District } from './../districts/shared/district';
 import { TranslateService } from 'ng2-translate';
 import * as myGlobals from '../../globals';
+import {ExcelService} from '../resources/shared/excel.service';
+
+export class ReportObj{
+  districtname:string;
+  Distrito:string;
+  Observacao:string;
+}
 
 @Component({
   selector: 'app-receives',
@@ -25,35 +33,37 @@ import * as myGlobals from '../../globals';
 * @author Damasceno Lopes
 */
 export class ReceivesComponent implements OnInit {
-  public sends: Send[] = [];
+  public sends;sends1: Send[] = [];
   public send: Send = new Send();
-  public receives; receivesreport: Receive[] = [];
+  public receives;receives1: Receive[] = [];
+
+  public receivesreport: ReportObj[];
+
   public receive: Receive = new Receive();
-  public from; until; district_id; p;
+  public from; until; district_id;idart;
   public alldistricts: District[] = [];
   public form: FormGroup;
-  public received; canceled;idart: boolean;
+  public received; canceled: boolean;
   public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD; isHidden; isHidden2m: string;
   public user: Object[] = [];
 
-  public next; previous: number = 0;
-  public first; last; range: string;
+  public maxDate=new Date();
+
 
   public pageSize: number;
+  public page: number;
+  // MatPaginator Output
+  public pageEvent: PageEvent;
+  public displayedColumns: string[] = ['district','backup_date','idart_backup_date','received','updated','actions'];
+  public displayedColumns2: string[] = ['district','backup_date','idart_backup_date','received','restored','updated','actions'];
+  @ViewChild(MatSort) sort: MatSort;
 
-  public options: Pickadate.DateOptions = {
-    format: 'dd/mm/yyyy',
-    formatSubmit: 'yyyymmdd',
-    today: 'Hoje',
-    close: 'Fechar',
-    clear:'Limpar',
-    max: new Date(),
-    onClose: () => this.search2()
-  };
   public total; totali: number = 0;
 
-  constructor(public datepipe: DatePipe, public sendsService: SendsService, public receivesService: ReceivesService,
-    public translate: TranslateService, public districtsService: DistrictsService, formBuilder: FormBuilder) {
+  constructor(private excelService:ExcelService,public datepipe: DatePipe, public sendsService: SendsService, public receivesService: ReceivesService,
+    public translate: TranslateService, public districtsService: DistrictsService, formBuilder: FormBuilder,
+    public dialog: MatDialog,
+    public snackBar: MatSnackBar) {
     this.form = formBuilder.group({
       district: [],
       backup_from: [],
@@ -61,16 +71,20 @@ export class ReceivesComponent implements OnInit {
       received: [],
       idart: []
     });
+
+    
+
   }
 
   ngOnInit() {
     this.isHidden = "";
-    this.received = false;
+   
+    
     this.canceled = false;
     this.from = "";
     this.until = "";
     this.district_id = "";
-    this.idart = false;
+    this.idart = "";
     this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
     this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
     this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
@@ -79,47 +93,45 @@ export class ReceivesComponent implements OnInit {
     this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
     this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
 
-    this.districtsService.findDistricts("", "", "", "", "fullName,uid,districtId")
+    this.page=0;
+    this.pageSize=10;
+    if(window.sessionStorage.getItem('received')){
+      this.received = true;
+      this.getPageReceive(1);
+    }else{
+      this.received = false;
+      this.getPageSend(1);
+      
+    }
+
+    this.districtsService.findDistricts("", "", "", "", "fullName,uid,districtId,canceled")
       .subscribe(data => {
         this.alldistricts = data.content;
       });
-    this.pageSize=10
-    this.getPageSend(1);
+     
   }
 
-  getPageSend(page: number) {
-    this.first = "";
-    this.last = "";
+  getPageSend(event) {
+
+    if(event!=null){
+      if(event.pageIndex||event.pageSize){
+      this.page=event.pageIndex;
+      this.pageSize=event.pageSize;
+      }
+    }
     this.isHidden = "";
-    this.sendsService.findAllSends(page, this.pageSize, this.received, this.canceled,this.idart, this.from, this.until, this.district_id, "observation,transporter.phoneNumber,transporter.name,district.fullName,received,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,uid,backupDate,updateFinished,validationFinished,syncFinished,crossDhis2Finished,crossIdartFinished,uid,ikReceived,dateIkReceived,idartBackup,idartBackupDate")
+    this.sendsService.findAllSends(this.page+1, this.pageSize, this.received, this.canceled,this.idart, this.from, this.until, this.district_id, "createdBy.phoneNumber,updatedBy.phoneNumber,observation,transporter.phoneNumber,transporter.role,transporter.name,district.fullName,received,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,uid,backupDate,updateFinished,validationFinished,syncFinished,crossDhis2Finished,crossIdartFinished,uid,ikReceived,dateIkReceived,idartBackup,idartBackupDate")
       .subscribe(data => {
         this.total = data.totalElements;
-        this.p = page;
-        this.sends = data.content;
-        this.next = page + 1;
-        this.previous = page - 1;
-        if (data.first == true && data.last == true) {
-          this.first = "disabled";
-          this.last = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize - 1)) + " - " + data.totalElements;
-        }
-        else if (data.first == true && data.last == false) {
-          this.first = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize - 1)) + " - " + (page * this.pageSize);
-        }
-        else if (data.first == false && data.last == true) {
-          this.last = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize - 1)) + " - " + data.totalElements;
-        }
-        else if (data.first == false && data.last == false) {
-          this.range = ((page * this.pageSize) - (this.pageSize - 1)) + " - " + + (page * this.pageSize);
-        }
+        this.sends1 = data.content;
+        this.sends = new MatTableDataSource(this.sends1);
+        
       },
         error => {
           this.isHidden = "hide";
           this.total = 0;
-          this.p = 1;
           this.sends = [];
+          this.sends1 = [];
         },
         () => {
           this.isHidden = "hide";
@@ -127,48 +139,48 @@ export class ReceivesComponent implements OnInit {
       );
   }
 
-  getPageReceive(page: number) {
-    this.first = "";
-    this.last = "";
+  getPageReceive(event) {
+
+    if(event!=null){
+      if(event.pageIndex||event.pageSize){
+      this.page=event.pageIndex;
+      this.pageSize=event.pageSize;
+      }
+    }
     this.isHidden = "";
-    this.receivesService.findAllReceives(page, this.pageSize, this.canceled,this.idart, this.from, this.until, this.district_id, "transporter.name,receiveId,receiveDate,ikReturned,dateIkReturned,dateCreated,dateUpdated,createdBy.personName,uid,dateRestored,canceledReason,restoredBy.personName,ikReturnedBy.personName,restored,canceled,send.observation,send.transporter.phoneNumber,send.transporter.name,send.district.fullName,send.received,send.dateUpdated,send.dateCreated,send.createdBy.personName,send.updatedBy.personName,send.uid,send.backupDate,send.updateFinished,send.validationFinished,send.syncFinished,send.crossDhis2Finished,send.crossIdartFinished,send.uid,send.ikReceived,send.dateIkReceived,send.idartBackup,send.idartBackupDate")
+    this.receivesService.findAllReceives(this.page+1, this.pageSize, this.canceled,this.idart, this.from, this.until, this.district_id, "observation,send.createdBy.phoneNumber,createdBy.phoneNumber,updatedBy.phoneNumber,transporter.name,transporter.phoneNumber,transporter.role,receiveId,receiveDate,ikReturned,dateIkReturned,dateCreated,dateUpdated,createdBy.personName,uid,dateRestored,canceledReason,restoredBy.personName,ikReturnedBy.personName,restored,canceled,send.observation,send.transporter.phoneNumber,send.transporter.name,send.district.fullName,send.received,send.dateUpdated,send.dateCreated,send.createdBy.personName,send.updatedBy.personName,send.uid,send.backupDate,send.updateFinished,send.validationFinished,send.syncFinished,send.crossDhis2Finished,send.crossIdartFinished,send.uid,send.ikReceived,send.dateIkReceived,send.idartBackup,send.idartBackupDate")
       .subscribe(data => {
         this.total = data.totalElements;
-        this.p = page;
-        this.receives = data.content;
-        this.next = page + 1;
-        this.previous = page - 1;
-        if (data.first == true && data.last == true) {
-          this.first = "disabled";
-          this.last = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize - 1)) + " - " + data.totalElements;
-        }
-        else if (data.first == true && data.last == false) {
-          this.first = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize - 1)) + " - " + (page * this.pageSize);
-        }
-        else if (data.first == false && data.last == true) {
-          this.last = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize - 1)) + " - " + data.totalElements;
-        }
-        else if (data.first == false && data.last == false) {
-          this.range = ((page * this.pageSize) - (this.pageSize - 1)) + " - " + + (page * this.pageSize);
-        }
+        this.receives1 = data.content;
+        this.receives = new MatTableDataSource(this.receives1);
+       
       },
         error => {
           this.isHidden = "hide";
           this.total = 0;
-          this.p = 1;
           this.receives = [];
+          this.receives1 = [];
         },
         () => {
           this.isHidden = "hide";
         }
       );
+  }
+
+  printSend1(uuid){
+    this.isHidden = "";
+    this.send = this.sends1.find(item => item.uid == uuid);
+    this.printSend();
+  }
+
+  printSend2(uid) {
+    this.isHidden = "";
+    this.receive = this.receives1.find(item => item.uid == uid);
+    this.send = this.receive.send;
+    this.printSend();
   }
 
   printSend() {
-    var user = JSON.parse(window.sessionStorage.getItem('user'));
     var doc = new jsPDF();
     doc.setFontSize(10);
     doc.setTextColor(100);
@@ -183,14 +195,20 @@ export class ReceivesComponent implements OnInit {
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
 
+    var idart="";
+
+    if(this.send.idartBackup){
+      idart=", iDART: "+this.datepipe.transform(this.send.idartBackupDate, 'dd/MM/yyyy');
+    }
+
     doc.text(this.send.district.fullName, 40, 55);
     doc.setDrawColor(0);
     doc.setFillColor(243, 243, 243);
     doc.rect(40, 60, 65, 8, 'F')
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    doc.text('Data do Backup:', 49, 65);
-    doc.text(this.datepipe.transform(this.send.backupDate, 'dd/MM/yyyy'), 110, 65);
+    doc.text('Data do Backup OpenMRS:', 49, 65);
+    doc.text(this.datepipe.transform(this.send.backupDate, 'dd/MM/yyyy')+idart, 110, 65);
     doc.setDrawColor(0);
     doc.setFillColor(243, 243, 243);
     doc.rect(40, 70, 65, 8, 'F')
@@ -257,11 +275,11 @@ export class ReceivesComponent implements OnInit {
     doc.text(splitTitle, 110, 125);
     doc.text('_______________________________', 30, 180);
     doc.setFontSize(11);
-    doc.text(user.person.othersNames + " " + user.person.surname, 30, 185);
+    doc.text(this.send.createdBy.personName+" ("+this.send.createdBy.phoneNumber+")", 30, 185);
     doc.setFontSize(12);
     doc.text('_______________________________', 30, 200);
     doc.setFontSize(11);
-    doc.text(this.send.transporter.name, 30, 205);
+    doc.text(this.send.transporter.name +" ("+this.send.transporter.phoneNumber+")", 30, 205);
     doc.setFontSize(12);
     doc.text('_______________________________', 30, 220);
     doc.text('Oficial de SIS', 30, 225);
@@ -280,22 +298,21 @@ export class ReceivesComponent implements OnInit {
     doc.setFontSize(8);
     doc.setTextColor(100);
     doc.save('SCB_Protocolo_Envio_' + this.send.district.name + '_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm') + '.pdf');
+    this.isHidden = "hide";
   }
 
   setSend(uuid) {
-    this.send = this.sends.find(item => item.uid == uuid);
+    this.send = this.sends1.find(item => item.uid == uuid);
+    this.openDialog();
     }
 
-  setSend2(uid) {
-    this.receive = this.receives.find(item => item.uid == uid);
-    this.send = this.receive.send;
-  }
+  
 
   setReceive(uid) {
-    this.receive = this.receives.find(item => item.uid == uid);
+    this.receive = this.receives1.find(item => item.uid == uid);
+    this.openDialog2();
   }
-
-
+  
   search() {
     var userValue = this.form.value;
 
@@ -307,15 +324,15 @@ export class ReceivesComponent implements OnInit {
     }
 
     if (userValue.idart == null || userValue.idart == false) {
-      this.idart = false;
+      this.idart = "";
     } else {
       this.idart = true;
     }
 
     if ((userValue.backup_from != "" && userValue.backup_from != null) && (userValue.backup_until != "" && userValue.backup_until != null)) {
       if (userValue.backup_from <= userValue.backup_until) {
-        this.from = userValue.backup_from;
-        this.until = userValue.backup_until
+        this.from = this.datepipe.transform(userValue.backup_from, 'yyyyMMdd');
+        this.until = this.datepipe.transform(userValue.backup_until, 'yyyyMMdd');
       } else {
         this.from = "";
         this.until = "";
@@ -327,13 +344,34 @@ export class ReceivesComponent implements OnInit {
 
     if (userValue.received == null || userValue.received == false) {
       this.received = false;
+      window.sessionStorage.removeItem('received');
+      this.page=0;
       this.getPageSend(1);
     } else {
       this.received = true;
+      window.sessionStorage.setItem('received', 'true');
+      this.page=0;
       this.getPageReceive(1);
     }
   }
 
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '800px',
+      height: '600px',
+      data: this.send
+    });
+
+  }
+
+  openDialog2(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog2, {
+      width: '800px',
+      height: '600px',
+      data: this.receive
+    });
+
+  }
 
   search2() {
 
@@ -341,8 +379,8 @@ export class ReceivesComponent implements OnInit {
     
     if ((userValue.backup_from != "" && userValue.backup_from != null) && (userValue.backup_until != "" && userValue.backup_until != null)) {
       if (userValue.backup_from <= userValue.backup_until) {
-        this.from = userValue.backup_from;
-        this.until = userValue.backup_until;
+        this.from = this.datepipe.transform(userValue.backup_from, 'yyyyMMdd');
+        this.until = this.datepipe.transform(userValue.backup_until, 'yyyyMMdd');
         if (userValue.received == null || userValue.received == false) {
           this.getPageSend(1);
         } else {
@@ -368,15 +406,6 @@ export class ReceivesComponent implements OnInit {
 
   }
 
-
-  searchSize() {
-    this.getPageSend(1);
-  }
-
-  searchSize2() {
-    this.getPageReceive(1);
-  }
-
   printList() {
     this.isHidden = "";
     var total;
@@ -395,11 +424,13 @@ export class ReceivesComponent implements OnInit {
         total = data.content.length;
 
         if (this.district_id == '') {
+         
+          this.alldistricts =this.alldistricts.filter(item => item.canceled==false);
           for (let d of this.alldistricts) {
             if (!this.receivesreport.find(item => item.districtname == d.fullName)) {
               let receive = new Receive();
               receive.districtname = d.fullName
-              receive.obsd = "Não registou envio de backup neste periodo.";
+              receive.obsd = "Sem registo.";
               this.receivesreport.push(receive);
             }
           }
@@ -490,8 +521,92 @@ export class ReceivesComponent implements OnInit {
       );
   }
 
+
+
+  printListExcel() {
+    this.isHidden = "";
+    var total;
+
+    alasql.fn.datetime = function (dateStr) {
+      var date = new Date(dateStr);
+      return ("0" + date.getDate()).slice(-2)+"/"+("0" + (date.getMonth()+1)).slice(-2)+"/"+date.getFullYear();
+      ;
+    };
+
+
+    this.receivesService.findAllReceives(1, 1000, this.canceled,this.idart, this.from, this.until, this.district_id, "dateRestored,receiveDate,createdBy.personName,send.observation,send.district.fullName,send.createdBy.personName,send.backupDate,send.updateFinished,send.validationFinished,send.syncFinished,send.crossDhis2Finished,send.crossIdartFinished,send.dateCreated,dateCreated,send.idartBackupDate")
+      .subscribe(data => {
+        this.receivesreport = data.content;
+        this.receivesreport = alasql("SELECT send->district->fullName AS Distrito,datetime(send->backupDate) AS [Data do Backup OpenMRS],  CASE WHEN send->idartBackupDate IS NOT NULL THEN datetime(send->idartBackupDate) ELSE '' END AS [Data do Backup iDART],CASE WHEN send->updateFinished==true THEN 'Sim' ELSE 'Não' END AS [Actualização Terminada?] ,CASE WHEN send->validationFinished==true THEN 'Sim' ELSE 'Não' END AS [Validação Terminada?], CASE WHEN send->syncFinished==true THEN 'Sim' ELSE 'Não' END AS [Sincronização Terminada?], CASE WHEN send->crossDhis2Finished==true THEN 'Sim' ELSE 'Não' END AS [Cruzamento com DHIS2?],CASE WHEN send->crossIdartFinished==true THEN 'Sim' ELSE 'Não' END AS [Cruzamento com iDART?], send->createdBy->personName AS [Enviado por], datetime(send->dateCreated) AS [Enviado em], send->observation AS [Observacao], createdBy->personName AS [Recebido por], datetime(receiveDate) AS [Recebido em], CASE WHEN dateRestored IS NOT NULL THEN datetime(dateRestored) ELSE '' END AS [Restaurado em], observation AS [Observação SIS]  FROM ?receivesreport", [this.receivesreport])
+
+
+        if (this.district_id == '') {
+         
+          this.alldistricts =this.alldistricts.filter(item => item.canceled==false);
+          for (let d of this.alldistricts) {
+            if (!this.receivesreport.find(item => item.Distrito == d.fullName)) {
+              let receive = new ReportObj();
+              receive.Distrito = d.fullName
+              receive.Observacao = "Sem registo.";
+              this.receivesreport.push(receive);
+            }
+          }
+        }
+      },
+        error => {
+          this.isHidden = "hide";
+          this.receivesreport = [];
+        },
+        () => {
+          this.isHidden = "hide";
+          console.log()
+          this.excelService.exportAsExcelFile(this.receivesreport, 'SCB_Backups recebidos_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm'));
+          
+        }
+      );
+  }
+
+
+
   getDate(str: any){
+    if(str!=""){
     return str.charAt(6)+""+str.charAt(7)+"/"+str.charAt(4)+""+str.charAt(5)+"/"+str.charAt(0)+""+str.charAt(1)+str.charAt(2)+""+str.charAt(3);
+    }else{
+      return "";
+    }
   }
 
 }
+
+@Component({
+  selector: 'sends-info-dialog',
+  templateUrl: 'sends-info-dialog.html',
+})
+export class DialogOverviewExampleDialog {
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: Send) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+}
+
+@Component({
+  selector: 'receives-info-dialog',
+  templateUrl: 'receives-info-dialog.html',
+})
+export class DialogOverviewExampleDialog2 {
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog2>,
+    @Inject(MAT_DIALOG_DATA) public data: Receive) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+}
+

@@ -2,11 +2,11 @@
  * Copyright (C) 2014-2018, Friends in Global Health, LLC
  * All rights reserved.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog, MatDialogRef, MatSort, MatTableDataSource, MAT_DIALOG_DATA, PageEvent,MatSnackBar } from '@angular/material';
 import { IronkeysService } from "./shared/ironkeys.service";
 import { Ironkey } from "./shared/ironkey";
-import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 declare var jsPDF: any;
 import { DatePipe } from '@angular/common';
@@ -25,21 +25,26 @@ import 'rxjs/add/operator/debounceTime';
 * @author Damasceno Lopes
 */
 export class IronkeysComponent implements OnInit {
-  public ironkeys; ironkeysreport: Ironkey[] = [];
-  public p: number = 1;
+  public ironkeys;ironkeys1; ironkeysreport: Ironkey[] = [];
   public total; next; previous: number = 0;
   public form: FormGroup;
   public ironkey: Ironkey = new Ironkey();
   public isHidden; isDisabledt: string;
-  public serial; first; last; range: string;
+  public serial: string;
   public version: string;
   public status: string;
   public size: string;
-  public pageSize: number;
 
   public serialValueControl = new FormControl();
   public versionValueControl = new FormControl();
   public formCtrlSub: Subscription;
+
+  public pageSize: number;
+  public page: number;
+  // MatPaginator Output
+  public pageEvent: PageEvent;
+  public displayedColumns: string[] = ['serial','version','size','status','districts','updated','actions'];
+  @ViewChild(MatSort) sort: MatSort;
 
   public statuslist = [
     { name: "Activado" },
@@ -68,12 +73,18 @@ export class IronkeysComponent implements OnInit {
   constructor(
     public datepipe: DatePipe,
     public ironkeysService: IronkeysService,
-    public toastService: MzToastService,
     public translate: TranslateService,
-    public formBuilder: FormBuilder) {
+    public formBuilder: FormBuilder,
+    public dialog: MatDialog,
+    public snackBar: MatSnackBar) {
     this.form = formBuilder.group({
       status: [],
       size: []
+    });
+    this.ironkeysService.invokeEvent.subscribe(value => {
+      if (value === 'someVal') {
+        this.deleteIronkey();
+      }
     });
   }
   ngOnInit() {
@@ -81,7 +92,8 @@ export class IronkeysComponent implements OnInit {
     this.version = "";
     this.status = "";
     this.size = "";
-    this.pageSize=10
+    this.page=0;
+    this.pageSize=10;
     this.getPage(1);
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
 
@@ -101,47 +113,44 @@ export class IronkeysComponent implements OnInit {
 
   }
 
-  getPage(page: number) {
-    this.first = "";
-    this.last = "";
+  getPage(event) {
+
+    if(event!=null){
+      if(event.pageIndex||event.pageSize){
+      this.page=event.pageIndex;
+      this.pageSize=event.pageSize;
+      }
+    }
+
     this.isHidden = "";
     this.isDisabledt = "disabled";
-    this.ironkeysService.findIronkeys(page, this.pageSize, this.serial, this.version, this.status, this.size, "size,serial,version,districts.fullName,districts.uid,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,datePurchased,status,uid,observation")
+    this.ironkeysService.findIronkeys(this.page+1, this.pageSize, this.serial, this.version, this.status, this.size, "createdBy.phoneNumber,updatedBy.phoneNumber,size,serial,version,districts.fullName,districts.uid,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,datePurchased,status,uid,observation")
       .subscribe(data => {
         this.total = data.totalElements;
-        this.p = page;
-        this.ironkeys = data.content;
-        this.next = page + 1;
-        this.previous = page - 1;
-        if (data.first == true && data.last == true) {
-          this.first = "disabled";
-          this.last = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
-        }
-        else if (data.first == true && data.last == false) {
-          this.first = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + (page * this.pageSize);
-        }
-        else if (data.first == false && data.last == true) {
-          this.last = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
-        }
-        else if (data.first == false && data.last == false) {
-          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + + (page * this.pageSize);
-        }
+        this.ironkeys1 = data.content;
+        this.ironkeys = new MatTableDataSource(this.ironkeys1);
+        this.ironkeys.sort = this.sort;
+
+        
       },
         error => {
           this.isHidden = "hide";
           this.isDisabledt = "disabled";
           this.total = 0;
-          this.p = 1;
           this.ironkeys = [];
+          this.ironkeys1 = [];
         },
         () => {
           this.isHidden = "hide";
           this.isDisabledt = "";
         }
       );
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
   }
 
   search() {
@@ -176,14 +185,11 @@ export class IronkeysComponent implements OnInit {
     else {
       this.version = "";
     }
+    this.page=0;
     this.getPage(1);
   }
 
-  searchSize(){
-    this.getPage(1);
-  }
-
-
+  
   printList() {
     this.isHidden = "";
     this.isDisabledt = "disabled";
@@ -292,19 +298,47 @@ export class IronkeysComponent implements OnInit {
   }
 
   setIronkey(uid) {
-    this.ironkey = this.ironkeys.find(item => item.uid == uid);
+    this.ironkey = this.ironkeys1.find(item => item.uid == uid);
+    this.openDialog();
   }
+
+  setIronkeyDelete(uid) {
+    this.ironkey = this.ironkeys1.find(item => item.uid == uid);
+    this.openDialog4();
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '800px',
+      height: '600px',
+      data: this.ironkey
+    });
+
+  }
+
+  openDialog4(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog4, {
+      width: '800px',
+      height: '250px',
+      data: this.ironkey
+    });
+       
+  }
+
+  
+
+
   deleteIronkey() {
     this.isHidden = "";
     this.isDisabledt = "disabled";
     this.ironkeysService.deleteIronkey(this.ironkey.uid)
       .subscribe(data => {
         if (data.text() == "Success") {
-          this.getPage(this.p);
-          this.showMsg(this.ironkey.serial);
+          this.search();
+          this.openSnackBar("Ironkey: "+this.ironkey.serial+", excluido com sucesso!", "OK");
           this.isDisabledt = "";
         } else {
-          this.showMsgErr(this.ironkey.serial);
+          ;this.openSnackBar("Não é possivel excluir o Ironkey!", "OK");
           this.isHidden = "hide";
           this.isDisabledt = "";
         }
@@ -320,10 +354,45 @@ export class IronkeysComponent implements OnInit {
       );
   }
 
-  showMsg(ironkey) {
-    this.toastService.show('Ironkey: ' + ironkey + ', excluido com sucesso!', 2000, 'green', null);
+}
+
+@Component({
+  selector: 'ironkeys-info-dialog',
+  templateUrl: 'ironkeys-info-dialog.html',
+})
+export class DialogOverviewExampleDialog {
+
+  public displayedColumns: string[] = ['district'];
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: Ironkey) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
-  showMsgErr(ironkey) {
-    this.toastService.show('Ironkey: ' + ironkey + ', não pode ser excluido!', 2000, 'red', null);
+
+}
+
+@Component({
+  selector: 'ironkeys-delete-dialog',
+  templateUrl: 'ironkeys-delete-dialog.html',
+})
+export class DialogOverviewExampleDialog4 {
+
+  
+  constructor(
+    public ironkeysService: IronkeysService,
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog4>,
+    @Inject(MAT_DIALOG_DATA) public data: Ironkey) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
+
+  onDeleteClick(): void {
+    this.ironkeysService.callMethodOfSecondComponent();
+    this.dialogRef.close();
+  }
+
 }

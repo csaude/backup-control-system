@@ -7,8 +7,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Transporter } from '../shared/transporter';
 import { TransportersService } from '../shared/transporters.service';
-import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
+import { MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-transporter-form',
@@ -42,8 +42,8 @@ export class TransporterFormComponent implements OnInit {
     public formBuilder: FormBuilder,
     public router: Router,
     public route: ActivatedRoute,
+    public snackBar: MatSnackBar,
     public transportersService: TransportersService,
-    public toastService: MzToastService,
     public translate: TranslateService
   ) {
     this.form = formBuilder.group({
@@ -56,6 +56,12 @@ export class TransporterFormComponent implements OnInit {
       phoneNumber: [],
       canceled: [],
       canceledReason: []
+    });
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
     });
   }
 
@@ -86,7 +92,7 @@ export class TransporterFormComponent implements OnInit {
     var result, userValue = this.form.value;
     if (this.transporter.uid) {
       if (userValue.canceled == true && userValue.canceledReason == null) {
-        this.showMsgErr2();
+        this.openSnackBar("Escreva a razão para anular!", "OK");
         this.isDisabled = false;
       } else {
         userValue.transporterId = this.transporter.transporterId;
@@ -102,9 +108,9 @@ export class TransporterFormComponent implements OnInit {
         result.subscribe(data => {
           if (data.text() == "Success") {
             this.router.navigate(['transporters']);
-            this.showMsg(userValue.name);
-          } else {
-            this.showMsgErr();
+            this.openSnackBar("Transportador: "+userValue.name+", actualizado com sucesso!", "OK");
+            } else {
+            this.openSnackBar("Este Transportador ja existe!", "OK");
             this.isDisabled = false;
           }
         });
@@ -119,26 +125,14 @@ export class TransporterFormComponent implements OnInit {
       result.subscribe(data => {
         if (data.text() == "Success") {
           this.router.navigate(['transporters']);
-          this.showMsg(userValue.name);
+          this.openSnackBar("Transportador: "+userValue.name+", cadastrado com sucesso!", "OK");
         } else {
-          this.showMsgErr();
+          this.openSnackBar("Este Transportador ja existe!", "OK");
           this.isDisabled = false;
         }
       }
       );
     }
-  }
-
-  showMsg(transporter) {
-    this.toastService.show('Transportador: ' + transporter + ', salvo com sucesso!', 2000, 'green', null);
-  }
-
-  showMsgErr() {
-    this.toastService.show('Este Transportador ja existe!', 2000, 'red', null);
-  }
-
-  showMsgErr2() {
-    this.toastService.show('Escreva a razão para anular!', 2000, 'red', null);
   }
   
 }

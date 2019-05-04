@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { NavbarService } from './nav-bar.service';
 import { TranslateService } from 'ng2-translate';
@@ -11,7 +11,8 @@ import { ResourcesService } from "./../resources/shared/resources.service";
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
-  styleUrls: ['./nav-bar.component.css']
+  styleUrls: ['./nav-bar.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 
 /** 
@@ -260,7 +261,7 @@ export class NavBarComponent implements OnInit {
         }
         let options = {
           body: this.user.person.othersNames + " " + this.user.person.surname + ", " + exist + this.total + backup + "por receber!",
-          icon: "assets/images/bell-icon.png"
+          icon: "assets/images/scb-bell.png"
         };
        new Notification("SCB", options);
       }
@@ -282,7 +283,7 @@ export class NavBarComponent implements OnInit {
             }
             let options = {
               body: this.user.person.othersNames + " " + this.user.person.surname + ", " + exist + this.total + backup + "por receber!",
-              icon: "assets/images/bell-icon.png"
+              icon: "assets/images/scb-bell.png"
             };
             var notification = new Notification("SCB", options);
             clearInterval(this.nIntervId2);
@@ -313,7 +314,7 @@ export class NavBarComponent implements OnInit {
         }
         let options = {
           body: this.user.person.othersNames + " " + this.user.person.surname + ", " + exist + this.total2 + backup + "em progresso!",
-          icon: "assets/images/bell-icon.png"
+          icon: "assets/images/scb-bell.png"
         };
        new Notification("SCB", options);
       }
@@ -336,7 +337,7 @@ export class NavBarComponent implements OnInit {
             }
             let options = {
               body: this.user.person.othersNames + " " + this.user.person.surname + ", " + exist + this.total2 + backup + "em progresso!",
-              icon: "assets/images/bell-icon.png"
+              icon: "assets/images/scb-bell.png"
             };
             var notification = new Notification("SCB", options);
            

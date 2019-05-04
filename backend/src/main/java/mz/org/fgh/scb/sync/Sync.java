@@ -82,6 +82,18 @@ public class Sync {
 
 	@Column(nullable = false, name = "powercut")
 	private boolean powerCut;
+	
+	@Column(name = "sync_error_resolved", nullable = false)
+	private boolean syncErrorResolved;
+
+	@Column(name = "serverfault_resolved", nullable = false)
+	private boolean serverFaultResolved;
+
+	@Column(name = "laptopfault_resolved", nullable = false)
+	private boolean laptopFaultResolved;
+
+	@Column(nullable = false, name = "powercut_resolved")
+	private boolean powerCutResolved;
 
 	@Column(nullable = false, name = "date_created")
 	private Date dateCreated;
@@ -305,6 +317,38 @@ public class Sync {
 		this.canceledBy = canceledBy;
 	}
 
+	public boolean isSyncErrorResolved() {
+		return syncErrorResolved;
+	}
+
+	public void setSyncErrorResolved(boolean syncErrorResolved) {
+		this.syncErrorResolved = syncErrorResolved;
+	}
+
+	public boolean isServerFaultResolved() {
+		return serverFaultResolved;
+	}
+
+	public void setServerFaultResolved(boolean serverFaultResolved) {
+		this.serverFaultResolved = serverFaultResolved;
+	}
+
+	public boolean isLaptopFaultResolved() {
+		return laptopFaultResolved;
+	}
+
+	public void setLaptopFaultResolved(boolean laptopFaultResolved) {
+		this.laptopFaultResolved = laptopFaultResolved;
+	}
+
+	public boolean isPowerCutResolved() {
+		return powerCutResolved;
+	}
+
+	public void setPowerCutResolved(boolean powerCutResolved) {
+		this.powerCutResolved = powerCutResolved;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -340,7 +384,9 @@ public class Sync {
 	public String toString() {
 		return "Sync [syncId=" + syncId + ", startTime=" + startTime + ", startItemsToSend=" + startItemsToSend + ", startItemsToReceive=" + startItemsToReceive + ", endTime=" + endTime + ", endItemsToSend=" + endItemsToSend
 				+ ", endItemsToReceive=" + endItemsToReceive + ", observation=" + observation + ", observationHis=" + observationHis + ", canceled=" + canceled + ", uid=" + uid + ", syncError=" + syncError + ", serverFault=" + serverFault
-				+ ", laptopFault=" + laptopFault + ", powerCut=" + powerCut + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated + ", canceledReason=" + canceledReason + ", dateCanceled=" + dateCanceled + "]";
+				+ ", laptopFault=" + laptopFault + ", powerCut=" + powerCut + ", syncErrorResolved=" + syncErrorResolved + ", serverFaultResolved=" + serverFaultResolved + ", laptopFaultResolved=" + laptopFaultResolved
+				+ ", powerCutResolved=" + powerCutResolved + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated + ", canceledReason=" + canceledReason + ", dateCanceled=" + dateCanceled + "]";
 	}
 
+	
 }

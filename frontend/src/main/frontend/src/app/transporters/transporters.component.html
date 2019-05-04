@@ -1,195 +1,133 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
+<mat-sidenav-container autosize>
+  <mat-sidenav #drawer mode="side" opened="true" [fixedInViewport]="true" [fixedTopGap]="63" >
+    
+      <mat-toolbar color="primary">
+          <mat-toolbar-row>
+            <span>Menu</span>
+          </mat-toolbar-row>
+      </mat-toolbar>
 
-<br>
-<h5 class="light">{{ "transportersfound" | translate }}</h5>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/home" matTooltip="Ir para a pagina inicial">
+        <mat-icon>home</mat-icon>&nbsp;&nbsp;<span class="nav-caption">Página Inicial</span>
+      </a>
+      <a mat-list-item routerLink="/transporters/new" matTooltip="Adicionar novo Transportador">
+        <mat-icon>add</mat-icon>&nbsp;&nbsp;<span class="nav-caption">{{ "add" | translate}} Transportador</span>
+      </a>
+    </mat-nav-list>
 
-<form materialize [formGroup]="form">
-  <div class="row">
-    <div class="input-field col s12 m2 l2">
-      <input id="name" type="text" placeholder="{{ 'searchbyname' | translate }}" [formControl]="nameValueControl">
-      <label for="name">
-        {{ 'searchbyname' | translate }}
-      </label>
-    </div>
-    <div class="col s12 m3 l3">
-      <mz-select-container>
-        <select mz-select mz-validation required id="district" label="{{ 'function' | translate }}" formControlName="role"
-          (change)="search()">
-          <option value="all" selected>Todas Posições</option>
-          <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
-        </select>
-      </mz-select-container>
-    </div>
+    <mat-expansion-panel style="box-shadow: none">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+              Pesquisar Dados
+          </mat-panel-title>
+          <mat-panel-description>
+            
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        
+        <div>
+            <form [formGroup]="form">
+        <mat-form-field style="width: 100%;">
+            <mat-label>{{ 'searchbyname' | translate }}</mat-label>
+            <input matInput type="text" [formControl]="nameValueControl" placeholder="{{ 'searchbyname' | translate }}">
+            <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+    
+        <mat-form-field style="width: 100%;">
+            <mat-label>{{ 'function' | translate }}</mat-label>
+            <mat-select  formControlName="role" (change)="search()">
+              <mat-option value="all" selected>Todas Posições</mat-option>
+              <mat-option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</mat-option>
+            </mat-select>
+            <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+    
+        <br>
+             <mat-checkbox formControlName="canceled" (change)="search()">{{ "canceled" | translate }}</mat-checkbox>
+    
+    </form>
+        </div>
 
-  </div>
-  <div class="row" style="margin-top: -20px;">
+    </mat-expansion-panel>
+    
 
-    <div class="col s12 m8 l8" style="margin-top: 25px;">
-      <input type="checkbox" class="filled-in" id="receiveds" formControlName="canceled" (change)="search()" />
-      <label for="receiveds">{{ "canceled" | translate }}</label>
-    </div>
-    <div class="col s12 m4 l4" style="margin-top: -15px;">
-      <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
+  </mat-sidenav>
+  <mat-sidenav-content style="padding: 10px; margin-top: 70px;">
 
-        <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
-        <mz-select-container style="width: 50px;">
-          <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
-            <option value="10" selected>10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </mz-select-container>
+      <span style="display: inline-flex;">
+          <button mat-mini-fab color="basic" (click)="drawer.toggle()" matTooltip="Esconder / Mostrar Menu lateral"><mat-icon>menu</mat-icon> </button>
+        &nbsp;&nbsp;<h1 class="mat-h1" style="margin-top: 7px;">{{ "transportersfound" | translate }} <a matTooltip="Ajuda" target="_blank" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+      </span>
+        <mat-paginator *ngIf="isHidden=='hide'" [length]="total" [pageIndex]="page" [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 15, 25, 100]" (page)="pageEvent = getPage($event)"></mat-paginator>
+        <mat-progress-bar mode="indeterminate" *ngIf="isHidden==''"></mat-progress-bar>
+        <section class="mat-typography">
+        <span class="info-label" *ngIf="isHidden==''">Carregando dados...</span>
+      </section>
+          <mat-table mat-table [dataSource]="transporters" class="mat-elevation-z8" matSort>
+    
+            <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+    
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> {{ "transportername" | translate }} </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+            </ng-container>
+    
+            <!-- Role -->
+            <ng-container matColumnDef="role">
+              <mat-header-cell *matHeaderCellDef mat-sort-header> {{ "function" | translate }} </mat-header-cell>
+              <mat-cell *matCellDef="let element">{{element.role}}</mat-cell>
+            </ng-container>
+    
+            <!-- Phone -->
+            <ng-container matColumnDef="phone">
+              <mat-header-cell *matHeaderCellDef > {{ "phone" | translate }} </mat-header-cell>
+              <mat-cell *matCellDef="let element">{{element.phoneNumber}}</mat-cell>
+            </ng-container>
+    
+               <!-- Updated On -->
+            <ng-container matColumnDef="updated">
+                <mat-header-cell *matHeaderCellDef style="text-align: center;"> {{ "updatedon" | translate }} </mat-header-cell>
+                <mat-cell *matCellDef="let element" style="text-align: center;">  {{ element.dateUpdated | date: 'dd/MM/yyyy'}}</mat-cell>
+              </ng-container>
+    
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef></mat-header-cell>
+              <mat-cell *matCellDef="let element" style="text-align: center;">
+                <button mat-icon-button [matMenuTriggerFor]="menu" [disabled]="isHidden==''">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="setTransporter(element.uid)">
+                    <mat-icon>info</mat-icon>
+                    <span>{{ 'details' | translate}}</span>
+                  </button>
+                  <button mat-menu-item [routerLink]="['/transporters', element.uid]">
+                    <mat-icon>mode_edit</mat-icon>
+                    <span>{{ 'edit' | translate}}</span>
+                  </button>
+                  <button mat-menu-item (click)="setTransporterDelete(element.uid)">
+                    <mat-icon>delete</mat-icon>
+                    <span>{{ 'delete' | translate}}</span>
+                  </button>
+                </mat-menu>
+              </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+      <br>
+        <mat-paginator *ngIf="isHidden=='hide'" [length]="total" [pageIndex]="page" [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 15, 25, 100]" (page)="pageEvent = getPage($event)">
+        </mat-paginator>
+       
+        <button routerLink="/transporters/new"  mat-fab matTooltip="Adicionar novo Transportador" color="primary" class="fab-bottom-right">
+          <mat-icon>add</mat-icon>
+        </button>
 
-
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
-        <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
-        <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
-        <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
-
-      </ul>
-    </div>
-  </div>
-</form>
-
-<div class="card col s12 " style="margin-top: -20px;">
-  
-    <div class="progress {{isHidden}}" style="margin-top: 65px; margin-bottom: 0;">
-        <div class="indeterminate"></div>
-      </div>
-  <table class="bordered responsive-table highlight">
-      
-    <thead>
-      <tr>
-        <th>{{ "transportername" | translate }}</th>
-        <th>{{ "function" | translate }}</th>
-        <th>{{ "phone" | translate }}</th>
-        <th>{{ "updatedon" | translate }}</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody *ngIf="isHidden=='hide'">
-      <tr *ngFor="let transporter of transporters">
-        <td>{{ transporter.name }}</td>
-        <td>{{ transporter.role }}</td>
-        <td>{{ transporter.phoneNumber }}</td>
-        <td>{{ transporter.dateUpdated | date: 'dd/MM/yyyy' }}</td>
-        <td>
-          <a mz-tooltip tooltip="{{'details' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setTransporter(transporter.uid)"
-            (click)="basicModal2.openModal()" [routerLink]="">
-            <i class="material-icons icon-green">info</i>
-          </a>
-          &nbsp;
-          <a mz-tooltip tooltip="{{'edit' | translate}}" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/transporters', transporter.uid]">
-            <i class="material-icons icon-orange">mode_edit</i>
-          </a>
-          &nbsp;
-          <a mz-tooltip tooltip="{{'delete' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setTransporter(transporter.uid)"
-            (click)="basicModal.openModal()" routerLink="/transporters">
-            <i class="material-icons icon-red">delete</i>
-          </a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<div class="col s12">
-  <ul class="pagination valign-center" *ngIf="isHidden=='hide'" style="margin-top: -10px;">
-
-    <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
-    <mz-select-container style="width: 50px;">
-      <select mz-select id="pageSize" [(ngModel)]="pageSize" (change)="searchSize()">
-        <option value="10" selected>10</option>
-        <option value="25">25</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-      </select>
-    </mz-select-container>
-
-
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
-    <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
-    <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
-    <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
-
-  </ul>
-</div>
-
-
-<mz-modal #basicModal>
-  <mz-modal-header>
-    <i mz-icon [align]="'left'" [icon]="'warning'" [size]="'small'">
-    </i>
-    <h4>{{ "confirm" | translate }}</h4>
-  </mz-modal-header>
-  <mz-modal-content>
-    {{ "transporterdelete" | translate }}: {{transporter.name}}? {{ "confirmdelete" | translate }}
-  </mz-modal-content>
-  <mz-modal-footer>
-    <button mz-button [flat]="true" (click)="deleteTransporter()" mz-modal-close>{{ "yes" | translate }}</button>
-    <button mz-button [flat]="true" mz-modal-close>{{ "no" | translate }}</button>
-  </mz-modal-footer>
-</mz-modal>
-
-<mz-modal #basicModal2 [fixedFooter]="true">
-  <mz-modal-header>
-    <h4>{{ "transporterdetails" | translate }}</h4>
-  </mz-modal-header>
-  <mz-modal-content>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12">
-        <h5 class="light">{{transporter.name}}</h5>
-      </div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "function" | translate }}:</div>
-      <div class="col s12 l10 m10">{{transporter.role}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;" *ngIf="transporter.phoneNumber!=null">
-      <div class="col s12 l2 m2">{{ "phone" | translate }}:</div>
-      <div class="col s12 l10 m10">{{transporter.phoneNumber}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{transporter.createdBy.personName}} - {{ transporter.dateCreated | date:'dd/MM/yyyy
-        HH:mm' }}</div>
-    </div>
-    <div class="row" *ngIf="transporter.updatedBy!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{transporter.updatedBy.personName}} - {{ transporter.dateUpdated | date:'dd/MM/yyyy
-        HH:mm' }}</div>
-    </div>
-    <div class="row" *ngIf="transporter.canceledBy!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "canceledby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{transporter.canceledBy.personName}} - {{ transporter.dateCanceled |
-        date:'dd/MM/yyyy HH:mm' }}</div>
-    </div>
-    <div class="row" *ngIf="transporter.canceledBy!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "cancelitreason" | translate }}:</div>
-      <div class="col s12 l10 m10">{{transporter.canceledReason}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <span style="color:lightgrey;">{{transporter.uid}}</span>
-      </div>
-    </div>
-  </mz-modal-content>
-  <mz-modal-footer>
-    <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
-  </mz-modal-footer>
-</mz-modal>
-
-<div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
-  <a mz-tooltip tooltip="{{ 'add' | translate }}" [position]="'left'" [html]="false" [delay]="100" routerLink="/transporters/new"
-    class="btn-floating btn-large green waves-effect">
-    <i class="material-icons">add</i>
-  </a>
-</div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

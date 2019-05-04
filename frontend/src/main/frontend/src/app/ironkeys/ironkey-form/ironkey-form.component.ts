@@ -7,8 +7,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Ironkey } from '../shared/ironkey';
 import { IronkeysService } from '../shared/ironkeys.service';
-import { MzToastService } from 'ngx-materialize';
+import { MatSnackBar} from '@angular/material';
 import { TranslateService } from 'ng2-translate';
+
 @Component({
   selector: 'app-ironkey-form',
   templateUrl: './ironkey-form.component.html',
@@ -19,14 +20,9 @@ import { TranslateService } from 'ng2-translate';
 * @author Damasceno Lopes
 */
 export class IronkeyFormComponent implements OnInit {
-  public options: Pickadate.DateOptions = {
-    format: 'dd/mm/yyyy',
-    formatSubmit: 'yyyy-mm-dd',
-    today: 'Hoje',
-    close: 'Fechar',
-    clear:'Limpar',
-    max: new Date()
-  };
+  
+  public maxDate=new Date();
+
   public sizes = [
     { id: 1, name: '1 GB' },
     { id: 2, name: '2 GB' },
@@ -62,8 +58,8 @@ export class IronkeyFormComponent implements OnInit {
     public router: Router,
     public route: ActivatedRoute,
     public ironkeysService: IronkeysService,
-    public toastService: MzToastService,
-    public translate: TranslateService
+    public translate: TranslateService,
+    public snackBar: MatSnackBar
   ) {
     this.form = formBuilder.group({
       serial: ['', [
@@ -82,6 +78,13 @@ export class IronkeyFormComponent implements OnInit {
       datePurchased: []
     });
   }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
+  }
+
   ngOnInit() {
     this.isDisabled = false;
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
@@ -97,6 +100,7 @@ export class IronkeyFormComponent implements OnInit {
           .subscribe(
             ironkey => {
               this.ironkey = ironkey;
+              this.ironkey.datePurchased=new Date(ironkey.datePurchased);
               this.serial = ironkey.serial;
             },
             error => {
@@ -125,10 +129,10 @@ export class IronkeyFormComponent implements OnInit {
         result = this.ironkeysService.updateIronkey(userValue);
         result.subscribe(data => {
           if (data.text() == "Success") {
+            this.openSnackBar("Ironkey: "+userValue.serial+", actualizado com sucesso!", "OK");
             this.router.navigate(['ironkeys']);
-            this.showMsg(userValue.serial);
-          } else {
-            this.showMsgErr();
+             } else {
+              this.openSnackBar("Este Ironkey ja existe", "OK");
             this.isDisabled = false;
           }
         }, error => {
@@ -145,18 +149,12 @@ export class IronkeyFormComponent implements OnInit {
       result.subscribe(data => {
         if (data.text() == "Success") {
           this.router.navigate(['ironkeys']);
-          this.showMsg(userValue.serial);
+          this.openSnackBar("Ironkey: "+userValue.serial+", criado com sucesso!", "OK");
         } else {
-          this.showMsgErr();
+          this.openSnackBar("Este Ironkey ja existe!", "OK");
           this.isDisabled = false;
         }
       });
     }
-  }
-  showMsg(ironkey) {
-    this.toastService.show('Iron Key: ' + ironkey + ', salvo com sucesso!', 2000, 'green', null);
-  }
-  showMsgErr() {
-    this.toastService.show('Este Ironkey ja existe!', 2000, 'red', null);
   }
 }

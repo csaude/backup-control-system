@@ -1,306 +1,202 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
+<mat-sidenav-container autosize>
+    <mat-sidenav #drawer mode="side" opened="true" [fixedInViewport]="true" [fixedTopGap]="63" >
+      
+        <mat-toolbar color="primary">
+            <mat-toolbar-row>
+              <span>Menu</span>
+            </mat-toolbar-row>
+        </mat-toolbar>
+  
+      <mat-nav-list>
+        <a mat-list-item routerLink="/home" matTooltip="Ir para a pagina inicial">
+          <mat-icon>home</mat-icon>&nbsp;&nbsp;<span class="nav-caption">Página Inicial</span>
+        </a>
+        <a mat-list-item *ngIf="ROLE_SIS||ROLE_ODMA" routerLink="/syncs/new" matTooltip="Registar nova Sincronização">
+          <mat-icon>add</mat-icon>&nbsp;&nbsp;<span class="nav-caption">Registar Sincronização</span>
+        </a>
+        <a mat-list-item *ngIf="isHidden=='hide'" (click)="printListExcel()" routerLink="/syncs" matTooltip="Baixar a lista em Excel">
+          <mat-icon>file_download</mat-icon>&nbsp;&nbsp;<span class="nav-caption">{{ "downloadlist" | translate}} em Excel</span>
+        </a>
+        <!--
+        <a mat-list-item *ngIf="isHidden=='hide'" (click)="printList()" routerLink="/syncs" matTooltip="Baixar a lista em PDF">
+          <mat-icon>file_download</mat-icon>&nbsp;&nbsp;<span class="nav-caption">{{ "downloadlist" | translate}} em PDF</span>
+        </a>
+        -->
+      </mat-nav-list>
+  
+      <mat-expansion-panel style="box-shadow: none" [expanded]="district_id!=''||server_id!=''||from2!=''||until2!=''">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+                Pesquisar Dados
+            </mat-panel-title>
+            <mat-panel-description>
+              
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          
+          <div>
 
-<br>
-<h5 class="light">{{ "syncsfound" | translate }}
-</h5>
-
-<form materialize [formGroup]="form">
-  <div class="row">
-    <div class="col s12 l2 m2">
-      <mz-select-container>
-        <select mz-select mz-validation required id="district" label="{{ 'district' | translate }}" formControlName="district"
-          (change)="search()" [disabled]="disabled2==true">
-          <option value="all" selected>Todos Distritos</option>
-          <option *ngFor="let district of alldistricts" [value]="district.districtId">{{ district.fullName }}</option>
-        </select>
-      </mz-select-container>
-    </div>
-
-    <div class="col s12 l2 m2">
-      <mz-select-container>
-        <select mz-select mz-validation required id="server" label="{{ 'servername' | translate }}" formControlName="server"
-          (change)="search()" [disabled]="disabled1==true">
-          <option value="all" selected>Todos Servidores</option>
-
-          <optgroup *ngFor="let d of allservers" [label]="d.district">
-            <option *ngFor="let server of d.servers" [value]="server.serverId">{{ server.name }}</option>
-          </optgroup>
-        </select>
-      </mz-select-container>
-    </div>
-
-  </div>
-
-  <div class="row" style="margin-top: -20px;">
-
-    <div class="col s6 l2 m2">
-      <mz-datepicker-container>
-        <input mz-datepicker label="{{ 'sync_from' | translate }}" [options]="options" formControlName="start_from"
-          type="date" (change)="search()" />
-      </mz-datepicker-container>
-    </div>
-
-    <div class="col s6 l2 m2">
-      <mz-datepicker-container>
-        <input mz-datepicker label="{{ 'sync_until' | translate }}" [options]="options" formControlName="start_until"
-          type="date" (change)="search()" />
-      </mz-datepicker-container>
-    </div>
-    <div class="col s12 m8 l8" style="margin-top: -15px;">
-      <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
-
-        <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
-        <mz-select-container style="width: 50px;">
-          <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
-            <option value="10" selected>10</option>
-            <option value="25">25</option>
-<option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </mz-select-container>
-
-
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
-        <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
-        <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
-        <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
-
-      </ul>
-    </div>
-  </div>
-</form>
-
-<div class="col s12 card" style="margin-top: -20px;">
-  <div class="progress {{isHidden}}" style="margin-top: 35px; margin-bottom: 0;">
-    <div class="indeterminate"></div>
-  </div>
-  <table class="bordered responsive-table highlight">
-    <thead>
-      <tr>
-        <th>{{ "district" | translate }} / {{ "servername" | translate }}</th>
-        <th>{{ "sync_time" | translate }}</th>
-        <th>{{ "duration" | translate }}</th>
-        <th>{{ "initial_state" | translate }}</th>
-        <th>{{ "final_state" | translate }}</th>
-        <th>{{ "updatedon" | translate }}</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody  *ngIf="isHidden=='hide'">
-      <tr  style="line-height: 15px;" *ngFor="let sync of syncs">
-        <td>{{ sync.district.name }} / {{ sync.server.name }}</td>
-       <td>
-          {{getSyncTimeline(sync.startTime,sync.endTime)}}
-        </td>
-
-        <td>
-          {{getSyncDuration(sync.startTime,sync.endTime)}}
-        </td>
-        <td>
-          <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.startItemsToSend }} {{"items_to_s" |translate
-          }} </span>
-        <br>
-        <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.startItemsToReceive }} {{"items_to_r"
-          |translate}}</span>
-        </td>
-        <td *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='complete'">
-          <span *ngIf="sync.endItemsToSend==0&&sync.endItemsToReceive==0" class='green-text text-darken-3"'>{{'synced' | translate}}</span>
-          <span *ngIf="sync.endItemsToSend>0||sync.endItemsToReceive>0">
-            <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.endItemsToSend }} {{"items_to_s" |translate
-              }} </span>
-            <br>
-            <span style="font-size: 13px;color:rgb(121, 120, 120);">{{ sync.endItemsToReceive }} {{"items_to_r"
-              |translate}}</span>
-          </span>
-        </td>
-        <td *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='progress'&&getSyncExpires(sync.startTime)==false">
-          <span style="float: left;text-align: center; margin-left: 0px; height: 15;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span>
-          <div class="progress" style="width: 99px; margin-top: -7px;">
-            <div class="indeterminate"></div>
+              <form [formGroup]="form">
+              <mat-form-field style="width: 95%;">
+                  <mat-label>{{ 'district' | translate }}</mat-label>
+                  <mat-select   (change)="search()" [disabled]="disabled1==true" [(value)]="district_id">
+                    <mat-option value="all" selected>Todos Distritos</mat-option>
+                    <mat-option *ngFor="let district of alldistricts" [value]="district.districtId">{{ district.fullName }}</mat-option>
+                  </mat-select>
+                  <mat-icon matPrefix>location_on</mat-icon>
+              </mat-form-field>
+    
+              <mat-form-field style="width: 95%;">
+                  <mat-label>{{ 'servername' | translate }}</mat-label>
+                  <mat-select  (change)="search()" [disabled]="disabled1==true" [(value)]="server_id">
+                    <mat-option value="all" selected>Todos Servidores</mat-option>
+                    <mat-optgroup *ngFor="let d of allservers" [label]="d.district">
+                        <mat-option *ngFor="let server of d.servers" [value]="server.serverId">{{ server.name }}</mat-option>
+                      </mat-optgroup>
+                  </mat-select>
+                  <mat-icon matPrefix>location_on</mat-icon>
+              </mat-form-field>
+    
+              <mat-form-field>
+                  <input matInput [matDatepicker]="picker" (click)="picker.open()" autocomplete="off" onkeypress="return false;" [max]="maxDate" placeholder="Data Inicial" (dateChange)="search2()" [(ngModel)]="from2" formControlName="start_from"> 
+                  <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+    
+                <mat-form-field>
+                    <input matInput [matDatepicker]="picker2" autocomplete="off" (click)="picker2.open()" onkeypress="return false;" [max]="maxDate" placeholder="Data Final" (dateChange)="search2()" [(ngModel)]="until2" formControlName="start_until"> 
+                    <mat-datepicker-toggle matPrefix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                  </mat-form-field>
+    
+    </form>
           </div>
-        </td>
-        <td *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='progress'&&getSyncExpires(sync.startTime)==true">
-          <span *ngIf="sync.endItemsToSend==0&&sync.endItemsToReceive==0" class='red-text text-darken-3"'>{{'not_concluded' | translate}}</span>
-        </td>
-        <td>{{ sync.dateUpdated | date: 'dd/MM/yyyy' }}</td>
-        <td>
+  
+      </mat-expansion-panel>
+      
+  
+    </mat-sidenav>
+    <mat-sidenav-content style="padding: 10px; margin-top: 70px;">
+  
+      <span style="display: inline-flex;">
+        <button mat-mini-fab color="basic" (click)="drawer.toggle()" matTooltip="Esconder / Mostrar Menu lateral"><mat-icon>menu</mat-icon> </button>
+      &nbsp;&nbsp;<h1 class="mat-h1" style="margin-top: 7px;">{{ "syncsfound" | translate }} <a matTooltip="Ajuda" target="_blank" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+    </span>
+      <mat-paginator *ngIf="isHidden=='hide'" [length]="total" [pageIndex]="page" [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 15, 25, 100]" (page)="pageEvent = getPage($event)"></mat-paginator>
+      <mat-progress-bar mode="indeterminate" *ngIf="isHidden==''"></mat-progress-bar>
+      <section class="mat-typography">
+          <span class="info-label" *ngIf="isHidden==''">Carregando dados...</span>
+        </section>
+   
+      <mat-table mat-table [dataSource]="syncs" class="mat-elevation-z8" matSort>
+  
+          <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+  
+          <!-- Name Column -->
+          <ng-container matColumnDef="fullName">
+            <mat-header-cell *matHeaderCellDef> {{ "district" | translate }} / {{ "servername" | translate }} </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.district.name }} / {{ element.server.name }} </mat-cell>
+          </ng-container>
+  
+          <!-- Sync Time -->
+          <ng-container matColumnDef="sync_time">
+            <mat-header-cell *matHeaderCellDef> {{ "sync_time" | translate }} </mat-header-cell>
+            <mat-cell *matCellDef="let element">{{getSyncTimeline(element.startTime,element.endTime)}}</mat-cell>
+          </ng-container>
+  
+           <!-- Duration -->
+           <ng-container matColumnDef="duration" >
+              <mat-header-cell *matHeaderCellDef> {{ "duration" | translate }} </mat-header-cell>
+              <mat-cell *matCellDef="let element">
+              <span *ngIf="getSyncStatus(element.startTime,element.endTime)=='complete'">
+                {{getSyncDuration(element.startTime,element.endTime)}}
+              </span>
+              <span style="color:red;" *ngIf="getSyncStatus(element.startTime,element.endTime)=='progress'&&getSyncExpires(element.startTime)==true">
+                  {{'not_concluded' | translate}}
+              </span>
+              <span *ngIf="getSyncStatus(element.startTime,element.endTime)=='progress'&&getSyncExpires(element.startTime)==false">
+                  <mat-progress-bar style="margin-right: 10px;" matTooltip="Sincronização em progresso" mode="indeterminate"></mat-progress-bar>
+              </span>
+              </mat-cell>
+            </ng-container>
 
-          <a mz-tooltip tooltip="{{'details' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setSync(sync.uid)"
-            (click)="basicModal2.openModal()" [routerLink]="">
-            <i *ngIf="getOccurence(sync.uid)==''" class="material-icons icon-green">info</i>
-            <i *ngIf="getOccurence(sync.uid)!=''" class="material-icons icon-red">info</i>
-          </a>
-          &nbsp;
-          <a *ngIf="(ROLE_SIS||ROLE_ODMA)&&getSyncExpires(sync.startTime)==false" mz-tooltip tooltip="{{'edit' | translate}}"
-            [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/syncs', sync.uid]">
-            <i class="material-icons icon-orange">mode_edit</i>
-          </a>
-          <a *ngIf="(ROLE_SIS||ROLE_ODMA)&&getSyncExpires(sync.startTime)==true" mz-tooltip tooltip="{{'cant_edit_sync' | translate}}"
-            [position]="'top'" [html]="false" [delay]="100">
-            <i class="material-icons icon-orange " style="color:lightgrey;">mode_edit</i>
-          </a>
+           <!-- Items to send start -->
+           <ng-container matColumnDef="send_s">
+              <mat-header-cell *matHeaderCellDef>Itens {{ "items_send" | translate }} no inicio</mat-header-cell>
+              <mat-cell *matCellDef="let element" style="text-align: right;">{{ element.startItemsToSend }}</mat-cell>
+            </ng-container>
 
-        </td>
-      </tr>
-    </tbody>
+            <!-- Items to receive start -->
+           <ng-container matColumnDef="receive_s">
+              <mat-header-cell *matHeaderCellDef>Itens {{ "items_receive" | translate }} no inicio</mat-header-cell>
+              <mat-cell *matCellDef="let element" style="text-align: right;">{{ element.startItemsToReceive }}</mat-cell>
+            </ng-container>
 
-  </table>
-</div>
-<ul class="pagination valign-center" *ngIf="isHidden=='hide'">
+             <!-- Items to send end -->
+           <ng-container matColumnDef="send_e">
+              <mat-header-cell *matHeaderCellDef>Itens {{ "items_send" | translate }} no fim</mat-header-cell>
+              <mat-cell *matCellDef="let element" style="text-align: right;">
+                <span *ngIf="getSyncStatus(element.startTime,element.endTime)=='complete'">
+                {{ element.endItemsToSend }}
+                </span>
+              </mat-cell>
+            </ng-container>
 
-  <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
-  <mz-select-container style="width: 50px;">
-    <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
-      <option value="10" selected>10</option>
-      <option value="25">25</option>
-<option value="50">50</option>
-      <option value="100">100</option>
-    </select>
-  </mz-select-container>
+            <!-- Items to receive end -->
+           <ng-container matColumnDef="receive_e">
+              <mat-header-cell *matHeaderCellDef>Itens {{ "items_receive" | translate }} no fim</mat-header-cell>
+              <mat-cell *matCellDef="let element" style="text-align: right;">
+                  <span *ngIf="getSyncStatus(element.startTime,element.endTime)=='complete'">
+                      {{ element.endItemsToReceive }}
+                      </span>
 
-
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
-  <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
-  <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
-  <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
-
-</ul>
-<!--
-<ul class="pagination" *ngIf="isHidden==''">
-  {{ "loading" | translate }}
-</ul>
--->
-<mz-modal #basicModal2 [fixedFooter]="true">
-  <mz-modal-header>
-    <h4>{{ "syncdetails" | translate }}</h4>
-  </mz-modal-header>
-  <mz-modal-content>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12">
-        <h5 class="light">{{sync.server.name}}</h5>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "district" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.district.name}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "sync_time" | translate }}:</div>
-      <div class="col s12 l10 m10">{{getSyncTimeline(sync.startTime,sync.endTime)}}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "duration" | translate }}:</div>
-      <div class="col s12 l10 m10" *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='progress'&&getSyncExpires(sync.startTime)==false"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span></div>
-      <div class="col s12 l10 m10" *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='progress'&&getSyncExpires(sync.startTime)==true"><span *ngIf="sync.endItemsToSend==0&&sync.endItemsToReceive==0" class='red-text text-darken-3"'>{{'not_concluded' | translate}}</span></div>
-      <div class="col s12 l10 m10" *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='complete'">{{getSyncDuration(sync.startTime,sync.endTime)}}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "items_onstart" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ sync.startItemsToSend }} {{ "items_send" | translate }}
-        <br>{{ sync.startItemsToReceive }} {{ "items_receive" | translate }}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;" *ngIf="sync.endTime!=null">
-      <div class="col s12 l2 m2">{{ "items_onend" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ sync.endItemsToSend }} {{ "items_send" | translate }}
-        <br>{{ sync.endItemsToReceive }} {{ "items_receive" | translate }}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <input type="checkbox" id="update_finished" checked="{{sync.syncError==true?'checked':''}}" onclick="return false;" />
-        <label for="update_finished">{{ "sync_error_desc" | translate }}</label>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <input type="checkbox" id="serverfault" checked="{{sync.serverFault==true?'checked':''}}" onclick="return false;" />
-        <label for="serverfault">{{ "serverfault" | translate }}</label>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <input type="checkbox" id="laptopfault" checked="{{sync.laptopFault==true?'checked':''}}" onclick="return false;" />
-        <label for="laptopfault">{{ "laptopfault" | translate }}</label>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <input type="checkbox" id="powercut" checked="{{sync.powerCut==true?'checked':''}}" onclick="return false;" />
-        <label for="powercut">{{ "powercut" | translate }}</label>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;" *ngIf="sync.observation!=null">
-      <div class="col s12 l2 m2">{{ "obs_district" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.observation}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;" *ngIf="sync.observationHis!=null">
-      <div class="col s12 l2 m2">{{ "obs_his" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.observationHis}}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.createdBy.personName}} - {{ sync.dateCreated | date:'dd/MM/yyyy HH:mm' }}</div>
-    </div>
-    <div class="row" *ngIf="sync.updatedBy!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.updatedBy.personName}} - {{ sync.dateUpdated | date:'dd/MM/yyyy HH:mm' }}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <span style="color:lightgrey;">{{sync.uid}}</span>
-      </div>
-    </div>
-  </mz-modal-content>
-  <mz-modal-footer>
-    <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
-  </mz-modal-footer>
-</mz-modal>
-
-
-<div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
-  <a class="btn-floating  btn-large green">
-    <i class="material-icons">more_vert</i>
-  </a>
-  <ul>
-      <li>
-          <a mz-tooltip tooltip="{{'downloadlist' | translate}} Excel" [position]="'left'" [html]="false" [delay]="100" (click)="printListExcel()"
-            class="btn-floating  waves-effect waves-light  orange">
-            <i class="material-icons">file_download</i>
-          </a>
-        </li>
-    <li>
-      <a mz-tooltip tooltip="{{'downloadlist' | translate}} PDF" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
-        class="btn-floating  waves-effect waves-light  orange">
-        <i class="material-icons">file_download</i>
-      </a>
-    </li>
-    <li *ngIf="ROLE_SIS||ROLE_ODMA">
-      <a mz-tooltip [tooltip]="'Registar nova Sincronização'" [position]="'left'" [html]="false" [delay]="100"
-        routerLink="/syncs/new" class="btn-floating  waves-effect waves-light  blue">
-        <i class="material-icons">add</i>
-      </a>
-    </li>
-  </ul>
-</div>
+              </mat-cell>
+            </ng-container>
+  
+             <!-- Updated On -->
+          <ng-container matColumnDef="updated">
+              <mat-header-cell *matHeaderCellDef style="text-align: center;"> {{ "updatedon" | translate }} </mat-header-cell>
+              <mat-cell *matCellDef="let element" style="text-align: center;">  {{ element.dateUpdated | date: 'dd/MM/yyyy'}}</mat-cell>
+            </ng-container>
+  
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let element" style="text-align: center;">
+              <button mat-icon-button [matMenuTriggerFor]="menu" [disabled]="isHidden==''">
+                  <mat-icon *ngIf="getOccurence(element.uid)==''">more_vert</mat-icon>
+                  <mat-icon style="color:red;" *ngIf="getOccurence(element.uid)!=''">more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="setSync(element.uid)">
+                  <mat-icon *ngIf="getOccurence(element.uid)==''">info</mat-icon>
+                  <mat-icon style="color:red;" *ngIf="getOccurence(element.uid)!=''">info</mat-icon>
+                  <span>{{ 'details' | translate}}</span>
+                </button>
+                <button *ngIf="(ROLE_SIS||ROLE_ODMA)&&getSyncExpires(element.startTime)==false" mat-menu-item [routerLink]="['/syncs', element.uid]">
+                  <mat-icon>mode_edit</mat-icon>
+                  <span>Actualizar Registo</span>
+                </button>
+                <button matTooltip="Registo do passado não é possivel actualizar" *ngIf="(ROLE_SIS||ROLE_ODMA)&&getSyncExpires(element.startTime)==true" mat-menu-item >
+                  <mat-icon style="color:lightgrey;">mode_edit</mat-icon>
+                  <span>Registo do passado</span>
+                </button>
+              </mat-menu>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        
+    <br>
+      <mat-paginator *ngIf="isHidden=='hide'" [length]="total" [pageIndex]="page" [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 15, 25, 100]" (page)="pageEvent = getPage($event)">
+      </mat-paginator>
+      
+      <button routerLink="/syncs/new" *ngIf="ROLE_SIS||ROLE_ODMA" mat-fab matTooltip="Registar nova Sincronização" color="primary" class="fab-bottom-right">
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-sidenav-content>
+  </mat-sidenav-container>

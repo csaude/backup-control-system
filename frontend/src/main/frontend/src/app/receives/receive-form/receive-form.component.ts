@@ -11,11 +11,11 @@ import { SendsService } from "../../sends/shared/sends.service";
 import { Send } from "../../sends/shared/send";
 import { TransportersService } from './../../transporters/shared/transporters.service';;
 import { Transporter } from './../../transporters/shared/transporter';
-import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 import { DatePipe } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
+import { MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-receive-form',
@@ -27,6 +27,7 @@ import { Subscription } from 'rxjs/Subscription';
 * @author Damasceno Lopes
 */
 export class ReceiveFormComponent implements OnInit {
+
   public form: FormGroup;
   public title;name: string;
   public isHidden: string;
@@ -36,19 +37,9 @@ export class ReceiveFormComponent implements OnInit {
   public openFunctionCallback; closeFunctionCallback;
   public alltransporters: Transporter[] = [];
   public disabled1: boolean;
-
-  public options: Pickadate.DateOptions = {
-    format: 'dd/mm/yyyy',
-    formatSubmit: 'yyyy-mm-dd',
-    today: 'Hoje',
-    close: 'Fechar',
-    clear:'Limpar',
-    max: new Date()
-  };
-
   public nameValueControl = new FormControl();
   public formCtrlSub: Subscription;
-
+  public maxDate=new Date();
    
   constructor(
     formBuilder: FormBuilder,
@@ -57,7 +48,7 @@ export class ReceiveFormComponent implements OnInit {
     public receivesService: ReceivesService,
     public sendsService: SendsService,
     public transportersService: TransportersService,
-    public toastService: MzToastService,
+    public snackBar: MatSnackBar,
     public translate: TranslateService,
     public datepipe: DatePipe
   ) {
@@ -73,20 +64,17 @@ export class ReceiveFormComponent implements OnInit {
       restored: [],
       transporter: [],
       canceled: [],
-      canceledReason: []
+      canceledReason: [],
+      sendCanceled: [],
+      sendCanceledReason: []
     });
   }
+
+  
   
   ngOnInit() {
-
-    this.formCtrlSub = this.nameValueControl.valueChanges
-      .debounceTime(600)
-      .subscribe(newValue => {
-        this.name = this.nameValueControl.value;
-        if(this.name!=""){ this.refreshTransporter();}else{
-          this.alltransporters=[];
-        }
-      });
+this.name="";
+  
     this.disabled1 = true;
     this.isDisabled = false;
     var uuid = this.route.params.subscribe(params => {
@@ -94,7 +82,7 @@ export class ReceiveFormComponent implements OnInit {
       this.title = uuid ? 'Receber Backup' : 'Editar Recepção de Backup';
       if (uuid) {
         this.isHidden = uuid ? 'hide' : 'hide';
-        this.sendsService.findOneSendByUuid(uuid,"district.name,district.parent.name,transporter.transporterId,sendId,transporter.uid,district.uid,observation,transporter.phoneNumber,transporter.name,district.districtId,district.fullName,received,dateCreated,createdBy.uid,createdBy.userId,uid,backupDate,updateFinished,validationFinished,syncFinished,crossDhis2Finished,crossIdartFinished,uid,ikReceived,dateIkReceived,idartBackup,idartBackupDate")
+        this.sendsService.findOneSendByUuid(uuid,"district.fullName,transporter.transporterId,sendId,transporter.uid,district.uid,observation,transporter.phoneNumber,transporter.name,district.districtId,district.fullName,received,dateCreated,createdBy.uid,createdBy.userId,uid,backupDate,updateFinished,validationFinished,syncFinished,crossDhis2Finished,crossIdartFinished,uid,ikReceived,dateIkReceived,idartBackup,idartBackupDate")
           .subscribe(send => {
             this.send = send;
           },
@@ -104,21 +92,80 @@ export class ReceiveFormComponent implements OnInit {
               }
             });
             
-        this.alltransporters =[];
-          this.disabled1 = false;
+            this.transportersService.findTransporters(1, 20, this.name, "", false,"name,phoneNumber,transporterId,uid,role")
+            .subscribe(data => { 
+              this.alltransporters = data.content;
+              this.alltransporters=this.alltransporters.filter(item => item.transporterId !== this.send.transporter.transporterId);
+            
+            }
+              , errot => {
+                this.disabled1 = false;
+                this.alltransporters = []
+               },
+              () => {
+                this.disabled1 = false;
+              }
+            );
+          
       } else {
         //Edit here
         var uuidr = params['uuidr'];
-        this.receivesService.findOneReceiveByUuid(uuidr,"createdBy.uid,createdBy.userId,send.sendId,transporter.transporterId,transporter.uid,transporter.name,transporter.phoneNumber,receiveId,receiveDate,ikReturned,dateIkReturned,dateCreated,dateUpdated,createdBy.personName,uid,dateRestored,canceledReason,restoredBy.personName,ikReturnedBy.personName,restored,canceled,send.observation,send.transporter.phoneNumber,send.transporter.name,send.district.fullName,send.received,send.dateUpdated,send.dateCreated,send.createdBy.personName,send.updatedBy.personName,send.uid,send.backupDate,send.updateFinished,send.validationFinished,send.syncFinished,send.crossDhis2Finished,send.crossIdartFinished,send.uid,send.ikReceived,send.dateIkReceived,send.idartBackup,send.idartBackupDate")
+        this.receivesService.findOneReceiveByUuid(uuidr,"observation,createdBy.uid,createdBy.userId,send.sendId,transporter.transporterId,transporter.uid,transporter.name,transporter.phoneNumber,receiveId,receiveDate,ikReturned,dateIkReturned,dateCreated,dateUpdated,createdBy.personName,uid,dateRestored,canceledReason,restoredBy.personName,ikReturnedBy.personName,restored,canceled,send.observation,send.transporter.phoneNumber,send.transporter.name,send.district.fullName,send.received,send.dateUpdated,send.dateCreated,send.createdBy.personName,send.updatedBy.personName,send.uid,send.backupDate,send.updateFinished,send.validationFinished,send.syncFinished,send.crossDhis2Finished,send.crossIdartFinished,send.uid,send.ikReceived,send.dateIkReceived,send.idartBackup,send.idartBackupDate")
           .subscribe(receive => {
             this.receive = receive;
+            this.receive.receiveDate=new Date(this.receive.receiveDate);
+if(this.receive.restored){
+  this.receive.dateRestored=new Date(this.receive.dateRestored);
+}
+
             if (this.receive.transporter != null) {
-              this.alltransporters.push(this.receive.transporter) ;
+              this.receive.dateIkReturned=new Date(this.receive.dateIkReturned);
+              
+              this.transportersService.findTransporters(1, 20, this.name, "", false,"name,phoneNumber,transporterId,uid,role")
+          .subscribe(data => { 
+            this.alltransporters = data.content;
+            this.alltransporters=this.alltransporters.filter(item => item.transporterId !== this.send.transporter.transporterId);
+
+            this.alltransporters.push(this.receive.transporter);
+              this.alltransporters = this.alltransporters.sort(function (a, b) {
+                var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+                var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                if (nameA < nameB) {
+                  return -1;
+                }
+                if (nameA > nameB) {
+                  return 1;
+                }
+                return 0;
+              });
+          
+          }
+            , errot => {
+              this.disabled1 = false;
+              this.alltransporters = []
+             },
+            () => {
               this.disabled1 = false;
             }
+          );
+
+
+            }
             else {
-              this.alltransporters =[];
-              this.disabled1 = false;
+              this.transportersService.findTransporters(1, 20, this.name, "", false,"name,phoneNumber,transporterId,uid,role")
+              .subscribe(data => { 
+                this.alltransporters = data.content;
+                this.alltransporters=this.alltransporters.filter(item => item.transporterId !== this.send.transporter.transporterId);
+              
+              }
+                , errot => {
+                  this.disabled1 = false;
+                  this.alltransporters = []
+                 },
+                () => {
+                  this.disabled1 = false;
+                }
+              );
             }
           },
           response => {
@@ -131,38 +178,46 @@ export class ReceiveFormComponent implements OnInit {
   }
 
   save() {
+
     this.isDisabled = true;
     var result, userValue = this.form.value;
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     if (this.receive.receiveId) {
-      if (new Date(userValue.receiveDate) > new Date() || new Date(userValue.dateIkReturned) > new Date()) {
-        this.showMsgErr();
+      userValue.send=this.receive.send;
+      if (new Date(userValue.receiveDate) > new Date()) {
+        this.openSnackBar("A Data do Recepção não deve estar no futuro!", "OK");
         this.isDisabled = false;
       } else
-        if (userValue.ikReturned == true && (userValue.transporter.name == null || userValue.dateIkReturned == null || userValue.dateIkReturned == "")) {
-          this.showMsgErr3();
+        if (userValue.ikReturned == true && (!userValue.transporter || userValue.dateIkReturned == null || userValue.dateIkReturned == "")) {
+          this.openSnackBar("O transportador e data de devolução do Iron Key devem ser preenchidos!", "OK");
           this.isDisabled = false;
         }
         else
           if (userValue.restored == true && (userValue.dateRestored == null)) {
-            this.showMsgErr4();
+            this.openSnackBar("A Data de Restauração deve ser preenchida!", "OK");
             this.isDisabled = false;
           }
           else
             if (new Date(userValue.dateRestored) > new Date()) {
-              this.showMsgErr2();
+              this.openSnackBar("A Data de Restauração não deve estar no futuro!", "OK");
               this.isDisabled = false;
             }
             else
-              if (this.datepipe.transform(userValue.receiveDate, 'yyyy-MM-dd') < this.datepipe.transform(new Date(this.receive.send.backupDate), 'yyyy-MM-dd') || this.datepipe.transform(userValue.dateRestored, 'yyyy-MM-dd') < this.datepipe.transform(new Date(this.receive.send.backupDate), 'yyyy-MM-dd') || this.datepipe.transform(userValue.dateIkReturned, 'yyyy-MM-dd') < this.datepipe.transform(new Date(this.receive.send.backupDate), 'yyyy-MM-dd') || this.datepipe.transform(userValue.dateIkReturned, 'yyyy-MM-dd') < this.datepipe.transform(userValue.receiveDate, 'yyyy-MM-dd') || this.datepipe.transform(userValue.dateRestored, 'yyyy-MM-dd') < this.datepipe.transform(userValue.receiveDate, 'yyyy-MM-dd')) {
-                this.showMsgErrDate();
+            if (new Date(userValue.receiveDate) < new Date(userValue.send.backupDate) || ( userValue.dateIkReturned && new Date(userValue.dateIkReturned) < new Date(userValue.receiveDate))  || ( userValue.dateRestored && (new Date(userValue.dateRestored) < new Date(userValue.receiveDate))) ) {
+                this.openSnackBar("Verifique as datas!", "OK");
                 this.isDisabled = false;
               }
               else {
                 if (userValue.canceled == true && userValue.canceledReason == null) {
-                  this.showMsgErr3n();
+                  this.openSnackBar("Escreva a razão para anular!", "OK");
                   this.isDisabled = false;
-                } else {
+                }else if (userValue.ikReturned == true &&userValue.transporter&&!userValue.transporter.name) {
+                  this.openSnackBar("Transportador inválido!", "OK");
+                  this.isDisabled = false;
+                }
+              
+                else {
+                  
                   userValue.receiveId = this.receive.receiveId;
                   userValue.dateCreated = this.receive.dateCreated;
                   userValue.uid = this.receive.uid;
@@ -171,39 +226,46 @@ export class ReceiveFormComponent implements OnInit {
                     uid: user.uid,
                     userId: user.userId
                   };
+
                   result = this.receivesService.updateReceive(userValue);
                   result.subscribe(data => this.router.navigate(['receives']));
                 }
               }
     } else {
-      if (new Date(userValue.receiveDate) > new Date()) {
-        this.showMsgErr();
+      userValue.send=this.send;
+
+      if (userValue.sendCanceled == true && userValue.sendCanceledReason == null) {
+        this.openSnackBar("Escreva a razão para anular!", "OK");
+        this.isDisabled = false;
+      }else if (new Date(userValue.receiveDate) > new Date()) {
+        this.openSnackBar("A Data do Recepção estar no futuro!", "OK");
         this.isDisabled = false;
       } else
-        if (userValue.ikReturned == true && (userValue.transporter.name == null || userValue.dateIkReturned == null || userValue.dateIkReturned == "")) {
-          this.showMsgErr3();
+        if (userValue.ikReturned == true && (!userValue.transporter || userValue.dateIkReturned == null || userValue.dateIkReturned == "")) {
+          this.openSnackBar("O transportador e data de devolução do Iron Key devem ser preenchidos!", "OK");
           this.isDisabled = false;
         }
         else
           if (userValue.restored == true && (userValue.dateRestored == null)) {
-            this.showMsgErr4();
+            this.openSnackBar("A Data de Restauração deve ser preenchida!", "OK");
             this.isDisabled = false;
-          }
-          else
-            if (new Date(userValue.dateRestored) > new Date()) {
-              this.showMsgErr2();
-              this.isDisabled = false;
-            }
+          }         
             else
-              if (this.datepipe.transform(userValue.receiveDate, 'yyyy-MM-dd') < this.datepipe.transform(new Date(userValue.send.backupDate), 'yyyy-MM-dd') || this.datepipe.transform(userValue.dateRestored, 'yyyy-MM-dd') < this.datepipe.transform(new Date(userValue.send.backupDate), 'yyyy-MM-dd') || this.datepipe.transform(userValue.dateIkReturned, 'yyyy-MM-dd') < this.datepipe.transform(new Date(userValue.send.backupDate), 'yyyy-MM-dd') || this.datepipe.transform(userValue.dateIkReturned, 'yyyy-MM-dd') < this.datepipe.transform(userValue.receiveDate, 'yyyy-MM-dd') || this.datepipe.transform(userValue.dateRestored, 'yyyy-MM-dd') < this.datepipe.transform(userValue.receiveDate, 'yyyy-MM-dd')) {
-                this.showMsgErrDate();
+              if (new Date(userValue.receiveDate) < new Date(userValue.send.backupDate) || (userValue.dateIkReturned && new Date(userValue.dateIkReturned) < new Date(userValue.receiveDate))|| (userValue.dateRestored && new Date(userValue.dateRestored) < new Date(userValue.receiveDate))) {
+                this.openSnackBar("Verifique as datas!", "OK");
                 this.isDisabled = false;
               }
               else {
                 if (this.send.received == true) {
                   this.router.navigate(['receives']);
-                } else {
-
+                } 
+                
+                else if (userValue.ikReturned == true &&userValue.transporter&&!userValue.transporter.name) {
+                  this.openSnackBar("Transportador inválido!", "OK");
+                  this.isDisabled = false;
+                }
+                else {
+                  
                   userValue.createdBy = {
                     person: {
                       othersNames: user.person.othersNames,
@@ -213,6 +275,8 @@ export class ReceiveFormComponent implements OnInit {
                     uid: user.uid,
                     userId: user.userId
                   };
+                  userValue.send.canceled=userValue.sendCanceled;
+                  userValue.send.canceledReason=userValue.sendCanceledReason;
 
                   result = this.receivesService.createReceive(userValue);
                   result.subscribe(data => this.router.navigate(['receives']));
@@ -222,9 +286,20 @@ export class ReceiveFormComponent implements OnInit {
     }
   }
 
-  refreshTransporter(){
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
+  }
+
+  displayFn(transporter: Transporter): string {
+    if(transporter)
+    return transporter.name;
+}
+
+  search(searchValue : string){
     this.disabled1 = true;
-    this.transportersService.findTransporters(1, 10, this.name, "", false,"name,phoneNumber,transporterId,uid,role")
+    this.transportersService.findTransporters(1, 20, searchValue, "", false,"name,phoneNumber,transporterId,uid,role")
           .subscribe(data => { this.alltransporters = data.content; }
             , errot => {
               this.disabled1 = false;
@@ -236,22 +311,4 @@ export class ReceiveFormComponent implements OnInit {
           );
   }
 
-  showMsgErr() {
-    this.toastService.show('A Data do Recepção ou Devolução não deve estar no futuro!', 2000, 'red', null);
-  }
-  showMsgErr2() {
-    this.toastService.show('A Data de Restauração não deve estar no futuro!', 2000, 'red', null);
-  }
-  showMsgErr3() {
-    this.toastService.show('O transportador e data de devolução do Iron Key devem ser preenchidos!', 2000, 'red', null);
-  }
-  showMsgErr4() {
-    this.toastService.show('A Data de Restauração deve ser preenchida!', 2000, 'red', null);
-  }
-  showMsgErrDate() {
-    this.toastService.show('Verifique as datas!', 2000, 'red', null);
-  }
-  showMsgErr3n() {
-    this.toastService.show('Escreva a razão para anular!', 2000, 'red', null);
-  }
 }

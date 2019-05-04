@@ -25,6 +25,8 @@ export class District {
   instanceUrl: string;
   instanceUsername: string;
   instancePassword: string;
+  start_time: string;
+  last_backup_idart: string;
 
   server: string;
   last_backup_restored: String;

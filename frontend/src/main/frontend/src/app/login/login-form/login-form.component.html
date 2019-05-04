@@ -1,67 +1,56 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
+<div fxLayout="row" fxLayoutAlign="center center" class="login-main">
 
-<div class="section"></div>
-<div class="section"></div>
-<div class="section"></div>
-<div class="valign-wrapper row login-box">
-  <div class="col card hoverable s10 pull-s1 m6 pull-m3 l4 pull-l4">
+    
+
+    <mat-card >
+    
+    
+    <mat-card-header>
+    
+    
+       <mat-card-title><h1 class="mat-h1">SCB - Login</h1></mat-card-title>
+    
+    
+    </mat-card-header>
+    
     <form [formGroup]="form" (ngSubmit)="login()">
-      <div class="card-content">
-        <span class="card-title">SCB - Login</span>
-        <div class="row">
-          <div class="input-field col s12">
-            <i class="material-icons prefix">perm_identity</i>
-            <input type="text" class="validate" [(ngModel)]="localUser.username" id="username" formControlName="username" />
-            <label for="username">Username *</label>
-          </div>
-          <div class="input-field col s12">
-            <i class="material-icons prefix">vpn_key</i>
-            <input type="password" class="validate" [(ngModel)]="localUser.password" name="password" id="password" formControlName="password"
-            />
-            <label for="password">Password *</label>
-          </div>
-          <div class="{{loginFail}} right-align">
-            <span style="color:red;">Credênciais invalidas!</span>
-          </div>
-          <div class="{{loginAccess}} right-align">
-            <span style="color:red;">Acesso Restrito!</span>
-          </div>
-        </div>
-      </div>
-      <div class="card-action right-align">
+    <mat-card-content fxLayout="column">
+    
+        
+    
+       <mat-form-field>
+    
+    
+         <input matInput type="text" [(ngModel)]="localUser.username" id="username" formControlName="username" placeholder="Username *">
+    
+    
+       </mat-form-field>
+    
+    
+       <mat-form-field>
+    
+    
+         <input type="password" matInput placeholder="Password *" [(ngModel)]="localUser.password" id="password" formControlName="password">
+    
+    
+       </mat-form-field>
+    
+    
+    </mat-card-content>
+    
+    
+    <mat-card-actions align="end">
+    
+       <mat-progress-bar mode="indeterminate" *ngIf="isDisabled"></mat-progress-bar>
+       <button type="submit" mat-raised-button color="primary" [disabled]="isDisabled">Login</button>
+    
+    
+    </mat-card-actions>
 
-          <div class="col s6 right-align">
-
-          <div class="preloader-wrapper small active" *ngIf="isDisabled">
-              <div class="spinner-layer spinner-green-only">
-                <div class="circle-clipper left">
-                  <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                  <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                  <div class="circle"></div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="col s6 right-align">
-
-        <button class="btn waves-effect waves-light" type="submit" [disabled]="isDisabled">
-          Entrar
-        </button>
-      </div>
-      
-      <div class="section"></div>
-      </div>
-    </form>
-  </div>
- 
-</div>
+  </form>
+    
+    
+    </mat-card>
+    
+    
+    </div>

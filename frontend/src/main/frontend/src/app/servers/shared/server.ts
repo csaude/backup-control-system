@@ -29,5 +29,6 @@ export class Server {
   canceledReason: string;
   uid: string;
   duration: string;
+  description: string;
 
 }

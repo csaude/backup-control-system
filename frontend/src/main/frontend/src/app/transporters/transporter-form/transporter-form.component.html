@@ -1,78 +1,53 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
 
-    <br>
-    <h5 class="light" *ngIf="title=='Novo Transportador'" style="display: inline-flex;vertical-align: middle;">
-      <a routerLink="/transporters" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-        <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-      </a>
-      {{ "transporternew" | translate }}</h5>
-    <h5 class="light" *ngIf="title=='Editar Transportador'" style="display: inline-flex;vertical-align: middle;">
-      <a routerLink="/transporters" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-        <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-      </a>
-      {{ "transporteredit" | translate }}</h5>
-    <div class="card-panel">
-      <div class="row">
-        <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
-          <div class="row">
-            <div class="input-field col s12">
-              <i class="material-icons prefix">account_circle</i>
-              <input id="name" type="text" class="validate" [(ngModel)]="transporter.name" formControlName="name"
-                [class.invalid]="form.controls['name'].touched && !form.controls['name'].valid">
-              <label for="name" [class.active]="transporter.name" data-error="O Nome do Transportador deve ser preenchido.">
-                {{ "transportername" | translate }} *
-              </label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s12">
-              <mz-select-container>
-                <i class="material-icons prefix">perm_identity</i>
-                <select mz-select id="role" label="{{ 'function' | translate }} *" placeholder="{{ 'select' | translate }}"
-                  [(ngModel)]="transporter.role" formControlName="role">
-                  <option *ngFor="let role of roles" [value]="role.name" [selected]="role.name == transporter.role">{{
-                    role.name }}</option>
-                </select>
-              </mz-select-container>
-            </div>
-          </div>
+<div style="margin: 0 auto;width: 67%;margin-top: 100px;">
+    <h1 class="mat-h1"  *ngIf="title=='Novo Transportador'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/transporters"><mat-icon>arrow_back</mat-icon></a> {{ "transporternew" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+      <h1 class="mat-h1"  *ngIf="title=='Editar Transportador'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/transporters"><mat-icon>arrow_back</mat-icon></a>{{ "transporteredit" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+  
+  <mat-card>
+      <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        
+      <mat-form-field style="width: 100%;">
+          <mat-label>{{ 'transportername' | translate }} *</mat-label>
+          <input type="text" matInput placeholder="{{ 'transportername' | translate }}" [(ngModel)]="transporter.name" formControlName="name">
+          <mat-icon matPrefix>person_outline</mat-icon>
+        </mat-form-field>
+        <br><br>
+  
+        <mat-form-field style="width: 100%;">
+            <mat-label>{{ 'function' | translate }} *</mat-label>
+            <mat-select [(ngModel)]="transporter.role" formControlName="role">
+              <mat-option>{{ 'select' | translate }}</mat-option>
+              <mat-option *ngFor="let role of roles" [value]="role.name">{{role.name }}</mat-option>
+            </mat-select>
+            <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+        <br><br>
+  
+        <mat-form-field style="width: 100%;">
+            <mat-label>{{ 'phone' | translate }}</mat-label>
+            <input type="text" matInput placeholder="{{ 'phone' | translate }}" [(ngModel)]="transporter.phoneNumber" formControlName="phoneNumber">
+            <mat-icon matPrefix>phone</mat-icon>
+        </mat-form-field>
+        <br><br>
 
-          <div class="row">
-            <div class="input-field col s12">
-              <i class="material-icons prefix">phone</i>
-              <input id="phoneNumber" type="number" class="validate" [(ngModel)]="transporter.phoneNumber"
-                formControlName="phoneNumber" [class.invalid]="form.controls['phoneNumber'].touched && !form.controls['phoneNumber'].valid">
-              <label for="phoneNumber" [class.active]="transporter.phoneNumber">
-                {{ "phone" | translate }}
-              </label>
-            </div>
-          </div>
+        <mat-checkbox *ngIf="transporter.transporterId!=null" [(ngModel)]="transporter.canceled" formControlName="canceled">{{ "cancelit" | translate }}</mat-checkbox>
+        <br><br>
+        <mat-form-field  style="width: 100%;" *ngIf="transporter.canceled">
           
-          <div class="row" class="row {{ isHidden }}">
-            <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 25px;">
-              <input type="checkbox" class="filled-in" id="canceled" [(ngModel)]="transporter.canceled" formControlName="canceled" />
-              <label for="canceled">{{ "cancelit" | translate }}</label>
-            </div>
-            <div class="input-field col s12 l8 m8" *ngIf="transporter.canceled">
-              <i class="material-icons prefix">label_outline</i>
-              <input id="canceledReason" type="text" class="validate" [(ngModel)]="transporter.canceledReason"
-                formControlName="canceledReason">
-              <label for="canceledReason" [class.active]="transporter.canceledReason">
-                {{ "cancelitreason" | translate }}
-              </label>
-            </div>
-          </div>
-          <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled">
-            {{ "save" | translate }}
-            <i class="material-icons right">send</i>
-          </button>
-          <a *ngIf="!isDisabled" class="waves-effect waves-teal btn-flat" routerLink="/transporters">
-            <span class="orange-text text-darken-3">{{ "cancel" | translate }}</span>
-          </a>
-        </form>
-      </div>
-    </div>
+            <mat-label>{{ "cancelitreason" | translate }} *</mat-label>
+            <input type="text" matInput placeholder="" [(ngModel)]="transporter.canceledReason" formControlName="canceledReason">
+            <mat-icon matPrefix>label_outline</mat-icon>
+        </mat-form-field>
+        
+        <br>
+        <mat-card-actions>
+            <button type="submit" mat-raised-button color="primary" [disabled]="!form.valid||isDisabled" matTooltip="Salvar registo">{{ "save" | translate }}</button>
+            <button mat-raised-button routerLink="/districts" [disabled]="isDisabled" matTooltip="Cancelar operação">{{ "cancel" | translate }}</button>
+          </mat-card-actions>
+  
+  </form>
+  
+  </mat-card-content>
+  </mat-card>
+  </div>

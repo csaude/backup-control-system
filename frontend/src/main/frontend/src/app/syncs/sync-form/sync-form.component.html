@@ -1,221 +1,97 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
-<br>
 
-<h5 class="light" *ngIf="title=='Novo Registo de Sincronização'" style="display: inline-flex;vertical-align: middle;">
-  <a routerLink="/syncs" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-  </a> {{ "syncnew" | translate }}
-</h5>
-<h5 class="light" *ngIf="title=='Editar Registo de Sincronização'" style="display: inline-flex;vertical-align: middle;">
-  <a routerLink="/syncs" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-  </a> {{ "syncedit" | translate }}
-</h5>
-<div class="card-panel">
-  <div class="row">
-    <form materialize [formGroup]="form" (ngSubmit)="save()">
-      <div class="row">
-        <div class="{{disabled1==true?'col s10 l11 m11':'col s12 l12 m12'}}">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'location_on'">
-            </i>
-            <select mz-select mz-validation required id="server" label="{{ 'servername' | translate }} *" placeholder="{{ 'select' | translate }}"
-              [(ngModel)]="sync.server" formControlName="server">
+<div style="margin: 0 auto;width: 67%;margin-top: 100px;">
+  <h1 class="mat-h1"  *ngIf="title=='Novo Registo de Sincronização'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/syncs"><mat-icon>arrow_back</mat-icon></a> {{ "syncnew" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+  <h1 class="mat-h1"  *ngIf="title=='Editar Registo de Sincronização'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/syncs"><mat-icon>arrow_back</mat-icon></a>{{ "syncedit" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
 
-              <optgroup *ngFor="let d of allservers" [label]="d.district">
-                <option *ngFor="let server of d.servers" [ngValue]="server">{{ server.name }}</option>
-              </optgroup>
+<mat-card>
+    <mat-card-content>
 
+    <form [formGroup]="form" (ngSubmit)="save()">
+        <mat-form-field style="width: 100%;">
+            <mat-label>{{ 'servername' | translate }}</mat-label>
+            <mat-select [(ngModel)]="sync.server" formControlName="server" panelClass="panel-override">
+                <mat-option>{{ 'select' | translate }}</mat-option>
+              <mat-optgroup *ngFor="let d of allservers" [label]="d.district">
+                  <mat-option *ngFor="let server of d.servers" [value]="server">{{ server.name }}</mat-option>
+                </mat-optgroup>
+            </mat-select>
+            <mat-icon matPrefix>location_on</mat-icon>
+        </mat-form-field>
+        <br><br>
 
-            </select>
-          </mz-select-container>
+        <h3 class="mat-h3" style="color:lightgrey;">Hora Inicial:</h3>
+        <div style="display: flex">
+        <w-mat-timepicker style="width: 30%; margin-left: -10px;" autocomplete="off" onkeypress="return false;" color="primary" [(userTime)]="exportTime24"></w-mat-timepicker>
+
+        <mat-form-field style="width: 30%;margin-left: 3%;">
+            <input autocomplete="off" matInput type="number" placeholder="{{ 'items_to_send' | translate }} *" [(ngModel)]="sync.startItemsToSend" formControlName="startItemsToSend">
+            <mat-icon matPrefix>keyboard_arrow_up</mat-icon>
+          </mat-form-field>
+  
+          <mat-form-field style="width: 30%;margin-left: 3%;">
+            <input autocomplete="off" matInput type="number" placeholder="{{ 'items_to_receive' | translate }} *" [(ngModel)]="sync.startItemsToReceive" formControlName="startItemsToReceive">
+            <mat-icon matPrefix>keyboard_arrow_down</mat-icon>
+          </mat-form-field>
+
         </div>
 
-        <div class="col s1 l1 m1" *ngIf="disabled1==true">
-          <br>
-          <br>
-          <div class="preloader-wrapper small active">
-            <div class="spinner-layer spinner-red-only">
-              <div class="circle-clipper left">
-                <div class="circle"></div>
-              </div>
-              <div class="gap-patch">
-                <div class="circle"></div>
-              </div>
-              <div class="circle-clipper right">
-                <div class="circle"></div>
-              </div>
+        <h3 class="mat-h3" style="color: lightgrey;">Hora Final:</h3>
+        <div style="display: flex;">
+            <w-mat-timepicker style="width: 30%; margin-left: -10px;" autocomplete="off" onkeypress="return false;" color="primary" [(userTime)]="exportTime242"></w-mat-timepicker>
+    
+            <mat-form-field style="width: 30%;margin-left: 3%;">
+                <input  matInput type="number" placeholder="{{ 'end_items_to_send' | translate }} *" [(ngModel)]="sync.endItemsToSend" formControlName="endItemsToSend">
+                <mat-icon matPrefix>keyboard_arrow_up</mat-icon>
+              </mat-form-field>
+      
+              <mat-form-field style="width: 30%;margin-left: 3%;">
+                <input matInput type="number" placeholder="{{ 'end_items_to_receive' | translate }} *" [(ngModel)]="sync.endItemsToReceive" formControlName="endItemsToReceive">
+                <mat-icon matPrefix>keyboard_arrow_down</mat-icon>
+              </mat-form-field>
+    
             </div>
-          </div>
-        </div>
 
-      </div>
+            <h3 class="mat-h3" style="color: lightgrey;">Ocorrências:</h3>
 
-      <div class="row">
-        <div class="col s12 l4 m4">
-          <mz-timepicker-container>
-            <i mz-icon mz-input-prefix [icon]="'access_time'">
-            </i>
-            <input mz-timepicker label="{{ 'start_time' | translate }} *" [options]="timepickerOptions" id="timepicker"
-              placeholder="{{ 'select' | translate }}" [(ngModel)]="sync.startTime" formControlName="startTime"
-              type="text">
-          </mz-timepicker-container>
-        </div>
+        <p>
 
-        <div class="input-field col s6 l4 m4" >
-          <i class="material-icons prefix">keyboard_arrow_up</i>
-          <input id="start_items_to_send" type="number" class="validate" [(ngModel)]="sync.startItemsToSend"
-            formControlName="startItemsToSend" [class.invalid]="form.controls['startItemsToSend'].touched && !form.controls['startItemsToSend'].valid">
-          <label for="start_items_to_send" [class.active]="sync.startItemsToSend||sync.startItemsToSend==0">
-            {{ "items_to_send" | translate }} *
-          </label>
-        </div>
+          <mat-checkbox  (change)="syncError()" [(ngModel)]="sync.syncError" formControlName="syncError">{{ "sync_error_desc" | translate }}</mat-checkbox>&nbsp;&nbsp;
+          <mat-checkbox [(ngModel)]="sync.syncErrorResolved" [disabled]="!sync.syncError" formControlName="syncErrorResolved">{{ "sync_error_desc_resolved" | translate }}</mat-checkbox><br><br>
+          <mat-checkbox  (change)="serverFault()" [(ngModel)]="sync.serverFault" formControlName="serverFault">{{ "serverfault" | translate }}</mat-checkbox>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <mat-checkbox [(ngModel)]="sync.serverFaultResolved" [disabled]="!sync.serverFault" formControlName="serverFaultResolved">{{ "serverfault_resolved" | translate }}</mat-checkbox><br><br>
+          <mat-checkbox  (change)="laptopFault()" [(ngModel)]="sync.laptopFault" formControlName="laptopFault">{{ "laptopfault" | translate }}</mat-checkbox>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <mat-checkbox [(ngModel)]="sync.laptopFaultResolved" [disabled]="!sync.laptopFault" formControlName="laptopFaultResolved">{{ "laptopfault_resolved" | translate }}</mat-checkbox><br><br>
+          <mat-checkbox  (change)="powerCut()" [(ngModel)]="sync.powerCut" formControlName="powerCut">{{ "powercut" | translate }}</mat-checkbox>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <mat-checkbox [(ngModel)]="sync.powerCutResolved" [disabled]="!sync.powerCut" formControlName="powerCutResolved">{{ "powercut_resolved" | translate }}</mat-checkbox>
+         </p>
+      
+         <mat-form-field *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA" style="width: 50%;">
+            <textarea rows="3" placeholder="{{'obs_district' | translate }}" matInput maxlength="255" [(ngModel)]="sync.observation" formControlName="observation"></textarea>
+             </mat-form-field>
 
-        <div class="input-field col s6 l4 m4" >
-          <i class="material-icons prefix">keyboard_arrow_down</i>
-          <input id="start_items_to_receive" type="number" class="validate" [(ngModel)]="sync.startItemsToReceive"
-            formControlName="startItemsToReceive" [class.invalid]="form.controls['startItemsToReceive'].touched && !form.controls['startItemsToReceive'].valid">
-          <label for="start_items_to_receive" [class.active]="sync.startItemsToReceive||sync.startItemsToReceive==0">
-            {{ "items_to_receive" | translate }} *
-          </label>
-        </div>
+          <mat-form-field *ngIf="ROLE_SIS" style="width: 50%;">
+              <textarea rows="3"  placeholder="{{'obs_his' | translate }}" matInput maxlength="255" [(ngModel)]="sync.observationHis" formControlName="observationHis"></textarea>
+         </mat-form-field>
+         <br>
+         <mat-checkbox *ngIf="sync.syncId!=null" [(ngModel)]="sync.canceled" formControlName="canceled">{{ "cancelit" | translate }}</mat-checkbox>
+         <br>
+         <mat-form-field  style="width: 100%;" *ngIf="sync.canceled">
+           
+             <mat-label>{{ "cancelitreason" | translate }} *</mat-label>
+             <input type="text" matInput placeholder="" [(ngModel)]="sync.canceledReason" formControlName="canceledReason">
+             <mat-icon matPrefix>label_outline</mat-icon>
+         </mat-form-field>
+         
+         <br>
+       
 
-      </div>
+      <mat-card-actions>
+          <button type="submit" mat-raised-button color="primary" [disabled]="!form.valid||isDisabled||disabled1==true" matTooltip="Salvar registo">{{ "save" | translate }}</button>
+          <button mat-raised-button routerLink="/syncs" [disabled]="isDisabled" matTooltip="Cancelar operação">{{ "cancel" | translate }}</button>
+        </mat-card-actions>
 
+</form>
 
-
-
-      <div class="row">
-        <div class="col s12 l4 m4">
-          <mz-timepicker-container>
-            <i mz-icon mz-input-prefix [icon]="'access_time'">
-            </i>
-            <input mz-timepicker label="{{ 'end_time' | translate }} *" [options]="timepickerOptions" id="timepicker"
-              placeholder="{{ 'select' | translate }}" [(ngModel)]="sync.endTime" formControlName="endTime"
-              type="text">
-          </mz-timepicker-container>
-        </div>
-
-        <div class="input-field col s6 l4 m4" >
-          <i class="material-icons prefix">keyboard_arrow_up</i>
-          <input id="end_items_to_send" type="number" class="validate" [(ngModel)]="sync.endItemsToSend"
-            formControlName="endItemsToSend" [class.invalid]="form.controls['endItemsToSend'].touched && !form.controls['endItemsToSend'].valid">
-          <label for="end_items_to_send" [class.active]="sync.endItemsToSend||sync.endItemsToSend==0">
-            {{ "end_items_to_send" | translate }}
-          </label>
-        </div>
-
-        <div class="input-field col s6 l4 m4" >
-          <i class="material-icons prefix">keyboard_arrow_down</i>
-          <input id="end_items_to_receive" type="number" class="validate" [(ngModel)]="sync.endItemsToReceive"
-            formControlName="endItemsToReceive" [class.invalid]="form.controls['endItemsToReceive'].touched && !form.controls['endItemsToReceive'].valid">
-          <label for="end_items_to_receive" [class.active]="sync.endItemsToReceive||sync.endItemsToReceive==0">
-            {{ "end_items_to_receive" | translate }}
-          </label>
-        </div>
-
-      </div>
-
-      <div class="row">
-
-        <div class="switch col s3" style="margin-left: 45px;display: inline-flex;">
-
-          <label>
-            <input type="checkbox" [(ngModel)]="sync.syncError" formControlName="syncError">
-            <span class="lever"></span>
-          </label>
-
-          {{ "sync_error_desc" | translate }}
-        </div>
-
-      </div>
-
-      <div class="row">
-
-        <div class="switch col s12" style="margin-left: 45px;display: inline-flex;">
-
-          <label>
-            <input type="checkbox" [(ngModel)]="sync.serverFault" formControlName="serverFault">
-            <span class="lever"></span>
-          </label>
-          {{ "serverfault" | translate }}
-        </div>
-
-      </div>
-
-      <div class="row">
-
-        <div class="switch col s12" style="margin-left: 45px;display: inline-flex;">
-
-          <label>
-            <input type="checkbox" [(ngModel)]="sync.laptopFault" formControlName="laptopFault">
-            <span class="lever"></span>
-          </label>
-          {{ "laptopfault" | translate }}
-        </div>
-
-      </div>
-
-      <div class="row">
-
-        <div class="switch col s12" style="margin-left: 45px;display: inline-flex;">
-
-          <label>
-            <input type="checkbox" [(ngModel)]="sync.powerCut" formControlName="powerCut">
-            <span class="lever"></span>
-          </label>
-          {{ "powercut" | translate }}
-        </div>
-
-      </div>
-
-
-      <br>
-      <div class="row" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA">
-        <div class="input-field col s12 l12 m12">
-          <i class="material-icons prefix">description</i>
-          <textarea id="textarea1" class="materialize-textarea" maxlength="255" [(ngModel)]="sync.observation"
-            formControlName="observation" [class.invalid]="form.controls['observation'].touched && !form.controls['observation'].valid"></textarea>
-          <label for="textarea1" [class.active]="sync.observation" data-error="A Observação deve ser preenchida.">{{
-            "obs_district" | translate }}</label>
-        </div>
-      </div>
-
-      <div class="row" *ngIf="ROLE_SIS">
-        <div class="input-field col s12 l12 m12">
-
-          <i class="material-icons prefix">description</i>
-          <textarea id="textarea1" class="materialize-textarea" maxlength="255" [(ngModel)]="sync.observationHis"
-            formControlName="observationHis" [class.invalid]="form.controls['observationHis'].touched && !form.controls['observationHis'].valid"></textarea>
-          <label for="textarea1" [class.active]="sync.observationHis">{{ "obs_his" | translate }}</label>
-
-        </div>
-      </div>
-
-
-      <div class="row" class="row {{ isHidden }}">
-        <div class="col s12 l2 m2" style="margin-left: 45px;margin-top: 25px;">
-          <input type="checkbox" class="filled-in" id="canceled" [(ngModel)]="sync.canceled" formControlName="canceled" />
-          <label for="canceled">{{ "cancelit" | translate }}</label>
-        </div>
-        <div class="input-field col s12 l8 m8" *ngIf="sync.canceled">
-          <input id="canceled_reason" type="text" class="validate" [(ngModel)]="sync.canceledReason" formControlName="canceledReason">
-          <label for="canceled_reason" [class.active]="sync.canceledReason">
-            {{ "cancelitreason" | translate }}
-          </label>
-        </div>
-      </div>
-      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled||sync.server.name==null||disabled1==true">
-        {{ "save" | translate }}
-        <i class="material-icons right">send</i>
-      </button>
-      <a *ngIf="!isDisabled" class="waves-effect waves-teal btn-flat" routerLink="/syncs">
-        <span class="orange-text text-darken-3">{{ "cancel" | translate }}</span>
-      </a>
-    </form>
-  </div>
+</mat-card-content>
+</mat-card>
 </div>

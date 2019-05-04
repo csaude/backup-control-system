@@ -35,4 +35,9 @@ export class Sync {
   district: District = new District();
   serverreport: any;
 
+  syncErrorResolved: boolean;
+  serverFaultResolved: boolean;
+  laptopFaultResolved: boolean;
+  powerCutResolved: boolean;
+
 }

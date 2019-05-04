@@ -17,9 +17,13 @@
       "dom"
     ],
     "types": [
-      "jquery",
-      "materialize-css"
-    ]
+     
+    ],
+    "paths": {
+      "rxjs": [
+        "./vendor/rxjs.ts"
+      ]
+    }
     
   },
   "angularCompilerOptions": {

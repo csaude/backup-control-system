@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
+import { Subject } from 'rxjs/Subject';
 
 /** 
 * @author Damasceno Lopes
@@ -13,8 +14,12 @@ import * as myGlobals from '../../../globals';
 @Injectable()
 export class ServersService {
   public url: string = myGlobals.API;
-
+  invokeEvent: Subject<any> = new Subject();
   constructor(public http: Http) {
+  }
+
+  callMethodOfSecondComponent() {
+    this.invokeEvent.next('someVal');
   }
 
   findServers(page, size, district, name, canceled, type, fields) {

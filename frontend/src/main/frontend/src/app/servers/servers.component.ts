@@ -2,11 +2,11 @@
  * Copyright (C) 2014-2018, Friends in Global Health, LLC
  * All rights reserved.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog, MatDialogRef, MatSort, MatTableDataSource, MAT_DIALOG_DATA, PageEvent,MatSnackBar } from '@angular/material';
 import { ServersService } from "./shared/servers.service";
 import { Server } from "./shared/server";
-import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 declare var jsPDF: any; // Important
 import { DatePipe } from '@angular/common';
@@ -20,6 +20,7 @@ import { Sync } from "./../syncs/shared/sync";
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/debounceTime';
+import {ExcelService} from '../resources/shared/excel.service';
 
 @Component({
   selector: 'app-servers',
@@ -31,14 +32,13 @@ import 'rxjs/add/operator/debounceTime';
 * @author Damasceno Lopes
 */
 export class ServersComponent implements OnInit {
-  public servers; serversreport: Server[] = [];
-  public p: number = 1;
+  public servers;servers1; serversreport: Server[] = [];
   public total: number = 0;
   public form: FormGroup;
   public server: Server = new Server();
   public isHidden; isHidden2m; isDisabledt: string;
   public name; district; type: string;
-  public size: string;
+
   public alldistricts: District[] = [];
   public canceled: boolean;
   public ROLE_SIS: string;
@@ -53,6 +53,10 @@ export class ServersComponent implements OnInit {
   public sync: Sync = new Sync();
 
   public pageSize: number;
+  public page: number;
+  // MatPaginator Output
+  public pageEvent: PageEvent;
+  public displayedColumns: string[] = ['district','server','type','last_sync','updated','actions'];
 
   public types = [
     { name: 'CHILD' },
@@ -60,36 +64,59 @@ export class ServersComponent implements OnInit {
   ]
 
   public user;
-  
-  public next;previous: number=0;
-  public first; last; range: string;
 
   public nameValueControl = new FormControl();
   public formCtrlSub: Subscription;
+
+  @ViewChild(MatSort) sort: MatSort;
      
   constructor(
+    private excelService:ExcelService,
     public datepipe: DatePipe,
     public serversService: ServersService,
     public resourcesService: ResourcesService,
-    public toastService: MzToastService,
     public translate: TranslateService,
     public formBuilder: FormBuilder,
     public syncsService: SyncsService,
-    public districtsService: DistrictsService) {
+    public districtsService: DistrictsService,
+    public snackBar: MatSnackBar,
+    public dialog: MatDialog) {
     this.form = formBuilder.group({
       district: [],
       canceled: [],
       type: []
     });
+
+    this.serversService.invokeEvent.subscribe(value => {
+      if (value === 'someVal') {
+        this.deleteServer();
+      }
+    });
+
   }
   ngOnInit() {
-    this.name = "";
-    this.district = "";
-    this.size = "";
+    if(window.sessionStorage.getItem('server-name')){
+      this.name = window.sessionStorage.getItem('server-name');
+    }else{
+      this.name = "";
+    }
+    if(window.sessionStorage.getItem('server-district')){
+      this.district = +window.sessionStorage.getItem('server-district');
+    }else{
+      this.district = "";;
+    }
     this.type = "";
-    this.canceled = false;
-    this.pageSize=10
-    this.getPage(1);
+    
+    if(window.sessionStorage.getItem('server-canceled')){
+      this.canceled = true;
+    }else{
+      this.canceled = false;
+    }
+    
+
+    this.page=0;
+    this.pageSize=10;
+
     this.user = JSON.parse(window.sessionStorage.getItem('user'));
     this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
     this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
@@ -98,20 +125,29 @@ export class ServersComponent implements OnInit {
     this.ROLE_ODMA = window.sessionStorage.getItem('ROLE_ODMA');
     this.ROLE_ORMA = window.sessionStorage.getItem('ROLE_ORMA');
     this.ROLE_GDD = window.sessionStorage.getItem('ROLE_GDD');
-    this.districtsService.findDistricts("","","","","parent.name,name,districtId")
-      .subscribe(data => {
-        this.alldistricts = data.content.filter(item => item.parent == null);;
-      });
-      this.formCtrlSub = this.nameValueControl.valueChanges
-      .debounceTime(600)
+
+    this.formCtrlSub = this.nameValueControl.valueChanges
+      .debounceTime(200)
       .subscribe(newValue => {
         this.name = this.nameValueControl.value;
         this.search();
       });
+
+    this.districtsService.findDistricts("","","","","parent.name,name,districtId")
+      .subscribe(data => {
+        this.alldistricts = data.content.filter(item => item.parent == null);;
+      });
+      
   }
-  getPage(page: number) {
-    this.first = "";
-    this.last = "";
+  
+  getPage(event) {
+
+    if(event!=null){
+      if(event.pageIndex||event.pageSize){
+      this.page=event.pageIndex;
+      this.pageSize=event.pageSize;
+      }
+    }
     this.isHidden = "";
     this.isDisabledt = "disabled";
 
@@ -122,39 +158,22 @@ export class ServersComponent implements OnInit {
         error => { },
         () => {
 
-          this.serversService.findServers(page, this.pageSize, this.district, this.name, this.canceled, this.type,"canceledBy.personName,canceled,dateCanceled,canceledReason,observation,district.name,name,type,dateCreated,dateUpdated,createdBy.personName,updatedBy.personName,uid,serverId")
+          this.serversService.findServers(this.page+1, this.pageSize, this.district, this.name.split(" ").join("SPACE"), this.canceled, this.type,"createdBy.phoneNumber,updatedBy.phoneNumber,canceledBy.personName,canceled,dateCanceled,canceledReason,observation,district.name,name,type,dateCreated,dateUpdated,createdBy.personName,updatedBy.personName,uid,serverId")
             .subscribe(data => {
               this.total = data.totalElements;
-              this.p = page;
               var result = data.content;
               var synced = alasql("SELECT [0] AS sync_uuid,[1] AS serverId,[2] AS server_report,[3] AS duration,[4] AS end_items_to_send,[5] AS end_items_to_receive FROM ?", [this.serverssyncinfo]);
-              this.servers = alasql("SELECT * FROM ?result LEFT JOIN ?synced USING serverId ", [result, synced]);
-              this.next = page + 1;
-              this.previous = page - 1;
-              if (data.first == true && data.last == true) {
-                this.first = "disabled";
-                this.last = "disabled";
-                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
-              }
-              else if (data.first == true && data.last == false) {
-                this.first = "disabled";
-                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + (page * this.pageSize);
-              }
-              else if (data.first == false && data.last == true) {
-                this.last = "disabled";
-                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
-              }
-              else if (data.first == false && data.last == false) {
-                this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + + (page * this.pageSize);
-              }
+              this.servers1 = alasql("SELECT * FROM ?result LEFT JOIN ?synced USING serverId ", [result, synced]);
+              this.servers = new MatTableDataSource(this.servers1);
+              this.servers.sort = this.sort;
 
             },
               error => {
                 this.isHidden = "hide";
                 this.isDisabledt = "disabled";
                 this.total = 0;
-                this.p = 1;
                 this.servers = [];
+                this.servers1 = [];
               },
               () => {
                 this.isHidden = "hide";
@@ -164,32 +183,36 @@ export class ServersComponent implements OnInit {
         });
 
   }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
+  }
+
   search() {
     var userValue = this.form.value;
     if (this.name) {
-      this.name = this.name.split(" ").join("SPACE");
+      window.sessionStorage.setItem('server-name',this.name);
     }
     else {
       this.name = "";
+      window.sessionStorage.removeItem('server-name');
     }
 
-    if (userValue.district) {
-
-      if (userValue.district == "all") {
-        this.district = "";
-      } else {
-        this.district = userValue.district;
-      }
-
-    }
-    else {
+    if (this.district == "all" || this.district == null || this.district == "") {
       this.district = "";
+      window.sessionStorage.removeItem('server-district');
+    } else {
+      window.sessionStorage.setItem('server-district',this.district);
     }
 
     if (userValue.canceled) {
       this.canceled = userValue.canceled;
+      window.sessionStorage.setItem('server-canceled','true');
     } else {
       this.canceled = false;
+      window.sessionStorage.removeItem('server-canceled');
     }
 
     if (userValue.type) {
@@ -202,17 +225,22 @@ export class ServersComponent implements OnInit {
     else {
       this.type = "";
     }
-
+    this.page=0;
     this.getPage(1);
   }
 
-  searchSize(){
-    this.getPage(1);
-  }
-
+  
   setServer(uuid) {
-    this.server = this.servers.find(item => item.uid == uuid);
+    this.server = this.servers1.find(item => item.uid == uuid);
+    this.openDialog3();
   }
+
+  setServerDelete(uuid) {
+    this.server = this.servers1.find(item => item.uid == uuid);
+    this.openDialog4();
+  }
+
+
   deleteServer() {
     this.isHidden = "";
     this.isDisabledt = "disabled";
@@ -220,17 +248,16 @@ export class ServersComponent implements OnInit {
       .subscribe(data => {
         if (data.text() == "Success") {
           this.search();
-          this.showMsg(this.server.name);
+          this.openSnackBar("Servidor: "+this.server.name+", excluido com sucesso!", "OK");
           this.isDisabledt = "";
         } else {
-          this.showMsgErr(this.server.name);
+          this.openSnackBar("Não é possivel excluir o Servidor!", "OK");
           this.isHidden = "hide";
           this.isDisabledt = "";
         }
       }
         ,
         error => {
-          alert("Não é possivel excluir o Server!");
           this.isHidden = "hide";
           this.isDisabledt = "";
         },
@@ -338,13 +365,131 @@ export class ServersComponent implements OnInit {
 
   }
 
+  printListExcel() {
+    this.isHidden = "";
+    this.isDisabledt = "disabled";
+
+    
+    
+    this.resourcesService.findServersInfo()
+    .subscribe(data => {
+      this.serverssyncinfo = data;
+    },
+      error => { },
+      () => {
+
+        this.serversService.findServers("", "", this.district, this.name, this.canceled, this.type,"serverId,district.name,name,type")
+          .subscribe(data => {
+            var result = data.content;
+            var synced = alasql("SELECT [1] AS serverId,IFNULL([2],'') AS server_report,IFNULL([4],'') AS send,IFNULL([5],'') AS receive FROM ?", [this.serverssyncinfo]);
+            this.serversreport = alasql("SELECT district->name AS Distrito,name AS Localhost, type AS Tipo, synced.server_report AS [Última Sincronização],synced.send AS [Itens por enviar no fim],synced.receive AS [Itens por receber no fim] FROM ?result LEFT JOIN ?synced USING serverId ", [result, synced]);
+          },
+            error => {
+              this.isHidden = "hide";
+              this.isDisabledt = "";
+              this.serversreport = [];
+            },
+            () => {
+              this.isHidden = "hide";
+              this.isDisabledt = "";
+              this.excelService.exportAsExcelFile(this.serversreport, 'SCB_Sync Localhosts_' + this.datepipe.transform(new Date(), 'dd-MM-yyyy HHmm'));
+      });
+
+    });
+  }
+
   setSync(uuid) {
-    this.isHidden2m = "";
-    this.syncsService.findOneSyncByUuid(uuid,"observation,syncId,startTime,startItemsToSend,startItemsToReceive,endTime,endItemsToSend,endItemsToReceive,observationHis,dateCreated,dateUpdated,syncError,createdBy.personName,updatedBy.personName,uid,serverFault,laptopFault,powerCut,canceled,district.name,server.name,server.type")
+    this.isHidden = "";
+    this.syncsService.findOneSyncByUuid(uuid,"createdBy.phoneNumber,updatedBy.phoneNumber,observation,syncId,startTime,startItemsToSend,startItemsToReceive,endTime,endItemsToSend,endItemsToReceive,observationHis,dateCreated,dateUpdated,syncError,createdBy.personName,updatedBy.personName,uid,serverFault,laptopFault,powerCut,canceled,district.name,server.name,server.type,syncErrorResolved,serverFaultResolved,laptopFaultResolved,powerCutResolved")
       .subscribe(
         sync => {
           this.sync = sync;
-        }, error => { }, () => { this.isHidden2m = "hide"; });
+        }, error => { }, () => { this.isHidden = "hide";this.openDialog2(); });
+  }
+
+  openDialog2(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog2, {
+      width: '800px',
+      height: '600px',
+      data: this.sync
+    });
+       
+  }
+  
+  openDialog3(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog3, {
+      width: '800px',
+      height: '600px',
+      data: this.server
+    });
+       
+  }
+  
+  
+  openDialog4(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog4, {
+      width: '800px',
+      height: '250px',
+      data: this.server
+    });
+
+  }
+
+  
+  
+}
+
+@Component({
+  selector: 'servers-delete-dialog',
+  templateUrl: 'servers-delete-dialog.html',
+})
+export class DialogOverviewExampleDialog4 {
+
+  
+  constructor(
+    public serversService: ServersService,
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog4>,
+    @Inject(MAT_DIALOG_DATA) public data: Server) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  onDeleteClick(): void {
+    this.serversService.callMethodOfSecondComponent();
+    this.dialogRef.close();
+  }
+
+}
+
+@Component({
+  selector: 'servers-info-dialog',
+  templateUrl: 'servers-info-dialog.html',
+})
+export class DialogOverviewExampleDialog3 {
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog3>,
+    @Inject(MAT_DIALOG_DATA) public data: Server) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+}
+
+@Component({
+  selector: 'servers-sync-dialog',
+  templateUrl: 'servers-sync-dialog.html',
+})
+export class DialogOverviewExampleDialog2 {
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog2>,
+    @Inject(MAT_DIALOG_DATA) public data: Sync) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 
   getSyncTimeline(start, end) {
@@ -357,27 +502,6 @@ export class ServersComponent implements OnInit {
     else {
       let timeStart = new Date(start);
       time = ("0" + timeStart.getDate()).slice(-2) + "/" + ("0" + (timeStart.getMonth() + 1)).slice(-2) + "/" + timeStart.getFullYear() + " " + ("0" + timeStart.getHours()).slice(-2) + ":" + ("0" + timeStart.getMinutes()).slice(-2);
-    }
-    return time;
-  }
-
-  getSyncDuration(start, end) {
-    var time;
-    if (start && end) {
-      let timeStart = new Date(start);
-      let timeEnd = new Date(end);
-      var duration = timeEnd.getTime() - timeStart.getTime();
-      let hours: any = Math.floor(duration / (1000 * 60 * 60) % 60);
-      let minutes: any = Math.floor(duration / (1000 * 60) % 60);
-      let seconds: any = Math.floor(duration / 1000 % 60);
-      hours = hours < 10 ? '0' + hours : hours;
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-      seconds = seconds < 10 ? '0' + seconds : seconds;
-      return hours + 'h ' + minutes +'min';
-    }
-
-    else {
-      time = "-";
     }
     return time;
   }
@@ -410,10 +534,26 @@ export class ServersComponent implements OnInit {
     }
   }
 
-  showMsg(server) {
-    this.toastService.show('Servidor de sincronização: ' + server + ', excluido com sucesso!', 2000, 'green', null);
+  getSyncDuration(start, end) {
+    var time;
+    if (start && end) {
+      let timeStart = new Date(start);
+      let timeEnd = new Date(end);
+      var duration = timeEnd.getTime() - timeStart.getTime();
+      let hours: any = Math.floor(duration / (1000 * 60 * 60) % 60);
+      let minutes: any = Math.floor(duration / (1000 * 60) % 60);
+      let seconds: any = Math.floor(duration / 1000 % 60);
+      hours = hours < 10 ? '0' + hours : hours;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      seconds = seconds < 10 ? '0' + seconds : seconds;
+      return hours + 'h ' + minutes +'min';
+    }
+
+    else {
+      time = "-";
+    }
+    return time;
   }
-  showMsgErr(server) {
-    this.toastService.show('Servidor de sincronização: ' + server + ', não pode ser excluido!', 2000, 'red', null);
-  }
+
+
 }

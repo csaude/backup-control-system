@@ -2,11 +2,11 @@
  * Copyright (C) 2014-2018, Friends in Global Health, LLC
  * All rights reserved.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog, MatDialogRef, MatSort, MatTableDataSource, MAT_DIALOG_DATA, PageEvent,MatSnackBar } from '@angular/material';
 import { TransportersService } from "./shared/transporters.service";
 import { Transporter } from "./shared/transporter";
-import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
@@ -24,8 +24,8 @@ import 'rxjs/add/operator/debounceTime';
 export class TransportersComponent implements OnInit {
   public transporter: Transporter = new Transporter();
   public isHidden: string;
-  public transporters: Transporter[] = [];
-  public p: number = 1;
+  public transporters;transporters1: Transporter[] = [];
+
   public total: number = 0;
   public form: FormGroup;
   public roles = [
@@ -41,28 +41,39 @@ export class TransportersComponent implements OnInit {
   public name: string;
   public canceled: boolean;
   public role: string;
-  public next;previous: number=0;
-  public first; last; range: string;
 
   public nameValueControl = new FormControl();
   public formCtrlSub: Subscription;
 
   public pageSize: number;
+  public page: number;
+  // MatPaginator Output
+  public pageEvent: PageEvent;
+  public displayedColumns: string[] = ['name','role','phone','updated','actions'];
+  @ViewChild(MatSort) sort: MatSort;
      
   constructor(
     public transportersService: TransportersService,
-    public toastService: MzToastService,
     public translate: TranslateService,
-    public formBuilder: FormBuilder) {
+    public formBuilder: FormBuilder,
+    public dialog: MatDialog,
+    public snackBar: MatSnackBar) {
     this.form = formBuilder.group({
       role: [],
       canceled: []
+    });
+
+    this.transportersService.invokeEvent.subscribe(value => {
+      if (value === 'someVal') {
+        this.deleteTransporter();
+      }
     });
   }
   ngOnInit() {
     this.name = "";
     this.role = "";
-    this.pageSize=10
+    this.page=0;
+    this.pageSize=10;
     this.canceled = false;
     this.getPage(1);
 
@@ -75,45 +86,41 @@ export class TransportersComponent implements OnInit {
 
   }
 
-  getPage(page: number) {
-    this.first = "";
-    this.last = "";
+  getPage(event) {
+
+    if(event!=null){
+      if(event.pageIndex||event.pageSize){
+      this.page=event.pageIndex;
+      this.pageSize=event.pageSize;
+      }
+    }
+   
     this.isHidden = "";
-    this.transportersService.findTransporters(page, this.pageSize, this.name, this.role, this.canceled,"name,role,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,uid,canceled,canceledBy.personName,canceledReason,phoneNumber,dateCanceled")
+    this.transportersService.findTransporters(this.page+1, this.pageSize, this.name, this.role, this.canceled,"createdBy.phoneNumber,updatedBy.phoneNumber,name,role,dateUpdated,dateCreated,createdBy.personName,updatedBy.personName,uid,canceled,canceledBy.personName,canceledReason,phoneNumber,dateCanceled")
       .subscribe(data => {
         this.total = data.totalElements;
-        this.p = page;
-        this.transporters = data.content;
-        this.next = page + 1;
-        this.previous = page - 1;
-        if (data.first == true && data.last == true) {
-          this.first = "disabled";
-          this.last = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
-        }
-        else if (data.first == true && data.last == false) {
-          this.first = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + (page * this.pageSize);
-        }
-        else if (data.first == false && data.last == true) {
-          this.last = "disabled";
-          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + data.totalElements;
-        }
-        else if (data.first == false && data.last == false) {
-          this.range = ((page * this.pageSize) - (this.pageSize-1)) + " - " + + (page * this.pageSize);
-        }
+        this.transporters1 = data.content;
+        this.transporters = new MatTableDataSource(this.transporters1);
+        this.transporters.sort = this.sort;
       },
         error => {
           this.isHidden = "hide";
           this.total = 0;
-          this.p = 1;
           this.transporters = [];
+          this.transporters1 = [];
         },
         () => {
           this.isHidden = "hide";
         }
       );
   }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
+  }
+
   search() {
     var userValue = this.form.value;
     if (this.name) {
@@ -136,12 +143,10 @@ export class TransportersComponent implements OnInit {
     } else {
       this.canceled = false;
     }
+    this.page=0;
     this.getPage(1);
   }
 
-  searchSize(){
-    this.getPage(1);
-  }
 
   deleteTransporter() {
     this.isHidden = "";
@@ -149,9 +154,9 @@ export class TransportersComponent implements OnInit {
       .subscribe(data => {
         if (data.text() == "Success") {
           this.search();
-          this.showMsg(this.transporter.name);
+          this.openSnackBar("Transportador: "+this.transporter.name+", excluido com sucesso!", "OK");
         } else {
-          this.showMsgErr(this.transporter.name);
+          this.openSnackBar("Não é possivel excluir o Transportador!", "OK");
           this.isHidden = "hide";
         }
       },
@@ -160,12 +165,71 @@ export class TransportersComponent implements OnInit {
       );
   }
   setTransporter(uid) {
-    this.transporter = this.transporters.find(item => item.uid == uid);
+    this.transporter = this.transporters1.find(item => item.uid == uid);
+    this.openDialog();
   }
-  showMsg(transporter) {
-    this.toastService.show('Transportador: ' + transporter + ', excluido com sucesso!', 2000, 'green', null);
+
+  setTransporterDelete(uid) {
+    this.transporter = this.transporters1.find(item => item.uid == uid);
+    this.openDialog4();
+    
   }
-  showMsgErr(transporter) {
-    this.toastService.show('Transportador: ' + transporter + ', não pode ser excluido!', 2000, 'red', null);
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '800px',
+      height: '600px',
+      data: this.transporter
+    });
+
   }
+
+  openDialog4(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog4, {
+      width: '800px',
+      height: '250px',
+      data: this.transporter
+    });
+       
+  }
+
+}
+
+@Component({
+  selector: 'transporters-info-dialog',
+  templateUrl: 'transporters-info-dialog.html',
+})
+export class DialogOverviewExampleDialog {
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: Transporter) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+}
+
+@Component({
+  selector: 'transporters-delete-dialog',
+  templateUrl: 'transporters-delete-dialog.html',
+})
+export class DialogOverviewExampleDialog4 {
+
+  
+  constructor(
+    public transportersService: TransportersService,
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog4>,
+    @Inject(MAT_DIALOG_DATA) public data: Transporter) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  onDeleteClick(): void {
+    this.transportersService.callMethodOfSecondComponent();
+    this.dialogRef.close();
+  }
+
 }

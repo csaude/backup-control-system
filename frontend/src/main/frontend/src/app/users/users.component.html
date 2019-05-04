@@ -1,216 +1,131 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
-<br>
-<h5 class="light">{{ "usersfound" | translate }}</h5>
-<form materialize [formGroup]="form">
-  <div class="row">
-    <div class="input-field col s12 m3 l3">
-      <input id="name" type="text" class="validate" placeholder="{{ 'searchbyusername' | translate }}" [formControl]="nameValueControl">
-      <label for="name">
-        {{ 'searchbyusername' | translate }}
-      </label>
-    </div>
-  </div>
-  <div class="row" style="margin-top: -20px;">
-    <div class="col s12 m3 l3" style="margin-top: 25px;">
-      <input type="checkbox" class="filled-in" id="enabled" formControlName="enabled" [(ngModel)]="enableds" (change)="search()"
-        checked="checked" />
-      <label for="enabled">{{ "enabled" | translate }}</label>
-    </div>
-    <div class="col s12 m9 l9" style="margin-top: -15px;">
-      <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
-
-        <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
-        <mz-select-container style="width: 50px;">
-          <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
-            <option value="10" selected>10</option>
-            <option value="25">25</option>
-<option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </mz-select-container>
-
-
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
-        <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
-        <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
-        <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
-
-      </ul>
-    </div>
-  </div>
-</form>
-
-<div class="card col s12" style="margin-top: -20px;">
-  <div class="progress {{isHidden}}"  style="margin-top: 65px; margin-bottom: 0;">
-    <div class="indeterminate"></div>
-  </div>
-  <table class="bordered responsive-table highlight">
-    <thead>
-      <tr>
-        <th>{{ "fullname" | translate }}</th>
-        <th>{{ "username" | translate }}</th>
-        <th>{{ "email" | translate }}</th>
-        <th>{{ "phone" | translate }}</th>
-        <th>{{ "updatedon" | translate }}</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody *ngIf="isHidden=='hide'">
-      <tr *ngFor="let user of users">
-        <td>{{ user.person.othersNames }} {{ user.person.surname }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.person.email }}</td>
-        <td>{{ user.person.phoneNumber }}</td>
-        <td>{{ user.dateUpdated | date: 'dd/MM/yyyy' }}</td>
-        <td>
-
-          <a mz-tooltip tooltip="{{'details' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setUser(user.uid)"
-          (click)="basicModal2.openModal()" [routerLink]="">
-          <i class="material-icons icon-green">info</i>
+<mat-sidenav-container autosize>
+    <mat-sidenav #drawer mode="side" opened="true" [fixedInViewport]="true" [fixedTopGap]="63" >
+      
+        <mat-toolbar color="primary">
+            <mat-toolbar-row>
+              <span>Menu</span>
+            </mat-toolbar-row>
+        </mat-toolbar>
+  
+      <mat-nav-list>
+        <a mat-list-item routerLink="/home" matTooltip="Ir para a pagina inicial">
+          <mat-icon>home</mat-icon>&nbsp;&nbsp;<span class="nav-caption">Página Inicial</span>
         </a>
-        &nbsp;
-        <a mz-tooltip tooltip="{{'edit' | translate}}" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/users', user.uid]">
-          <i class="material-icons icon-orange">mode_edit</i>
+        <a mat-list-item routerLink="/users/new" matTooltip="Adicionar novo Transportador">
+          <mat-icon>add</mat-icon>&nbsp;&nbsp;<span class="nav-caption">{{ "add" | translate}} Utilizador</span>
         </a>
-        &nbsp;
-        <a mz-tooltip tooltip="{{'delete' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setUser(user.uid)"
-          (click)="basicModal.openModal()" routerLink="/users">
-          <i class="material-icons icon-red">delete</i>
-        </a>
+      </mat-nav-list>
+  
+      <mat-expansion-panel style="box-shadow: none">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+                Pesquisar Dados
+            </mat-panel-title>
+            <mat-panel-description>
+              
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          
+          <div>
+              <form [formGroup]="form">
+          <mat-form-field style="width: 95%;">
+              <mat-label>{{ 'searchbyname' | translate }}</mat-label>
+              <input matInput type="text" [formControl]="nameValueControl" placeholder="{{ 'searchbyname' | translate }}">
+              <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+    
+      
+          <br>
+               <mat-checkbox [(ngModel)]="enableds" formControlName="enabled" (change)="search()">{{ "enabled" | translate }}</mat-checkbox>
+      
+      </form>
+          </div>
+  
+      </mat-expansion-panel>
+      
+  
+    </mat-sidenav>
+    <mat-sidenav-content style="padding: 10px; margin-top: 70px;">
+      
+        <span style="display: inline-flex;">
+            <button mat-mini-fab color="basic" (click)="drawer.toggle()" matTooltip="Esconder / Mostrar Menu lateral"><mat-icon>menu</mat-icon> </button>
+          &nbsp;&nbsp;<h1 class="mat-h1" style="margin-top: 7px;">{{ "usersfound" | translate }} <a matTooltip="Ajuda" target="_blank" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+        </span>
+          <mat-paginator *ngIf="isHidden=='hide'" [length]="total" [pageIndex]="page" [pageSize]="pageSize"
+            [pageSizeOptions]="[5, 10, 15, 25, 100]" (page)="pageEvent = getPage($event)"></mat-paginator>
+          <mat-progress-bar mode="indeterminate" *ngIf="isHidden==''"></mat-progress-bar>
+          <section class="mat-typography">
+          <span class="info-label" *ngIf="isHidden==''">Carregando dados...</span>
+        </section>
+            <mat-table mat-table [dataSource]="users" class="mat-elevation-z8" matSort>
+      
+              <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+      
+              <!-- Name Column -->
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef> {{ "fullname" | translate }} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{ element.person.othersNames }} {{ element.person.surname }} </mat-cell>
+              </ng-container>
+      
+               <!-- Username -->
+               <ng-container matColumnDef="username">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> {{ "username" | translate }} </mat-header-cell>
+                  <mat-cell *matCellDef="let element"> {{ element.username }} </mat-cell>
+                </ng-container>
 
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-<ul class="pagination valign-center" *ngIf="isHidden=='hide'">
-
-  <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
-  <mz-select-container style="width: 50px;">
-    <select mz-select id="pageSize" [(ngModel)]="pageSize" (change)="searchSize()">
-      <option value="10" selected>10</option>
-      <option value="25">25</option>
-<option value="50">50</option>
-      <option value="100">100</option>
-    </select>
-  </mz-select-container>
-
-
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
-  <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
-  <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
-  <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
-
-</ul>
-
-<!--
-<ul class="pagination" *ngIf="isHidden==''">
-  {{ "loading" | translate }}
-</ul>
--->
-<mz-modal #basicModal>
-  <mz-modal-header>
-    <i mz-icon [align]="'left'" [icon]="'warning'" [size]="'small'">
-    </i>
-    <h4>{{ "confirm" | translate }}</h4>
-  </mz-modal-header>
-  <mz-modal-content>
-    {{ "userdelete" | translate }}: {{user.username}}? {{ "confirmdelete" | translate }}
-  </mz-modal-content>
-  <mz-modal-footer>
-    <button mz-button [flat]="true" (click)="deleteUser()" mz-modal-close>Sim</button>
-    <button mz-button [flat]="true" mz-modal-close>Não</button>
-  </mz-modal-footer>
-</mz-modal>
-<mz-modal #basicModal2 [fixedFooter]="true">
-  <mz-modal-header>
-    <h4>{{ "userdetails" | translate }}</h4>
-  </mz-modal-header>
-  <mz-modal-content>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12">
-        <h5 class="light">{{user.person.othersNames}} {{user.person.surname}}</h5>
-      </div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "gender" | translate }}:</div>
-      <div class="col s12 l10 m10">{{user.person.gender=='M'?'Masculino':'Feminino'}}</div>
-    </div>
-    <div class="row" *ngIf="user.person.email!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "email" | translate }}:</div>
-      <div class="col s12 l10 m10">{{user.person.email}}</div>
-    </div>
-    <div class="row" *ngIf="user.person.phoneNumber!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "phone" | translate }}:</div>
-      <div class="col s12 l10 m10">{{user.person.phoneNumber}}</div>
-    </div>
-    <div class="row" *ngIf="user.lastLogin!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "last_login" | translate }}:</div>
-      <div class="col s12 l10 m10">{{user.lastLogin | date: 'dd/MM/yyyy HH:mm'}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "function" | translate }}(s)</div>
-      <div class="col s12 l10 m10">
-        <table class="bordered responsive-table highlight">
-          <thead>
-            <tr>
-              <th>{{ "function" | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let authority of user.authorities">
-              <td>{{ authority.description }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{"district" | translate }}(s) ({{user.districts.length}}):</div>
-      <div class="col s12 l10 m10">
-         <ul style="margin: 0px;">
-                <li *ngFor="let district of user.districts">
-                    <a (click)="basicModal2.closeModal()" [routerLink]="['/districts', district.uid]"><span class="orange-text text-darken-3">{{district.fullName}}</span></a>
-                </li>
-          </ul>
-      </div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{user.creatorName}} - {{ user.dateCreated | date:'dd/MM/yyyy HH:mm' }}</div>
-    </div>
-    <div class="row" *ngIf="user.updaterName!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{user.updaterName}} - {{ user.dateUpdated | date:'dd/MM/yyyy HH:mm' }}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <span style="color:lightgrey;">{{user.uid}}</span>
-      </div>
-    </div>
-  </mz-modal-content>
-  <mz-modal-footer>
-    <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
-  </mz-modal-footer>
-</mz-modal>
-
-<div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
-  <a class="btn-floating  btn-large green">
-    <i class="material-icons">more_vert</i>
-  </a>
-  <ul>
-    <li>
-      <a mz-tooltip tooltip="{{'add' | translate}}" [position]="'left'" [html]="false" [delay]="100" routerLink="/users/new"
-        class="btn-floating  waves-effect waves-light  blue">
-        <i class="material-icons">add</i>
-      </a>
-    </li>
-  </ul>
-</div>
+                 <!-- E-mail -->
+               <ng-container matColumnDef="email">
+                  <mat-header-cell *matHeaderCellDef > {{ "email" | translate }} </mat-header-cell>
+                  <mat-cell *matCellDef="let element"> {{ element.person.email }} </mat-cell>
+                </ng-container>
+      
+              <!-- Phone -->
+              <ng-container matColumnDef="phone">
+                <mat-header-cell *matHeaderCellDef > {{ "phone" | translate }} </mat-header-cell>
+                <mat-cell *matCellDef="let element">{{element.person.phoneNumber}}</mat-cell>
+              </ng-container>
+      
+                 <!-- Updated On -->
+              <ng-container matColumnDef="updated">
+                  <mat-header-cell *matHeaderCellDef style="text-align: center;"> {{ "updatedon" | translate }} </mat-header-cell>
+                  <mat-cell *matCellDef="let element" style="text-align: center;">  {{ element.dateUpdated | date: 'dd/MM/yyyy'}}</mat-cell>
+                </ng-container>
+      
+              <!-- Actions -->
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let element" style="text-align: center;">
+                  <button mat-icon-button [matMenuTriggerFor]="menu" [disabled]="isHidden==''">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="setUser(element.uid)">
+                      <mat-icon>info</mat-icon>
+                      <span>{{ 'details' | translate}}</span>
+                    </button>
+                    <button mat-menu-item [routerLink]="['/users', element.uid]">
+                      <mat-icon>mode_edit</mat-icon>
+                      <span>{{ 'edit' | translate}}</span>
+                    </button>
+                    <button mat-menu-item (click)="setUserDelete(element.uid)">
+                      <mat-icon>delete</mat-icon>
+                      <span>{{ 'delete' | translate}}</span>
+                    </button>
+                  </mat-menu>
+                </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+        <br>
+          <mat-paginator *ngIf="isHidden=='hide'" [length]="total" [pageIndex]="page" [pageSize]="pageSize"
+            [pageSizeOptions]="[5, 10, 15, 25, 100]" (page)="pageEvent = getPage($event)">
+          </mat-paginator>
+          
+          <button routerLink="/users/new"  mat-fab matTooltip="Adicionar novo Utilizador" color="primary" class="fab-bottom-right">
+            <mat-icon>add</mat-icon>
+          </button>
+  
+    </mat-sidenav-content>
+  </mat-sidenav-container>

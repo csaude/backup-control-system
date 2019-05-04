@@ -34,7 +34,7 @@ export class SyncsService {
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     headers.append('Authorization', 'Basic ' + btoa(user.username + ':' + parsedWordArray.toString(CryptoJS.enc.Utf8)));
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + "/v1/syncs?fields=" + fields + "&filter=district:eq:" + district_id + ",server:eq:" + server_id + ",startTime:gte:" + from + ",startTime:lte:" + until + ",user!user&page=" + page + "&pageSize=" + size+"&order=-startTime", { headers: headers })
+    return this.http.get(this.url + "/v1/syncs?fields=" + fields + "&filter=canceled:eq:false,district:eq:" + district_id + ",server:eq:" + server_id + ",startTime:gte:" + from + ",startTime:lte:" + until + ",user!user&page=" + page + "&pageSize=" + size+"&order=-startTime", { headers: headers })
       .map(res => res.json());
   }
 

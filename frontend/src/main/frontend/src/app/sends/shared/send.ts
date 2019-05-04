@@ -43,4 +43,5 @@ export class Send {
   ik_returned: boolean;
   ik_returneddate: Date;
   ik_returnedto: String;
+  receivernumber: String;
 }

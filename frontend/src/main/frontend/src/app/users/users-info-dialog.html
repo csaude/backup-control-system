@@ -1,0 +1,58 @@
+<h1 mat-dialog-title>{{ "userdetails" | translate }}</h1>
+<div mat-dialog-content>
+  <section class="mat-typography">
+  <h4 class="mat-h4">{{data.person.othersNames}} {{data.person.surname}}</h4>
+  <span>{{ "gender" | translate }}: {{data.person.gender}}<br></span>
+  <span *ngIf="data.person.email!=null">{{ "email" | translate }}: {{data.person.email}}<br></span>
+  <span *ngIf="data.person.phoneNumber!=null">{{ "phone" | translate }}: {{data.person.phoneNumber}}<br></span>
+  <span *ngIf="data.lastLogin!=null">{{ "last_login" | translate }}: {{data.lastLogin | date:'dd/MM/yyyy HH:mm' }}<br></span>
+</section>
+
+
+<p>
+    <mat-table style="overflow-y: scroll;height: 70px;box-shadow: none !important;" mat-table [dataSource]="data.authorities" class="mat-elevation-z8">
+  
+        <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+  
+        <!-- Name -->
+        <ng-container matColumnDef="role">
+          <mat-header-cell *matHeaderCellDef> {{ "function" | translate }} (s)</mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
+        </ng-container>
+  
+        
+        <mat-header-row *matHeaderRowDef="displayedColumns1" style="min-height: 35px;"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns1;" style="min-height: 30px;"></mat-row>
+      </mat-table>
+  </p>
+
+  <p>
+      <mat-table style="overflow-y: scroll;height: 150px;box-shadow: none !important;" mat-table [dataSource]="data.districts" class="mat-elevation-z8">
+    
+          <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+    
+          <!-- Name -->
+          <ng-container matColumnDef="district">
+            <mat-header-cell *matHeaderCellDef> {{ "district" | translate }} (s) ({{data.districts.length}})</mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.fullName}} </mat-cell>
+          </ng-container>
+    
+          
+          <mat-header-row *matHeaderRowDef="displayedColumns2" style="min-height: 35px;"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns2;" style="min-height: 30px;"></mat-row>
+        </mat-table>
+    </p>
+
+<section class="mat-typography">
+    {{ "createdby" | translate }}: {{data.creatorName}} - {{ data.dateCreated | date:'dd/MM/yyyy HH:mm' }}  <br>
+    <span *ngIf="data.updaterName!=null">{{ "updatedby" | translate }}: {{data.updaterName}} - {{ data.dateUpdated | date:'dd/MM/yyyy HH:mm' }}<br></span>
+  <span class="info-label">{{data.uid}}</span>
+</section>
+
+
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" [mat-dialog-close]="">OK</button>
+</div>

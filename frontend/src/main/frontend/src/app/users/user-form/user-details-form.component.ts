@@ -12,9 +12,9 @@ import { District } from './../../districts/shared/district';
 import { Person } from './../../persons/shared/person';
 import { AuthoritiesService } from './../../authorities/shared/authorities.service';
 import { Authority } from './../../authorities/shared/authority';
-import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 import * as CryptoJS from 'crypto-js';
+import { MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-userdetails-form',
@@ -58,8 +58,8 @@ export class UserDetailsFormComponent implements OnInit {
     public usersService: UsersService,
     public districtsService: DistrictsService,
     public authoritiesService: AuthoritiesService,
-    public toastService: MzToastService,
-    public translate: TranslateService
+    public translate: TranslateService,
+    public snackBar: MatSnackBar
   ) {
     this.form = formBuilder.group({
       user_id: [],
@@ -82,15 +82,22 @@ export class UserDetailsFormComponent implements OnInit {
       person: [],
       password_new: [],
       enabled: [],
-      authorities: ['', [
-        Validators.required
-      ]],
+      authorities: [],
       notification: [],
       locale: ['', [
         Validators.required
       ]]
     });
+
+    
   }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
+  }
+
   ngOnInit() {
     this.isDisabled = false;
     this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
@@ -195,6 +202,8 @@ export class UserDetailsFormComponent implements OnInit {
           phoneNumber: userValue.phone_number,
           email: userValue.email
         }
+        userValue.districts=this.user.districts;
+        userValue.authorities=this.user.authorities;
 
         result = this.usersService.updateUser(userValue, this.user.creatorId, user.userId);
         result.subscribe(data => {
@@ -202,7 +211,7 @@ export class UserDetailsFormComponent implements OnInit {
           error => {
           },
           () => {
-            this.showMsg(userValue.username);
+            this.openSnackBar("Dados pessoais salvos com sucesso!", "OK");
             window.sessionStorage.removeItem("user");
 
             if (userValue.password_new != null) {
@@ -222,10 +231,5 @@ export class UserDetailsFormComponent implements OnInit {
     } else {
     }
   }
-  showMsg(user) {
-    this.toastService.show('Utilizador: ' + user + ', salvo com sucesso!', 4000, 'green', null);
-  }
-  showMsgErr(user) {
-    this.toastService.show('Username: ' + user + ' ja esta a ser utilizado!', 4000, 'red', null);
-  }
+  
 }

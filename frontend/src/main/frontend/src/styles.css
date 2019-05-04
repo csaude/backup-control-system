@@ -1,20 +1,52 @@
-body{
-  background-color:#f3f3f3;
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.info-label {
+  font-size: .8rem;
+  color: #9e9e9e;
 }
 
-.preloader-container {
-    position: absolute;
-    top: 40%;
-    width: 100%;
-    text-align: center;
-  }
+.fab-bottom-right {
+  top: auto !important;
+  right: 20px !important;
+  bottom: 10px !important;
+  left: auto !important;
+  position: fixed !important;
+}
 
-  td, th {
-    padding: 5px !important;
-  }
-  
+.mat-sidenav {
+  left: 0;
+  width: 17%;
+  box-shadow: 3px 0px 10px 3px rgba(0,0,0,.12);
+}
 
+body{
+  background-color:#FAFAFA;
+}
 
+.mat-paginator-container {
+  background-color:#FAFAFA;
+}
 
+.mat-row:hover {
+  background-color: #F8F8F8;
+}
 
-  
+/* Scroller*/
+::-webkit-scrollbar {
+width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+background: #f1f1f1; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+background: rgb(156, 156, 156); 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+background: #555; 
+}

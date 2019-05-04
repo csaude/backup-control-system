@@ -7,10 +7,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Server } from '../shared/server';
 import { ServersService } from '../shared/servers.service';
-import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 import { District } from '../../districts/shared/district';
 import { DistrictsService } from '../../districts/shared/districts.service';
+import { MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-server-form',
@@ -22,11 +22,7 @@ import { DistrictsService } from '../../districts/shared/districts.service';
 * @author Damasceno Lopes
 */
 export class ServerFormComponent implements OnInit {
-  public options: Pickadate.DateOptions = {
-    format: 'dd/mm/yyyy',
-    formatSubmit: 'yyyy-mm-dd',
-  };
-  
+    
   public alldistricts: District[] = [];
   public form: FormGroup;
   public title: string;
@@ -49,7 +45,7 @@ export class ServerFormComponent implements OnInit {
     public router: Router,
     public route: ActivatedRoute,
     public serversService: ServersService,
-    public toastService: MzToastService,
+    public snackBar: MatSnackBar,
     public translate: TranslateService,
     public districtsService: DistrictsService
   ) {
@@ -68,6 +64,13 @@ export class ServerFormComponent implements OnInit {
       canceledReason: []
     });
   }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
+  }
+
   ngOnInit() {
     this.disabled1 = true;
     this.isDisabled = false;
@@ -131,8 +134,12 @@ export class ServerFormComponent implements OnInit {
     this.isDisabled = true;
     var result, userValue = this.form.value;
     if (this.server.uid) {
+      if (userValue.district.districtId==null) {
+        this.openSnackBar("Escolha um Distrito!", "OK");
+        this.isDisabled = false;
+      } else
       if (userValue.canceled == true && userValue.canceledReason == null) {
-        this.showMsgErr2();
+        this.openSnackBar("Escreva a razão para anular!", "OK");
         this.isDisabled = false;
       } else {
 
@@ -149,9 +156,9 @@ export class ServerFormComponent implements OnInit {
         result.subscribe(data => {
           if (data.text() == "Success") {
             this.router.navigate(['servers']);
-            this.showMsg(userValue.name);
+            this.openSnackBar("Servidor: "+userValue.name+" actualizado com sucesso!", "OK");
           } else {
-            this.showMsgErr(userValue.name);
+            this.openSnackBar("Este servidor ja existe!", "OK");
             this.isDisabled = false;
           }
         }, error => {
@@ -160,6 +167,10 @@ export class ServerFormComponent implements OnInit {
           });
         }  
     } else {
+      if (userValue.district.districtId==null) {
+        this.openSnackBar("Escolha um Distrito!", "OK");
+        this.isDisabled = false;
+      } else{
       userValue.createdBy = {
         uid: this.user.uid,
         userId: this.user.userId
@@ -168,21 +179,14 @@ export class ServerFormComponent implements OnInit {
       result.subscribe(data => {
         if (data.text() == "Success") {
           this.router.navigate(['servers']);
-          this.showMsg(userValue.name);
+          this.openSnackBar("Servidor: "+userValue.name+" criado com sucesso!", "OK");
         } else {
-          this.showMsgErr(userValue.name);
+          this.openSnackBar("Este servidor ja existe!", "OK");
           this.isDisabled = false;
         }
+      
       });
-    }
+    }}
   }
-  showMsg(server) {
-    this.toastService.show('Servidor: ' + server + ', salvo com sucesso!', 2000, 'green', null);
-  }
-  showMsgErr(server) {
-    this.toastService.show('Este Servidor ja existe!', 2000, 'red', null);
-  }
-  showMsgErr2() {
-    this.toastService.show('Escreva a razão para anular!', 2000, 'red', null);
-  }
+ 
 }

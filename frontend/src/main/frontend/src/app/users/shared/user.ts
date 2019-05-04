@@ -27,5 +27,8 @@ export class User {
   lastLogin: Date;
   password: String;
   locale: string;
+  phoneNumber: string;
+  notification: boolean;
+  fullName: string;
 
 }

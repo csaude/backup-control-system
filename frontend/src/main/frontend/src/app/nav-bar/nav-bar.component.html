@@ -1,167 +1,103 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
-<header>
-  <div class="navbar-fixed" *ngIf="isAuth">
-   
-    <mz-dropdown [id]="'dropdown-demo3'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="true"
-      [dropdownButtonId]="'btn-dropdown-demo3'" [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300"
-      [stopPropagation]="true">
-      <mz-dropdown-item>
-        <a (click)="setUser()" [routerLink]="['/users/profile', user.uid]">{{ "profile" | translate }}</a>
-      </mz-dropdown-item>
-      <mz-dropdown-divider></mz-dropdown-divider>
-      <mz-dropdown-item *ngIf="ROLE_SIS">
-        <a target="_blank" href="http://196.28.230.195:8080/scb/swagger-ui.html">Rest Docs</a>
-      </mz-dropdown-item>
-      <mz-dropdown-divider></mz-dropdown-divider>
-      <mz-dropdown-item >
-        <a target="_blank" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM/edit?usp=sharing">{{"help" | translate}}</a>
-      </mz-dropdown-item>
-      <mz-dropdown-divider></mz-dropdown-divider>
-      <mz-dropdown-item>
-        <a (click)="logout()"> {{ "exit" | translate }}</a>
-      </mz-dropdown-item>
-    </mz-dropdown>
+<mat-toolbar color="primary" class="app-navbar" *ngIf="isAuth">
+        <span routerLink="/home">SCB</span>
+        <span class="example-spacer"></span>
+          <button mat-icon-button [matMenuTriggerFor]="menu" style="margin-right: 20px;">
+            <mat-icon >apps</mat-icon>
+            <span class="badge" *ngIf="(ROLE_SIS||ROLE_ODMA)&&(total2>0||total>0)">{{total2+total}}</span>
+          </button>
+          <mat-menu #menu="matMenu" [overlapTrigger]="false" class="plMenuCSS">
+
+            <div style="display: flex; width: 400px;">
+            <a routerLink="/home" class="lopesMenu" mat-menu-item style="display: inline-block; width: 120px; height: 90px;align-items: center;justify-content: center; padding: 10px; margin: 5px;text-align: center;">
+
+                <span style="margin: 5px;padding: 5px;"><img src="assets/images/scb-dashboard.png" /></span>
+                <h3  class="mat-h4">{{ "dashboard" | translate }}</h3>
+
+            </a>
+
+            <a routerLink="/districts" class="lopesMenu" mat-menu-item style="display: inline-block; width: 120px; height: 90px;align-items: center;justify-content: center; padding: 10px; margin: 5px;text-align: center;">
+
+                <span style="margin: 5px;padding: 5px;"><img src="assets/images/scb-location.png" /></span>
+                <h3 class="mat-h4" style="word-wrap: break-word;white-space: normal; line-height: 16px">Gestão de {{ "districts" | translate }}</h3>
+
+            </a>
+
+            <a routerLink="/syncs" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_OA||ROLE_GMA"  class="lopesMenu" mat-menu-item style="display: inline-block; width: 130px; height: 90px;align-items: center;justify-content: center; padding: 10px; margin: 5px;text-align: center;">
+
+                <span  style="margin: 5px;padding: 5px;"><img src="assets/images/scb-openmrs.png" /><span class="badge" *ngIf="(ROLE_SIS||ROLE_ODMA)&&total2>0">{{total2}}</span></span>
+                <h3 class="mat-h4" style="word-wrap: break-word;white-space: normal; line-height: 16px">{{ "records" | translate }}</h3>
+
+            </a>
+            
+
+          </div>
 
 
-    <mz-dropdown [id]="'dropdown-demo5'" [align]="'left'" [belowOrigin]="true" [constrainWidth]="false" 
-    [dropdownButtonId]="'btn-dropdown-demo5'" [gutter]="true" [hover]="false" [inDuration]="300" [outDuration]="300"
-    [stopPropagation]="true">
-    
-    <div style="color:black;  padding: 4px;">
-      <div class="row">
-        <div class="col s4 center-align"><a routerLink="/home" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-dashboard.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "dashboard" | translate }}</div></a></div>
-        <div class="col s4 center-align"><a routerLink="/districts" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-location.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "districts" | translate }}</div></a></div>
-        <div class="col s4 center-align"><a routerLink="/syncs" style="margin:5px;padding: 5px;"><small *ngIf="ROLE_SIS&&total2>0" class="notification-badge2">{{total2}}</small><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-openmrs.png" /></div><div class="row" style="margin-top: -35px; height: 15px; color: black; display:block; word-wrap: break-word;width: 100px; white-space: normal; line-height: 16px;">{{ "records" | translate }}</div></a></div>
-      </div>
-      <div class="row" style="margin-top: -20px;">
-       <div class="col s4 center-align"><a routerLink="/transporters" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-transporter.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "transporters" | translate }}</div></a></div>
-        <div class="col s4 center-align" *ngIf="ROLE_SIS||ROLE_IT"><a routerLink="/ironkeys" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-ironkey.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "ironkeys" | translate }}</div></a></div>
-        <div class="col s4 center-align" *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS"><a routerLink="/sends" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-flash-drive.png" /></div><div class="row" style="margin-top: -35px; height: 15px; color: black; display:block; word-wrap: break-word;width: 100px; white-space: normal; line-height: 16px;">{{ "send" | translate }}</div></a></div>
-      </div>
-      <div *ngIf="ROLE_SIS" class="row" style="margin-top: -20px;">
-       <div class="col s4 center-align"><a routerLink="/receives" style="margin: 5px;padding: 5px;"><small *ngIf="ROLE_SIS&&total>0" class="notification-badge2s">{{total}}</small><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-flash-drive.png" /></div><div class="row" style="margin-top: -35px; height: 15px; color: black; display:block; word-wrap: break-word;width: 100px; white-space: normal; line-height: 16px;">{{ "receive" | translate }}</div></a></div>
-       <div class="col s4 center-align"><a routerLink="/evaluations" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-dqa.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "evaluations" | translate }}</div></a></div>
-       <div class="col s4 center-align"><a routerLink="/servers" style="margin:5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-openmrs.png" /></div><div class="row" style="margin-top: -35px; height: 15px; color: black; display:block; word-wrap: break-word;width: 100px; white-space: normal; line-height: 16px;">{{ "servers" | translate }}</div></a></div>
-      </div>
-      <div *ngIf="ROLE_SIS" class="row" style="margin-top: -20px;">
-          <div class="col s4 center-align"><a routerLink="/users" style="margin: 5px;padding: 5px;"><div class="row" style="margin-top: 10px;"><img src="assets/images/scb-user.png" /></div><div class="row" style="margin-top: -42px; height: 22px; color: black; ">{{ "users" | translate }}</div></a></div>
-      </div>
-    </div>
-    
-    
-  </mz-dropdown>
+          <div style="display: flex; width: 400px;">
+              <a routerLink="/transporters" class="lopesMenu" mat-menu-item style="display: inline-block; width: 120px; height: 90px;align-items: center;justify-content: center; padding: 10px; margin: 5px;text-align: center;">
   
+                  <span  style="margin: 5px;padding: 5px;"><img src="assets/images/scb-transporter.png" /></span>
+                  <h3  class="mat-h4" style="word-wrap: break-word;white-space: normal; line-height: 16px"> Transportador de Backups</h3>
+  
+              </a>
 
-    <nav class="z-depth-0">
-      <div class="nav-wrapper #0288d1 light-blue darken-2 z-depth-0">
-        <a routerLink="/home" class="brand-logo">&nbsp;&nbsp;SCB</a>
-        <a id="btn-sidenav-demo" class="button-collapse">
-          <i class="material-icons">menu</i>
-        </a>
-        <ul class="right hide-on-med-and-down">
+              <a *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS" routerLink="/sends" class="lopesMenu" mat-menu-item style="display: inline-block; width: 130px; height: 90px;align-items: center;justify-content: center; padding: 10px; margin: 5px;text-align: center;">
+  
+                  <span  style="margin: 5px;padding: 5px;"><img src="assets/images/scb-flash-drive.png" /></span>
+                  <h3 class="mat-h4" style="word-wrap: break-word;white-space: normal; line-height: 16px">{{ "send" | translate }}</h3>
+  
+              </a>
+  
+              <a *ngIf="ROLE_SIS||ROLE_OA||ROLE_GMA" routerLink="/servers" class="lopesMenu" mat-menu-item style="display: inline-block; width: 120px; height: 90px;align-items: center;justify-content: center; padding: 10px; margin: 5px;text-align: center;">
+  
+                  <span  style="margin: 5px;padding: 5px;"><img src="assets/images/scb-laptop.png" /></span>
+                  <h3 class="mat-h4" style="word-wrap: break-word;white-space: normal; line-height: 16px">{{ "servers" | translate }}</h3>
+  
+              </a>
+  
+            </div>
 
-        
-
-          <li>
-            <a id="btn-dropdown-demo5">
-              <small *ngIf="(ROLE_SIS||ROLE_ODMA)&&(total2>0||total>0)" class="notification-badge">{{total2+total}}</small>
-              Menu
-              <i class="material-icons left">apps</i>
-              <i class="material-icons right">arrow_drop_down</i>
-            </a>
-          </li>
-
-          <li class="{{activeUser}}" *ngIf="isAuth">
-            <a id="btn-dropdown-demo3">
-              <i class="material-icons left">person</i>
-              <span id="userNameInitials">{{user.person.othersNames| slice:0:1}}{{user.person.surname|slice:0:1}}</span>
-              &nbsp;&nbsp;<img style="align-items: center;vertical-align: middle" *ngIf="user.locale=='pt'" src="assets/images/scb-pt.png" /> 
-              <img style="align-items: center;vertical-align: middle" *ngIf="user.locale=='en'" src="assets/images/scb-en.png" /> 
-              <i class="material-icons right">arrow_drop_down</i>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </div>
-</header>
-
-<mz-sidenav [id]="'sidenav-demo'" [collapseButtonId]="'btn-sidenav-demo'" [closeOnClick]="true">
-  <mz-sidenav-header>
-  </mz-sidenav-header>
-  <mz-sidenav-subheader>SCB</mz-sidenav-subheader>
-  <mz-sidenav-link>
-    <a routerLink="/home">Dashboard</a>
-  </mz-sidenav-link>
-  <mz-sidenav-collapsible *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS">
-    <mz-sidenav-collapsible-header>
-      <i mz-icon [icon]="'arrow_drop_down'" class="caret"></i>Backups
-    </mz-sidenav-collapsible-header>
-    <mz-sidenav-collapsible-content>
-      <mz-sidenav-link >
-        <a routerLink="/sends">Envios</a>
-      </mz-sidenav-link>
-      <mz-sidenav-link >
-        <a routerLink="/receives">Recepções</a>
-      </mz-sidenav-link>
-    </mz-sidenav-collapsible-content>
-  </mz-sidenav-collapsible>
- 
-  <mz-sidenav-collapsible *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
-    <mz-sidenav-collapsible-header>
-      <i mz-icon [icon]="'arrow_drop_down'" class="caret"></i>Sincronização
-    </mz-sidenav-collapsible-header>
-    <mz-sidenav-collapsible-content>
-      <mz-sidenav-link *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA||ROLE_SIS||ROLE_GMA||ROLE_OA">
-        <a routerLink="/syncs">Registos</a>
-      </mz-sidenav-link>
-    </mz-sidenav-collapsible-content>
-  </mz-sidenav-collapsible>
-
-
-  <mz-sidenav-collapsible>
-    <mz-sidenav-collapsible-header>
-      <i mz-icon [icon]="'arrow_drop_down'" class="caret"></i>Metadados
-    </mz-sidenav-collapsible-header>
-    <mz-sidenav-collapsible-content>
-      <mz-sidenav-link *ngIf="ROLE_SIS||ROLE_IT">
-        <a routerLink="/ironkeys">Ironkeys</a>
-      </mz-sidenav-link>
-      <mz-sidenav-link>
-        <a routerLink="/districts">Distritos</a>
-      </mz-sidenav-link>
-      <mz-sidenav-link>
-        <a routerLink="/transporters">Transportadores</a>
-      </mz-sidenav-link>
-      <mz-sidenav-link *ngIf="ROLE_SIS">
-        <a routerLink="/evaluations">Avaliações</a>
-      </mz-sidenav-link>
-      
-      <mz-sidenav-link *ngIf="ROLE_SIS||ROLE_GMA||ROLE_OA">
-        <a routerLink="/servers">Sync Servers</a>
-      </mz-sidenav-link>
+            <div style="display: flex; width: 400px;">
+                <a *ngIf="ROLE_SIS||ROLE_GMA||ROLE_OA" routerLink="/receives" class="lopesMenu" mat-menu-item style="display: inline-block; width: 120px; height: 90px;align-items: center;justify-content: center; padding: 10px; margin: 5px;text-align: center;">
     
-      <mz-sidenav-link *ngIf="ROLE_SIS">
-        <a routerLink="/users">Utilizadores</a>
-      </mz-sidenav-link>
-    </mz-sidenav-collapsible-content>
-  </mz-sidenav-collapsible>
+                    <span  style="margin: 5px;padding: 5px;"><img src="assets/images/scb-flash-drive.png" /><span class="badge" *ngIf="ROLE_SIS&&total>0">{{total}}</span></span>
+                    <h3  class="mat-h4" style="word-wrap: break-word;white-space: normal; line-height: 16px"> {{ "receive" | translate }}</h3>
+    
+                </a>
+  
+                <a *ngIf="ROLE_SIS" routerLink="/users" class="lopesMenu" mat-menu-item style="display: inline-block; width: 130px; height: 90px;align-items: center;justify-content: center; padding: 10px; margin: 5px;text-align: center;">
+    
+                    <span  style="margin: 5px;padding: 5px;"><img src="assets/images/scb-user.png" /></span>
+                    <h3 class="mat-h4" style="word-wrap: break-word;white-space: normal; line-height: 16px">Gestão de {{ "users" | translate }}</h3>
+    
+                </a>
+    
+                <a *ngIf="ROLE_SIS||ROLE_IT" routerLink="/ironkeys" class="lopesMenu" mat-menu-item style="display: inline-block; width: 120px; height: 90px;align-items: center;justify-content: center; padding: 10px; margin: 5px;text-align: center;">
+    
+                    <span  style="margin: 5px;padding: 5px;"><img src="assets/images/scb-ironkey.png" /></span>
+                    <h3 class="mat-h4" style="word-wrap: break-word;white-space: normal; line-height: 16px">Gestão de {{ "ironkeys" | translate }}</h3>
+    
+                </a>
+    
+              </div>
 
-  <mz-sidenav-collapsible>
-    <mz-sidenav-collapsible-header *ngIf="isAuth">
-      <i mz-icon [icon]="'person'" class="caret"></i>{{user.person.othersNames}} {{user.person.surname}}
-    </mz-sidenav-collapsible-header>
-    <mz-sidenav-collapsible-content>
-      <mz-sidenav-link>
-        <a (click)="setUser()" *ngIf="isAuth" [routerLink]="['/users/profile', user.uid]">Perfil</a>
-      </mz-sidenav-link>
-      <mz-sidenav-link>
-        <a (click)="logout()">Sair</a>
-      </mz-sidenav-link>
-    </mz-sidenav-collapsible-content>
-  </mz-sidenav-collapsible>
-</mz-sidenav>
+          </mat-menu>
+
+<button mat-mini-fab [matMenuTriggerFor]="menu2" style="background-color:lightgray;color: black;">{{user.person.othersNames| slice:0:1}}{{user.person.surname|slice:0:1}} </button> <mat-icon [matMenuTriggerFor]="menu2">arrow_drop_down</mat-icon>
+<mat-menu #menu2="matMenu" [overlapTrigger]="false">
+      <a mat-menu-item style="text-decoration: none;" (click)="setUser()" [routerLink]="['/users/profile', user.uid]">
+        <mat-icon>people_outline</mat-icon>
+        <span>Meu Perfil</span>
+      </a>
+      <a mat-menu-item style="text-decoration: none;" target="_blank" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM/edit?usp=sharing">
+        <mat-icon>help_outline</mat-icon>
+        <span >Obter {{"help" | translate}}</span>
+      </a>
+      <button (click)="logout()" mat-menu-item>
+        <mat-icon>exit_to_app</mat-icon>
+        <span> {{ "exit" | translate }}</span>
+      </button>
+      </mat-menu>
+      
+        
+      </mat-toolbar>

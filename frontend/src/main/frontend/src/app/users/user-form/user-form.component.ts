@@ -12,8 +12,8 @@ import { District } from './../../districts/shared/district';
 import { Person } from './../../persons/shared/person';
 import { AuthoritiesService } from './../../authorities/shared/authorities.service';
 import { Authority } from './../../authorities/shared/authority';
-import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
+import { MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-user-form',
@@ -54,8 +54,8 @@ export class UserFormComponent implements OnInit {
     public usersService: UsersService,
     public districtsService: DistrictsService,
     public authoritiesService: AuthoritiesService,
-    public toastService: MzToastService,
-    public translate: TranslateService
+    public translate: TranslateService,
+    public snackBar: MatSnackBar
   ) {
     this.form = formBuilder.group({
       others_names: ['', [
@@ -84,6 +84,13 @@ export class UserFormComponent implements OnInit {
       ]]
     });
   }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
+  }
+
   ngOnInit() {
     this.isDisabled = false;
     this.disabled1 = true;
@@ -207,9 +214,9 @@ export class UserFormComponent implements OnInit {
       result.subscribe(data => {
         if (data.text() == "Success") {
           this.router.navigate(['users']);
-          this.showMsg(userValue.username);
+          this.openSnackBar("Utilizador: "+ userValue.username+", actualizado com sucesso!", "OK");
         } else {
-          this.showMsgErr(userValue.username);
+          this.openSnackBar("Este Utilizador já existe!", "OK");
           this.isDisabled = false;
         }
       },
@@ -220,7 +227,7 @@ export class UserFormComponent implements OnInit {
       );
     } else {
       if (!userValue.password) {
-        this.showMsgErr2();
+        this.openSnackBar("Escreva a password!", "OK");
         this.isDisabled = false;
       } else {
         var userLogged = JSON.parse(window.sessionStorage.getItem('user'));
@@ -228,6 +235,7 @@ export class UserFormComponent implements OnInit {
           userId: userLogged.userId,
           uid: userLogged.uid
         };
+        userValue.enabled=true;
         userValue.person = {
           othersNames: userValue.others_names,
           surname: userValue.surname,
@@ -240,9 +248,9 @@ export class UserFormComponent implements OnInit {
         result.subscribe(data => {
           if (data.text() == "Success") {
             this.router.navigate(['users']);
-            this.showMsg(userValue.username);
+            this.openSnackBar("Utilizador: "+ userValue.username+", criado com sucesso!", "OK");
           } else {
-            this.showMsgErr(userValue.username);
+            this.openSnackBar("Este Utilizador ja existe!", "OK");
             this.isDisabled = false;
           }
         });
@@ -250,13 +258,5 @@ export class UserFormComponent implements OnInit {
       }
     }
   }
-  showMsg(user) {
-    this.toastService.show('Utilizador: ' + user + ', salvo com sucesso!', 2000, 'green', null);
-  }
-  showMsgErr(user) {
-    this.toastService.show('Este Utilizador ja existe!', 2000, 'red', null);
-  }
-  showMsgErr2() {
-    this.toastService.show('Escreva uma password!', 2000, 'red', null);
-  }
+  
 }

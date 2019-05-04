@@ -3,34 +3,14 @@
  * All rights reserved.
  * @author Damasceno Lopes
  */
- 
-i.icon-red {
-    color: red;
+ .mat-toolbar-row, .mat-toolbar-single-row {
+    height: 44px;
 }
 
-i.icon-orange {
-    color: orange;
+.mat-toolbar-multiple-rows {
+  min-height: 44px;
 }
 
-i.icon-grey {
-    color:#CCC;
-}
-
-i.icon-blue {
-    color:#0288D1;
-}
-
-.valign-center {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-.page-size{
-    color:gray;
-    font-size: 13px;
-}
-
-.btn:hover{
-    background-color: #F2F2F2 !important;
-}
+.mat-column-serial {
+    flex: 0 0 260px;
+  }

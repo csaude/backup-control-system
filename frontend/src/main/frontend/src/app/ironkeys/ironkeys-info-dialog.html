@@ -1,0 +1,43 @@
+<h1 mat-dialog-title>{{ "ironkeydetails" | translate }}</h1>
+<div mat-dialog-content>
+  <section class="mat-typography">
+  <h4 class="mat-h4">{{data.serial}}</h4>
+  <span>{{ "version" | translate }}: {{data.version}}<br></span>
+  <span>{{ "state" | translate }}: {{data.status}}<br></span>
+  <span>{{ "capacity" | translate }} (GB): {{data.size}}<br></span>
+  <span *ngIf="data.datePurchased!=null">{{ "date_purchased" | translate }}: {{data.datePurchased | date:'dd/MM/yyyy'}}<br></span>
+  <span *ngIf="data.districts.length>0">{{ "district" | translate }}(s) ({{data.districts.length}})<br></span>
+</section>
+
+<p *ngIf="data.districts.length>0">
+
+   
+
+    <mat-table style="overflow-y: scroll;height: 163px;box-shadow: none !important; " mat-table [dataSource]="data.districts" class="mat-elevation-z8">
+  
+        <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+  
+        <!-- District -->
+        <ng-container matColumnDef="district">
+          <mat-header-cell *matHeaderCellDef> {{ "district" | translate }} </mat-header-cell>
+          <mat-cell *matCellDef="let element"><button mat-button color="primary" [mat-dialog-close]="" [routerLink]="['/districts', element.uid]"> {{element.fullName}} </button></mat-cell>
+        </ng-container>
+       
+        <mat-header-row *matHeaderRowDef="displayedColumns" style="min-height: 35px;"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" style="min-height: 30px;"></mat-row>
+      </mat-table>
+  </p>
+
+<section class="mat-typography">
+    <p *ngIf="data.observation!=null&&data.observation!=''">{{ "observation" | translate }}: {{data.observation}} </p>
+    {{ "createdby" | translate }}: {{data.createdBy.personName}} ({{data.createdBy.phoneNumber}}) - {{ data.dateCreated | date:'dd/MM/yyyy HH:mm' }}  <br>
+    <span *ngIf="data.updatedBy!=null">{{ "updatedby" | translate }}: {{data.updatedBy.personName}} ({{data.updatedBy.phoneNumber}}) - {{ data.dateUpdated | date:'dd/MM/yyyy HH:mm' }}<br></span>
+  <span class="info-label">{{data.uid}}</span>
+</section>
+
+
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" [mat-dialog-close]="">OK</button>
+</div>

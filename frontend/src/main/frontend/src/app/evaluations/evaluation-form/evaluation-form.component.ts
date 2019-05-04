@@ -7,11 +7,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Evaluation } from '../shared/evaluation';
 import { EvaluationsService } from '../shared/evaluations.service';
-import { MzToastService } from 'ngx-materialize';
+//import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 @Component({
   selector: 'app-evaluation-form',
-  templateUrl: './evaluation-form.component.html',
+  templateUrl: './evaluation-form2.component.html',
   styleUrls: ['./evaluation-form.component.css']
 })
 
@@ -32,7 +32,7 @@ export class EvaluationFormComponent implements OnInit {
     public router: Router,
     public route: ActivatedRoute,
     public evaluationsService: EvaluationsService,
-    public toastService: MzToastService,
+    //public toastService: MzToastService,
     public translate: TranslateService
   ) {
     this.form = formBuilder.group({
@@ -113,9 +113,9 @@ export class EvaluationFormComponent implements OnInit {
   }
 
   showMsg(evaluation) {
-    this.toastService.show('Avaliação: ' + evaluation + ', salvo com sucesso!', 4000, 'green', null);
+   // this.toastService.show('Avaliação: ' + evaluation + ', salvo com sucesso!', 4000, 'green', null);
   }
   showMsgErr() {
-    this.toastService.show('ESta Avaliação ja existe!', 4000, 'red', null);
+   // this.toastService.show('ESta Avaliação ja existe!', 4000, 'red', null);
   }
 }

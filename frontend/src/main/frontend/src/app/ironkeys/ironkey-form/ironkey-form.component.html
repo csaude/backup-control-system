@@ -1,91 +1,67 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
 
-<br>
-<h5 class="light" *ngIf="title=='Novo Ironkey'" style="display: inline-flex;vertical-align: middle;">
-  <a routerLink="/ironkeys" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-  </a> {{ "ironkeynew" | translate }}</h5>
-<h5 class="light" *ngIf="title=='Editar Ironkey'" style="display: inline-flex;vertical-align: middle;">
-  <a routerLink="/ironkeys" mz-tooltip [tooltip]="'Voltar'" [position]="'left'" [html]="false" [delay]="100">
-    <i class="material-icons waves-effect left" style="color: black;">arrow_back</i>
-  </a> {{ "ironkeyedit" | translate }}</h5>
+<div style="margin: 0 auto;width: 67%;margin-top: 100px;">
+    <h1 class="mat-h1"  *ngIf="title=='Novo Ironkey'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/ironkeys"><mat-icon>arrow_back</mat-icon></a> {{ "ironkeynew" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+      <h1 class="mat-h1"  *ngIf="title=='Editar Ironkey'"><a style="vertical-align: middle;" matTooltip="Voltar" routerLink="/ironkeys"><mat-icon>arrow_back</mat-icon></a>{{ "ironkeyedit" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+  
+  <mat-card>
+      <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        
+      <mat-form-field style="width: 100%;">
+          <mat-label>{{ 'serialn' | translate }} *</mat-label>
+          <input autocomplete="off" type="text" matInput placeholder="{{ 'serialn' | translate }}" [(ngModel)]="ironkey.serial" formControlName="serial">
+          <mat-icon matPrefix>label_outline</mat-icon>
+        </mat-form-field>
+        <br><br>
 
-<div class="card-panel">
-  <div class="row">
-    <form materialize class="col s12" [formGroup]="form" (ngSubmit)="save()">
-      <div class="row">
-        <div class="input-field col s12">
-          <i class="material-icons prefix">label_outline</i>
-          <input id="serial" type="text" class="validate" [(ngModel)]="ironkey.serial" formControlName="serial" [class.invalid]="form.controls['serial'].touched && !form.controls['serial'].valid">
-          <label for="serial" [class.active]="ironkey.serial" data-error="O Nº de Série deve ser preenchido.">
-            {{ "serialn" | translate }} *
-          </label>
-        </div>
-      </div>
+        <mat-form-field style="width: 100%;">
+                <mat-label>{{ 'version' | translate }} *</mat-label>
+                <input autocomplete="off" type="text" matInput placeholder="{{ 'version' | translate }}" [(ngModel)]="ironkey.version" formControlName="version">
+                <mat-icon matPrefix>label_outline</mat-icon>
+              </mat-form-field>
+              <br><br>
+  
+        <mat-form-field style="width: 100%;">
+            <mat-label>{{ 'state' | translate }} *</mat-label>
+            <mat-select [(ngModel)]="ironkey.status" formControlName="status">
+              <mat-option>{{ 'select' | translate }}</mat-option>
+              <mat-option *ngFor="let status of status" [value]="status.name">{{status.name }}</mat-option>
+            </mat-select>
+            <mat-icon matPrefix>label_outline</mat-icon>
+        </mat-form-field>
 
-      <div class="row">
-        <div class="input-field col s12">
-          <i class="material-icons prefix">label_outline</i>
-          <input id="version" type="text" class="validate" [(ngModel)]="ironkey.version" formControlName="version" [class.invalid]="form.controls['version'].touched && !form.controls['version'].valid">
-          <label for="version" [class.active]="ironkey.version" data-error="A versão deve ser preenchida.">
-            {{ "version" | translate }} *
-          </label>
-        </div>
-      </div>
+        <br><br>
+  
+        <mat-form-field style="width: 47%;">
+            <mat-label>{{ 'capacity' | translate }} *</mat-label>
+            <mat-select [(ngModel)]="ironkey.size" formControlName="size">
+              <mat-option>{{ 'select' | translate }}</mat-option>
+              <mat-option *ngFor="let size of sizes" [value]="size.id">{{size.name }}</mat-option>
+            </mat-select>
+            <mat-icon matPrefix>insert_drive_file</mat-icon>
+        </mat-form-field>
+        
+        <mat-form-field style="width: 47%;margin-left: 5%;">
+            <mat-label>{{'date_purchased' | translate }} *</mat-label>
+                <input matInput autocomplete="off" onkeypress="return false;" [matDatepicker]="picker" placeholder="{{ 'date_purchased' | translate }}" [(ngModel)]="ironkey.datePurchased" formControlName="datePurchased"> 
+                <mat-datepicker-toggle matPrefix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+        <br><br>
 
-      <div class="row">
-        <div class="col s12">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'label_outline'">
-            </i>
-            <select mz-select id="status" label="{{ 'state' | translate }} *" placeholder="{{ 'select' | translate }}" [(ngModel)]="ironkey.status"
-              formControlName="status">
-              <option *ngFor="let status of status" [value]="status.name" [selected]="status.name == ironkey.status">{{ status.name }}</option>
-            </select>
-          </mz-select-container>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col s12 l6 m6">
-          <mz-select-container>
-            <i mz-icon mz-input-prefix [icon]="'insert_drive_file'">
-            </i>
-            <select mz-select id="size" label="{{ 'capacity' | translate }} *" placeholder="{{ 'select' | translate }}" [(ngModel)]="ironkey.size"
-              formControlName="size">
-              <option *ngFor="let size of sizes" [value]="size.id" [selected]="size.name == ironkey.size">{{ size.name }}</option>
-            </select>
-          </mz-select-container>
-        </div>
-        <div class="col s12 l6 m6">
-          <mz-datepicker-container>
-            <i mz-icon mz-input-prefix [icon]="'date_range'">
-            </i>
-            <input mz-datepicker label="{{ 'date_purchased' | translate }}" [options]="options" [(ngModel)]="ironkey.datePurchased" formControlName="datePurchased"
-              type="date" />
-          </mz-datepicker-container>
-        </div>
-      </div>
-           
+        <mat-form-field style="width: 50%;">
+                <textarea rows="3"  placeholder="{{'description' | translate }}" matInput maxlength="255" [(ngModel)]="ironkey.observation" formControlName="observation"></textarea>
+           </mat-form-field>
       
-      <div class="row">
-        <div class="input-field col s12">
-          <i class="material-icons prefix">description</i>
-          <textarea id="textarea1" class="materialize-textarea" maxlength="255" [(ngModel)]="ironkey.observation" formControlName="observation"></textarea>
-          <label for="textarea1" [class.active]="ironkey.observation">{{ "observation" | translate }}</label>
-        </div>
-      </div>
-      <button class="btn waves-effect waves-light" type="submit" [disabled]="!form.valid||isDisabled">
-        {{ "save" | translate }}
-        <i class="material-icons right">send</i>
-      </button>
-      <a *ngIf="!isDisabled" class="waves-effect waves-teal btn-flat" routerLink="/ironkeys">
-        <span class="orange-text text-darken-3">{{ "cancel" | translate }}</span>
-      </a>
-    </form>
+        
+        <br>
+        <mat-card-actions>
+            <button type="submit" mat-raised-button color="primary" [disabled]="!form.valid||isDisabled" matTooltip="Salvar registo">{{ "save" | translate }}</button>
+            <button mat-raised-button routerLink="/ironkeys" [disabled]="isDisabled" matTooltip="Cancelar operação">{{ "cancel" | translate }}</button>
+          </mat-card-actions>
+  
+  </form>
+  
+  </mat-card-content>
+  </mat-card>
   </div>
-</div>

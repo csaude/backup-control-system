@@ -6,16 +6,23 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
+import { Subject } from 'rxjs/Subject';
 
 /**
  * @author Damasceno Lopes
  */
 @Injectable()
 export class IronkeysService {
+
   public url: string = myGlobals.API;
+  invokeEvent: Subject<any> = new Subject();
 
   constructor(public http: Http) {
 
+  }
+
+  callMethodOfSecondComponent() {
+    this.invokeEvent.next('someVal');
   }
 
   findIronkeys(page, size, serial, version, status, capacity, fields) {

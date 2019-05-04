@@ -93,6 +93,12 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -110,5 +116,20 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>test</id>
+			<properties>
+				<myActiveProfile>test</myActiveProfile>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<myActiveProfile>prod</myActiveProfile>
+			</properties>
+		</profile>
+	</profiles>
 
 </project>

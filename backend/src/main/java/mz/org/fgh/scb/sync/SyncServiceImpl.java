@@ -62,7 +62,7 @@ public class SyncServiceImpl implements SyncService {
 			DateFormat simpleDateFormat2 = new SimpleDateFormat("HH:mm");
 			if(sync.getEndTime()==null) {
 				sync_time=simpleDateFormat.format(sync.getStartTime());
-				duration="<span style='color:white;background-color: orange; font-size: 11px;border-radius: 5%; padding: 5px;'>EM PROGRESSO</span>";
+				duration="<span style='color:white;background-color: orange; font-size: 11px;border-radius: 5%; padding: 3px;'>EM PROGRESSO</span>";
 				end_items_to_send = "";
 				end_items_to_receive = "";
 			}else {
@@ -81,24 +81,26 @@ public class SyncServiceImpl implements SyncService {
 			
 			error="";
 			errorExist="";
-			header_color="#0288D1";
-			if (sync.isSyncError()) {
-				error= "Erro de Sync<br>";
-				header_color="#FF0000";
+			header_color="#3f51b5";
+			if (sync.isSyncError()&&sync.isSyncErrorResolved()==false) {
+				error= "Erro de Sincronização<br>";
+				header_color="#f44336";
 				errorExist=" (Bug)";
 			} 
-			if (sync.isServerFault()) {
+			if (sync.isServerFault()&&sync.isServerFaultResolved()==false) {
 				error= error+"Avaria do Servidor<br>";
-				header_color="#FF0000";
+				header_color="#f44336";
 				errorExist=" (Bug)";
 			} 
-			if (sync.isLaptopFault()) {
+			if (sync.isLaptopFault()&&sync.isLaptopFaultResolved()==false) {
 				error= error+"Avaria do Laptop<br>";
-				header_color="#FF0000";
+				header_color="#f44336";
 				errorExist=" (Bug)";
 			} 
-			if (sync.isPowerCut()) {
+			if (sync.isPowerCut()&&sync.isPowerCutResolved()==false) {
 				error= error+"Corte de Energia";
+				header_color="#f44336";
+				errorExist=" (Bug)";
 			} 
 			
 			obs="";
@@ -141,7 +143,7 @@ public class SyncServiceImpl implements SyncService {
 						email.setFrom("scb.fgh@gmail.com", "SCB-"+ env.getProperty("org")+" Message [No Reply]");
 						email.setSubject("[SCB-" + env.getProperty("org") + "]"+errorExist+" Sincronização: " +district+" / "+ server + "-"+ sync_time);
 						email.setHtmlMsg(""
-								+ "<table border='1' style='border-color:#EEEEEE;' cellspacing='0' cellpadding='5' style='width:400px;'>"
+								+ "<table border='1' style='border-color:#FAFAFA;' cellspacing='0' cellpadding='5' style='width:400px;'>"
 								+ "<thead><tr><td colspan='2' style='text-align:center;background-color:"+header_color+";color:white;'>Registo de Sincronização</td></tr><thead>"
 								+ "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Servidor:</td><td>" + district+" / "+server + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Horário de<br>Sincronização:</td><td>" + sync_time + "</td></tr>"
@@ -217,24 +219,26 @@ public class SyncServiceImpl implements SyncService {
 			
 				error="";
 				errorExist="";
-				header_color="#0288D1";
-				if (sync.isSyncError()) {
-					error= "Erro de Sync<br>";
-					header_color="#FF0000";
+				header_color="#3f51b5";
+				if (sync.isSyncError()&&sync.isSyncErrorResolved()==false) {
+					error= "Erro de Sincronização<br>";
+					header_color="#f44336";
 					errorExist=" (Bug)";
 				} 
-				if (sync.isServerFault()) {
+				if (sync.isServerFault()&&sync.isServerFaultResolved()==false) {
 					error= error+"Avaria do Servidor<br>";
-					header_color="#FF0000";
+					header_color="#f44336";
 					errorExist=" (Bug)";
 				} 
-				if (sync.isLaptopFault()) {
+				if (sync.isLaptopFault()&&sync.isLaptopFaultResolved()==false) {
 					error= error+"Avaria do Laptop<br>";
-					header_color="#FF0000";
+					header_color="#f44336";
 					errorExist=" (Bug)";
 				} 
-				if (sync.isPowerCut()) {
+				if (sync.isPowerCut()&&sync.isPowerCutResolved()==false) {
 					error= error+"Corte de Energia";
+					header_color="#f44336";
+					errorExist=" (Bug)";
 				} 
 				
 				obs="";
@@ -278,7 +282,7 @@ public class SyncServiceImpl implements SyncService {
 							email.setFrom("scb.fgh@gmail.com", "SCB-"+ env.getProperty("org")+" Message [No Reply]");
 							email.setSubject("[SCB-" + env.getProperty("org") + "]"+errorExist+" Sincronização: " + district+" / "+server + "-"+ sync_time);
 							email.setHtmlMsg(""
-									+ "<table border='1' style='border-color:#EEEEEE;' cellspacing='0' cellpadding='5' style='width:400px;'>"
+									+ "<table border='1' style='border-color:#FAFAFA;' cellspacing='0' cellpadding='5' style='width:400px;'>"
 									+ "<thead><tr><td colspan='2' style='text-align:center;background-color:"+header_color+";color:white;'>Registo de Sincronização</td></tr><thead>"
 									+ "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Servidor:</td><td>" + district+" / "+server + "</td></tr>"
 									+ "<tr><td bgcolor='#F3F3F3'>Horário de<br>Sincronização:</td><td>" + sync_time + "</td></tr>"

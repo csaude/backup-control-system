@@ -61,35 +61,35 @@ public class SendServiceImpl implements SendService {
 			// ------------------------------
 			DateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 			if (send.isUpdateFinished() == true) {
-				at = "Sim";
+				at = "<span style='color:white;background-color: green; font-size: 11px;border-radius: 3px; padding: 5px;'>Sim</span>";
 			} else {
-				at = "Não";
+				at = "<span style='color:white;background-color: red; font-size: 11px;border-radius: 3px; padding: 5px;'>Não</span>";
 			}
 			if (send.isValidationFinished() == true) {
-				vt = "Sim";
+				vt = "<span style='color:white;background-color: green; font-size: 11px;border-radius: 3px; padding: 5px;'>Sim</span>";
 			} else {
-				vt = "Não";
+				vt = "<span style='color:white;background-color: red; font-size: 11px;border-radius: 3px; padding: 5px;'>Não</span>";
 			}
 			if (send.isSyncFinished() == true) {
-				st = "Sim";
+				st = "<span style='color:white;background-color: green; font-size: 11px;border-radius: 3px; padding: 5px;'>Sim</span>";
 			} else {
-				st = "Não";
+				st = "<span style='color:white;background-color: red; font-size: 11px;border-radius: 3px; padding: 5px;'>Não</span>";
 			}
 			if (send.isCrossDhis2Finished() == true) {
-				c_dhis = "Sim";
+				c_dhis = "<span style='color:white;background-color: green; font-size: 11px;border-radius: 3px; padding: 5px;'>Sim</span>";
 			} else {
-				c_dhis = "Não";
+				c_dhis = "<span style='color:white;background-color: red; font-size: 11px;border-radius: 3px; padding: 5px;'>Não</span>";
 			}
 			if (send.isCrossIdartFinished() == true) {
-				c_idart = "Sim";
+				c_idart = "<span style='color:white;background-color: green; font-size: 11px;border-radius: 3px; padding: 5px;'>Sim</span>";
 			} else {
-				c_idart = "Não";
+				c_idart = "<span style='color:white;background-color: red; font-size: 11px;border-radius: 3px; padding: 5px;'>Não</span>";
 			}
 			if (send.isIdartBackup() == true) {
-				idart_backup = "Sim - " + simpleDateFormat.format(send.getIdartBackupDate());
+				idart_backup = "<span style='color:white;background-color: green; font-size: 11px;border-radius: 3px; padding: 5px;'>Sim</span> - " + simpleDateFormat.format(send.getIdartBackupDate());
 				;
 			} else {
-				idart_backup = "Não";
+				idart_backup = "<span style='color:white;background-color: red; font-size: 11px;border-radius: 3px; padding: 5px;'>Não</span>";
 			}
 
 			data = simpleDateFormat.format(send.getBackupDate());
@@ -122,8 +122,8 @@ public class SendServiceImpl implements SendService {
 						}
 						email.setFrom("scb.fgh@gmail.com", "SCB-"+ env.getProperty("org")+" Message [No Reply]");
 						email.setSubject("[SCB-" + env.getProperty("org") + "] Envio de backup: " + district + "-" + data);
-						email.setHtmlMsg("" + "<table border='1' style='border-color:#EEEEEE;' cellspacing='0' cellpadding='5' style='width:400px;'>"
-								+ "<thead><tr><td colspan='2' style='text-align:center;background-color:#0288D1;color:white;'>Novo registo de Envio de Backup</td></tr><thead>" + "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Distrito:</td><td>"
+						email.setHtmlMsg("" + "<table border='1' style='border-color:#FAFAFA;' cellspacing='0' cellpadding='5' style='width:400px;'>"
+								+ "<thead><tr><td colspan='2' style='text-align:center;background-color:#3f51b5;color:white;'>Registo de Envio de Backup</td></tr><thead>" + "<tbody><tr>" + "<td bgcolor='#F3F3F3'>Distrito:</td><td>"
 								+ district + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Data do Backup:</td><td>" + data + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Actualização Terminada?</td><td>" + at + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Sincronização Terminada?</td><td>" + st + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Cruzamento com DHIS2?</td><td>" + c_dhis + "</td></tr>"
 								+ "<tr><td bgcolor='#F3F3F3'>Cruzamento com iDART?</td><td>" + c_idart + "</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Validação Terminada?</td><td>" + vt + "</td></tr>"
@@ -131,7 +131,7 @@ public class SendServiceImpl implements SendService {
 								+ "<tr><td bgcolor='#F3F3F3'>Enviado por:</td><td>" + send.getCreatedBy().getPersonName()+ "<br>("
 								+ send.getCreatedBy().getPerson().getPhoneNumber() + ")</td></tr>" + "<tr><td bgcolor='#F3F3F3'>Transportado por:</td><td>"+ transporter_role + ":<br>"+ transporter_name + "<br>(" + transporter_phone
 								+ ")" + "</td></tr>"
-								+ "<tr><td colspan='2' style='text-align:center;background-color:#0288D1;color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>SCB</span></a><br/>" +Calendar.getInstance().get(Calendar.YEAR)+" © <a href='mailto:sis@fgh.org.mz'><span style='color:#00FFFF;'>sis@fgh.org.mz</span></a></td></tr>"
+								+ "<tr><td colspan='2' style='text-align:center;background-color:#3f51b5;color:white;'><a href='http://196.28.230.195:8080/scb'><span style='color:#00FFFF;'>SCB</span></a><br/>" +Calendar.getInstance().get(Calendar.YEAR)+" © <a href='mailto:sis@fgh.org.mz'><span style='color:#00FFFF;'>sis@fgh.org.mz</span></a></td></tr>"
 								+ "</tbody></table>");
 						email.setTextMsg("O seu cliente não aceita mensagens HTML. \nContacte o Administador para mais detalhes.");
 						email.setCharset("utf-8");

@@ -1,0 +1,20 @@
+<h1 mat-dialog-title>{{ "transporterdetails" | translate }}</h1>
+<div mat-dialog-content>
+  <section class="mat-typography">
+  <h4 class="mat-h4">{{data.name}}</h4>
+  <span>{{ "function" | translate }}: {{data.role}}<br></span>
+  <span *ngIf="data.phoneNumber!=null">{{ "phone" | translate }}: {{data.phoneNumber}}<br></span>
+  
+</section>
+<br>
+<section class="mat-typography">
+    {{ "createdby" | translate }}: {{data.createdBy.personName}} ({{data.createdBy.phoneNumber}}) - {{ data.dateCreated | date:'dd/MM/yyyy HH:mm' }}  <br>
+    <span *ngIf="data.updatedBy!=null">{{ "updatedby" | translate }}: {{data.updatedBy.personName}} ({{data.updatedBy.phoneNumber}}) - {{ data.dateUpdated | date:'dd/MM/yyyy HH:mm' }}<br></span>
+  <span class="info-label">{{data.uid}}</span>
+</section>
+
+
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" [mat-dialog-close]="">OK</button>
+</div>

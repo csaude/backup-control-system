@@ -1,125 +1,346 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
+<div style="margin: 0 auto;width: 95%;margin-top: 100px; padding-left: 5%;">
+    <h1 class="mat-h1">{{ "dashboard" | translate }} <a matTooltip="Ajuda" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
 
-<br>
-<h5 class="light" style="display: inline-flex;">{{ "dashboard" | translate }}
-  &nbsp;
- <a mz-tooltip [tooltip]="'Ajuda'" [position]="'top'" [html]="false" [delay]="100" style="color:black;" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM/edit#heading=h.kwqgn3wjeizw" target="_blank"><i class="material-icons waves-effect" >help_outline</i></a>
-</h5>
+    <div style="display: flex;">
+            <mat-card style="width: 92%;">
+                    <mat-card-title>Registo de Envio/Recepção de Backups</mat-card-title>
+            </mat-card>
 
-<mz-tab [responsiveThreshold]="'true'">
-  <mz-tab-item [active]="'true'" [label]="'Backups'">
-
-    <div class="row">
-      <div class="card col s12 l12 m12" style="height:350px;">
-        <div class="progress" *ngIf="chart1==false">
-          <div class="indeterminate"></div>
-        </div>
-
-        <canvas *ngIf="chart1" baseChart  [colors]="myColors" [datasets]="barChartData" [labels]="barChartLabels"
-          [options]="barChartOptions" [legend]="barChartLegend" [chartType]="barChartType"></canvas>
-      </div>
-
-      <div class="card col s12 l12 m12" style="height:350px;">
-        <div class="progress" *ngIf="chart2==false">
-          <div class="indeterminate red"></div>
-        </div>
-        <canvas *ngIf="chart2" baseChart  [datasets]="barChartData2" [labels]="barChartLabels2" [options]="barChartOptions2"
-          [legend]="barChartLegend2" [chartType]="barChartType2"></canvas>
-      </div>
-
-      <div class="card col s12 l12 m12" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA" style="height:350px;">
-        <div class="progress" *ngIf="chart3==false">
-          <div class="indeterminate red"></div>
-        </div>
-        <canvas *ngIf="chart3" baseChart  [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
-          [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
-      </div>
     </div>
+<div *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
 
-  </mz-tab-item>
-  <mz-tab-item [label]="'Sync'">
-  
-     <form materialize [formGroup]="form">
-          <div class="input-field col s10" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
-            <mz-select-container>
-              <select mz-select mz-validation required id="district" label="{{'district'| translate}}"  (change)="search()" formControlName="district"
-                >
-                <option value="all" selected>Todos Distritos</option>
-                <option *ngFor="let district of alldistricts" [value]="district.name">{{ district.name }}</option>
-              </select>
-            </mz-select-container>
-          </div>
-        </form>
-       
+        
     
-    <div class="row">
+  <div style="margin-top: 10px;display: flex;">
+      <mat-card style="width: 44%;">
+          <mat-card-content>
+              <mat-card-subtitle>Nº de backups efectuados no mês anterior recebidos no SIS (FY{{ prevMonth | date: 'yy'}}{{ prevMonth | date: 'MM'}})</mat-card-subtitle>
+             
+          <div style="height:350px;">
+              <mat-spinner *ngIf="!chart1" style="margin: 0 auto;"></mat-spinner>
+            <canvas *ngIf="chart1" baseChart  [colors]="myColors2" [datasets]="barChartData" [labels]="barChartLabels"
+            [options]="barChartOptions" [legend]="barChartLegend" [chartType]="barChartType"></canvas>
+          </div>    
+            </mat-card-content>
+      </mat-card>
 
-        <div class="card col s12 l12 m12" style="height:350px;">
-            <div class="progress" *ngIf="chart4==false">
-              <div class="indeterminate"></div>
-            </div>
-
-            <canvas *ngIf="chart4" baseChart [colors]="myColors2"   [datasets]="barChartData4" [labels]="barChartLabels4"
-            [options]="barChartOptions4" [legend]="barChartLegend4" [chartType]="barChartType4"></canvas>
-          </div>
-  
-        <div class="card col s12 l12 m12" style="height:350px;">
-            <div class="progress" *ngIf="chart5==false">
-              <div class="indeterminate"></div>
-            </div>
-            <canvas *ngIf="chart5" baseChart [colors]="myColors2"  [datasets]="barChartData5" [labels]="barChartLabels5"
-            [options]="barChartOptions5" [legend]="barChartLegend5" [chartType]="barChartType5"></canvas>
-          </div>
-  
-        <div class="card col s12 l6 m6" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
-            <canvas style="height:350px;" *ngIf="chart6" baseChart [data]="pieChartData6" [labels]="pieChartLabels6" [chartType]="pieChartType6" [options]="pieOptions6"></canvas>
-          </div>
-
-          <div class="card col s12 l6 m6" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA" >
-              <canvas style="height:350px;" *ngIf="chart7" baseChart [data]="pieChartData7" [labels]="pieChartLabels7" [chartType]="pieChartType7" [options]="pieOptions7"></canvas>
-            </div>
-
-            <div class="card col s12 l6 m6" style="height:350px;" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
-                <div class="progress" *ngIf="chart8==false">
-                  <div class="indeterminate red"></div>
-                </div>
-                <canvas  *ngIf="chart8" baseChart  [datasets]="barChartData8" [labels]="barChartLabels8"
-                [options]="barChartOptions8" [legend]="barChartLegend8" [chartType]="barChartType8"></canvas>
+      <mat-card style="width: 44%; margin-left: 1%;">
+        <mat-card-content>
+            <mat-card-subtitle>Completude de registo de envio/recepção de backups no mês anterior (FY{{ prevMonth | date: 'yy'}}{{ prevMonth | date: 'MM'}})</mat-card-subtitle>
+            <mat-spinner *ngIf="!chart1" style="margin: 0 auto;"></mat-spinner>
+            <div style="display: block;">
+                <canvas *ngIf="chart1" baseChart
+                  [options]="doughnutChartOptions1"
+                  [colors]="myColors3"
+                  [data]="doughnutChartData"
+                  [labels]="doughnutChartLabels"
+                  [chartType]="doughnutChartType">
+                </canvas>
               </div>
+        </mat-card-content>
+    </mat-card>
+</div>
 
-              <div class="card col s12 l6 m6" style="height:350px;" *ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
-                  <div class="progress" *ngIf="chart8==false">
-                    <div class="indeterminate red"></div>
-                  </div>
-                  <canvas  *ngIf="chart9" baseChart  [datasets]="barChartData9" [labels]="barChartLabels9"
-                  [options]="barChartOptions9" [legend]="barChartLegend9" [chartType]="barChartType9"></canvas>
-                </div>
+<div style="margin-top: 10px;display: flex;">
+    <mat-card style="width: 44%;">
+        <mat-card-content>
+            <mat-card-subtitle>Nº de backups efectuados neste mês recebidos no SIS (FY{{ currentMonth | date: 'yy'}}{{ currentMonth | date: 'MM'}})</mat-card-subtitle>
+            
+        <div style="height:350px;">
+            <mat-spinner *ngIf="!chart2" style="margin: 0 auto;"></mat-spinner>
+            <canvas *ngIf="chart2" baseChart [colors]="myColors2"  [datasets]="barChartData2" [labels]="barChartLabels2" [options]="barChartOptions2"
+            [legend]="barChartLegend2" [chartType]="barChartType2"></canvas>
+        </div>    
+          </mat-card-content>
+    </mat-card>
 
-                <div class="card col s12 l6 m6" style="height:350px;"*ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
-                    <div class="progress" *ngIf="chart10==false">
-                      <div class="indeterminate red"></div>
-                    </div>
-                    <canvas *ngIf="chart10" baseChart  [datasets]="barChartData10" [labels]="barChartLabels10" [options]="barChartOptions10"
-                      [legend]="barChartLegend10" [chartType]="barChartType10"></canvas>
-                  </div>
+    <mat-card style="width: 44%; margin-left: 1%;">
+        <mat-card-content>
+            <mat-card-subtitle>Completude de registo de envio/recepção de backups neste mês (FY{{ currentMonth | date: 'yy'}}{{ currentMonth | date: 'MM'}})</mat-card-subtitle>
+            <mat-spinner *ngIf="!chart2" style="margin: 0 auto;"></mat-spinner>
+            <div style="display: block">
+                <canvas *ngIf="chart2" baseChart
+                  [options]="doughnutChartOptions2"
+                  [colors]="myColors3"
+                  [data]="doughnutChartData2"
+                  [labels]="doughnutChartLabels"
+                  [chartType]="doughnutChartType">
+                </canvas>
+              </div>
+        </mat-card-content>
+    </mat-card>
 
-                  <div class="card col s12 l6 m6" style="height:350px;"*ngIf="ROLE_SIS||ROLE_IT||ROLE_OA||ROLE_GMA">
-                      <div class="progress" *ngIf="chart10==false">
-                        <div class="indeterminate red"></div>
-                      </div>
-                      <canvas *ngIf="chart11" baseChart  [datasets]="barChartData11" [labels]="barChartLabels11" [options]="barChartOptions11"
-                        [legend]="barChartLegend11" [chartType]="barChartType11"></canvas>
-                    </div>
+</div>
 
-                   
 
+<div style="margin-top: 10px;display: flex;">
+<mat-card style="width: 92%;">
+    <mat-card-content>
+        <mat-card-subtitle>Nº de distritos que registaram envio de backups nos últimos 12 meses</mat-card-subtitle>
+        
+    <div style="height:350px;">
+        <mat-spinner *ngIf="!chart3" style="margin: 0 auto;"></mat-spinner>
+        <canvas *ngIf="chart3" baseChart  [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+        [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
+    </div>    
+      </mat-card-content>
+</mat-card>
+</div>
+
+<div style="margin-top: 10px;display: flex;">
+        <mat-card style="width: 92%;">
+                <mat-card-title>Registo de Sincronização OpenMRS</mat-card-title>
+        </mat-card>
+
+</div>
+
+<div style="margin-top: 10px;display: flex;">
+    <mat-card style="width: 44%;">
+        <mat-card-content>
+            <mat-card-subtitle>Completude de registo de sincronização OpenMRS na semana anterior</mat-card-subtitle>
+            <mat-spinner *ngIf="!chart4" style="margin: 0 auto;"></mat-spinner>
+            <div style="display: block">
+                <canvas *ngIf="chart4" baseChart
+                  [options]="doughnutChartOptions3"
+                  [colors]="myColors3"
+                  [data]="doughnutChartData3"
+                  [labels]="doughnutChartLabels2"
+                  [chartType]="doughnutChartType">
+                </canvas>
+              </div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card style="width: 44%; margin-left: 1%;">
+        <mat-card-content>
+            <mat-card-subtitle>Completude de registo de sincronização OpenMRS nesta semana</mat-card-subtitle>
+            <mat-spinner *ngIf="!chart5" style="margin: 0 auto;"></mat-spinner>
+            <div style="display: block">
+                <canvas *ngIf="chart5" baseChart
+                  [options]="doughnutChartOptions4"
+                  [colors]="myColors3"
+                  [data]="doughnutChartData4"
+                  [labels]="doughnutChartLabels2"
+                  [chartType]="doughnutChartType">
+                </canvas>
+              </div>
+        </mat-card-content>
+    </mat-card>
+
+</div>
+
+
+
+
+
+
+<div style="margin-top: 10px;display: flex;" *ngIf="ROLE_SIS||ROLE_OA||ROLE_GMA">
+    <mat-card style="width: 92%;">
+        <mat-card-content>
+            <mat-card-subtitle>Registos de Sincronização OpenMRS da semana anterior</mat-card-subtitle>
+
+        <div style="height:350px;">
+            <mat-spinner *ngIf="!chart4" style="margin: 0 auto;"></mat-spinner>
+            <canvas *ngIf="chart4" baseChart [colors]="myColors2s"   [datasets]="barChartData4" [labels]="barChartLabels4"
+            [options]="barChartOptions4" [legend]="barChartLegend4" [chartType]="barChartType4"></canvas>
+        </div>    
+          </mat-card-content>
+    </mat-card>
     </div>
 
-  </mz-tab-item>
+    <div style="margin-top: 10px;display: flex;" *ngIf="ROLE_SIS||ROLE_OA||ROLE_GMA">
+        <mat-card style="width: 92%;">
+            <mat-card-content>
+                <mat-card-subtitle>Registos de Sincronização OpenMRS desta semana</mat-card-subtitle>
+                
+            <div style="height:350px;">
+                <mat-spinner *ngIf="!chart5" style="margin: 0 auto;"></mat-spinner>
+                <canvas *ngIf="chart5" baseChart [colors]="myColors2s"  [datasets]="barChartData5" [labels]="barChartLabels5"
+            [options]="barChartOptions5" [legend]="barChartLegend5" [chartType]="barChartType5"></canvas>
+            </div>    
+              </mat-card-content>
+        </mat-card>
+        </div>
 
-</mz-tab>
+
+        <div style="margin-top: 10px;display: flex;" *ngIf="ROLE_SIS||ROLE_OA||ROLE_GMA">
+            <mat-card style="width: 44%;">
+                <mat-card-content>
+                    <mat-card-subtitle>Nº de ocorrências de sincronização OpenMRS registadas na semana anterior</mat-card-subtitle>
+                    <mat-spinner *ngIf="!chart6" style="margin: 0 auto;"></mat-spinner>
+                <div style="display: block;">
+                    <canvas *ngIf="chart6" baseChart [data]="pieChartData6" [labels]="pieChartLabels6" [chartType]="pieChartType6" [options]="pieOptions6"></canvas>
+                </div>    
+                  </mat-card-content>
+            </mat-card>
+      
+            <mat-card style="width: 44%; margin-left: 1%;">
+                <mat-card-content>
+                    <mat-card-subtitle>Nº de ocorrências de sincronização OpenMRS registadas nesta semana</mat-card-subtitle>
+                    <mat-spinner *ngIf="!chart7" style="margin: 0 auto;"></mat-spinner>
+                <div style="display: block;">
+                    <canvas *ngIf="chart7" baseChart [data]="pieChartData7" [labels]="pieChartLabels7" [chartType]="pieChartType7" [options]="pieOptions7"></canvas>
+                </div>    
+                  </mat-card-content>
+            </mat-card>
+      </div>
+</div>
+
+
+
+
+<div *ngIf="ROLE_GDD||ROLE_ODMA||ROLE_ORMA">
+    <div style="margin-top: 10px;display: flex;">
+        <mat-card style="width: 44%;">
+            <mat-card-content>
+                <mat-card-subtitle>Nº de backups efectuados no mês anterior recebidos no SIS (FY{{ prevMonth | date: 'yy'}}{{ prevMonth | date: 'MM'}})</mat-card-subtitle>
+               
+            <div style="height:350px;">
+                <mat-spinner *ngIf="!chart1" style="margin: 0 auto;"></mat-spinner>
+              <canvas *ngIf="chart1" baseChart  [colors]="myColors2" [datasets]="barChartData" [labels]="barChartLabels"
+              [options]="barChartOptions" [legend]="barChartLegend" [chartType]="barChartType"></canvas>
+            </div>    
+              </mat-card-content>
+        </mat-card>
+
+        <mat-card style="width: 44%; margin-left: 1%;">
+                <mat-card-content>
+                    <mat-card-subtitle>Completude de registo de envio/recepção de backups no mês anterior (FY{{ prevMonth | date: 'yy'}}{{ prevMonth | date: 'MM'}})</mat-card-subtitle>
+                    <mat-spinner *ngIf="!chart1" style="margin: 0 auto;"></mat-spinner>
+                    <div style="display: block;">
+                        <canvas *ngIf="chart1" baseChart
+                          [options]="doughnutChartOptions1"
+                          [colors]="myColors3"
+                          [data]="doughnutChartData"
+                          [labels]="doughnutChartLabels"
+                          [chartType]="doughnutChartType">
+                        </canvas>
+                      </div>
+                </mat-card-content>
+            </mat-card>
+  </div>
+
+
+  <div style="margin-top: 10px;display: flex;">
+        <mat-card style="width: 44%;">
+                <mat-card-content>
+                    <mat-card-subtitle>Nº de backups efectuados neste mês recebidos no SIS (FY{{ currentMonth | date: 'yy'}}{{ currentMonth | date: 'MM'}})</mat-card-subtitle>
+                    
+                <div style="height:350px;">
+                    <mat-spinner *ngIf="!chart2" style="margin: 0 auto;"></mat-spinner>
+                    <canvas *ngIf="chart2" [colors]="myColors2" baseChart  [datasets]="barChartData2" [labels]="barChartLabels2" [options]="barChartOptions2"
+                    [legend]="barChartLegend2" [chartType]="barChartType2"></canvas>
+                </div>    
+                  </mat-card-content>
+            </mat-card>
+
+        <mat-card style="width: 44%; margin-left: 1%;">
+                <mat-card-content>
+                    <mat-card-subtitle>Completude de registo de envio/recepção de backups neste mês (FY{{ currentMonth | date: 'yy'}}{{ currentMonth | date: 'MM'}})</mat-card-subtitle>
+                    <mat-spinner *ngIf="!chart2" style="margin: 0 auto;"></mat-spinner>
+                    <div style="display: block;">
+                        <canvas *ngIf="chart2" baseChart
+                          [options]="doughnutChartOptions2"
+                          [colors]="myColors3"
+                          [data]="doughnutChartData2"
+                          [labels]="doughnutChartLabels"
+                          [chartType]="doughnutChartType">
+                        </canvas>
+                      </div>
+                </mat-card-content>
+            </mat-card>
+
+  </div>
+
+
+
+
+  <div style="margin-top: 10px;display: flex;">
+        <mat-card style="width: 92%;">
+                <mat-card-title>Registo de Sincronização OpenMRS</mat-card-title>
+        </mat-card>
+
+</div>
+  
+  
+  <div style="margin-top: 10px;display: flex;">
+      <mat-card style="width: 44%;">
+          <mat-card-content>
+              <mat-card-subtitle>Nº de registos de sincronização OpenMRS da semana anterior</mat-card-subtitle>
+  
+          <div style="height:350px;">
+              <mat-spinner *ngIf="!chart4" style="margin: 0 auto;"></mat-spinner>
+              <canvas *ngIf="chart4" baseChart [colors]="myColors2s"   [datasets]="barChartData4" [labels]="barChartLabels4"
+              [options]="barChartOptions4" [legend]="barChartLegend4" [chartType]="barChartType4"></canvas>
+          </div>    
+            </mat-card-content>
+      </mat-card>
+
+      <mat-card style="width: 44%; margin-left: 1%;">
+            <mat-card-content>
+                <mat-card-subtitle>Completude de registo de sincronização OpenMRS da semana anterior</mat-card-subtitle>
+                <mat-spinner *ngIf="!chart4" style="margin: 0 auto;"></mat-spinner>
+                <div style="display: block;">
+                    <canvas *ngIf="chart4" baseChart
+                      [options]="doughnutChartOptions3"
+                      [colors]="myColors3"
+                      [data]="doughnutChartData3"
+                      [labels]="doughnutChartLabels2"
+                      [chartType]="doughnutChartType">
+                    </canvas>
+                  </div>
+            </mat-card-content>
+        </mat-card>
+
+
+          </div>
+
+
+          <div style="margin-top: 10px;display: flex;">
+                <mat-card style="width: 44%; ">
+                        <mat-card-content>
+                            <mat-card-subtitle>Nº de registos de sincronização OpenMRS desta semana</mat-card-subtitle>
+                            
+                        <div style="height:350px;">
+                            <mat-spinner *ngIf="!chart5" style="margin: 0 auto;"></mat-spinner>
+                            <canvas *ngIf="chart5" baseChart [colors]="myColors2s"  [datasets]="barChartData5" [labels]="barChartLabels5"
+                        [options]="barChartOptions5" [legend]="barChartLegend5" [chartType]="barChartType5"></canvas>
+                        </div>    
+                          </mat-card-content>
+                    </mat-card>
+          
+                <mat-card style="width: 44%; margin-left: 1%;">
+                      <mat-card-content>
+                          <mat-card-subtitle>Completude de registo de sincronização OpenMRS desta semana</mat-card-subtitle>
+                          <mat-spinner *ngIf="!chart5" style="margin: 0 auto;"></mat-spinner>
+                          <div style="display: block;">
+                              <canvas *ngIf="chart5" baseChart
+                                [options]="doughnutChartOptions4"
+                                [colors]="myColors3"
+                                [data]="doughnutChartData4"
+                                [labels]="doughnutChartLabels2"
+                                [chartType]="doughnutChartType">
+                              </canvas>
+                            </div>
+                      </mat-card-content>
+                  </mat-card>
+                  </div>
+  
+  
+      
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+
 

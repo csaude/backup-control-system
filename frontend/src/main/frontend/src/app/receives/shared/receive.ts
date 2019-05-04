@@ -11,6 +11,8 @@ import { User } from './../../users/shared/user';
 */
 export class Receive {
   districtname: string;
+  Distrito: string;
+  Observacao: string;
   obsd: string;
   canceled: boolean;
   restored: boolean;

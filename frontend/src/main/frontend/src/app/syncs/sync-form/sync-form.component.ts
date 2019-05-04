@@ -11,7 +11,7 @@ import { ServersService } from './../../servers/shared/servers.service';
 import { Server } from './../../servers/shared/server';
 import { TransportersService } from './../../transporters/shared/transporters.service';;
 import { Transporter } from './../../transporters/shared/transporter';
-import { MzToastService } from 'ngx-materialize';
+import { MatSnackBar} from '@angular/material';
 import { TranslateService } from 'ng2-translate';
 import { DatePipe } from '@angular/common';
 import * as alasql from 'alasql';
@@ -42,28 +42,9 @@ export class SyncFormComponent implements OnInit {
   public ROLE_ODMA: string;
   public ROLE_ORMA: string;
   public ROLE_GDD: string; public disabled1: boolean;
+  public maxDate=new Date();
 
-  public options: Pickadate.DateOptions = {
-    format: 'dd/mm/yyyy',
-    formatSubmit: 'yyyy-mm-dd',
-    today: 'Hoje',
-    close: 'Fechar',
-    clear: 'Limpar',
-    max: new Date()
-  };
-
-  public timepickerOptions: Pickadate.TimeOptions = {
-    formatSubmit: 'HH:mm',
-    default: 'now',
-    fromnow: 0,
-    twelvehour: false,
-    donetext: 'OK',
-    cleartext: 'Limpar',
-    canceltext: 'Cancelar',
-    autoclose: true,
-    ampmclickable: true
-  };
-
+  public exportTime24;exportTime242;
 
   constructor(
     formBuilder: FormBuilder,
@@ -72,17 +53,15 @@ export class SyncFormComponent implements OnInit {
     public syncsService: SyncsService,
     public serversService: ServersService,
     public transportersService: TransportersService,
-    public toastService: MzToastService,
+    public snackBar: MatSnackBar,
     public translate: TranslateService,
     public datepipe: DatePipe,
     public nav: NavbarService
   ) {
     this.form = formBuilder.group({
-      server: ['', [
+      server: [null, [
         Validators.required]],
-      startTime: ['', [
-        Validators.required
-      ]],
+      startTime: [],
       startItemsToSend: ['', [
         Validators.required,Validators.min(0)
       ]],
@@ -99,9 +78,14 @@ export class SyncFormComponent implements OnInit {
       syncError: [],
       serverFault: [],
       laptopFault: [],
-      powerCut: []
+      powerCut: [],
+      syncErrorResolved: [],
+      serverFaultResolved: [],
+      laptopFaultResolved: [],
+      powerCutResolved: []
     });
   }
+
   ngOnInit() {
     this.isDisabled = false;
     this.disabled1 = true;
@@ -119,7 +103,12 @@ export class SyncFormComponent implements OnInit {
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
 
-
+        var date = new Date();
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        this.exportTime24 = {hour: hours, minute: minutes, meriden: null, format: 24};
+        this.exportTime242 = {hour: hours, minute: minutes, meriden: null, format: 24};
+        
         if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
 
           this.serversService.findServers("", "", "", "", false, "", "uid,name,serverId,district.name,district.districtId,district.uid")
@@ -139,10 +128,36 @@ export class SyncFormComponent implements OnInit {
             }, error => { }, () => { this.disabled1 = false; });
         }
       } else {
-        this.syncsService.findOneSyncByUuid(uuid, "observation,syncId,startTime,startItemsToSend,startItemsToReceive,endTime,endItemsToSend,endItemsToReceive,observationHis,dateCreated,dateUpdated,syncError,createdBy.uid,createdBy.userId,createdBy.person.othersNames,createdBy.person.surname,createdBy.person.phoneNumber,uid,serverFault,laptopFault,powerCut,canceled,district.name,server.name,server.district.name,server.type,server.serverId,server.uid,server.district.uid,server.district.districtId")
+
+
+        this.syncsService.findOneSyncByUuid(uuid, "observation,syncId,startTime,startItemsToSend,startItemsToReceive,endTime,endItemsToSend,endItemsToReceive,observationHis,dateCreated,dateUpdated,syncError,createdBy.uid,createdBy.userId,createdBy.person.othersNames,createdBy.person.surname,createdBy.person.phoneNumber,uid,serverFault,laptopFault,powerCut,canceled,district.name,server.name,server.district.name,server.type,server.serverId,server.uid,server.district.uid,server.district.districtId,syncErrorResolved,serverFaultResolved,laptopFaultResolved,powerCutResolved")
           .subscribe(
             sync => {
               this.sync = sync;
+             
+                var date = new Date(this.sync.startTime);
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+               
+                this.exportTime24 = {hour: hours, minute: minutes, meriden: null, format: 24};
+
+                if(this.sync.endTime){
+                  var date2 = new Date(this.sync.endTime);
+                  var hours2 = date2.getHours();
+                  var minutes2 = date2.getMinutes();
+                 
+                  this.exportTime242 = {hour: hours2, minute: minutes2, meriden: null, format: 24};
+                }else{
+                  var date3 = new Date();
+                  var hours3 = date3.getHours();
+        var minutes3 = date3.getMinutes();
+        this.exportTime242 = {hour: hours3, minute: minutes3, meriden: null, format: 24};
+
+                  this.sync.endItemsToSend=null;
+                  this.sync.endItemsToReceive=null;
+
+                }
+
 
               var date = new Date();
               date.setDate(date.getDate() + 1);
@@ -161,12 +176,13 @@ export class SyncFormComponent implements OnInit {
                 this.router.navigate(['not-found']);
               }
 
-              if (new Date(this.sync.startTime))
+              /*if (new Date(this.sync.startTime))
 
                 this.sync.startTime = ("0" + new Date(this.sync.startTime).getHours()).slice(-2) + ":" + ("0" + new Date(this.sync.startTime).getMinutes()).slice(-2)
               if (this.sync.endTime != null) {
                 this.sync.endTime = ("0" + new Date(this.sync.endTime).getHours()).slice(-2) + ":" + ("0" + new Date(this.sync.endTime).getMinutes()).slice(-2)
-              }
+              }*/
+
               if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
                 this.serversService.findServers("", "", "", "", false, "", "uid,name,serverId,district.name,district.districtId,district.uid")
                   .subscribe(data => {
@@ -211,36 +227,49 @@ export class SyncFormComponent implements OnInit {
 
 
   save() {
+
     this.isDisabled = true;
     var result, userValue = this.form.value;
+
+    userValue.startTime=this.exportTime24.hour+":"+this.exportTime24.minute;
+    userValue.endTime=this.exportTime242.hour+":"+this.exportTime242.minute;
+  
+    
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     if (this.sync.uid) {
 
-      if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date() || new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000") > new Date()) {
-        this.showMsgErr6();
+      if (userValue.server.district.districtId==null) {
+        this.openSnackBar("Escolha um servidor!", "OK");
         this.isDisabled = false;
       } else
-        if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000")) {
-          this.showMsgErr4();
+
+      if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.startTime) > new Date() || new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.endTime) > new Date()) {
+        this.openSnackBar("O registo não deve estar no futuro!", "OK");
+        this.isDisabled = false;
+      } else
+        if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.startTime ) > new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.endTime )) {
+          this.openSnackBar("Hora Final deve ser maior!", "OK");
           this.isDisabled = false;
         } else
           if (userValue.canceled == true && userValue.canceledReason == null) {
-            this.showMsgErr3();
+            this.openSnackBar("Escreva a razão para anular!", "OK");
             this.isDisabled = false;
           }
           else if (userValue.endItemsToSend > userValue.startItemsToSend || userValue.endItemsToReceive > userValue.startItemsToReceive) {
-            this.showMsgErr5();
+            this.openSnackBar("Nº de itens no fim da sincronização não deve ser maior que no inicio.!", "OK");
+            
             this.isDisabled = false;
           }
           else if (userValue.endItemsToSend < 0 || userValue.endItemsToReceive < 0 ||  userValue.startItemsToReceive < 0 || userValue.startItemsToSend < 0) {
-            this.showMsgErr5n();
+            this.openSnackBar("Nº de itens não deve ser inferior a 0!", "OK");
             this.isDisabled = false;
           }
-          else if ((userValue.endTime != null && userValue.endTime != "") && (userValue.endItemsToSend == null || userValue.endItemsToReceive == null)) {
-            this.showMsgErr7();
-            this.isDisabled = false;
-          }
+          
           else {
+
+             if ((userValue.endTime != null && userValue.endTime != "") && (userValue.endItemsToSend == null || userValue.endItemsToReceive == null)) {
+              userValue.endTime=null;
+            }
 
             if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
 
@@ -259,10 +288,10 @@ export class SyncFormComponent implements OnInit {
                 userId: user.userId
               };
               userValue.observation = this.sync.observation;
-              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
+              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.startTime );
 
               if (userValue.endTime != null && userValue.endTime != "") {
-                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
+                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.endTime );
               }
               else {
                 userValue.endItemsToSend = null;
@@ -271,7 +300,7 @@ export class SyncFormComponent implements OnInit {
               }
 
               result = this.syncsService.updateSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
-              this.showMsg();
+              this.openSnackBar("Registo actualizado com sucesso!", "OK");
               this.nav.callMethodOfSecondComponent();
 
 
@@ -294,10 +323,10 @@ export class SyncFormComponent implements OnInit {
               };
               userValue.observationHis = this.sync.observationHis;
 
-              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
+              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.startTime );
 
               if (userValue.endTime != null && userValue.endTime != "") {
-                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
+                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.endTime );
               }
               else {
                 userValue.endItemsToSend = null;
@@ -308,7 +337,7 @@ export class SyncFormComponent implements OnInit {
 
 
               result = this.syncsService.updateSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
-              this.showMsg();
+              this.openSnackBar("Registo actualizado com sucesso!", "OK");
               this.nav.callMethodOfSecondComponent();
 
             }
@@ -318,32 +347,36 @@ export class SyncFormComponent implements OnInit {
 
     } else {
 
-
-      if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date() || new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000") > new Date()) {
-        this.showMsgErr6();
+      if (userValue.server.district.districtId==null) {
+        this.openSnackBar("Escolha um servidor!", "OK");
         this.isDisabled = false;
       } else
-        if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000") > new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000")) {
-          this.showMsgErr4();
+
+      if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.startTime ) > new Date() || new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.endTime ) > new Date()) {
+        this.openSnackBar("O registo não deve estar no futuro!", "OK");
+        this.isDisabled = false;
+      } else
+        if (new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.startTime ) > new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.endTime )) {
+          this.openSnackBar("Hora Final deve ser maior!", "OK");
           this.isDisabled = false;
         } else
           if (userValue.canceled == true && userValue.canceledReason == null) {
-            this.showMsgErr3();
+            this.openSnackBar("Escreva a razão para anular!", "OK");
             this.isDisabled = false;
           }
           else if (userValue.endItemsToSend > userValue.startItemsToSend || userValue.endItemsToReceive > userValue.startItemsToReceive) {
-            this.showMsgErr5();
+            this.openSnackBar("Nº de itens no fim da sincronização não deve ser maior que no inicio.!", "OK");
             this.isDisabled = false;
           }
           else if (userValue.endItemsToSend < 0 || userValue.endItemsToReceive < 0 ||  userValue.startItemsToReceive < 0 || userValue.startItemsToSend < 0) {
-            this.showMsgErr5n();
-            this.isDisabled = false;
-          }
-          else if ((userValue.endTime != null && userValue.endTime != "") && (userValue.endItemsToSend == null || userValue.endItemsToReceive == null)) {
-            this.showMsgErr7();
+            this.openSnackBar("Nº de itens não deve ser inferior a 0!", "OK");
             this.isDisabled = false;
           }
           else {
+
+            if ((userValue.endTime != null && userValue.endTime != "") && (userValue.endItemsToSend == null || userValue.endItemsToReceive == null)) {
+              userValue.endTime=null;
+            }
 
             if (this.ROLE_GDD || this.ROLE_ODMA || this.ROLE_ORMA) {
 
@@ -357,10 +390,10 @@ export class SyncFormComponent implements OnInit {
                 userId: user.userId
               };
 
-              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
+              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.startTime );
 
               if (userValue.endTime != null && userValue.endTime != "") {
-                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
+                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.endTime );
               }
               else {
                 userValue.endItemsToSend = null;
@@ -370,7 +403,7 @@ export class SyncFormComponent implements OnInit {
 
 
               result = this.syncsService.createSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
-              this.showMsg();
+              this.openSnackBar("Registo criado com sucesso!", "OK");
               this.nav.callMethodOfSecondComponent();
 
             } else if (this.ROLE_SIS) {
@@ -385,10 +418,10 @@ export class SyncFormComponent implements OnInit {
                 userId: user.userId
               };
 
-              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.startTime + ":00.000");
+              userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.startTime );
 
               if (userValue.endTime != null && userValue.endTime != "") {
-                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + "T" + userValue.endTime + ":00.000");
+                userValue.endTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.endTime );
               }
               else {
                 userValue.endItemsToSend = null;
@@ -397,40 +430,52 @@ export class SyncFormComponent implements OnInit {
               }
 
               result = this.syncsService.createSync(userValue).subscribe(data => { }, error => { }, () => { this.router.navigate(['syncs']); this.nav.callMethodOfSecondComponent(); });
-              this.showMsg();
+              this.openSnackBar("Registo criado com sucesso!", "OK");
 
             }
 
-          }
+          
+    }
+
+  }
+}
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
+  }
+
+  syncError(){
+
+    if(this.sync.syncError==false){
+      this.sync.syncErrorResolved=false;
     }
 
   }
 
-  showMsg() {
-    this.toastService.show('Registo de Sincronização salvo com sucesso!', 2000, 'green', null);
-  }
-  showMsgErr3() {
-    this.toastService.show('Escreva a razão para anular!', 2000, 'red', null);
+  serverFault(){
+
+    if(this.sync.serverFault==false){
+      this.sync.serverFaultResolved=false;
+    }
+
   }
 
-  showMsgErr4() {
-    this.toastService.show('Hora final deve ser maior!', 2000, 'red', null);
+  laptopFault(){
+
+    if(this.sync.laptopFault==false){
+      this.sync.laptopFaultResolved=false;
+    }
+
   }
 
-  showMsgErr6() {
-    this.toastService.show('Registo não deve estar no futuro!', 2000, 'red', null);
-  }
+  powerCut(){
 
-  showMsgErr7() {
-    this.toastService.show('Preenche o nº dos itens por enviar/receber na hora final!', 2000, 'red', null);
-  }
+    if(this.sync.powerCut==false){
+      this.sync.powerCutResolved=false;
+    }
 
-  showMsgErr5() {
-    this.toastService.show('Nº de itens no fim da sincronização não deve ser maior que no inicio.', 2000, 'red', null);
-  }
-
-  showMsgErr5n() {
-    this.toastService.show('Nº de itens não deve ser inferior a 0.', 2000, 'red', null);
   }
 
 }

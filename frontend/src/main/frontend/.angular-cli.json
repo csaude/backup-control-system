@@ -21,12 +21,9 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.css",
-        "../node_modules/materialize-css/dist/css/materialize.min.css"
+        "styles.css"
       ],
       "scripts": [
-        "../node_modules/jquery/dist/jquery.min.js",
-        "../node_modules/materialize-css/dist/js/materialize.min.js",
         "../node_modules/chart.js/dist/Chart.bundle.min.js",
         "../node_modules/alasql/dist/alasql.min.js",
         "../node_modules/jspdf/dist/jspdf.min.js",

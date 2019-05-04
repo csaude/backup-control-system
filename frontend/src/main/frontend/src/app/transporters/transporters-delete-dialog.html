@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>Confirmação?</h1>
+<div mat-dialog-content>
+    <section class="mat-typography">
+    {{ "transporterdelete" | translate }}: {{data.name}} ? {{ "confirmdelete" | translate }}
+</section>
+</div>
+<div mat-dialog-actions>
+  <button  mat-raised-button color="primary" (click)="onDeleteClick()">{{ "yes" | translate }}</button>
+  <button  mat-raised-button color="secondary" [mat-dialog-close]="">{{ "no" | translate }}</button>
+</div>

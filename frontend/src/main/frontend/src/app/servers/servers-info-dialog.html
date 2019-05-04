@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>{{ "serverdetails" | translate }}</h1>
+<div mat-dialog-content>
+  <section class="mat-typography">
+  <h4 class="mat-h4">{{data.district.name}} / {{data.name}}</h4>
+  <span>{{ "type" | translate }}: {{data.type}}<br></span>
+  <span *ngIf="data.duration!=null">{{ "lastsync" | translate }}: {{data.duration}}<br></span>
+  <span *ngIf="data.observation!=null">{{ "observation" | translate }}: {{data.observation }}<br></span>
+  
+</section>
+ 
+<section class="mat-typography">
+    {{ "createdby" | translate }}: {{data.createdBy.personName}} ({{data.createdBy.phoneNumber}}) - {{ data.dateCreated | date:'dd/MM/yyyy HH:mm' }}  <br>
+    <span *ngIf="data.updatedBy!=null">{{ "updatedby" | translate }}: {{data.updatedBy.personName}} ({{data.updatedBy.phoneNumber}}) - {{ data.dateUpdated | date:'dd/MM/yyyy HH:mm' }}<br></span>
+  <span class="info-label">{{data.uid}}</span>
+</section>
+
+
+</div>
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" [mat-dialog-close]="">OK</button>
+</div>

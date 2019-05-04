@@ -11,10 +11,10 @@ import { DistrictsService } from './../../districts/shared/districts.service';
 import { District } from './../../districts/shared/district';
 import { TransportersService } from './../../transporters/shared/transporters.service';;
 import { Transporter } from './../../transporters/shared/transporter';
-import { MzToastService } from 'ngx-materialize';
 import { TranslateService } from 'ng2-translate';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
+import { MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-send-form',
@@ -26,6 +26,9 @@ import { Subscription } from 'rxjs/Subscription';
 * @author Damasceno Lopes
 */
 export class SendFormComponent implements OnInit {
+
+  public maxDate=new Date();
+
   public form: FormGroup;
   public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD: string;
   public title: string;
@@ -36,14 +39,6 @@ export class SendFormComponent implements OnInit {
   public alltransporters: Transporter[] = [];
   public allsends: Send[] = [];
   public disabled1: boolean;
-  public options: Pickadate.DateOptions = {
-    format: 'dd/mm/yyyy',
-    formatSubmit: 'yyyy-mm-dd',
-    today: 'Hoje',
-    close: 'Fechar',
-    clear:'Limpar',
-    max: new Date()
-  };
 
   public nameValueControl = new FormControl();
   public formCtrlSub: Subscription;
@@ -55,7 +50,7 @@ export class SendFormComponent implements OnInit {
     public sendsService: SendsService,
     public districtsService: DistrictsService,
     public transportersService: TransportersService,
-    public toastService: MzToastService,
+    public snackBar: MatSnackBar,
     public translate: TranslateService
   ) {
     this.form = formBuilder.group({
@@ -84,17 +79,20 @@ export class SendFormComponent implements OnInit {
       idartBackupDate:[]
     });
   }
-  ngOnInit() {
-    
-    this.formCtrlSub = this.nameValueControl.valueChanges
-      .debounceTime(600)
-      .subscribe(newValue => {
-        this.name = this.nameValueControl.value;
-        if(this.name!=""){ this.refreshTransporter();}else{
-          this.alltransporters=[];
-        }
-      });
 
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
+  }
+
+  displayFn(transporter: Transporter): string {
+    return transporter.name;
+}
+
+  ngOnInit() {
+    this.name="";
+    
     this.ROLE_SIS = window.sessionStorage.getItem('ROLE_SIS');
     this.ROLE_OA = window.sessionStorage.getItem('ROLE_OA');
     this.ROLE_IT = window.sessionStorage.getItem('ROLE_IT');
@@ -110,7 +108,7 @@ export class SendFormComponent implements OnInit {
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
 
-        this.alldistricts = user.districts;
+        this.alldistricts = user.districts.filter(item=>item.canceled==false);
 
         this.alldistricts.sort(function (a, b) {
           var nameA = a.fullName.toUpperCase(); // ignore upper and lowercase
@@ -125,7 +123,21 @@ export class SendFormComponent implements OnInit {
         });
         
 
-          this.alltransporters =[];
+        this.transportersService.findTransporters(1, 20, this.name, "", false,"name,phoneNumber,transporterId,uid,role")
+        .subscribe(data => { 
+          this.alltransporters = data.content;
+          this.alltransporters=this.alltransporters.filter(item => item.transporterId !== this.send.transporter.transporterId);
+        
+        }
+          , errot => {
+            this.disabled1 = false;
+            this.alltransporters = []
+           },
+          () => {
+            this.disabled1 = false;
+          }
+        );
+
           this.disabled1 = false;
 
       } else {
@@ -133,7 +145,11 @@ export class SendFormComponent implements OnInit {
           .subscribe(
             send => {
               this.send = send;
-              this.alldistricts = user.districts;
+              this.send.backupDate=new Date(send.backupDate);
+              if(this.send.idartBackup){
+                this.send.idartBackupDate=new Date(send.idartBackupDate);
+              }
+              this.alldistricts = user.districts.filter(item=>item.canceled==false);
               var filtereddistricts = this.alldistricts;
               filtereddistricts = filtereddistricts.filter(item => item.districtId !== this.send.district.districtId);
 
@@ -154,9 +170,37 @@ export class SendFormComponent implements OnInit {
                 return 0;
               });
 
+          this.transportersService.findTransporters(1, 20, this.name, "", false,"name,phoneNumber,transporterId,uid,role")
+          .subscribe(data => { 
+            this.alltransporters = data.content;
+            this.alltransporters=this.alltransporters.filter(item => item.transporterId !== this.send.transporter.transporterId);
+
+            this.alltransporters.push(this.send.transporter);
+              this.alltransporters = this.alltransporters.sort(function (a, b) {
+                var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+                var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+                if (nameA < nameB) {
+                  return -1;
+                }
+                if (nameA > nameB) {
+                  return 1;
+                }
+                return 0;
+              });
+          
+          }
+            , errot => {
+              this.disabled1 = false;
+              this.alltransporters = []
+             },
+            () => {
+              this.disabled1 = false;
+            }
+          );
+/**
               this.alltransporters.push(this.send.transporter) ;
               this.disabled1 = false;
-
+ */
             },
             response => {
               if (response.status == 404) {
@@ -172,22 +216,32 @@ export class SendFormComponent implements OnInit {
     var result, userValue = this.form.value;
     var userLogged = JSON.parse(window.sessionStorage.getItem('user'));
     if (this.send.uid) {
+
+      if (userValue.district.districtId==null) {
+        this.openSnackBar("Escolha um Distrito!", "OK");
+        this.isDisabled = false;
+      } else
+
       if (new Date(userValue.backupDate) > new Date()) {
-        this.showMsgErr();
+        this.openSnackBar("A data do backup não deve estar no futuro!", "OK");
         this.isDisabled = false;
       }
       else {
         if (userValue.canceled == true && userValue.canceledReason == null) {
-          this.showMsgErr3();
+          this.openSnackBar("Escreva a razão para anular!", "OK");
           this.isDisabled = false;
         }
         else if (userValue.ikReceived == true && (userValue.dateIkReceived == null)) {
-          this.showMsgErr4();
+          this.openSnackBar("Data de recepção de ironkey deve ser preenchida!", "OK");
           this.isDisabled = false;
         }else if (userValue.idartBackup == true && (userValue.idartBackupDate == null||(new Date(userValue.idartBackupDate)>new Date()))) {
-          this.showMsgErr5();
+          this.openSnackBar("Veriqfique a data do backup de iDART!", "OK");
+          this.isDisabled = false;
+        }else if (!userValue.transporter.name) {
+          this.openSnackBar("Transportador inválido!", "OK");
           this.isDisabled = false;
         }
+        
         else {
           userValue.sendId = this.send.sendId;
           userValue.dateCreated = this.send.dateCreated;
@@ -200,15 +254,22 @@ export class SendFormComponent implements OnInit {
           };
           result = this.sendsService.updateSend(userValue);
           result.subscribe(data => this.router.navigate(['sends']));
-          this.showMsg();
+          this.openSnackBar("Envio de backup actualizado com sucesso!", "OK");
         }
       }
     } else {
+      if (userValue.district.districtId==null) {
+        this.openSnackBar("Escolha um Distrito!", "OK");
+        this.isDisabled = false;
+      } else
       if (new Date(userValue.backupDate) > new Date()) {
-        this.showMsgErr();
+        this.openSnackBar("A data do backup não deve estar no futuro!", "OK");
         this.isDisabled = false;
       }else if (userValue.idartBackup == true && (userValue.idartBackupDate == null||(new Date(userValue.idartBackupDate)>new Date()))) {
-        this.showMsgErr5();
+        this.openSnackBar("Verifique a data do backup de iDART!", "OK");
+        this.isDisabled = false;
+      }else if (!userValue.transporter.name) {
+        this.openSnackBar("Transportador inválido!", "OK");
         this.isDisabled = false;
       }
       else {
@@ -223,14 +284,14 @@ export class SendFormComponent implements OnInit {
         };
         result = this.sendsService.createSend(userValue);
         result.subscribe(data => this.router.navigate(['sends']));
-        this.showMsg();
+        this.openSnackBar("Envio de backup criado com sucesso!", "OK");
       }
     }
   }
 
-  refreshTransporter(){
+  search(searchValue : string){
     this.disabled1 = true;
-    this.transportersService.findTransporters(1, 10, this.name, "", false,"name,phoneNumber,transporterId,uid,role")
+    this.transportersService.findTransporters(1, 20, searchValue, "", false,"name,phoneNumber,transporterId,uid,role")
           .subscribe(data => { this.alltransporters = data.content; }
             , errot => {
               this.disabled1 = false;
@@ -243,21 +304,4 @@ export class SendFormComponent implements OnInit {
   }
 
 
-  
-
-  showMsg() {
-    this.toastService.show('Envio de Backup salvo com sucesso!', 2000, 'green', null);
-  }
-  showMsgErr() {
-    this.toastService.show('A Data do Backup não deve estar no futuro!', 2000, 'red', null);
-  }
-  showMsgErr3() {
-    this.toastService.show('Escreva a razão para anular!', 2000, 'red', null);
-  }
-  showMsgErr4() {
-    this.toastService.show('A Data de Recepção deve ser preenchida!', 2000, 'red', null);
-  }
-  showMsgErr5() {
-    this.toastService.show('A data do backup de iDART deve ser preenchida', 2000, 'red', null);
-  }
 }

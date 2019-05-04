@@ -1,254 +1,169 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
+<mat-sidenav-container autosize>
+    <mat-sidenav #drawer mode="side" opened="true" [fixedInViewport]="true" [fixedTopGap]="63" >
+      
+        <mat-toolbar color="primary">
+            <mat-toolbar-row>
+              <span>Menu</span>
+            </mat-toolbar-row>
+        </mat-toolbar>
+  
+      <mat-nav-list>
+        <a mat-list-item routerLink="/home" matTooltip="Ir para a pagina inicial">
+          <mat-icon>home</mat-icon>&nbsp;&nbsp;<span class="nav-caption">Página Inicial</span>
+        </a>
+        <a mat-list-item routerLink="/ironkeys/new" matTooltip="Adicionar novo Transportador">
+          <mat-icon>add</mat-icon>&nbsp;&nbsp;<span class="nav-caption">{{ "add" | translate}} Transportador</span>
+        </a>
+        <a mat-list-item (click)="printList()" routerLink="/ironkeys" matTooltip="Baixar a lista em PDF">
+          <mat-icon>file_download</mat-icon>&nbsp;&nbsp;<span class="nav-caption">{{ "downloadlist" | translate}} em PDF</span>
+        </a>
+      </mat-nav-list>
+  
+      <mat-expansion-panel style="box-shadow: none">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+                Pesquisar Dados
+            </mat-panel-title>
+            <mat-panel-description>
+              
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          
+          <div>
+              <form [formGroup]="form">
+          <mat-form-field style="width: 95%;">
+              <mat-label>{{ 'searchbyserial' | translate }}</mat-label>
+              <input matInput type="text" [formControl]="serialValueControl" placeholder="{{ 'searchbyname' | translate }}">
+              <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+    
+          <mat-form-field style="width: 95%;">
+              <mat-label>{{ 'searchbyversion' | translate }}</mat-label>
+              <input matInput type="text" [formControl]="versionValueControl" placeholder="{{ 'searchbyname' | translate }}">
+              <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+      
+          <mat-form-field style="width: 95%;">
+              <mat-label>{{ 'capacity' | translate }}</mat-label>
+              <mat-select  formControlName="size" (change)="search()">
+                <mat-option value="all" selected>Todas Capacidades</mat-option>
+                <mat-option *ngFor="let size of sizes" [value]="size.id">{{ size.name }}</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>insert_drive_file</mat-icon>
+          </mat-form-field>
+    
+          <mat-form-field style="width: 95%;">
+              <mat-label>{{ 'state' | translate }}</mat-label>
+              <mat-select  formControlName="status" (change)="search()">
+                <mat-option value="all" selected>Todos Estados</mat-option>
+                <mat-option *ngFor="let statusitem of statuslist" [value]="statusitem.name">{{ statusitem.name }}</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>label_outline</mat-icon>
+          </mat-form-field>
+      
+      </form>
+          </div>
+  
+      </mat-expansion-panel>
+      
+  
+    </mat-sidenav>
+    <mat-sidenav-content style="padding: 10px; margin-top: 70px;">
+  
+        <span style="display: inline-flex;">
+            <button mat-mini-fab color="basic" (click)="drawer.toggle()" matTooltip="Esconder / Mostrar Menu lateral"><mat-icon>menu</mat-icon> </button>
+          &nbsp;&nbsp;<h1 class="mat-h1" style="margin-top: 7px;">{{ "ironkeysfound" | translate }} <a matTooltip="Ajuda" target="_blank" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+        </span>
+          <mat-paginator *ngIf="isHidden=='hide'" [length]="total" [pageIndex]="page" [pageSize]="pageSize"
+            [pageSizeOptions]="[5, 10, 15, 25, 100]" (page)="pageEvent = getPage($event)"></mat-paginator>
+          <mat-progress-bar mode="indeterminate" *ngIf="isHidden==''"></mat-progress-bar>
+          <section class="mat-typography">
+          <span class="info-label" *ngIf="isHidden==''">Carregando dados...</span>
+        </section>
+            <mat-table mat-table [dataSource]="ironkeys" class="mat-elevation-z8" matSort>
+      
+              <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+      
+              <!-- Serial Column -->
+              <ng-container matColumnDef="serial">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{ "serialn" | translate }} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.serial}} </mat-cell>
+              </ng-container>
+      
+              <!-- Version -->
+              <ng-container matColumnDef="version">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{ "version" | translate }} </mat-header-cell>
+                <mat-cell *matCellDef="let element">{{element.version}}</mat-cell>
+              </ng-container>
+      
+              <!-- Size -->
+              <ng-container matColumnDef="size">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{ "capacity" | translate }} (GB)</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{element.size}}</mat-cell>
+              </ng-container>
 
-<br>
-<h5 class="light">{{ "ironkeysfound" | translate }}
-</h5>
-<script>
+              <!-- Status -->
+              <ng-container matColumnDef="status">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header> {{ "state" | translate }} </mat-header-cell>
+                  <mat-cell *matCellDef="let element">{{element.status}}</mat-cell>
+                </ng-container>
 
+                 <!-- Districts -->
+              <ng-container matColumnDef="districts">
+                  <mat-header-cell *matHeaderCellDef > {{ "district" | translate }}(s) </mat-header-cell>
+                  <mat-cell *matCellDef="let element" style="text-align: left;">
+                    
 
+                      <ul style="padding:0;list-style-type: none;">
+                          <li *ngFor="let district of element.districts">
+                              <button mat-button color="primary" [routerLink]="['/districts', district.uid]">{{district.fullName}}</button>
+                          </li>
+                        </ul>
 
-</script>
-<form materialize [formGroup]="form">
-  <div class="row">
-    <div class="input-field col s6 m2 l2">
-      <input id="name" type="text" placeholder="{{ 'searchbyserial' | translate }}" [formControl]="serialValueControl">
-      <label for="name">
-        {{ 'searchbyserial' | translate }}
-      </label>
-    </div>
-    <div class="input-field col s6 m2 l2">
-      <input id="name" type="text" placeholder="{{ 'searchbyversion' | translate }}" [formControl]="versionValueControl">
-      <label for="name">
-        {{ 'searchbyversion' | translate }}
-      </label>
-    </div>
-  </div>
-  <div class="row" style="margin-top: -20px;">
-    <div class="col s6 m2 l2">
-      <mz-select-container>
-        <select mz-select id="status" label="{{ 'capacity' | translate }}" placeholder="{{ 'select' | translate }}"
-          formControlName="size" (change)="search()">
-          <option value="all" selected>Todas Capacidades</option>
-          <option *ngFor="let size of sizes" [value]="size.id">{{ size.name }}</option>
-        </select>
-      </mz-select-container>
-    </div>
-
-    <div class="col s6 m2 l2">
-      <mz-select-container>
-        <select mz-select id="status" label="{{ 'state' | translate }}" placeholder="{{ 'select' | translate }}"
-          formControlName="status" (change)="search()">
-          <option value="all" selected>Todos Estados</option>
-          <option *ngFor="let statusitem of statuslist" [value]="statusitem.name">{{ statusitem.name }}</option>
-        </select>
-      </mz-select-container>
-    </div>
-
-    <div class="col s12 m8 l8" style="margin-top: -15px;">
-      <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
-
-        <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
-        <mz-select-container style="width: 50px;">
-          <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
-            <option value="10" selected>10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </mz-select-container>
-
-
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
-        <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
-        <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
-        <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
-
-      </ul>
-    </div>
-
-  </div>
-</form>
-
-<div class="card col s12" style="margin-top: -20px;">
-  <div class="progress {{isHidden}}" style="margin-top: 35px; margin-bottom: 0;">
-    <div class="indeterminate"></div>
-  </div>
-  <table class=" bordered responsive-table highlight">
-    <thead>
-      <tr>
-        <th>{{ "serialn" | translate }}</th>
-        <th>{{ "version" | translate }}</th>
-        <th>{{ "capacity" | translate }} (GB)</th>
-        <th>{{ "state" | translate }}</th>
-        <th>{{ "district" | translate }}(s)</th>
-        <th>{{ "updatedon" | translate }}</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody *ngIf="isHidden=='hide'">
-      <tr *ngFor="let ironkey of ironkeys">
-        <td>{{ ironkey.serial }}</td>
-        <td>{{ ironkey.version }}</td>
-        <td *ngIf="ironkey.size==0">{{ "other" | translate }}</td>
-        <td *ngIf="ironkey.size!=0">{{ ironkey.size }}</td>
-        <td>{{ ironkey.status }}</td>
-        <td>
-
-          <ul style="margin: 0px;">
-            <li *ngFor="let district of ironkey.districts">
-              <a [routerLink]="['/districts', district.uid]"><span class="orange-text text-darken-3">{{district.fullName}}</span></a>
-            </li>
-          </ul>
-
-        </td>
-        <td>{{ ironkey.dateUpdated | date: 'dd/MM/yyyy' }}</td>
-        <td>
-
-          <a mz-tooltip tooltip="{{'details' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setIronkey(ironkey.uid)"
-            (click)="basicModal2.openModal()" [routerLink]="">
-            <i class="material-icons icon-green">info</i>
-          </a>
-          &nbsp;
-          <a mz-tooltip tooltip="{{'edit' | translate}}" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/ironkeys', ironkey.uid]">
-            <i class="material-icons icon-orange">mode_edit</i>
-          </a>
-          &nbsp;
-          <a mz-tooltip tooltip="{{'delete' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setIronkey(ironkey.uid)"
-            (click)="basicModal.openModal()" routerLink="/ironkeys">
-            <i class="material-icons icon-red">delete</i>
-          </a>
-
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<ul class="pagination valign-center" *ngIf="isHidden=='hide'">
-
-  <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
-  <mz-select-container style="width: 50px;">
-    <select mz-select id="pageSize" [(ngModel)]="pageSize" (change)="searchSize()">
-      <option value="10" selected>10</option>
-      <option value="25">25</option>
-      <option value="50">50</option>
-      <option value="100">100</option>
-    </select>
-  </mz-select-container>
-
-
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
-  <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
-  <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
-  <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
-
-</ul>
-
-<!--
-<ul class="pagination" *ngIf="isHidden==''">
-  {{ "loading" | translate }}
-</ul>
--->
-<mz-modal #basicModal>
-  <mz-modal-header>
-    <i mz-icon [align]="'left'" [icon]="'warning'" [size]="'small'">
-    </i>
-    <h4>{{ "confirm" | translate }}</h4>
-  </mz-modal-header>
-  <mz-modal-content>
-    {{ "ironkeydelete" | translate }}: {{ironkey.serial}}? {{ "confirmdelete" | translate }}
-  </mz-modal-content>
-  <mz-modal-footer>
-    <button mz-button [flat]="true" (click)="deleteIronkey()" mz-modal-close>{{ "yes" | translate }}</button>
-    <button mz-button [flat]="true" mz-modal-close>{{ "no" | translate }}</button>
-  </mz-modal-footer>
-</mz-modal>
-
-<mz-modal #basicModal2 [fixedFooter]="true">
-  <mz-modal-header>
-    <h4>{{ "ironkeydetails" | translate }}</h4>
-  </mz-modal-header>
-  <mz-modal-content>
-    <div class="row">
-      <div class="col s12">
-        <h5 class="light">{{ironkey.serial}}</h5>
-      </div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "version" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ironkey.version}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "state" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ironkey.status}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "capacity" | translate }} (GB):</div>
-      <div class="col s12 l10 m10" *ngIf="ironkey.size!=0">{{ironkey.size}}</div>
-      <div class="col s12 l10 m10" *ngIf="ironkey.size==0">{{ "other" | translate }}</div>
-    </div>
-    <div class="row" *ngIf="ironkey.datePurchased!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "date_purchased" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ironkey.datePurchased | date: 'dd/MM/yyyy'}}</div>
-    </div>
-    <div class="row" *ngIf="ironkey.districts.length>0" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "ironkeysdistricts" | translate }} ({{ironkey.districts.length}}):</div>
-      <div class="col s12 l10 m10">
-        <ul style="margin: 0px;">
-          <li *ngFor="let district of ironkey.districts">
-            <a (click)="basicModal2.closeModal()" [routerLink]="['/districts', district.uid]"><span class="orange-text text-darken-3">{{district.fullName}}</span></a>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="row" *ngIf="ironkey.observation!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "observation" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ironkey.observation}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ironkey.createdBy.personName}} - {{ ironkey.dateCreated | date:'dd/MM/yyyy HH:mm'
-        }}</div>
-    </div>
-    <div class="row" *ngIf="ironkey.updatedBy!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ironkey.updatedBy.personName}} - {{ ironkey.dateUpdated | date:'dd/MM/yyyy HH:mm'
-        }}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s10">
-        <span style="color:lightgrey;">{{ironkey.uid}}</span>
-      </div>
-    </div>
-  </mz-modal-content>
-  <mz-modal-footer>
-    <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
-  </mz-modal-footer>
-</mz-modal>
-
-<div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
-  <a class="btn-floating  btn-large green">
-    <i class="material-icons">more_vert</i>
-  </a>
-  <ul>
-    <li>
-      <a mz-tooltip tooltip="{{'downloadlist' | translate}}" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
-        class="btn-floating  waves-effect orange {{isDisabledt}}">
-        <i class="material-icons">file_download</i>
-      </a>
-    </li>
-    <li>
-      <a mz-tooltip tooltip="{{'add' | translate}}" [position]="'left'" [html]="false" [delay]="100" routerLink="/ironkeys/new"
-        class="btn-floating  waves-effect waves-light  blue">
-        <i class="material-icons">add</i>
-      </a>
-    </li>
-  </ul>
-</div>
+                  </mat-cell>
+                </ng-container>
+      
+                 <!-- Updated On -->
+              <ng-container matColumnDef="updated">
+                  <mat-header-cell *matHeaderCellDef style="text-align: center;"> {{ "updatedon" | translate }} </mat-header-cell>
+                  <mat-cell *matCellDef="let element" style="text-align: center;">  {{ element.dateUpdated | date: 'dd/MM/yyyy'}}</mat-cell>
+                </ng-container>
+      
+              <!-- Actions -->
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let element" style="text-align: center;">
+                  <button mat-icon-button [matMenuTriggerFor]="menu" [disabled]="isHidden==''">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="setIronkey(element.uid)">
+                      <mat-icon>info</mat-icon>
+                      <span>{{ 'details' | translate}}</span>
+                    </button>
+                    <button mat-menu-item [routerLink]="['/ironkeys', element.uid]">
+                      <mat-icon>mode_edit</mat-icon>
+                      <span>{{ 'edit' | translate}}</span>
+                    </button>
+                    <button mat-menu-item (click)="setIronkeyDelete(element.uid)">
+                      <mat-icon>delete</mat-icon>
+                      <span>{{ 'delete' | translate}}</span>
+                    </button>
+                  </mat-menu>
+                </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+        <br>
+          <mat-paginator *ngIf="isHidden=='hide'" [length]="total" [pageIndex]="page" [pageSize]="pageSize"
+            [pageSizeOptions]="[5, 10, 15, 25, 100]" (page)="pageEvent = getPage($event)">
+          </mat-paginator>
+         
+          <button routerLink="/ironkeys/new"  mat-fab matTooltip="Adicionar novo Ironkey" color="primary" class="fab-bottom-right">
+            <mat-icon>add</mat-icon>
+          </button>
+  
+    </mat-sidenav-content>
+  </mat-sidenav-container>

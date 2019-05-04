@@ -1,0 +1,28 @@
+<h1 mat-dialog-title>{{ "backupdetails" | translate }}</h1>
+<div mat-dialog-content>
+  <section class="mat-typography">
+      <h4 class="mat-h4">{{data.district.fullName}}</h4>
+  {{ "backup_date" | translate }}: {{data.backupDate | date: 'dd/MM/yyyy'}} <br>
+  {{ "transporter" | translate }}: {{data.transporter.name}} ({{data.transporter.phoneNumber}}) <span class="info-label">{{data.transporter.role}} {{data.transporter.canceledReason}}</span> 
+  <p>
+    <br>
+  <mat-checkbox checked="{{data.updateFinished==true?'checked':''}}" onclick="return false;">{{ "at" | translate }}</mat-checkbox><br>
+  <mat-checkbox checked="{{data.syncFinished==true?'checked':''}}" onclick="return false;">{{ "st" | translate }}</mat-checkbox><br>
+  <mat-checkbox checked="{{data.crossDhis2Finished==true?'checked':''}}" onclick="return false;">{{ "dhis2" | translate }}</mat-checkbox><br>
+  <mat-checkbox checked="{{data.crossIdartFinished==true?'checked':''}}" onclick="return false;">{{ "idart" | translate }}</mat-checkbox><br>
+  <mat-checkbox checked="{{data.validationFinished==true?'checked':''}}" onclick="return false;">{{ "vt" | translate }}</mat-checkbox><br>
+  <mat-checkbox checked="{{data.idartBackup==true?'checked':''}}" onclick="return false;">{{ "include_idart_backup" | translate }} <span *ngIf="data.idartBackup">{{data.idartBackupDate | date: 'dd/MM/yyyy'}}</span></mat-checkbox>
+ </p>
+ 
+ <p *ngIf="data.observation!=null&&data.observation!=''">{{ "obs_district" | translate }}: {{data.observation}} </p>
+ <p><mat-checkbox checked="{{data.received==true?'checked':''}}" onclick="return false;">{{ "hisreceived" | translate }} <span *ngIf="data.received"> {{data.receivername}} ({{data.receivernumber}}) - {{data.receivedate | date: 'dd/MM/yyyy'}}</span></mat-checkbox><br>
+    <mat-checkbox checked="{{data.ik_returned==true?'checked':''}}" onclick="return false;">{{ "ikreturned" | translate }} <span *ngIf="data.ik_returned"> {{data.ik_returnedto}} - {{data.ik_returneddate | date: 'dd/MM/yyyy'}}</span></mat-checkbox><br>
+ </p>
+ {{ "createdby" | translate }}: {{data.createdBy.personName}} ({{data.createdBy.phoneNumber}}) - {{ data.dateCreated | date:'dd/MM/yyyy HH:mm' }}  <br>
+  <span *ngIf="data.updatedBy!=null">{{ "updatedby" | translate }}: {{data.updatedBy.personName}} ({{data.updatedBy.phoneNumber}}) - {{ data.dateUpdated | date:'dd/MM/yyyy HH:mm' }}<br></span>
+<span class="info-label">{{data.uid}}</span>
+</section>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button color="primary" [mat-dialog-close]="">OK</button>
+</div>

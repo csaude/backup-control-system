@@ -1,355 +1,159 @@
-<!--
- Copyright (C) 2014-2018, Friends in Global Health, LLC
- All rights reserved.
- @author Damasceno Lopes
--->
-
-<br>
-<h5 class="light">{{ "serversfound" | translate }}</h5>
-
-<form materialize [formGroup]="form">
-  <div class="row">
-
-    <div class="col s12 l2 m2">
-      <mz-select-container>
-        <select mz-select mz-validation required id="district" label=" {{ 'district' | translate }}" formControlName="district"
-          (change)="search()">
-          <option value="all" selected>Todos Distritos</option>
-          <option *ngFor="let district of alldistricts" [value]="district.districtId">{{ district.name }}</option>
-        </select>
-      </mz-select-container>
-    </div>
-
-    <div class="input-field col s12 m2 l2">
-      <input id="name" type="text" placeholder="{{ 'searchbyname' | translate }}" class="validate" [formControl]="nameValueControl">
-      <label for="name">
-        {{ 'searchbyname' | translate }}
-      </label>
-    </div>
-  </div>
-  <div class="row" style="margin-top: -20px;">
-    <div class="col s6 m2 l2">
-      <mz-select-container>
-        <select mz-select mz-validation required id="district" [label]="'Tipo de Servidor'" formControlName="type"
-          (change)="search()">
-          <option value="all" selected>Todos Tipos</option>
-          <option *ngFor="let type of types" [value]="type.name">{{ type.name }}</option>
-        </select>
-      </mz-select-container>
-    </div>
-
-
-    <br />
-    <div class="col s6 m2 l2">
-      <input type="checkbox" class="filled-in" id="receiveds" formControlName="canceled" (change)="search()" />
-      <label for="receiveds">{{ "canceled" | translate }}</label>
-    </div>
-    <div class="col s12 m8 l8" style="margin-top: -35px;">
-      <ul class="pagination valign-center" *ngIf="isHidden=='hide'">
-
-        <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
-        <mz-select-container style="width: 50px;">
-          <select mz-select id="pageSize" [(ngModel)]="pageSize" [ngModelOptions]="{standalone: true}" (change)="searchSize()">
-            <option value="10" selected>10</option>
-            <option value="25">25</option>
-<option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </mz-select-container>
-
-
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
-        <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
-        <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
-        <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
-
-      </ul>
-    </div>
-  </div>
-</form>
-
-<div class="col s12 card" style="margin-top: -20px;">
-  <div class="progress {{isHidden}}" style="margin-top: 35px; margin-bottom: 0;">
-    <div class="indeterminate"></div>
-  </div>
-  <table class="bordered responsive-table highlight">
-    <thead>
-      <tr>
-        <th>{{ "district" | translate }}</th>
-        <th>{{ "servername" | translate }}</th>
-        <th>{{ "type" | translate }}</th>
-        <th>{{ "lastsync" | translate }}</th>
-        <th>{{ "updatedon" | translate }}</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody *ngIf="isHidden=='hide'">
-      <tr style="line-height: 15px;" *ngFor="let server of servers">
-        <td>{{ server.district.name}}</td>
-        <td>{{ server.name }}</td>
-        <td>{{ server.type }}</td>
-        <td>
-
-          <a (click)="setSync(server.sync_uuid)" (click)="basicModalSync.openModal()" class="waves-effect waves-teal ">
-            <span class="orange-text text-darken-3">
-              {{ server.duration }}</span>
-          </a><br><span *ngIf="server.end_items_to_send" style="font-size: 13px;color:rgb(121, 120, 120);">{{
-            server.end_items_to_send }} {{"items_to_s" | translate}},&nbsp;</span>
-          <span *ngIf="server.end_items_to_receive" style="font-size: 13px;color:rgb(121, 120, 120);">{{
-            server.end_items_to_receive }} {{"items_to_r" | translate}}</span>
-
-
-        </td>
-        <td>{{ server.dateUpdated | date: 'dd/MM/yyyy' }}</td>
-        <td>
-
-          <a mz-tooltip tooltip="{{'details' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setServer(server.uid)"
-          (click)="basicModal2.openModal()" [routerLink]="">
-          <i class="material-icons icon-green">info</i>
+<mat-sidenav-container autosize>
+    <mat-sidenav #drawer mode="side" opened="true" [fixedInViewport]="true" [fixedTopGap]="63" >
+      
+        <mat-toolbar color="primary">
+            <mat-toolbar-row>
+              <span>Menu</span>
+            </mat-toolbar-row>
+        </mat-toolbar>
+  
+      <mat-nav-list>
+        <a mat-list-item routerLink="/home" matTooltip="Ir para a pagina inicial">
+          <mat-icon>home</mat-icon>&nbsp;&nbsp;<span class="nav-caption">Página Inicial</span>
         </a>
-        &nbsp;
-        <a mz-tooltip tooltip="{{'edit' | translate}}" [position]="'top'" [html]="false" [delay]="100" [routerLink]="['/servers', server.uid]">
-          <i class="material-icons icon-orange">mode_edit</i>
+        <a *ngIf="ROLE_SIS" mat-list-item routerLink="/servers/new" matTooltip="Adicionar novo Servidor">
+          <mat-icon>add</mat-icon>&nbsp;&nbsp;<span class="nav-caption">{{ "add" | translate}} novo Servidor</span>
         </a>
-        &nbsp;
-        <a mz-tooltip tooltip="{{'delete' | translate}}" [position]="'top'" [html]="false" [delay]="100" (click)="setServer(server.uid)"
-          (click)="basicModal.openModal()" routerLink="/servers">
-          <i class="material-icons icon-red">delete</i>
+        <a mat-list-item (click)="printListExcel()" *ngIf="isHidden=='hide'" routerLink="/servers" matTooltip="Baixar a lista em Excel">
+          <mat-icon>file_download</mat-icon>&nbsp;&nbsp;<span class="nav-caption">{{ "downloadlist" | translate}} em Excel</span>
         </a>
+        <a mat-list-item (click)="printList()" *ngIf="isHidden=='hide'" routerLink="/servers" matTooltip="Baixar a lista em PDF">
+          <mat-icon>file_download</mat-icon>&nbsp;&nbsp;<span class="nav-caption">{{ "downloadlist" | translate}} em PDF</span>
+        </a>
+      </mat-nav-list>
+  
+      <mat-expansion-panel style="box-shadow: none" [expanded]="district!=''||name!=''||canceled">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+                Pesquisar Dados
+            </mat-panel-title>
+            <mat-panel-description>
+              
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          
+          <div>
+              <form [formGroup]="form">
+    
+                  <mat-form-field style="width: 95%;">
+                      <mat-label>{{ 'district' | translate }}</mat-label>
+                      <mat-select  (change)="search()"  [(value)]="district">
+                        <mat-option value="all" selected>Todos Distritos</mat-option>
+                        <mat-option *ngFor="let district of alldistricts" [value]="district.districtId">{{ district.name }}</mat-option>
+                      </mat-select>
+                      <mat-icon matPrefix>location_on</mat-icon>
+                  </mat-form-field>
+    
+          <mat-form-field style="width: 95%;">
+              <mat-label>{{ 'searchbyname' | translate }}</mat-label>
+              <input matInput type="text" [(ngModel)]="name"  [formControl]="nameValueControl" placeholder="{{ 'searchbyname' | translate }}">
+              <mat-icon matPrefix>search</mat-icon>
+              <button mat-button *ngIf="name" matSuffix mat-icon-button aria-label="Clear" (click)="name=''">
+                  <mat-icon>close</mat-icon>
+                </button>
+          </mat-form-field>
+      
+          <mat-form-field style="width: 95%;">
+              <mat-label>{{ "type" | translate }}</mat-label>
+              <mat-select  formControlName="type" (change)="search()">
+                <mat-option value="all" selected>Todos Tipos</mat-option>
+                <mat-option *ngFor="let type of types" [value]="type.name">{{ type.name }}</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>label_outline</mat-icon>
+          </mat-form-field>
+      
+          <br>
+               <mat-checkbox formControlName="canceled" [(ngModel)]="canceled" (change)="search()">{{ "canceled" | translate }}</mat-checkbox>
+      
+      </form>
+          </div>
+  
+      </mat-expansion-panel>
+      
+  
+    </mat-sidenav>
+    <mat-sidenav-content style="padding: 10px;margin-top: 70px;">
+      
+        <span style="display: inline-flex;">
+            <button mat-mini-fab color="basic" (click)="drawer.toggle()" matTooltip="Esconder / Mostrar Menu lateral"><mat-icon>menu</mat-icon> </button>
+          &nbsp;&nbsp;<h1 class="mat-h1" style="margin-top: 7px;">{{ "serversfound" | translate }} <a matTooltip="Ajuda" target="_blank" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
+        </span>
+          <mat-paginator *ngIf="isHidden=='hide'" [length]="total" [pageIndex]="page" [pageSize]="pageSize"
+            [pageSizeOptions]="[5, 10, 15, 25, 100]" (page)="pageEvent = getPage($event)"></mat-paginator>
+          <mat-progress-bar mode="indeterminate" *ngIf="isHidden==''"></mat-progress-bar>
+          <section class="mat-typography">
+          <span class="info-label" *ngIf="isHidden==''">Carregando dados...</span>
+        </section>
+            <mat-table mat-table [dataSource]="servers" class="mat-elevation-z8" matSort>
+      
+              <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+      
+              <!-- District Column -->
+              <ng-container matColumnDef="district">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{ "district" | translate }} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.district.name}} </mat-cell>
+              </ng-container>
+      
+              <!-- Name -->
+              <ng-container matColumnDef="server">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{ "servername" | translate }} </mat-header-cell>
+                <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+              </ng-container>
+      
+              <!-- Type -->
+              <ng-container matColumnDef="type">
+                <mat-header-cell *matHeaderCellDef > {{ "type" | translate }} </mat-header-cell>
+                <mat-cell *matCellDef="let element">{{element.type}}</mat-cell>
+              </ng-container>
 
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-<ul class="pagination valign-center" *ngIf="isHidden=='hide'">
-
-  <span class="page-size">{{ 'itenspage' | translate }}:</span> &nbsp;&nbsp;
-  <mz-select-container style="width: 50px;">
-    <select mz-select id="pageSize" [(ngModel)]="pageSize" (change)="searchSize()">
-      <option value="10" selected>10</option>
-      <option value="25">25</option>
-<option value="50">50</option>
-      <option value="100">100</option>
-    </select>
-  </mz-select-container>
-
-
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="page-size">{{range}} {{ "of" | translate }} {{total}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <li *ngIf="first=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_left</i></li>
-  <li *ngIf="first==''" class="waves-effect"><a (click)="getPage(previous)"><i class="material-icons">chevron_left</i></a></li>
-  <li *ngIf="last=='disabled'" class="disabled"><i class="material-icons icon-grey">chevron_right</i></li>
-  <li *ngIf="last==''" class="waves-effect"><a (click)="getPage(next)"><i class="material-icons">chevron_right</i></a></li>
-
-</ul>
-
-<!--
-<ul class="pagination" *ngIf="isHidden==''">
-  {{ "loading" | translate }}
-</ul>
--->
-<mz-modal #basicModal>
-  <mz-modal-header>
-    <i mz-icon [align]="'left'" [icon]="'warning'" [size]="'small'">
-    </i>
-    <h4>{{ "confirm" | translate }}</h4>
-  </mz-modal-header>
-  <mz-modal-content>
-    {{ "serverdelete" | translate }}: {{server.name}}? {{ "confirmdelete" | translate }}
-  </mz-modal-content>
-  <mz-modal-footer>
-    <button mz-button [flat]="true" (click)="deleteServer()" mz-modal-close>{{ "yes" | translate }}</button>
-    <button mz-button [flat]="true" mz-modal-close>{{ "no" | translate }}</button>
-  </mz-modal-footer>
-</mz-modal>
-
-<mz-modal #basicModal2 [fixedFooter]="true">
-  <mz-modal-header>
-    <h4>{{ "serverdetails" | translate }}</h4>
-  </mz-modal-header>
-  <mz-modal-content>
-    <div class="row">
-      <div class="col s12">
-        <h5 class="light">{{server.name}}</h5>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "type" | translate }}:</div>
-      <div class="col s12 l10 m10">{{server.type}}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "district" | translate }}:</div>
-      <div class="col s12 l10 m10">{{server.district.name}}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;" *ngIf="server.duration">
-      <div class="col s12 l2 m2">{{ "lastsync" | translate }}:</div>
-      <div class="col s12 l10 m10">
-        {{ server.duration }}
-        <br><span *ngIf="server.end_items_to_send" style="color:rgb(121, 120, 120);">{{ server.end_items_to_send }}
-          {{"items_to_s" | translate}},&nbsp;</span>
-        <span *ngIf="server.end_items_to_receive" style="color:rgb(121, 120, 120);">{{ server.end_items_to_receive }}
-          {{"items_to_r" | translate}}</span>
-      </div>
-    </div>
-
-    <div class="row" *ngIf="server.observation!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "observation" | translate }}:</div>
-      <div class="col s12 l10 m10">{{server.observation}}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{server.createdBy.personName}} - {{ server.dateCreated | date:'dd/MM/yyyy HH:mm' }}</div>
-    </div>
-    <div class="row" *ngIf="server.updatedBy!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{server.updatedBy.personName}} - {{ server.dateUpdated | date:'dd/MM/yyyy HH:mm' }}</div>
-    </div>
-    <div class="row" *ngIf="server.canceledBy!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "canceledby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{server.canceledBy.personName}} - {{ server.dateCanceled | date:'dd/MM/yyyy HH:mm' }}</div>
-    </div>
-    <div class="row" *ngIf="server.canceledBy!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "cancelitreason" | translate }}:</div>
-      <div class="col s12 l10 m10">{{server.canceledReason}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s10">
-        <span style="color:lightgrey;">{{server.uid}}</span>
-      </div>
-    </div>
-  </mz-modal-content>
-  <mz-modal-footer>
-    <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
-  </mz-modal-footer>
-</mz-modal>
-
-<mz-modal #basicModalSync [fixedFooter]="true">
-  <mz-modal-header>
-    <h4>{{ "syncdetails" | translate }}</h4>
-    <div class="progress {{isHidden2m}}">
-      <div class="indeterminate"></div>
-    </div>
-  </mz-modal-header>
-  <mz-modal-content *ngIf="isHidden2m=='hide'">
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12">
-        <h5 class="light">{{sync.server.name}}</h5>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "district" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.district.name}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "sync_time" | translate }}:</div>
-      <div class="col s12 l10 m10">{{getSyncTimeline(sync.startTime,sync.endTime)}}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "duration" | translate }}:</div>
-      <div class="col s12 l10 m10" *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='progress'&&getSyncExpires(sync.startTime)==false"><span style="float: left;text-align: center; margin-left: 0px;" class='new badge orange' data-badge-caption="EM PROGRESSO"></span></div>
-      <div class="col s12 l10 m10" *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='progress'&&getSyncExpires(sync.startTime)==true"><span *ngIf="sync.endItemsToSend==0&&sync.endItemsToReceive==0" class='red-text text-darken-3"'>{{'not_concluded' | translate}}</span></div>
-      <div class="col s12 l10 m10" *ngIf="getSyncStatus(sync.startTime,sync.endTime)=='complete'">{{getSyncDuration(sync.startTime,sync.endTime)}}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "items_onstart" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ sync.startItemsToSend }} {{ "items_send" | translate }}
-        <br>{{ sync.startItemsToReceive }} {{ "items_receive" | translate }}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;" *ngIf="sync.endTime!=null">
-      <div class="col s12 l2 m2">{{ "items_onend" | translate }}:</div>
-      <div class="col s12 l10 m10">{{ sync.endItemsToSend }} {{ "items_send" | translate }}
-        <br>{{ sync.endItemsToReceive }} {{ "items_receive" | translate }}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <input type="checkbox" id="update_finished" checked="{{sync.syncError==true?'checked':''}}" onclick="return false;" />
-        <label for="update_finished">{{ "sync_error_desc" | translate }}</label>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <input type="checkbox" id="serverfault" checked="{{sync.serverFault==true?'checked':''}}" onclick="return false;" />
-        <label for="serverfault">{{ "serverfault" | translate }}</label>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <input type="checkbox" id="laptopfault" checked="{{sync.laptopFault==true?'checked':''}}" onclick="return false;" />
-        <label for="laptopfault">{{ "laptopfault" | translate }}</label>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <input type="checkbox" id="powercut" checked="{{sync.powerCut==true?'checked':''}}" onclick="return false;" />
-        <label for="powercut">{{ "powercut" | translate }}</label>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;" *ngIf="sync.observation!=null">
-      <div class="col s12 l2 m2">{{ "obs_district" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.observation}}</div>
-    </div>
-    <div class="row" style="margin-top: -11px;" *ngIf="sync.observationHis!=null">
-      <div class="col s12 l2 m2">{{ "obs_his" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.observationHis}}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "createdby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.createdBy.personName}} - {{ sync.dateCreated | date:'dd/MM/yyyy HH:mm' }}</div>
-    </div>
-    <div class="row" *ngIf="sync.updatedBy!=null" style="margin-top: -11px;">
-      <div class="col s12 l2 m2">{{ "updatedby" | translate }}:</div>
-      <div class="col s12 l10 m10">{{sync.updatedBy.personName}} - {{ sync.dateUpdated | date:'dd/MM/yyyy HH:mm' }}</div>
-    </div>
-
-    <div class="row" style="margin-top: -11px;">
-      <div class="col s12 l2 m2"></div>
-      <div class="col s12 l10 m10">
-        <span style="color:lightgrey;">{{sync.uid}}</span>
-      </div>
-    </div>
-  </mz-modal-content>
-  <mz-modal-footer>
-    <button mz-button [flat]="true" mz-modal-close>{{ "close" | translate }}</button>
-  </mz-modal-footer>
-</mz-modal>
-
-<div class="fixed-action-btn" style="bottom: 20px; right: 20px;">
-  <a class="btn-floating  btn-large green">
-    <i class="material-icons">more_vert</i>
-  </a>
-  <ul>
-    <li>
-      <a mz-tooltip tooltip="{{'downloadlist' | translate}}" [position]="'left'" [html]="false" [delay]="100" (click)="printList()"
-        class="btn-floating  waves-effect waves-light  orange {{isDisabledt}}">
-        <i class="material-icons">file_download</i>
-      </a>
-    </li>
-    <li *ngIf="ROLE_SIS">
-      <a mz-tooltip tooltip="{{'add' | translate}}" [position]="'left'" [html]="false" [delay]="100"
-        routerLink="/servers/new" class="btn-floating  waves-effect waves-light  blue">
-        <i class="material-icons">add</i>
-      </a>
-    </li>
-  </ul>
-</div>
+              <!-- Last Sync -->
+        <ng-container matColumnDef="last_sync">
+            <mat-header-cell *matHeaderCellDef > {{ "lastsync" | translate }} </mat-header-cell>
+            <mat-cell *matCellDef="let element"> <button *ngIf="element.duration" mat-button matTooltip="Ver detalhes da última Sincronização"
+                (click)="setSync(element.sync_uuid)" [disabled]="isHidden==''">{{ element.duration }}</button></mat-cell>
+          </ng-container>
+      
+                 <!-- Updated On -->
+              <ng-container matColumnDef="updated">
+                  <mat-header-cell *matHeaderCellDef style="text-align: center;"> {{ "updatedon" | translate }} </mat-header-cell>
+                  <mat-cell *matCellDef="let element" style="text-align: center;">  {{ element.dateUpdated | date: 'dd/MM/yyyy'}}</mat-cell>
+                </ng-container>
+      
+              <!-- Actions -->
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let element" style="text-align: center;">
+                  <button mat-icon-button [matMenuTriggerFor]="menu" [disabled]="isHidden==''">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="setServer(element.uid)">
+                      <mat-icon>info</mat-icon>
+                      <span>{{ 'details' | translate}}</span>
+                    </button>
+                    <button *ngIf="ROLE_SIS" mat-menu-item [routerLink]="['/servers', element.uid]">
+                      <mat-icon>mode_edit</mat-icon>
+                      <span>{{ 'edit' | translate}}</span>
+                    </button>
+                    <button *ngIf="ROLE_SIS" mat-menu-item (click)="setServerDelete(element.uid)">
+                      <mat-icon>delete</mat-icon>
+                      <span>{{ 'delete' | translate}}</span>
+                    </button>
+                  </mat-menu>
+                </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+        <br>
+          <mat-paginator *ngIf="isHidden=='hide'" [length]="total" [pageIndex]="page" [pageSize]="pageSize"
+            [pageSizeOptions]="[5, 10, 15, 25, 100]" (page)="pageEvent = getPage($event)">
+          </mat-paginator>
+          
+          <button *ngIf="ROLE_SIS" routerLink="/servers/new"  mat-fab matTooltip="Adicionar novo Servidor" color="primary" class="fab-bottom-right">
+            <mat-icon>add</mat-icon>
+          </button>
+  
+    </mat-sidenav-content>
+  </mat-sidenav-container>

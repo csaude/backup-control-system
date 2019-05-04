@@ -9,7 +9,7 @@ import { District } from '../shared/district';
 import { DistrictsService } from '../shared/districts.service';
 import { IronkeysService } from './../../ironkeys/shared/ironkeys.service';;
 import { Ironkey } from './../../ironkeys/shared/ironkey';
-import { MzToastService } from 'ngx-materialize';
+import { MatSnackBar} from '@angular/material';
 import { TranslateService } from 'ng2-translate';
 
 @Component({
@@ -51,7 +51,7 @@ export class DistrictFormComponent implements OnInit {
     public route: ActivatedRoute,
     public districtsService: DistrictsService,
     public ironkeysService: IronkeysService,
-    public toastService: MzToastService,
+    public snackBar: MatSnackBar,
     public translate: TranslateService
   ) {
     this.form = formBuilder.group({
@@ -84,18 +84,18 @@ export class DistrictFormComponent implements OnInit {
           .subscribe(data => {
             this.alldistricts = data.content;
           });
-        this.ironkeysService.findIronkeys("","","","","","","serial,ironkeyId,uid")
+        this.ironkeysService.findIronkeys("","","","","","","serial,ironkeyId,uid,size")
           .subscribe(data => { this.allironkeys = data.content }, error => { },
             () => {
               this.disabled1 = false;
             });
         return;
       } else {
-        this.districtsService.findOneDistrictByUuid(uuid,"instanceUrl,instanceUsername,instancePassword,districtId,name,province,uid,dateCreated,createdBy.userId,createdBy.uid,ironkeys.serial,ironkeys.ironkeyId,ironkeys.uid,parent.districtId,parent.uid,parent.fullName,canceled,canceledReason").subscribe(
+        this.districtsService.findOneDistrictByUuid(uuid,"instanceUrl,instanceUsername,instancePassword,districtId,name,province,uid,dateCreated,createdBy.userId,createdBy.uid,ironkeys.serial,ironkeys.ironkeyId,ironkeys.uid,ironkeys.size,parent.districtId,parent.uid,parent.fullName,canceled,canceledReason").subscribe(
           district => {
             this.district = district;
             var districtik = district.ironkeys;
-            this.ironkeysService.findIronkeys("","","","","","","serial,ironkeyId,uid")
+            this.ironkeysService.findIronkeys("","","","","","","serial,ironkeyId,uid,size")
               .subscribe(data => {
                 this.allironkeys = data.content;
                 var filteredironkeys = this.allironkeys;
@@ -156,6 +156,11 @@ export class DistrictFormComponent implements OnInit {
     var result, userValue = this.form.value;
     var user = JSON.parse(window.sessionStorage.getItem('user'));
     if (this.district.uid) {
+      if (userValue.canceled == true && userValue.canceledReason == null) {
+        this.openSnackBar("Escreva a razão para anular!", "OK");
+        this.isDisabled = false;
+      }else{
+
       userValue.districtId = this.district.districtId;
       userValue.dateCreated = this.district.dateCreated;
       userValue.uid = this.district.uid;
@@ -168,13 +173,14 @@ export class DistrictFormComponent implements OnInit {
       result.subscribe(data => {
         if (data.text() == "Success") {
           this.router.navigate(['districts']);
-          this.showMsg(userValue.name);
-        } else {
-          this.showMsgErr();
+          this.openSnackBar("Distrito: "+userValue.name+", actualizado com sucesso!", "OK");
+            } else {
+          this.openSnackBar("Este Distrito ja existe!", "OK");
           this.isDisabled = false;
         }
       });
-    } else {
+    }} else {
+      
       userValue.createdBy = {
         uid: this.user.uid,
         userId: this.user.userId
@@ -183,20 +189,20 @@ export class DistrictFormComponent implements OnInit {
       result.subscribe(data => {
         if (data.text() == "Success") {
           this.router.navigate(['districts']);
-          this.showMsg(userValue.name);
+          this.openSnackBar("Distrito: "+userValue.name+", cadastrado com sucesso!", "OK");
         } else {
-          this.showMsgErr();
+          this.openSnackBar("Este Distrito ja existe!", "OK");
           this.isDisabled = false;
         }
       });
     }
   }
 
-  showMsg(district) {
-    this.toastService.show('Distrito: ' + district + ', salvo com sucesso!', 4000, 'green', null);
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 4000,
+    });
   }
 
-  showMsgErr() {
-    this.toastService.show('Este Distrito ja existe!', 4000, 'red', null);
-  }
+  
 }

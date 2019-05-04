@@ -1,100 +1,45 @@
-@-webkit-keyframes pulse {to {box-shadow: 0 0 0 15px rgba(232, 76, 61, 0);}}
-@-moz-keyframes pulse {to {box-shadow: 0 0 0 15px rgba(232, 76, 61, 0);}}
-@-ms-keyframes pulse {to {box-shadow: 0 0 0 15px rgba(232, 76, 61, 0);}}
-@keyframes pulse {to {box-shadow: 0 0 0 15px rgba(232, 76, 61, 0);}}
-
-.pulseb {
-    -webkit-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
-    -moz-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
-    -ms-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
-    animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+.app-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
 }
 
-.pulseb:hover 
-{
-  -webkit-animation: none;-moz-animation: none;-ms-animation: none;animation: none;
+.example-icon {
+  padding: 0 14px;
 }
 
-.notification-badge {
-    display: inline-flex;
-    place-content: center;
-    align-items: center;
-    position: relative;
-    top: -10px;
-    right: 22px;
-    font-size: 11px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color:red;
-    color: rgb(255, 255, 255);
-   
+.example-spacer {
+  flex: 1 1 auto;
 }
 
-.notification-badge2 {
+.badge {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  font-size: 12px;
+  line-height: 13px;
+  border-radius: 50%;
+  width: 13px;
+  height: 13px;
+  background-color: #ff0000; 
+  border: 4px solid #ff0000;
+  color: #ffffff;
+  text-align: center;
   display: inline-flex;
   place-content: center;
   align-items: center;
-  position: absolute;
-  top: 14px;
-  right: 24px;
-  font-size: 11px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color:red;
-  color: rgb(255, 255, 255);
- 
-}
-
-.notification-badge2s {
-  display: inline-flex;
-  place-content: center;
-  align-items: center;
-  position: absolute;
-  top: 222px;
-  right: 294px;
-  font-size: 11px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color:red;
-  color: rgb(255, 255, 255);
- 
-}
-
-#userNameInitials{
-  color: rgb(255, 255, 255);
-  background-color: green;
-  user-select: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  border-radius: 50%;
-  height: 32px;
-  width: 32px;
-  font-weight: 700;
-  line-height: 32px;
-  margin-left: -2px;
-
-}
-
-.btn-small {
-  height: 32px;
-  line-height: 32px;
-  width: 32px;
   
 }
 
 
-@media only screen and (min-width: 601px){
-  nav, nav .nav-wrapper i, nav a.button-collapse, nav a.button-collapse i {
-      height: 53px;
-      line-height: 53px;
+div.plMenuCSS { 
+  max-width:600px;
   }
-}
 
-i.icon-red {
-  color: red;
-}
+  a.lopesMenu.mat-menu-item:hover{
+    background-color: rgba(0,0,0,.14);
+  }
+

@@ -58,8 +58,8 @@
     "districtsfound": "Districts Management",
     "province": "Province",
     "district": "District",
-    "lastbackuprestored": "Last restored backup",
-    "lastbackupreceived": "Last received backup",
+    "lastbackuprestored": "Last restored OpenMRS",
+    "lastbackupreceived": "Last received iDART",
     "districtsironkeys": "Ironkey(s)",
     "districtnew": "New District",
     "districtedit": "Edit District",
@@ -157,6 +157,7 @@
     "items_to_receive":"Items to receive on start",
     "sync_error":"Error found?",
     "sync_error_desc":"Error found on synchronization?",
+    "sync_error_desc_resolved":"Error resolved?",
     "end_items_to_send":"Items to send on end",
     "end_items_to_receive":"Items to receive on end",
     "sync_time":"Synchronization Time?",
@@ -173,6 +174,9 @@
     "include_idart_backup":"Include iDART Backup?",
     "serverfault":"Server fault?",
     "laptopfault":"Laptop fault?",
+    "serverfault_resolved":"Server fixed?",
+    "laptopfault_resolved":"Laptop fixed?",
+    "powercut_resolved":"Power returned?",
     "powercut":"Power cut?",
     "openmrsconnection":"OpenMRS Connection",
     "lastbackuprestoreddate":"Date of last backup restored",
@@ -204,5 +208,7 @@
     "synced":"Sinchronized",
     "not_concluded":"Not concluded",
     "cant_edit_sync":"Can't edit past records",
-    "initial_state": "Initial State"
+    "initial_state": "Initial State",
+    "backupservers":"Servers State",
+    "datacompleteness":"Data Completeness"
 }
