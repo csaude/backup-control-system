@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Routes, RouterModule } from '@angular/router';
 import { AuthManagerServersRead } from './authmanagerread';
 import { AuthManagerServersEdit } from './authmanageredit';
@@ -15,6 +11,6 @@ const serversRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const serversRouting = RouterModule.forChild(serversRoutes);

@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -23,7 +19,7 @@ import { MatSnackBar} from '@angular/material';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class SendFormComponent implements OnInit {
 
@@ -108,7 +104,11 @@ export class SendFormComponent implements OnInit {
       this.isHidden = uuid ? '' : 'hide';
       if (!uuid) {
 
+        if(this.ROLE_SIS){
         this.alldistricts = user.districts.filter(item=>item.canceled==false);
+        }else{
+        this.alldistricts = user.districts.filter(item=>item.canceled==false&&item.fullName!='Quelimane');
+        }
 
         this.alldistricts.sort(function (a, b) {
           var nameA = a.fullName.toUpperCase(); // ignore upper and lowercase
@@ -149,13 +149,15 @@ export class SendFormComponent implements OnInit {
               if(this.send.idartBackup){
                 this.send.idartBackupDate=new Date(send.idartBackupDate);
               }
-              this.alldistricts = user.districts.filter(item=>item.canceled==false);
+              
+              if(this.ROLE_SIS){
+                this.alldistricts = user.districts.filter(item=>item.canceled==false);
+                }else{
+                this.alldistricts = user.districts.filter(item=>item.canceled==false&&item.fullName!='Quelimane');
+                }
+              
               var filtereddistricts = this.alldistricts;
               filtereddistricts = filtereddistricts.filter(item => item.districtId !== this.send.district.districtId);
-
-              if (!this.ROLE_SIS && user.districts.find(item => item.parent != null)) {
-                filtereddistricts = filtereddistricts.filter(item => item.parent != null);
-              }
 
               filtereddistricts.push(this.send.district);
               this.alldistricts = filtereddistricts.sort(function (a, b) {

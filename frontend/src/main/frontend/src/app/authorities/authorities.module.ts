@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { NgModule } from '@angular/core';
 import { AuthoritiesService } from './shared/authorities.service';
 
@@ -15,6 +11,6 @@ import { AuthoritiesService } from './shared/authorities.service';
 })
 
 /** 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 export class AuthoritiesModule { }

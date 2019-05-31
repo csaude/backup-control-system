@@ -1,7 +1,3 @@
-/*
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 package mz.org.fgh.scb.authority;
 
 import java.util.List;
@@ -14,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @RestController

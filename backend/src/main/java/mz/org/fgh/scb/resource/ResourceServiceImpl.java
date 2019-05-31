@@ -1,7 +1,3 @@
-/*
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 package mz.org.fgh.scb.resource;
 
 import java.util.List;
@@ -11,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Service
@@ -111,8 +107,8 @@ public class ResourceServiceImpl implements ResourceService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<String> findUsersForSyncErrorNotification(Long district_id) {
-		return resourceRepository.findUsersForSyncErrorNotification(district_id);
+	public List<String> findUsersForSyncOccurenceNotification(Long district_id) {
+		return resourceRepository.findUsersForSyncOccurenceNotification(district_id);
 	}
 	
 }

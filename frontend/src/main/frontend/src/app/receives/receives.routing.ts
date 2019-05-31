@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Routes, RouterModule } from '@angular/router';
 import { ReceivesComponent } from './receives.component';
 import { ReceiveFormComponent } from "./receive-form/receive-form.component";
@@ -16,6 +12,6 @@ const receivesRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const receivesRouting = RouterModule.forChild(receivesRoutes);

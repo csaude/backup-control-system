@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component, OnInit,Inject, ViewChild,forwardRef } from '@angular/core';
 import { FormBuilder, FormGroup,NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatDialog, MatDialogRef, MatSort, MatTableDataSource, MAT_DIALOG_DATA, PageEvent,MatSnackBar } from '@angular/material';
@@ -21,7 +17,7 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class SendsComponent implements OnInit {
   public ROLE_SIS; ROLE_IT; ROLE_OA; ROLE_GMA; ROLE_ODMA; ROLE_ORMA; ROLE_GDD;isHidden; isHidden2m: string;
@@ -57,6 +53,13 @@ export class SendsComponent implements OnInit {
       idart: []
     });
   }
+  public icon= 'chevron_left';
+  public changeIcon(){
+    if(this.icon=='chevron_left')
+    this.icon='chevron_right';
+    else
+    this.icon='chevron_left';
+  }
   ngOnInit() {
     this.isHidden = "";
     this.received = false;
@@ -77,7 +80,11 @@ export class SendsComponent implements OnInit {
     this.ROLE_GMA = window.sessionStorage.getItem('ROLE_GMA');
 
 
-    this.alldistricts = user.districts;
+    if(this.ROLE_SIS){
+      this.alldistricts = user.districts.filter(item=>item.canceled==false);
+      }else{
+      this.alldistricts = user.districts.filter(item=>item.canceled==false&&item.fullName!='Quelimane');
+      }
 
     this.alldistricts.sort(function (a, b) {
       var nameA = a.fullName.toUpperCase(); // ignore upper and lowercase
@@ -289,9 +296,9 @@ export class SendsComponent implements OnInit {
 
   setSend(uuid) {
     this.send = this.sends1.find(item => item.uid == uuid);
-    this.isHidden2m="hide";
+    this.isHidden="hide";
     if (this.send.received == true) {
-      this.isHidden2m="";
+      this.isHidden="";
       this.receivesService.findOneReceiveBySendUuid(uuid,"createdBy.phoneNumber,updatedBy.phoneNumber,createdBy.uid,createdBy.userId,send.sendId,transporter.transporterId,transporter.uid,transporter.name,transporter.phoneNumber,receiveId,receiveDate,ikReturned,dateIkReturned,dateCreated,dateUpdated,createdBy.personName,uid,dateRestored,canceledReason,restoredBy.personName,ikReturnedBy.personName,restored")
         .subscribe(data => {
           this.receive = data;
@@ -314,10 +321,10 @@ export class SendsComponent implements OnInit {
         }, error => {
         },
           () => {
-            this.isHidden2m="hide"; this.openDialog();
+            this.isHidden="hide"; this.openDialog();
           });
     } else {
-      this.isHidden2m="hide";
+      this.isHidden="hide";
       this.openDialog();
     }
   }

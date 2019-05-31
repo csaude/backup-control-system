@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component } from '@angular/core';
 @Component({
   selector: 'app-root',
@@ -10,7 +6,7 @@ import { Component } from '@angular/core';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class AppComponent {
   title = 'app works!';

@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Routes, RouterModule } from '@angular/router';
 import { EvaluationsComponent } from './evaluations.component';
 import { EvaluationFormComponent } from "./evaluation-form/evaluation-form.component";
@@ -15,6 +11,6 @@ const evaluationsRoutes: Routes = [
 ];
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 export const evaluationsRouting = RouterModule.forChild(evaluationsRoutes);

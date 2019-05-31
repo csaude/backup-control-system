@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -19,9 +15,14 @@ import { TranslateService } from 'ng2-translate';
 })
 
 /** 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 export class DistrictFormComponent implements OnInit {
+  
+  /**
+   *If this is already persisted on the database dont edit or delete
+   *Just add new value
+   */
   public provinces = [
     { name: 'Cabo Delgado' },
     { name: 'Gaza' },
@@ -43,7 +44,6 @@ export class DistrictFormComponent implements OnInit {
   public alldistricts: District[] = [];
   public allironkeys: Ironkey[] = [];
   public user: any;
-
    
   constructor(
     public formBuilder: FormBuilder,

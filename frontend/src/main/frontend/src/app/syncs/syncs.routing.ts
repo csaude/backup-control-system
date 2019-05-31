@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Routes, RouterModule } from '@angular/router';
 import { SyncsComponent } from './syncs.component';
 import { SyncFormComponent } from "./sync-form/sync-form.component";
@@ -15,6 +11,6 @@ const syncsRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const syncsRouting = RouterModule.forChild(syncsRoutes);

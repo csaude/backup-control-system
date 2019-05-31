@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component, OnInit,Inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef, MatSort, MatTableDataSource, MAT_DIALOG_DATA, PageEvent,MatSnackBar } from '@angular/material';
@@ -19,7 +15,7 @@ import 'rxjs/add/operator/debounceTime';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class TransportersComponent implements OnInit {
   public transporter: Transporter = new Transporter();
@@ -68,6 +64,13 @@ export class TransportersComponent implements OnInit {
         this.deleteTransporter();
       }
     });
+  }
+  public icon= 'chevron_left';
+  public changeIcon(){
+    if(this.icon=='chevron_left')
+    this.icon='chevron_right';
+    else
+    this.icon='chevron_left';
   }
   ngOnInit() {
     this.name = "";

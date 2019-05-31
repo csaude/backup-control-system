@@ -1,12 +1,8 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { User } from '../../users/shared/user';
 import { District } from '../../districts/shared/district';
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 export class Ironkey {
   ironkeyId: number;

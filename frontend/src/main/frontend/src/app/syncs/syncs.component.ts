@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef, MatSort, MatTableDataSource, MAT_DIALOG_DATA, PageEvent } from '@angular/material';
@@ -37,7 +33,7 @@ export class ReportObj{
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class SyncsComponent implements OnInit {
   public syncs;syncs1: Sync[] = [];
@@ -82,7 +78,7 @@ export class SyncsComponent implements OnInit {
   
 
   constructor(
-    private excelService:ExcelService,
+    public excelService:ExcelService,
     public resourcesService: ResourcesService,
     public datepipe: DatePipe,
     public syncsService: SyncsService,
@@ -96,6 +92,13 @@ export class SyncsComponent implements OnInit {
       start_from: [],
       start_until: []
     });
+  }
+  public icon= 'chevron_left';
+  public changeIcon(){
+    if(this.icon=='chevron_left')
+    this.icon='chevron_right';
+    else
+    this.icon='chevron_left';
   }
   ngOnInit() {
     this.total = 0;

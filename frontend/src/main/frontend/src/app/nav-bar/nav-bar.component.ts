@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 
 import { Component, OnInit,ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
@@ -16,7 +12,7 @@ import { ResourcesService } from "./../resources/shared/resources.service";
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class NavBarComponent implements OnInit {
   public user;

@@ -1,7 +1,3 @@
-/*
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 package mz.org.fgh.scb.transporter;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -15,7 +11,7 @@ import mz.org.fgh.scb.filter.FilterOperation;
 import mz.org.fgh.scb.filter.SearchCriteria;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public class TransporterSpecification implements Specification<Transporter> {

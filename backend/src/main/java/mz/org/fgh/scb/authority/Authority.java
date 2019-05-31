@@ -1,7 +1,3 @@
-/*
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 package mz.org.fgh.scb.authority;
 
 import java.util.HashSet;
@@ -22,7 +18,7 @@ import io.swagger.annotations.ApiModelProperty;
 import mz.org.fgh.scb.user.User;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "authority")

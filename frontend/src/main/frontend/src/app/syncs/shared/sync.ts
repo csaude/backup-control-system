@@ -1,13 +1,9 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Server } from './../../servers/shared/server';
 import { District } from './../../districts/shared/district';
 import { User } from './../../users/shared/user';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class Sync {
   syncId: number;

@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
@@ -22,7 +18,7 @@ import 'chartjs-plugin-datalabels';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class HomeComponent implements OnInit {
 
@@ -38,8 +34,8 @@ export class HomeComponent implements OnInit {
   public barChartData: any[] = [];
   public alldistricts;alldistricts2: District[] = [];
   public allservers;allservers2;allservers3;allservers4: Server[] = [];
-  public prevMonth= new Date(new Date().getFullYear(),new Date().getMonth()-2,new Date().getDate());
-  public currentMonth= new Date(new Date().getFullYear(),new Date().getMonth()-1,new Date().getDate());
+  public prevMonth= new Date(new Date().getFullYear(),new Date().getMonth()-2,1);
+  public currentMonth= new Date(new Date().getFullYear(),new Date().getMonth()-1,1);
 
 
   public barChartOptions: any = {
@@ -726,6 +722,9 @@ export class HomeComponent implements OnInit {
 
   }
   ngOnInit() {
+
+    console.log(this.currentMonth);
+
     this.isHidden=true;
     this.isAuth = false;
     this.chart1 = false;

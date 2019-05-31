@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component, OnInit,Inject, ViewChild,forwardRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef, MatSort, MatTableDataSource, MAT_DIALOG_DATA, PageEvent,MatSnackBar } from '@angular/material';
@@ -30,7 +26,7 @@ export class ReportObj{
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class ReceivesComponent implements OnInit {
   public sends;sends1: Send[] = [];
@@ -75,7 +71,13 @@ export class ReceivesComponent implements OnInit {
     
 
   }
-
+  public icon= 'chevron_left';
+  public changeIcon(){
+    if(this.icon=='chevron_left')
+    this.icon='chevron_right';
+    else
+    this.icon='chevron_left';
+  }
   ngOnInit() {
     this.isHidden = "";
    

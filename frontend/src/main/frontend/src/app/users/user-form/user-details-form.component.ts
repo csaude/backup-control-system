@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -23,7 +19,7 @@ import { MatSnackBar} from '@angular/material';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class UserDetailsFormComponent implements OnInit {
   public form: FormGroup;
@@ -116,7 +112,7 @@ export class UserDetailsFormComponent implements OnInit {
         return;
       } else {
         this.isHidden2 = 'hide';
-        this.usersService.findOneUserByUuid(uuid,"creatorName,updaterName,locale,userId,person.gender,person.othersNames,person.surname,person.email,person.phoneNumber,enabled,dateCreated,dateUpdated,creatorId,updaterId,uid,districts.fullName,districts.uid,authorities.description,lastLogin,username,person.personId,person.uid,districts.districtId,creatorId,authorities.authorityId,notification").subscribe(
+        this.usersService.findOneUserByUuid(uuid,"creatorName,updaterName,locale,userId,person.gender,person.othersNames,person.surname,person.email,person.phoneNumber,enabled,dateCreated,dateUpdated,creatorId,updaterId,uid,districts.fullName,districts.canceled,districts.uid,authorities.description,lastLogin,username,person.personId,person.uid,districts.districtId,creatorId,authorities.authorityId,notification").subscribe(
           user2 => {
             this.user = user2;
             var userdistrict = this.user.districts;

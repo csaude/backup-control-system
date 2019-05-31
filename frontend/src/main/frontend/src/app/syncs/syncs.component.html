@@ -79,7 +79,7 @@
     <mat-sidenav-content style="padding: 10px; margin-top: 70px;">
   
       <span style="display: inline-flex;">
-        <button mat-mini-fab color="basic" (click)="drawer.toggle()" matTooltip="Esconder / Mostrar Menu lateral"><mat-icon>menu</mat-icon> </button>
+        <button mat-mini-fab color="basic" (click)="drawer.toggle()" (click)="changeIcon()" matTooltip="Esconder / Mostrar Menu lateral"><mat-icon>{{icon}}</mat-icon> </button>
       &nbsp;&nbsp;<h1 class="mat-h1" style="margin-top: 7px;">{{ "syncsfound" | translate }} <a matTooltip="Ajuda" target="_blank" href="https://docs.google.com/document/d/1Sl5kc243TsGjfhXs0wG130wR2JJ9OonGSGea3o3chsM"><mat-icon style="vertical-align: middle;">help_outline</mat-icon></a></h1>
     </span>
       <mat-paginator *ngIf="isHidden=='hide'" [length]="total" [pageIndex]="page" [pageSize]="pageSize"

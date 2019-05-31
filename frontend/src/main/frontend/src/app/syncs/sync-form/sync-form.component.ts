@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -24,7 +20,7 @@ import { NavbarService } from '../../nav-bar/nav-bar.service';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class SyncFormComponent implements OnInit {
   public form: FormGroup;
@@ -287,7 +283,7 @@ export class SyncFormComponent implements OnInit {
                 uid: user.uid,
                 userId: user.userId
               };
-              userValue.observation = this.sync.observation;
+              userValue.observationHis = this.sync.observationHis;
               userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.startTime );
 
               if (userValue.endTime != null && userValue.endTime != "") {
@@ -321,7 +317,7 @@ export class SyncFormComponent implements OnInit {
                 uid: user.uid,
                 userId: user.userId
               };
-              userValue.observationHis = this.sync.observationHis;
+              userValue.observation = this.sync.observation;
 
               userValue.startTime = new Date(this.datepipe.transform(new Date(), 'yyyy-MM-dd') + " " + userValue.startTime );
 

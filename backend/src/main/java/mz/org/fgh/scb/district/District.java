@@ -1,7 +1,3 @@
-/*
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 package mz.org.fgh.scb.district;
 
 import java.util.Date;
@@ -28,7 +24,7 @@ import mz.org.fgh.scb.ironkey.Ironkey;
 import mz.org.fgh.scb.user.User;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "district")
@@ -56,16 +52,25 @@ public class District {
 	@Column(name = "instance_password")
 	private String instancePassword;
 
+	/**
+	 * A District can have a set of Ironkeys to transport monthly backups to Headquarters
+	 */
 	@ApiModelProperty(hidden = true)
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "district_ironkey", joinColumns = { @JoinColumn(name = "district_id", nullable = false, updatable = false) }, inverseJoinColumns = {
 			@JoinColumn(name = "ironkey_id", nullable = false, updatable = false) }, uniqueConstraints = { @UniqueConstraint(columnNames = { "district_id", "ironkey_id" }) })
 	private Set<Ironkey> ironkeys = new HashSet<Ironkey>(0);
 
+	/**
+	 * Many Users Can work in the same district
+	 */
 	@ApiModelProperty(hidden = true)
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "districts")
 	private Set<User> users = new HashSet<User>(0);
 
+	/**
+	 * This unique id can be used for data exchange in the future
+	 */
 	@Column(nullable = false, unique = true, name = "uuid")
 	private String uid;
 
@@ -75,6 +80,10 @@ public class District {
 	@Column(name = "canceled_reason")
 	private String canceledReason;
 
+	/**
+	 * This property where created to respond Backup in the Health Facility Level
+	 * Health Facility have parent wich is District
+	 */
 	@ApiModelProperty(hidden = true)
 	@JoinColumn(name = "parent_id")
 	@ManyToOne

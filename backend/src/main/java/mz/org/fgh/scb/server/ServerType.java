@@ -1,7 +1,7 @@
 package mz.org.fgh.scb.server;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public enum ServerType {

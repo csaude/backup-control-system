@@ -1,27 +1,23 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import * as CryptoJS from 'crypto-js';
 import * as myGlobals from '../../../globals';
 import { Subject } from 'rxjs/Subject';
 
-/** 
-* @author Damasceno Lopes
-*/
+/**
+ * @author Damasceno Lopes <damascenolopess@gmail.com> <damascenolopess@gmail.com>
+ *
+ */
 @Injectable()
 export class DistrictsService {
 
   public url: string = myGlobals.API;
-  invokeEvent: Subject<any> = new Subject();
+  public invokeEvent: Subject<any> = new Subject();
 
   constructor(public http: Http) {
   }
 
-
-  callMethodOfSecondComponent() {
+  callMethodOfSecondComponent(): void {
     this.invokeEvent.next('someVal');
   }
 
@@ -62,6 +58,7 @@ export class DistrictsService {
     headers.append('Content-Type', 'application/json');
     return this.http.put(this.url + "/v1/districts", JSON.stringify(district), { headers: headers });
   }
+
   deleteDistrict(uid) {
     var headers = new Headers();
     var parsedWordArray = CryptoJS.enc.Base64.parse(window.sessionStorage.getItem('password'));

@@ -1,7 +1,3 @@
-/*
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 package mz.org.fgh.scb.receive;
 
 import java.util.Date;
@@ -21,7 +17,7 @@ import mz.org.fgh.scb.transporter.Transporter;
 import mz.org.fgh.scb.user.User;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Entity(name = "receive")

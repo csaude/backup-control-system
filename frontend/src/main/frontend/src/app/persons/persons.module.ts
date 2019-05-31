@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { NgModule } from '@angular/core';
 
 @NgModule({
@@ -16,6 +12,6 @@ import { NgModule } from '@angular/core';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class PersonsModule { }

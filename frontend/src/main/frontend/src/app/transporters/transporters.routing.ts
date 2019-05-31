@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Routes, RouterModule } from '@angular/router';
 import { TransportersComponent } from './transporters.component';
 import { TransporterFormComponent } from "./transporter-form/transporter-form.component";
@@ -15,6 +11,6 @@ const transportersRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const transportersRouting = RouterModule.forChild(transportersRoutes);

@@ -34,18 +34,21 @@
     
     
        </mat-form-field>
+
+       <span align="end">
+    <br>
+        <mat-progress-bar mode="indeterminate" *ngIf="isDisabled"></mat-progress-bar>
+
+        <button type="submit" mat-raised-button color="primary" [disabled]="isDisabled">Login</button>
+     
+     
+       </span>
     
     
     </mat-card-content>
     
     
-    <mat-card-actions align="end">
-    
-       <mat-progress-bar mode="indeterminate" *ngIf="isDisabled"></mat-progress-bar>
-       <button type="submit" mat-raised-button color="primary" [disabled]="isDisabled">Login</button>
-    
-    
-    </mat-card-actions>
+  
 
   </form>
     

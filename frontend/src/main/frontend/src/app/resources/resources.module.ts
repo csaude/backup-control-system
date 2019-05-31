@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { NgModule } from '@angular/core';
 import { ResourcesService } from './shared/resources.service';
 import { ExcelService } from './shared/excel.service';
@@ -17,6 +13,6 @@ import { ExcelService } from './shared/excel.service';
 })
 
 /** 
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  */
 export class ResourcesModule { }

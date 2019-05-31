@@ -1,7 +1,3 @@
-/*
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 package mz.org.fgh.scb.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +9,7 @@ import mz.org.fgh.scb.user.User;
 import mz.org.fgh.scb.user.UserRepository;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Service

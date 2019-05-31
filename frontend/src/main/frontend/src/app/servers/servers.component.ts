@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component, OnInit,Inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef, MatSort, MatTableDataSource, MAT_DIALOG_DATA, PageEvent,MatSnackBar } from '@angular/material';
@@ -29,7 +25,7 @@ import {ExcelService} from '../resources/shared/excel.service';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class ServersComponent implements OnInit {
   public servers;servers1; serversreport: Server[] = [];
@@ -71,7 +67,7 @@ export class ServersComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
      
   constructor(
-    private excelService:ExcelService,
+    public excelService:ExcelService,
     public datepipe: DatePipe,
     public serversService: ServersService,
     public resourcesService: ResourcesService,
@@ -93,6 +89,13 @@ export class ServersComponent implements OnInit {
       }
     });
 
+  }
+  public icon= 'chevron_left';
+  public changeIcon(){
+    if(this.icon=='chevron_left')
+    this.icon='chevron_right';
+    else
+    this.icon='chevron_left';
   }
   ngOnInit() {
     if(window.sessionStorage.getItem('server-name')){

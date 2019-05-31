@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { DatePipe } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
@@ -32,7 +28,7 @@ declare var jsPDF: any;
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class DistrictsComponent implements OnInit {
 
@@ -64,6 +60,13 @@ export class DistrictsComponent implements OnInit {
   public displayedColumns: string[] = ['fullName','last_backup_received','last_backup_idart','last_sync',,'ironkeys','updated','actions'];
   @ViewChild(MatSort) sort: MatSort;
   
+  public icon= 'chevron_left';
+  public changeIcon(){
+    if(this.icon=='chevron_left')
+    this.icon='chevron_right';
+    else
+    this.icon='chevron_left';
+  }
 
   constructor(
     public datepipe: DatePipe,

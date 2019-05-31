@@ -1,13 +1,9 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Send } from './../../sends/shared/send';
 import { Transporter } from './../../transporters/shared/transporter';
 import { User } from './../../users/shared/user';
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class Receive {
   districtname: string;

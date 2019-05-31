@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Routes, RouterModule } from '@angular/router';
 import { AuthManagerIronkeysRead } from './authmanagerread';
 import { AuthManagerIronkeysEdit } from './authmanageredit';
@@ -14,6 +10,6 @@ const ironkeysRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const ironkeysRouting = RouterModule.forChild(ironkeysRoutes);

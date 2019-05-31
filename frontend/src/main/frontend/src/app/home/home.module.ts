@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { NgModule } from '@angular/core';
 import { HomeComponent } from './home.component';
 import { CommonModule } from '@angular/common';
@@ -76,6 +72,6 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class HomesModule { }

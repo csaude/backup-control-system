@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component, OnInit,Inject, ViewChild } from '@angular/core';
 import { UsersService } from "./shared/users.service";
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -19,7 +15,7 @@ import 'rxjs/add/operator/debounceTime';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class UsersComponent implements OnInit {
   public users;users1: User[] = [];
@@ -56,6 +52,13 @@ export class UsersComponent implements OnInit {
         }
       });
      }
+     public icon= 'chevron_left';
+  public changeIcon(){
+    if(this.icon=='chevron_left')
+    this.icon='chevron_right';
+    else
+    this.icon='chevron_left';
+  }
   ngOnInit() {
     this.username = "";
     this.enabled=true;

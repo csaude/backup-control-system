@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-not-found',
@@ -10,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
 })
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export class NotFoundComponent implements OnInit {
   constructor() { }

@@ -1,13 +1,9 @@
-/*
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 package mz.org.fgh.scb.resource;
 
 import java.util.List;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 public interface ResourceService {
@@ -99,7 +95,7 @@ public interface ResourceService {
 	 * @param district_id the District id
 	 * @return all emails of District Officers of the given District
 	 */
-	List<String> findUsersForSyncErrorNotification(Long district_id);
+	List<String> findUsersForSyncOccurenceNotification(Long district_id);
 
 	/**
 	 * Returns the number of Syncs in progress

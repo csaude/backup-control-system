@@ -1,7 +1,3 @@
-/*
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 package mz.org.fgh.scb.user;
 
 import java.util.regex.Matcher;
@@ -29,7 +25,7 @@ import mz.org.fgh.scb.exception.ItemNotFoundException;
 import mz.org.fgh.scb.filter.PageRequestBuilder;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @RestController

@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 import { Routes, RouterModule } from '@angular/router';
 import { SendsComponent } from './sends.component';
 import {SendFormComponent} from "./send-form/send-form.component";
@@ -15,6 +11,6 @@ const sendsRoutes: Routes = [
 ];
 
 /** 
-* @author Damasceno Lopes
+* @author Damasceno Lopes <damascenolopess@gmail.com>
 */
 export const sendsRouting = RouterModule.forChild(sendsRoutes);

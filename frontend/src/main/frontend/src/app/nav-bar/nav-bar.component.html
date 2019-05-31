@@ -1,10 +1,20 @@
 <mat-toolbar color="primary" class="app-navbar" *ngIf="isAuth">
         <span routerLink="/home">SCB</span>
         <span class="example-spacer"></span>
-          <button mat-icon-button [matMenuTriggerFor]="menu" style="margin-right: 20px;">
+
+        <span matTooltip="{{user.person.othersNames}} {{user.person.surname}}" id="userNameInitials">{{user.person.othersNames| slice:0:1}}{{user.person.surname|slice:0:1}}</span><span style="color:#CCC;font-size: 12px; margin-left: 5px;">{{user.person.othersNames}}</span>
+
+        <!--
+        <button mat-icon-button routerLink="/home" matTooltip="Página Inicial" style="margin-left: 10px;">
+            <mat-icon >home</mat-icon>
+        </button>
+-->
+
+          <button mat-icon-button [matMenuTriggerFor]="menu" style="margin-right: 15px;margin-left: 12px;">
             <mat-icon >apps</mat-icon>
             <span class="badge" *ngIf="(ROLE_SIS||ROLE_ODMA)&&(total2>0||total>0)">{{total2+total}}</span>
           </button>
+
           <mat-menu #menu="matMenu" [overlapTrigger]="false" class="plMenuCSS">
 
             <div style="display: flex; width: 400px;">
@@ -83,7 +93,8 @@
 
           </mat-menu>
 
-<button mat-mini-fab [matMenuTriggerFor]="menu2" style="background-color:lightgray;color: black;">{{user.person.othersNames| slice:0:1}}{{user.person.surname|slice:0:1}} </button> <mat-icon [matMenuTriggerFor]="menu2">arrow_drop_down</mat-icon>
+<!--<button mat-mini-fab [matMenuTriggerFor]="menu2" style="background-color:lightgray;color: black;">{{user.person.othersNames| slice:0:1}}{{user.person.surname|slice:0:1}} </button> -->
+<mat-icon [matMenuTriggerFor]="menu2">arrow_drop_down</mat-icon>
 <mat-menu #menu2="matMenu" [overlapTrigger]="false">
       <a mat-menu-item style="text-decoration: none;" (click)="setUser()" [routerLink]="['/users/profile', user.uid]">
         <mat-icon>people_outline</mat-icon>
@@ -93,6 +104,12 @@
         <mat-icon>help_outline</mat-icon>
         <span >Obter {{"help" | translate}}</span>
       </a>
+
+      <a *ngIf="ROLE_SIS" mat-menu-item style="text-decoration: none;" target="_blank" href="/scb/swagger-ui.html">
+        <mat-icon>help_outline</mat-icon>
+        <span >API docs</span>
+      </a>
+
       <button (click)="logout()" mat-menu-item>
         <mat-icon>exit_to_app</mat-icon>
         <span> {{ "exit" | translate }}</span>

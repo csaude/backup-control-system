@@ -1,7 +1,3 @@
-/*
- * Copyright (C) 2014-2018, Friends in Global Health, LLC
- * All rights reserved.
- */
 package mz.org.fgh.scb.sync;
 
 import java.text.DateFormat;
@@ -26,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import mz.org.fgh.scb.resource.ResourceRepository;
 
 /**
- * @author Damasceno Lopes
+ * @author Damasceno Lopes <damascenolopess@gmail.com>
  *
  */
 @Service
@@ -83,7 +79,7 @@ public class SyncServiceImpl implements SyncService {
 			errorExist="";
 			header_color="#3f51b5";
 			if (sync.isSyncError()&&sync.isSyncErrorResolved()==false) {
-				error= "Erro de Sincronização<br>";
+				error= "Erro de Sync<br>";
 				header_color="#f44336";
 				errorExist=" (Bug)";
 			} 
@@ -109,7 +105,7 @@ public class SyncServiceImpl implements SyncService {
 			} else if (sync.getObservation() == null && sync.getObservationHis() != null) {
 				obs =  sync.getObservationHis();
 			} else if (sync.getObservation() != null && sync.getObservationHis() != null) {
-				obs =  "M&A: " + sync.getObservation() + "\nSIS: " + sync.getObservationHis();
+				obs =  "M&A: " + sync.getObservation() + "<br>SIS: " + sync.getObservationHis();
 			}
 			
 			district = sync.getServer().getDistrict().getName();
@@ -128,7 +124,7 @@ public class SyncServiceImpl implements SyncService {
 						r1 = resourceRepository.findUsersForSyncNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");
 						}
 						else {
-							r1 = resourceRepository.findUsersForSyncErrorNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");	
+							r1 = resourceRepository.findUsersForSyncOccurenceNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");	
 						}
 						String r2 = r1.replace("]", " ");
 						String[] temp;
@@ -221,7 +217,7 @@ public class SyncServiceImpl implements SyncService {
 				errorExist="";
 				header_color="#3f51b5";
 				if (sync.isSyncError()&&sync.isSyncErrorResolved()==false) {
-					error= "Erro de Sincronização<br>";
+					error= "Erro de Sync<br>";
 					header_color="#f44336";
 					errorExist=" (Bug)";
 				} 
@@ -247,7 +243,7 @@ public class SyncServiceImpl implements SyncService {
 				} else if (sync.getObservation() == null && sync.getObservationHis() != null) {
 					obs =  sync.getObservationHis();
 				} else if (sync.getObservation() != null && sync.getObservationHis() != null) {
-					obs =  "M&A: " + sync.getObservation() + "\nSIS: " + sync.getObservationHis();
+					obs =  "M&A: " + sync.getObservation() + "<br>SIS: " + sync.getObservationHis();
 				}
 				
 				district = sync.getServer().getDistrict().getName();
@@ -266,7 +262,7 @@ public class SyncServiceImpl implements SyncService {
 							r1 = resourceRepository.findUsersForSyncNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");
 							}
 							else {
-								r1 = resourceRepository.findUsersForSyncErrorNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");	
+								r1 = resourceRepository.findUsersForSyncOccurenceNotification(sync.getServer().getDistrict().getDistrictId()).toString().replace("[", "");	
 							}
 							String r2 = r1.replace("]", " ");
 							String[] temp;
